@@ -1,4 +1,6 @@
-export async function wpgraphqlFetch<T>(
+import { cache } from 'react';
+
+async function wpgraphqlFetchRaw<T>(
     query: string,
     variables: Record<string, any> = {},
     options: RequestInit = {}
@@ -19,6 +21,7 @@ export async function wpgraphqlFetch<T>(
             query,
             variables,
         }),
+        next: { revalidate: 3600 }, // Default ISR cache for 1 hour
         ...options,
     });
 
@@ -28,3 +31,6 @@ export async function wpgraphqlFetch<T>(
     }
     return json;
 }
+
+// Use React cache to deduplicate requests in the same render pass (Shared between Metadata and Page)
+export const wpgraphqlFetch = cache(wpgraphqlFetchRaw);

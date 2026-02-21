@@ -220,54 +220,96 @@ export const GET_MENU_ITEMS = `
 `;
 
 export const GET_NODE_BY_SLUG = `
-  query GetNodeBySlug($slug: ID!) {
-  product(id: $slug, idType: SLUG) {
-    id
-    databaseId
-    name
-    slug
-    description
-    shortDescription
+  query GetNodeBySlug(
+    $slugId: ID!, 
+    $slugStr: String!,
+    $first: Int = 12, 
+    $after: String = "",
+    $minPrice: Float,
+    $maxPrice: Float,
+    $orderBy: [ProductsOrderbyInput] = [{ field: DATE, order: DESC }]
+  ) {
+    product(id: $slugId, idType: SLUG) {
+      id
+      databaseId
+      name
+      slug
+      description
+      shortDescription
       image {
-      sourceUrl
-      altText
-    }
-      galleryImages {
-        nodes {
         sourceUrl
         altText
       }
-    }
+      galleryImages {
+        nodes {
+          sourceUrl
+          altText
+        }
+      }
       productCategories {
         nodes {
-        name
-        slug
+          name
+          slug
+        }
       }
-    }
       ... on SimpleProduct {
-      price
-      regularPrice
-      salePrice
-      stockStatus
-    }
+        price
+        regularPrice
+        salePrice
+        stockStatus
+      }
       ... on VariableProduct {
-      price
-      regularPrice
-      salePrice
-      stockStatus
+        price
+        regularPrice
+        salePrice
+        stockStatus
         attributes {
           nodes {
-          name
-          options
+            name
+            options
+          }
+        }
+      }
+    }
+    productCategory(id: $slugId, idType: SLUG) {
+      id
+      name
+      description
+      slug
+    }
+    categoryProducts: products(
+      first: $first, 
+      after: $after, 
+      where: { categoryIn: [$slugStr], minPrice: $minPrice, maxPrice: $maxPrice, orderby: $orderBy }
+    ) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        id
+        databaseId
+        name
+        slug
+        ... on SimpleProduct {
+          price
+          regularPrice
+          salePrice
+          image {
+            sourceUrl
+            altText
+          }
+        }
+        ... on VariableProduct {
+          price
+          regularPrice
+          salePrice
+          image {
+            sourceUrl
+            altText
+          }
         }
       }
     }
   }
-  productCategory(id: $slug, idType: SLUG) {
-    id
-    name
-    description
-    slug
-  }
-}
 `;

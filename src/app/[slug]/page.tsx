@@ -11,7 +11,10 @@ export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const { data } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, { slug });
+    const { data } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
+        slugId: slug,
+        slugStr: slug
+    });
 
     if (data?.product) {
         return {
@@ -38,8 +41,25 @@ export default async function SlugPage({ params, searchParams }: {
     const { slug } = await params;
     const resolvedSearchParams = await searchParams;
 
-    // 1. Kiểm tra Slug là loại nội dung gì
-    const { data: nodeData } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, { slug });
+    const after = resolvedSearchParams.after || "";
+    const minPrice = resolvedSearchParams.minPrice ? parseFloat(resolvedSearchParams.minPrice) : null;
+    const maxPrice = resolvedSearchParams.maxPrice ? parseFloat(resolvedSearchParams.maxPrice) : null;
+    const sort = resolvedSearchParams.sort || "date-desc";
+
+    let orderBy = [{ field: "DATE", order: "DESC" }];
+    if (sort === "price-asc") orderBy = [{ field: "PRICE", order: "ASC" }];
+    if (sort === "price-desc") orderBy = [{ field: "PRICE", order: "DESC" }];
+
+    // 1. Kiểm tra Slug & Lấy dữ liệu (Gộp chung để giảm round-trip)
+    const { data: nodeData } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
+        slugId: slug,
+        slugStr: slug,
+        first: 12,
+        after,
+        minPrice,
+        maxPrice,
+        orderBy
+    });
 
     // --- TRƯỜNG HỢP: SẢN PHẨM ---
     if (nodeData?.product) {
@@ -114,27 +134,8 @@ export default async function SlugPage({ params, searchParams }: {
     // --- TRƯỜNG HỢP: DANH MỤC ---
     if (nodeData?.productCategory) {
         const category = nodeData.productCategory;
-        const after = resolvedSearchParams.after || "";
-        const minPrice = resolvedSearchParams.minPrice ? parseFloat(resolvedSearchParams.minPrice) : null;
-        const maxPrice = resolvedSearchParams.maxPrice ? parseFloat(resolvedSearchParams.maxPrice) : null;
-        const sort = resolvedSearchParams.sort || "date-desc";
-
-        let orderBy = [{ field: "DATE", order: "DESC" }];
-        if (sort === "price-asc") orderBy = [{ field: "PRICE", order: "ASC" }];
-        if (sort === "price-desc") orderBy = [{ field: "PRICE", order: "DESC" }];
-
-        const { data: catProductsData } = await wpgraphqlFetch<any>(GET_PRODUCTS_BY_CATEGORY, {
-            slugId: slug,
-            slugStr: slug,
-            first: 12,
-            after,
-            minPrice,
-            maxPrice,
-            orderBy
-        });
-
-        const products = catProductsData?.products?.nodes || [];
-        const pageInfo = catProductsData?.products?.pageInfo;
+        const products = nodeData.categoryProducts?.nodes || [];
+        const pageInfo = nodeData.categoryProducts?.pageInfo;
 
         return (
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
