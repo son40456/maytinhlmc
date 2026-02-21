@@ -9,15 +9,7 @@ import { useRouter } from 'next/navigation';
 import { wpgraphqlFetch } from '@/lib/graphql/fetcher';
 import { GET_MENU_ITEMS } from '@/lib/graphql/queries';
 
-interface MenuItemType {
-    id: string;
-    label: string;
-    url: string;
-    path: string;
-    parentId: string | null;
-    cssClasses: string[];
-    children?: MenuItemType[];
-}
+import { STATIC_MENU_ITEMS, MenuItemType } from '@/constants/menuData';
 
 const LayoutIcon = ({ size }: { size: number }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" /></svg>
@@ -29,8 +21,8 @@ const menuIconsMap: { [key: string]: React.ReactNode } = {
     'CPU': <Cpu size={18} />,
     'RAM': <HardDrive size={18} />,
     'VGA': <Monitor size={18} />,
-    'HARD DRIVE': <HardDrive size={18} />,
-    'SSD': <HardDrive size={18} />,
+    'Ổ CỨNG HDD': <HardDrive size={18} />,
+    'Ổ CỨNG SSD': <HardDrive size={18} />,
     'PSU': <Fan size={18} />,
     'CASE': <CaseIcon size={18} />,
     'MÀN HÌNH': <Monitor size={18} />,
@@ -47,7 +39,6 @@ const getMenuIcon = (label: string, cssClasses: string[] = []) => {
     if (menuIconsMap[cleanLabel]) return menuIconsMap[cleanLabel];
 
     // 2. Kiểm tra CSS Classes (Hỗ trợ Flatsome/Mega Menu icons)
-    // Flatsome thường dùng icon-xxx hoặc fa fa-xxx
     const iconClass = cssClasses.find(c => c.startsWith('icon-') || c.startsWith('fa-'));
     if (iconClass) {
         return <i className={`${iconClass}`} style={{ fontSize: '18px' }}></i>;
@@ -56,48 +47,17 @@ const getMenuIcon = (label: string, cssClasses: string[] = []) => {
     return <Monitor size={18} />;
 };
 
-const buildMenuTree = (flatList: any[]): MenuItemType[] => {
-    const map: { [key: string]: MenuItemType } = {};
-    const tree: MenuItemType[] = [];
-
-    flatList.forEach(item => {
-        map[item.id] = { ...item, children: [] };
-    });
-
-    flatList.forEach(item => {
-        if (item.parentId && map[item.parentId]) {
-            map[item.parentId].children?.push(map[item.id]);
-        } else {
-            tree.push(map[item.id]);
-        }
-    });
-
-    return tree;
-};
-
 export const Header = () => {
     const [mounted, setMounted] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [rawMenuItems, setRawMenuItems] = useState<any[]>([]);
     const itemCount = useCartStore((state) => state.getItemCount());
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
 
-    const menuTree = useMemo(() => buildMenuTree(rawMenuItems), [rawMenuItems]);
+    const menuTree = STATIC_MENU_ITEMS;
 
     useEffect(() => {
         setMounted(true);
-        const fetchMenu = async () => {
-            try {
-                const { data } = await wpgraphqlFetch<any>(GET_MENU_ITEMS);
-                if (data?.menuItems?.nodes) {
-                    setRawMenuItems(data.menuItems.nodes);
-                }
-            } catch (error) {
-                console.error('Error fetching menu:', error);
-            }
-        };
-        fetchMenu();
     }, []);
 
     const handleSearch = (e: React.FormEvent) => {
@@ -193,70 +153,80 @@ export const Header = () => {
             </div>
 
             {/* Tier 2: Navy Menu Bar */}
-            <div className="bg-[#12243d] text-white">
-                <div className="container mx-auto px-2 overflow-x-auto scrollbar-hide">
-                    <nav className="flex items-center min-w-max">
-                        {menuTree.length > 0 ? (
-                            menuTree.map((item) => {
-                                const cleanLabel = item.label.replace(/<\/?[^>]+(>|$)/g, "");
-                                const hasChildren = item.children && item.children.length > 0;
+            <div className="bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative">
+                <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative">
+                    <nav className="flex items-center justify-between w-full min-w-max lg:min-w-0">
+                        {menuTree.map((item) => {
+                            const cleanLabel = item.label.replace(/<\/?[^>]+(>|$)/g, "");
+                            const hasChildren = (item.children && item.children.length > 0) || (item.columns && item.columns.length > 0);
 
-                                return (
-                                    <div key={item.id} className="relative group/menu">
-                                        <Link
-                                            href={item.path.replace('/category/', '/').replace('/product/', '/')}
-                                            className="flex flex-col items-center justify-center py-2 px-3 hover:bg-[#1a3458] transition-all min-w-[75px] group border-b-2 border-transparent hover:border-yellow-400"
-                                        >
-                                            <span className="mb-0.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
-                                                {getMenuIcon(cleanLabel, item.cssClasses)}
-                                            </span>
-                                            <span className="text-[9px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-0.5 uppercase">
-                                                {cleanLabel}
-                                                {hasChildren && <ChevronDown size={10} />}
-                                            </span>
-                                        </Link>
-
-                                        {/* Dropdown Menu */}
-                                        {hasChildren && (
-                                            <div className="absolute left-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-xl border border-gray-100 min-w-[200px] py-2 z-[60]">
-                                                {item.children?.map(child => (
-                                                    <Link
-                                                        key={child.id}
-                                                        href={child.path.replace('/category/', '/').replace('/product/', '/')}
-                                                        className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-600 text-[11px] font-bold border-b border-gray-50 last:border-0 transition-colors"
-                                                    >
-                                                        {child.label.replace(/<\/?[^>]+(>|$)/g, "").toUpperCase()}
-                                                    </Link>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })
-                        ) : (
-                            <div className="flex w-full justify-between items-center py-2">
-                                {[
-                                    { label: 'BỘ PC', slug: 'pc-gaming-streaming' },
-                                    { label: 'MAINBOARD', slug: 'mainboard' },
-                                    { label: 'CPU', slug: 'cpu' },
-                                    { label: 'RAM', slug: 'ram-bo-nho-trong' },
-                                    { label: 'VGA', slug: 'vga-card-man-hinh' },
-                                    { label: 'Ổ CỨNG HDD', slug: 'o-cung-hdd' },
-                                    { label: 'Ổ CỨNG SSD', slug: 'o-cung-ssd' },
-                                    { label: 'PSU', slug: 'nguon-may-tinh-psu' },
-                                    { label: 'CASE', slug: 'vo-case' },
-                                    { label: 'MÀN HÌNH', slug: 'man-hinh' },
-                                    { label: 'TẢN NHIỆT', slug: 'tan-nhiet' },
-                                    { label: 'PHÍM CHUỘT', slug: 'phim-chuot' },
-                                    { label: 'TAI NGHE', slug: 'tai-nghe-gaming' }
-                                ].map((item) => (
-                                    <Link key={item.label} href={`/${item.slug}`} className="flex flex-col items-center justify-center py-1 px-3 min-w-[75px] opacity-70 hover:opacity-100">
-                                        <span className="mb-0.5">{menuIconsMap[item.label] || <Monitor size={18} />}</span>
-                                        <span className="text-[9px] font-bold">{item.label}</span>
+                            return (
+                                <div key={item.id} className="group/menu static lg:static">
+                                    <Link
+                                        href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
+                                        className="flex flex-col items-center justify-center py-2 px-3 hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-yellow-400"
+                                    >
+                                        <span className="mb-0.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
+                                            {getMenuIcon(cleanLabel, item.cssClasses)}
+                                        </span>
+                                        <span className="text-[9px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-0.5 uppercase whitespace-nowrap">
+                                            {cleanLabel}
+                                            {hasChildren && <ChevronDown size={10} />}
+                                        </span>
                                     </Link>
-                                ))}
-                            </div>
-                        )}
+
+                                    {/* Dropdown / Mega Menu */}
+                                    {hasChildren && (
+                                        <div className="absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-2xl border border-gray-100 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200">
+                                            <div className="flex justify-between items-start">
+                                                {/* Columns Rendering */}
+                                                {item.columns ? (
+                                                    <div className="flex gap-8 min-w-max">
+                                                        {item.columns.map((col, idx) => (
+                                                            <div key={idx} className="flex flex-col space-y-2 min-w-[150px]">
+                                                                {col.map(child => (
+                                                                    <Link
+                                                                        key={child.id}
+                                                                        href={child.path.replace('/category/', '/').replace('/product/', '/')}
+                                                                        className="block py-1 hover:text-blue-600 text-[11px] font-bold transition-colors"
+                                                                    >
+                                                                        {child.label.replace(/<\/?[^>]+(>|$)/g, "").toUpperCase()}
+                                                                    </Link>
+                                                                ))}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    // Simple Dropdown if no columns
+                                                    <div className="flex flex-col space-y-2 min-w-[150px]">
+                                                        {item.children?.map(child => (
+                                                            <Link
+                                                                key={child.id}
+                                                                href={child.path.replace('/category/', '/').replace('/product/', '/')}
+                                                                className="block py-1 hover:text-blue-600 text-[11px] font-bold transition-colors"
+                                                            >
+                                                                {child.label.replace(/<\/?[^>]+(>|$)/g, "").toUpperCase()}
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+                                                {/* Image Rendering */}
+                                                {item.image && (
+                                                    <div className="flex-shrink-0 w-48 h-48 relative hidden xl:block">
+                                                        <img
+                                                            src={item.image}
+                                                            alt={cleanLabel}
+                                                            className="w-full h-full object-contain opacity-90"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </nav>
                 </div>
             </div>
