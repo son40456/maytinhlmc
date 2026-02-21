@@ -36,7 +36,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
 
     return (
         <div className="group flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white hover:shadow-lg transition-shadow duration-200">
-            <Link href={`/product/${slug}`} className="relative aspect-square w-full bg-gray-100 overflow-hidden">
+            <Link href={`/${slug}`} className="relative aspect-square w-full bg-gray-100 overflow-hidden">
                 {imageUrl ? (
                     <Image
                         src={imageUrl}
@@ -52,7 +52,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                 )}
             </Link>
             <div className="flex flex-1 flex-col p-4">
-                <Link href={`/product/${slug}`}>
+                <Link href={`/${slug}`}>
                     <h3 className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2">{name}</h3>
                 </Link>
                 <p className="mt-2 text-lg font-semibold text-gray-900">{price}</p>

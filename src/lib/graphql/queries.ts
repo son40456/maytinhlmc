@@ -201,6 +201,73 @@ export const GET_CUSTOMER_DETAILS = `
           total
         }
       }
+  }
+`;
+
+export const GET_MENU_ITEMS = `
+  query GetMenuItems($location: MenuLocationEnum = PRIMARY) {
+    menuItems(where: { location: $location }, first: 100) {
+      nodes {
+        id
+        label
+        url
+        path
+        parentId
+        cssClasses
+      }
     }
   }
+`;
+
+export const GET_NODE_BY_SLUG = `
+  query GetNodeBySlug($slug: ID!) {
+  product(id: $slug, idType: SLUG) {
+    id
+    databaseId
+    name
+    slug
+    description
+    shortDescription
+      image {
+      sourceUrl
+      altText
+    }
+      galleryImages {
+        nodes {
+        sourceUrl
+        altText
+      }
+    }
+      productCategories {
+        nodes {
+        name
+        slug
+      }
+    }
+      ... on SimpleProduct {
+      price
+      regularPrice
+      salePrice
+      stockStatus
+    }
+      ... on VariableProduct {
+      price
+      regularPrice
+      salePrice
+      stockStatus
+        attributes {
+          nodes {
+          name
+          options
+        }
+      }
+    }
+  }
+  productCategory(id: $slug, idType: SLUG) {
+    id
+    name
+    description
+    slug
+  }
+}
 `;
