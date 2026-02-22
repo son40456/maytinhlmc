@@ -5,15 +5,39 @@ import Image from "next/image";
 import { AddToCartButton } from "@/components/ui/AddToCartButton";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
+import Link from "next/link";
 
 // ISR config
 export const revalidate = 3600;
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params, searchParams }: {
+    params: Promise<{ slug: string }>,
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
     const { slug } = await params;
+    const resolvedSearchParams = await searchParams;
+
+    // Thu thập các bộ lọc taxonomy từ URL (tự động)
+    const systemParams = ['after', 'minPrice', 'maxPrice', 'sort'];
+    const taxFilters = Object.entries(resolvedSearchParams)
+        .filter(([key]) => !systemParams.includes(key))
+        .map(([key, value]) => {
+            if (!value || typeof value !== 'string') return null;
+            // Làm đẹp URL: Bỏ tiền tố pa_ nếu có, chuẩn hóa thành Enum (vd: chipset -> PA_CHIPSET)
+            const cleanKey = key.startsWith('pa_') ? key.slice(3) : key;
+            const taxonomy = `PA_${cleanKey.toUpperCase().replace(/-/g, '_')}`;
+            return {
+                taxonomy,
+                terms: [value],
+                operator: 'IN'
+            };
+        })
+        .filter(f => f !== null);
+
     const { data } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
         slugId: slug,
-        slugStr: slug
+        slugStr: slug,
+        taxFilters: taxFilters.length > 0 ? taxFilters : null
     });
 
     if (data?.product) {
@@ -36,7 +60,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function SlugPage({ params, searchParams }: {
     params: Promise<{ slug: string }>,
-    searchParams: Promise<{ after?: string, minPrice?: string, maxPrice?: string, sort?: string }>
+    searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
     const { slug } = await params;
     const resolvedSearchParams = await searchParams;
@@ -45,6 +69,20 @@ export default async function SlugPage({ params, searchParams }: {
     const minPrice = resolvedSearchParams.minPrice ? parseFloat(resolvedSearchParams.minPrice) : null;
     const maxPrice = resolvedSearchParams.maxPrice ? parseFloat(resolvedSearchParams.maxPrice) : null;
     const sort = resolvedSearchParams.sort || "date-desc";
+
+    // Xây dựng bộ lọc taxonomy động
+    const systemParams = ['after', 'minPrice', 'maxPrice', 'sort'];
+    const taxFilters = Object.entries(resolvedSearchParams)
+        .filter(([key, value]) => !systemParams.includes(key) && value)
+        .map(([key, value]) => {
+            const cleanKey = key.startsWith('pa_') ? key.slice(3) : key;
+            const taxonomy = `PA_${cleanKey.toUpperCase().replace(/-/g, '_')}`;
+            return {
+                taxonomy,
+                terms: [value as string],
+                operator: 'IN'
+            };
+        });
 
     let orderBy = [{ field: "DATE", order: "DESC" }];
     if (sort === "price-asc") orderBy = [{ field: "PRICE", order: "ASC" }];
@@ -58,7 +96,8 @@ export default async function SlugPage({ params, searchParams }: {
         after,
         minPrice,
         maxPrice,
-        orderBy
+        orderBy,
+        taxFilters: taxFilters.length > 0 ? taxFilters : null
     });
 
     // --- TRƯỜNG HỢP: SẢN PHẨM ---
@@ -137,6 +176,16 @@ export default async function SlugPage({ params, searchParams }: {
         const products = nodeData.categoryProducts?.nodes || [];
         const pageInfo = nodeData.categoryProducts?.pageInfo;
 
+        // Tạo URL cho Load More bảo toàn tất cả searchParams
+        const getLoadMoreUrl = () => {
+            const params = new URLSearchParams();
+            Object.entries(resolvedSearchParams).forEach(([key, value]) => {
+                if (value) params.set(key, value);
+            });
+            params.set('after', pageInfo?.endCursor || "");
+            return `/${slug}?${params.toString()}`;
+        };
+
         return (
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="mb-8 border-b border-gray-200 pb-8">
@@ -171,12 +220,12 @@ export default async function SlugPage({ params, searchParams }: {
                                 </div>
                                 {pageInfo?.hasNextPage && (
                                     <div className="mt-12 flex justify-center">
-                                        <a
-                                            href={`/${slug}?after=${pageInfo.endCursor}${minPrice ? `&minPrice=${minPrice}` : ''}${maxPrice ? `&maxPrice=${maxPrice}` : ''}${sort !== 'date-desc' ? `&sort=${sort}` : ''}`}
+                                        <Link
+                                            href={getLoadMoreUrl()}
                                             className="px-6 py-3 border border-gray-300 rounded hover:bg-gray-50 font-medium"
                                         >
                                             Tải thêm
-                                        </a>
+                                        </Link>
                                     </div>
                                 )}
                             </>

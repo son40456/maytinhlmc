@@ -227,7 +227,8 @@ export const GET_NODE_BY_SLUG = `
     $after: String = "",
     $minPrice: Float,
     $maxPrice: Float,
-    $orderBy: [ProductsOrderbyInput] = [{ field: DATE, order: DESC }]
+    $orderBy: [ProductsOrderbyInput] = [{ field: DATE, order: DESC }],
+    $taxFilters: [ProductTaxonomyFilterInput]
   ) {
     product(id: $slugId, idType: SLUG) {
       id
@@ -280,7 +281,13 @@ export const GET_NODE_BY_SLUG = `
     categoryProducts: products(
       first: $first, 
       after: $after, 
-      where: { categoryIn: [$slugStr], minPrice: $minPrice, maxPrice: $maxPrice, orderby: $orderBy }
+      where: { 
+        categoryIn: [$slugStr], 
+        minPrice: $minPrice, 
+        maxPrice: $maxPrice, 
+        orderby: $orderBy,
+        taxonomyFilter: { filters: $taxFilters }
+      }
     ) {
       pageInfo {
         hasNextPage
