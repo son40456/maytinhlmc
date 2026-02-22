@@ -5,7 +5,14 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Button } from './Button';
 import { Input } from './Input';
 
-export function CategoryFilterSort() {
+interface FilterOption {
+    name: string;
+    slug: string;
+    rawSlug: string;
+    options: { name: string; slug: string }[];
+}
+
+export function CategoryFilterSort({ filters = [] }: { filters?: FilterOption[] }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -17,51 +24,33 @@ export function CategoryFilterSort() {
     const [minPrice, setMinPrice] = useState(currentMinPrice);
     const [maxPrice, setMaxPrice] = useState(currentMaxPrice);
 
-    const applyFilters = () => {
+    const updateParams = (newParams: Record<string, string | null>) => {
         const params = new URLSearchParams(searchParams.toString());
-
-        if (minPrice) params.set('minPrice', minPrice);
-        else params.delete('minPrice');
-
-        if (maxPrice) params.set('maxPrice', maxPrice);
-        else params.delete('maxPrice');
-
-        // Reset pagination
-        params.delete('after');
-
-        router.push(`${pathname}?${params.toString()}`);
-    };
-
-    const clearFilters = () => {
-        setMinPrice('');
-        setMaxPrice('');
-        const params = new URLSearchParams(searchParams.toString());
-        params.delete('minPrice');
-        params.delete('maxPrice');
-        params.delete('after');
+        Object.entries(newParams).forEach(([key, value]) => {
+            if (value === null) params.delete(key);
+            else params.set(key, value);
+        });
+        params.delete('after'); // Reset pagination
         router.push(`${pathname}?${params.toString()}`);
     };
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const sort = e.target.value;
-        const params = new URLSearchParams(searchParams.toString());
+        const value = e.target.value;
+        updateParams({ sort: value === 'date-desc' ? null : value });
+    };
 
-        if (sort !== 'date-desc') params.set('sort', sort);
-        else params.delete('sort');
-
-        // Reset pagination
-        params.delete('after');
-
-        router.push(`${pathname}?${params.toString()}`);
+    const handleFilterChange = (slug: string, value: string) => {
+        const current = searchParams.get(slug);
+        updateParams({ [slug]: current === value ? null : value });
     };
 
     return (
         <div className="space-y-6">
             {/* Sorting */}
             <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Sắp xếp theo</h3>
+                <h3 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Sắp xếp theo</h3>
                 <select
-                    className="w-full border-gray-300 rounded-md py-2 px-3 text-sm focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    className="w-full border-gray-300 rounded-md py-2 px-3 text-sm focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer"
                     value={currentSort}
                     onChange={handleSortChange}
                 >
@@ -71,31 +60,69 @@ export function CategoryFilterSort() {
                 </select>
             </div>
 
-            {/* Filtering */}
-            <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Lọc theo giá</h3>
+            {/* Dynamic Filters */}
+            {filters.map((filter) => (
+                <div key={filter.slug} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Lọc theo {filter.name}</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {filter.options.map((option) => {
+                            const isActive = searchParams.get(filter.slug) === option.slug;
+                            return (
+                                <button
+                                    key={option.slug}
+                                    onClick={() => handleFilterChange(filter.slug, option.slug)}
+                                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all border ${isActive
+                                        ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                                        : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                                        }`}
+                                >
+                                    {option.name}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            ))}
 
-                <div className="flex flex-col gap-4">
+            {/* Price Filtering */}
+            <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <h3 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Khoảng giá (đ)</h3>
+                <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-2">
                         <Input
                             type="number"
-                            placeholder="Từ (đ)"
-                            className="w-full text-sm"
+                            placeholder="Từ"
+                            className="w-full text-xs"
                             value={minPrice}
                             onChange={(e) => setMinPrice(e.target.value)}
                         />
-                        <span className="text-gray-500">-</span>
+                        <span className="text-gray-400">-</span>
                         <Input
                             type="number"
-                            placeholder="Đến (đ)"
-                            className="w-full text-sm"
+                            placeholder="Đến"
+                            className="w-full text-xs"
                             value={maxPrice}
                             onChange={(e) => setMaxPrice(e.target.value)}
                         />
                     </div>
                     <div className="flex gap-2">
-                        <Button className="w-full" size="sm" onClick={applyFilters}>Áp dụng</Button>
-                        <Button variant="outline" className="w-full" size="sm" onClick={clearFilters}>Xóa</Button>
+                        <Button
+                            className="w-full text-xs h-9 bg-blue-600 hover:bg-blue-700"
+                            onClick={() => updateParams({ minPrice: minPrice || null, maxPrice: maxPrice || null })}
+                        >
+                            Áp dụng
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="w-full text-xs h-9"
+                            onClick={() => {
+                                setMinPrice('');
+                                setMaxPrice('');
+                                updateParams({ minPrice: null, maxPrice: null });
+                            }}
+                        >
+                            Xóa
+                        </Button>
                     </div>
                 </div>
             </div>

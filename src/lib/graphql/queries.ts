@@ -318,5 +318,46 @@ export const GET_NODE_BY_SLUG = `
         }
       }
     }
+    filterDiscovery: products(
+      first: 50, 
+      where: { categoryIn: [$slugStr] }
+    ) {
+      nodes {
+        ... on SimpleProduct {
+          attributes {
+            nodes {
+              name
+              label
+              ... on GlobalProductAttribute {
+                slug
+                terms {
+                  nodes {
+                    name
+                    slug
+                  }
+                }
+              }
+            }
+          }
+        }
+        ... on VariableProduct {
+          attributes {
+            nodes {
+              name
+              label
+              ... on GlobalProductAttribute {
+                slug
+                terms {
+                  nodes {
+                    name
+                    slug
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 `;

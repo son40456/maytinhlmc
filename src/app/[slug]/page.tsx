@@ -6,6 +6,9 @@ import { AddToCartButton } from "@/components/ui/AddToCartButton";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
 import Link from "next/link";
+import { ProductGallery } from "@/components/product/ProductGallery";
+import { ProductSpecs } from "@/components/product/ProductSpecs";
+import { StickyBuyBar } from "@/components/product/StickyBuyBar";
 
 // ISR config
 export const revalidate = 3600;
@@ -100,72 +103,133 @@ export default async function SlugPage({ params, searchParams }: {
         taxFilters: taxFilters.length > 0 ? taxFilters : null
     });
 
+
     // --- TRƯỜNG HỢP: SẢN PHẨM ---
     if (nodeData?.product) {
         const product = nodeData.product;
+        // Clean price: Bỏ &nbsp; và chuẩn hóa khoảng trắng
+        const cleanPrice = (priceStr: string) => priceStr?.replace(/&nbsp;/g, " ").trim() || "Liên hệ";
+        const displayPrice = cleanPrice(product.price || product.regularPrice);
         const imageUrl = product.image?.sourceUrl || "";
 
         return (
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="flex flex-col md:flex-row gap-12">
-                    <div className="w-full md:w-1/2">
-                        {imageUrl ? (
-                            <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 mb-4">
-                                <Image
-                                    src={imageUrl}
-                                    alt={product.image?.altText || product.name}
-                                    fill
-                                    className="object-cover"
-                                    sizes="(max-width: 768px) 100vw, 50vw"
-                                    priority
-                                />
-                            </div>
-                        ) : (
-                            <div className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 mb-4">No Image</div>
+            <div className="bg-gray-50/50 min-h-screen">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+                    {/* Breadcrumbs */}
+                    <nav className="text-sm text-gray-500 mb-8 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-2">
+                        <Link href="/" className="hover:text-blue-600 transition-colors">Trang chủ</Link>
+                        <span>/</span>
+                        {product.productCategories?.nodes?.[0] && (
+                            <>
+                                <Link
+                                    href={`/${product.productCategories.nodes[0].slug}`}
+                                    className="hover:text-blue-600 transition-colors"
+                                >
+                                    {product.productCategories.nodes[0].name}
+                                </Link>
+                                <span>/</span>
+                            </>
                         )}
-                        {product.galleryImages?.nodes?.length > 0 && (
-                            <div className="grid grid-cols-4 gap-4 mt-4">
-                                {product.galleryImages.nodes.map((img: any, idx: number) => (
-                                    <div key={idx} className="relative aspect-square cursor-pointer overflow-hidden rounded-md border border-gray-200 hover:border-blue-500 transition-colors">
-                                        <Image src={img.sourceUrl} alt={img.altText || `Gallery image ${idx}`} fill className="object-cover" />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    <div className="w-full md:w-1/2 flex flex-col">
-                        <nav className="text-sm text-gray-500 mb-4">
-                            Trang chủ / {product.productCategories?.nodes?.[0]?.name} / {product.name}
-                        </nav>
-                        <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4 leading-tight">{product.name}</h1>
-                        <div className="flex items-center gap-4 mb-6">
-                            <span className="text-3xl font-bold text-red-600">{product.price || product.regularPrice || "Liên hệ"}</span>
-                        </div>
-                        <div className="bg-green-50 text-green-700 px-4 py-2 rounded-md font-medium text-sm mb-8 w-max">
-                            Tình trạng: {product.stockStatus === 'IN_STOCK' ? 'Còn hàng' : 'Hết hàng'}
-                        </div>
-                        {product.shortDescription && (
-                            <div className="prose prose-sm text-gray-600 mb-8 max-w-none border-b border-gray-200 pb-8" dangerouslySetInnerHTML={{ __html: product.shortDescription }} />
-                        )}
-                        <div className="mt-auto pt-8">
-                            <AddToCartButton
-                                id={product.id}
-                                databaseId={product.databaseId}
+                        <span className="text-gray-900 font-medium truncate">{product.name}</span>
+                    </nav>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                        {/* Left: Photos */}
+                        <div className="lg:col-span-5 xl:col-span-6">
+                            <ProductGallery
+                                mainImage={product.image}
+                                galleryNodes={product.galleryImages?.nodes || []}
                                 name={product.name}
-                                price={product.price || product.regularPrice || "0"}
-                                imageUrl={imageUrl}
-                                slug={product.slug}
-                                stockStatus={product.stockStatus || "IN_STOCK"}
                             />
                         </div>
+
+                        {/* Right: Info & Buy */}
+                        <div className="lg:col-span-7 xl:col-span-6 space-y-8">
+                            <div>
+                                <h1 className="text-2xl lg:text-3xl xl:text-4xl font-extrabold text-gray-900 leading-tight mb-4 tracking-tight">
+                                    {product.name}
+                                </h1>
+                                <div className="flex items-center gap-4 flex-wrap">
+                                    <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider">
+                                        {product.stockStatus === 'IN_STOCK' ? '● Còn hàng' : '○ Hết hàng'}
+                                    </div>
+                                    <span className="text-gray-400">|</span>
+                                    <span className="text-sm text-gray-500">Mã: {product.databaseId}</span>
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+                                <div className="space-y-1">
+                                    <p className="text-sm text-gray-400 font-medium">Giá bán ưu đãi</p>
+                                    <div className="flex items-baseline gap-3">
+                                        <span className="text-4xl font-black text-red-600 tracking-tighter">
+                                            {displayPrice}
+                                        </span>
+                                        {product.regularPrice && product.salePrice && (
+                                            <span className="text-lg text-gray-400 line-through">
+                                                {cleanPrice(product.regularPrice)}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="pt-2">
+                                    <ProductSpecs
+                                        shortDescription={product.shortDescription}
+                                        attributes={product.attributes}
+                                    />
+                                </div>
+
+                                <div className="pt-6 border-t border-gray-100">
+                                    <AddToCartButton
+                                        id={product.id}
+                                        databaseId={product.databaseId}
+                                        name={product.name}
+                                        price={displayPrice}
+                                        imageUrl={imageUrl}
+                                        slug={product.slug}
+                                        stockStatus={product.stockStatus || "IN_STOCK"}
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-gray-50 border border-gray-100">
+                                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 shadow-sm">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                                        </div>
+                                        <span className="text-xs font-bold text-gray-700">Chính hãng 100%</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-gray-50 border border-gray-100">
+                                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 shadow-sm">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                        </div>
+                                        <span className="text-xs font-bold text-gray-700">Bảo hành siêu tốc</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    {/* Description Section */}
+                    {product.description && (
+                        <div className="mt-16 bg-white rounded-3xl shadow-sm border border-gray-100 p-8 lg:p-12">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-8 pb-4 border-b-2 border-blue-600 w-max">
+                                Thông tin chi tiết
+                            </h2>
+                            <div className="prose max-w-none prose-blue prose-img:rounded-2xl" dangerouslySetInnerHTML={{ __html: product.description }} />
+                        </div>
+                    )}
                 </div>
-                {product.description && (
-                    <div className="mt-16 pt-16 border-t border-gray-200">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-8">Thông tin chi tiết</h2>
-                        <div className="prose max-w-none text-gray-700 w-full" dangerouslySetInnerHTML={{ __html: product.description }} />
-                    </div>
-                )}
+
+                <StickyBuyBar
+                    id={product.id}
+                    databaseId={product.databaseId}
+                    name={product.name}
+                    price={displayPrice}
+                    imageUrl={imageUrl}
+                    slug={product.slug}
+                    stockStatus={product.stockStatus || "IN_STOCK"}
+                />
             </div>
         );
     }
@@ -175,6 +239,43 @@ export default async function SlugPage({ params, searchParams }: {
         const category = nodeData.productCategory;
         const products = nodeData.categoryProducts?.nodes || [];
         const pageInfo = nodeData.categoryProducts?.pageInfo;
+
+        // Trích xuất các bộ lọc khả dụng từ filterDiscovery
+        const availableFilters: any[] = [];
+        const seenAttrs = new Set();
+
+        nodeData.filterDiscovery?.nodes?.forEach((p: any) => {
+            p.attributes?.nodes?.forEach((attr: any) => {
+                const key = attr.slug || attr.name;
+                const terms = attr.terms?.nodes || [];
+
+                if (!seenAttrs.has(key)) {
+                    seenAttrs.add(key);
+                    const displaySlug = key.startsWith('pa_') ? key.slice(3) : key;
+
+                    const optionsMap = new Map();
+                    terms.forEach((t: any) => optionsMap.set(t.slug, t.name));
+
+                    availableFilters.push({
+                        name: attr.label || attr.name,
+                        slug: displaySlug,
+                        rawSlug: key,
+                        options: Array.from(optionsMap.entries()).map(([slug, name]) => ({ slug, name }))
+                    });
+                } else {
+                    const existing = availableFilters.find(f => f.rawSlug === key);
+                    if (existing) {
+                        const existingSlugs = new Set(existing.options.map((o: any) => o.slug));
+                        terms.forEach((t: any) => {
+                            if (!existingSlugs.has(t.slug)) {
+                                existing.options.push({ slug: t.slug, name: t.name });
+                                existingSlugs.add(t.slug);
+                            }
+                        });
+                    }
+                }
+            });
+        });
 
         // Tạo URL cho Load More bảo toàn tất cả searchParams
         const getLoadMoreUrl = () => {
@@ -196,7 +297,7 @@ export default async function SlugPage({ params, searchParams }: {
                 </div>
                 <div className="flex flex-col lg:flex-row gap-8">
                     <div className="w-full lg:w-1/4 lg:flex-shrink-0">
-                        <CategoryFilterSort />
+                        <CategoryFilterSort filters={availableFilters} />
                     </div>
                     <div className="w-full lg:w-3/4">
                         {products.length === 0 ? (
