@@ -54,7 +54,8 @@ export const GET_PRODUCTS_BY_CATEGORY = `
     $after: String = "",
     $minPrice: Float,
     $maxPrice: Float,
-    $orderBy: [ProductsOrderbyInput] = [{ field: DATE, order: DESC }]
+    $orderBy: [ProductsOrderbyInput] = [{ field: DATE, order: DESC }],
+    $taxFilters: [ProductTaxonomyFilterInput]
   ) {
     productCategory(id: $slugId, idType: SLUG) {
       id
@@ -64,7 +65,13 @@ export const GET_PRODUCTS_BY_CATEGORY = `
     products(
       first: $first, 
       after: $after, 
-      where: { categoryIn: [$slugStr], minPrice: $minPrice, maxPrice: $maxPrice, orderby: $orderBy }
+      where: { 
+        categoryIn: [$slugStr], 
+        minPrice: $minPrice, 
+        maxPrice: $maxPrice, 
+        orderby: $orderBy,
+        taxonomyFilter: { filters: $taxFilters }
+      }
     ) {
       pageInfo {
         hasNextPage
@@ -253,6 +260,28 @@ export const GET_NODE_BY_SLUG = `
           slug
         }
       }
+      related {
+        nodes {
+          id
+          databaseId
+          name
+          slug
+          image {
+            sourceUrl
+            altText
+          }
+          ... on SimpleProduct {
+            price
+            regularPrice
+            salePrice
+          }
+          ... on VariableProduct {
+            price
+            regularPrice
+            salePrice
+          }
+        }
+      }
       ... on SimpleProduct {
         price
         regularPrice
@@ -334,6 +363,15 @@ export const GET_NODE_BY_SLUG = `
                   nodes {
                     name
                     slug
+                    ... on PaThuongHieu {
+                      logo {
+                        logo {
+                          node {
+                            sourceUrl
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -351,6 +389,15 @@ export const GET_NODE_BY_SLUG = `
                   nodes {
                     name
                     slug
+                    ... on PaThuongHieu {
+                      logo {
+                        logo {
+                          node {
+                            sourceUrl
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }

@@ -3,14 +3,13 @@ import { GET_NODE_BY_SLUG, GET_PRODUCTS_BY_CATEGORY } from "@/lib/graphql/querie
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { AddToCartButton } from "@/components/ui/AddToCartButton";
-import { ProductCard } from "@/components/ui/ProductCard";
 import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
 import Link from "next/link";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductSpecs } from "@/components/product/ProductSpecs";
 import { StickyBuyBar } from "@/components/product/StickyBuyBar";
-
-// ISR config
+import { CategoryProductView } from "@/components/category/CategoryProductView";
+import { ProductCard } from "@/components/ui/ProductCard";
 export const revalidate = 3600;
 
 export async function generateMetadata({ params, searchParams }: {
@@ -219,6 +218,28 @@ export default async function SlugPage({ params, searchParams }: {
                             <div className="prose max-w-none prose-blue prose-img:rounded-2xl" dangerouslySetInnerHTML={{ __html: product.description }} />
                         </div>
                     )}
+
+                    {/* Related Products Section */}
+                    {product.related?.nodes && product.related.nodes.length > 0 && (
+                        <div className="mt-16">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-8">
+                                Sản phẩm liên quan
+                            </h2>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6">
+                                {product.related.nodes.map((p: any) => (
+                                    <ProductCard
+                                        key={p.id}
+                                        id={p.id}
+                                        databaseId={p.databaseId}
+                                        name={p.name}
+                                        price={(p.price || p.regularPrice || "Liên hệ").replace(/&nbsp;/g, ' ')}
+                                        imageUrl={p.image?.sourceUrl || ""}
+                                        slug={p.slug}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <StickyBuyBar
@@ -254,13 +275,16 @@ export default async function SlugPage({ params, searchParams }: {
                     const displaySlug = key.startsWith('pa_') ? key.slice(3) : key;
 
                     const optionsMap = new Map();
-                    terms.forEach((t: any) => optionsMap.set(t.slug, t.name));
+                    terms.forEach((t: any) => {
+                        const logoUrl = t.logo?.logo?.node?.sourceUrl;
+                        optionsMap.set(t.slug, { name: t.name, logo: logoUrl });
+                    });
 
                     availableFilters.push({
                         name: attr.label || attr.name,
                         slug: displaySlug,
                         rawSlug: key,
-                        options: Array.from(optionsMap.entries()).map(([slug, name]) => ({ slug, name }))
+                        options: Array.from(optionsMap.entries()).map(([slug, data]) => ({ slug, name: data.name, logo: data.logo }))
                     });
                 } else {
                     const existing = availableFilters.find(f => f.rawSlug === key);
@@ -268,13 +292,27 @@ export default async function SlugPage({ params, searchParams }: {
                         const existingSlugs = new Set(existing.options.map((o: any) => o.slug));
                         terms.forEach((t: any) => {
                             if (!existingSlugs.has(t.slug)) {
-                                existing.options.push({ slug: t.slug, name: t.name });
+                                const logoUrl = t.logo?.logo?.node?.sourceUrl;
+                                existing.options.push({ slug: t.slug, name: t.name, logo: logoUrl });
                                 existingSlugs.add(t.slug);
                             }
                         });
                     }
                 }
             });
+        });
+
+        // Hậu xử lý: Sắp xếp các lựa chọn khoảng giá theo thứ tự tự nhiên (tăng dần)
+        availableFilters.forEach((filter: any) => {
+            if (filter.slug.includes('khoang-gia')) {
+                filter.options.sort((a: any, b: any) => {
+                    const extractMin = (slug: string) => {
+                        let minStr = slug.replace('duoi-', '0-').replace('tren-', '999-').replace(/trieu/g, '');
+                        return parseInt(minStr.split('-')[0]) || 0;
+                    };
+                    return extractMin(a.slug) - extractMin(b.slug);
+                });
+            }
         });
 
         // Tạo URL cho Load More bảo toàn tất cả searchParams
@@ -289,50 +327,13 @@ export default async function SlugPage({ params, searchParams }: {
 
         return (
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="mb-8 border-b border-gray-200 pb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">{category.name}</h1>
-                    {category.description && (
-                        <div className="text-gray-600" dangerouslySetInnerHTML={{ __html: category.description }} />
-                    )}
-                </div>
-                <div className="flex flex-col lg:flex-row gap-8">
-                    <div className="w-full lg:w-1/4 lg:flex-shrink-0">
-                        <CategoryFilterSort filters={availableFilters} />
-                    </div>
-                    <div className="w-full lg:w-3/4">
-                        {products.length === 0 ? (
-                            <div className="bg-gray-50 rounded-lg py-16 text-center text-gray-500">
-                                Không tìm thấy sản phẩm nào.
-                            </div>
-                        ) : (
-                            <>
-                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                                    {products.map((p: any) => (
-                                        <ProductCard
-                                            key={p.id}
-                                            id={p.id}
-                                            databaseId={p.databaseId}
-                                            name={p.name}
-                                            price={p.price || p.regularPrice || "Liên hệ"}
-                                            imageUrl={p.image?.sourceUrl || ""}
-                                            slug={p.slug}
-                                        />
-                                    ))}
-                                </div>
-                                {pageInfo?.hasNextPage && (
-                                    <div className="mt-12 flex justify-center">
-                                        <Link
-                                            href={getLoadMoreUrl()}
-                                            className="px-6 py-3 border border-gray-300 rounded hover:bg-gray-50 font-medium"
-                                        >
-                                            Tải thêm
-                                        </Link>
-                                    </div>
-                                )}
-                            </>
-                        )}
-                    </div>
-                </div>
+                <CategoryProductView
+                    category={category}
+                    initialProducts={products}
+                    initialPageInfo={pageInfo}
+                    availableFilters={availableFilters}
+                    categorySlug={slug}
+                />
             </div>
         );
     }

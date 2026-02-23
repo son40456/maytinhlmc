@@ -299,6 +299,35 @@ export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, 
                             ))}
                         </div>
 
+                        {/* Selected Tags */}
+                        {Object.values(selectedAttributes).some(arr => arr.length > 0) && (
+                            <div className="p-3 border-b border-gray-100 flex items-center gap-3 shrink-0 bg-gray-50/30 overflow-x-auto no-scrollbar">
+                                <span className="text-sm font-bold text-gray-700 whitespace-nowrap">Chọn theo tiêu chí:</span>
+                                <div className="flex items-center gap-2">
+                                    {availableFilters.map(filter => {
+                                        const selectedInFilter = selectedAttributes[filter.slug] || [];
+                                        return selectedInFilter.map(valSlug => {
+                                            const optionName = filter.options.find((o: any) => o.slug === valSlug)?.name || valSlug;
+                                            return (
+                                                <div
+                                                    key={`${filter.slug}-${valSlug}`}
+                                                    className="flex items-center bg-white border border-pink-400 rounded-md px-3 py-1.5 text-xs text-gray-800 relative group pr-8"
+                                                >
+                                                    <span className="font-medium">{optionName}</span>
+                                                    <button
+                                                        onClick={() => toggleAttribute(filter.slug, valSlug)}
+                                                        className="absolute -right-2 -top-2 bg-[#f44336] text-white rounded-full p-0.5 hover:bg-red-700 transition-colors shadow-sm"
+                                                    >
+                                                        <X className="w-3 h-3 stroke-[3]" />
+                                                    </button>
+                                                </div>
+                                            );
+                                        });
+                                    })}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Product List */}
                         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar relative">
                             {loading && (

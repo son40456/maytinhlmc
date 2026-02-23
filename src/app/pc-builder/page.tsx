@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { usePcBuilderStore } from "@/store/usePcBuilderStore";
 import { ProductSelectModal } from "@/components/pc-builder/ProductSelectModal";
@@ -8,6 +8,8 @@ import { useCartStore } from "@/store/useCartStore";
 import { FileSpreadsheet, DownloadCloud, Share2, Printer } from "lucide-react";
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 export default function BuildPcPage() {
     const { components, totalPrice, removeProduct, clearAll } = usePcBuilderStore();
@@ -31,29 +33,62 @@ export default function BuildPcPage() {
         }));
     };
 
-    const handleExportCSV = () => {
+    const handleExportExcel = async () => {
         const list = getSelectedComponentsList();
         if (list.length === 0) {
             alert('Chưa có linh kiện nào để xuất!');
             return;
         }
 
-        const headers = ['Linh kiện', 'Sản phẩm', 'Mã SP', 'Giá tiền'];
-        const csvContent = [
-            headers.join(','),
-            ...list.map(item => `"${item.category}","${item.name}","${item.id}","${item.price.replace(/&nbsp;/g, ' ')}"`)
-        ].join('\n');
+        try {
+            // 1. Tải file mẫu
+            const response = await fetch('/templates/buildpc.xlsx');
+            const arrayBuffer = await response.arrayBuffer();
 
-        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        if (link.download !== undefined) {
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'cau_hinh_pc_lmc.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // 2. Load workbook
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(arrayBuffer);
+            const worksheet = workbook.getWorksheet(1);
+            if (!worksheet) return;
+
+            // 3. Cập nhật ngày tháng (Dòng 8, Cột G)
+            const now = new Date();
+            const dateStr = `Đã tạo: ${now.toLocaleDateString('vi-VN')} ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
+            worksheet.getCell('G8').value = dateStr;
+
+            // 4. Điền dữ liệu linh kiện bắt đầu từ dòng 10
+            let currentRow = 10;
+            list.forEach((item, index) => {
+                const row = worksheet.getRow(currentRow);
+                row.getCell(2).value = index + 1; // STT
+                row.getCell(3).value = item.id;    // Mã SP
+                row.getCell(4).value = item.name;  // Tên SP (Cột D)
+                row.getCell(6).value = "";         // Bảo hành (Để trống nếu chưa có data)
+                row.getCell(7).value = 1;          // Số lượng
+
+                // Clean price string for Excel (bỏ đ, VNĐ, dấu chấm phân cách nếu cần, hoặc để nguyên string)
+                const cleanPrice = item.price.replace(/&nbsp;/g, ' ').replace(/[^\d]/g, '');
+                row.getCell(8).value = parseInt(cleanPrice) || 0;
+                row.getCell(9).value = parseInt(cleanPrice) || 0;
+
+                // Apply style nếu cần (optional, template thường có sẵn)
+                row.commit();
+                currentRow++;
+            });
+
+            // 5. Tổng chi phí
+            const totalRow = worksheet.getRow(currentRow);
+            totalRow.getCell(7).value = "Tổng chi phí";
+            totalRow.getCell(9).value = totalPrice;
+            totalRow.commit();
+
+            // 6. Xuất file
+            const buffer = await workbook.xlsx.writeBuffer();
+            saveAs(new Blob([buffer]), `cau_hinh_pc_lmc_${Date.now()}.xlsx`);
+
+        } catch (error) {
+            console.error('Lỗi khi xuất Excel:', error);
+            alert('Có lỗi xảy ra khi tạo file Excel. Vui lòng thử lại.');
         }
     };
 
@@ -219,11 +254,11 @@ export default function BuildPcPage() {
                         {/* Action Buttons */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             <button
-                                onClick={handleExportCSV}
+                                onClick={handleExportExcel}
                                 className="flex items-center justify-center gap-2 py-3 px-4 bg-[#0B519C] hover:bg-[#093e7a] text-white rounded-lg font-bold text-sm transition-colors shadow-sm"
                             >
                                 <FileSpreadsheet className="w-4 h-4" />
-                                Export CSV
+                                Xuất file Excel
                             </button>
                             <button
                                 onClick={handleDownloadImage}
