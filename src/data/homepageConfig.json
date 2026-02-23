@@ -1,0 +1,25 @@
+[
+  {
+    "id": "section-1771836888677",
+    "title": "Main",
+    "categorySlug": "mainboard-bo-mach-chu",
+    "subFilters": [
+      {
+        "name": "Main Gigabyte",
+        "slug": "gigabyte"
+      }
+    ]
+  },
+  {
+    "id": "section-1771837064005",
+    "title": "Màn hình máy tính",
+    "categorySlug": "man-hinh-may-tinh",
+    "subFilters": []
+  },
+  {
+    "id": "section-1771837092587",
+    "title": "Ổ cứng",
+    "categorySlug": "o-cung-hdd",
+    "subFilters": []
+  }
+]

@@ -1,8 +1,11 @@
-import { ProductCard } from "@/components/ui/ProductCard";
+import { ProductSlider } from "@/components/home/ProductSlider";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
 import { GET_FEATURED_PRODUCTS } from "@/lib/graphql/queries";
+import { HomeSection } from "@/components/home/HomeSection";
+import fs from "fs/promises";
+import path from "path";
 
 const dummyProducts = [
   {
@@ -33,11 +36,28 @@ const dummyProducts = [
     imageUrl: "",
     slug: "chuot-gaming",
   },
+  {
+    id: "5",
+    name: "Màn hình 27 inch 2K IPS 165Hz",
+    price: "6.500.000₫",
+    imageUrl: "",
+    slug: "man-hinh-2k",
+  },
 ];
 
 export default async function Home() {
+  // Read dynamic homepage config
+  let sections = [];
+  try {
+    const dataFilePath = path.join(process.cwd(), 'src', 'data', 'homepageConfig.json');
+    const fileData = await fs.readFile(dataFilePath, 'utf-8');
+    sections = JSON.parse(fileData);
+  } catch (error) {
+    console.error('Error reading homepage config in Home:', error);
+  }
+
   // Fetch real data from WPGraphQL
-  const { data } = await wpgraphqlFetch<any>(GET_FEATURED_PRODUCTS, { first: 4 }, {
+  const { data } = await wpgraphqlFetch<any>(GET_FEATURED_PRODUCTS, { first: 10 }, {
     next: { revalidate: 3600 } // ISR: Revalidate mỗi giờ
   });
 
@@ -56,7 +76,7 @@ export default async function Home() {
     : dummyProducts;
 
   return (
-    <div className="flex flex-col gap-12 pb-12">
+    <div className="flex flex-col gap-10 pb-12 bg-gray-50 min-h-screen">
       {/* Hero Banner */}
       <section className="bg-blue-600 text-white py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -81,20 +101,28 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Dynamic Sections từ Cấu hình Admin */}
+      <div className="flex flex-col gap-6">
+        {sections.map((section: any) => (
+          <HomeSection
+            key={section.id}
+            title={section.title}
+            categorySlug={section.categorySlug}
+            subFilters={section.subFilters}
+          />
+        ))}
+      </div>
+
       {/* Featured Products */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Sản phẩm nổi bật</h2>
-          <Link href="/category/new" className="text-blue-600 hover:underline font-medium">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mt-6 overflow-hidden">
+        <div className="flex justify-between items-center mb-6 border-b-2 border-red-600 pb-3">
+          <h2 className="text-xl md:text-2xl font-bold uppercase text-gray-900 tracking-wide z-10">Sản phẩm nổi bật</h2>
+          <Link href="/category/new" className="text-gray-700 hover:text-blue-600 border border-gray-200 hover:border-blue-500 font-bold text-sm bg-white px-4 py-1.5 rounded-full transition-all shadow-sm whitespace-nowrap z-10">
             Xem tất cả &rarr;
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {displayProducts.map((product: any) => (
-            <ProductCard key={product.id} {...product} />
-          ))}
-        </div>
+        <ProductSlider products={displayProducts} />
       </section>
     </div>
   );

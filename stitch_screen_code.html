@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PC Selector - Pro Glassmorphism Edition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3b82f6",
+                        "glow": "#60a5fa",
+                        "bg-deep": "#05070a",
+                        "glass-bg": "rgba(15, 23, 42, 0.6)",
+                        "neon-price": "#22d3ee",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { 
+                @apply bg-bg-deep text-slate-300 overflow-hidden;
+                background: radial-gradient(circle at 50% 50%, #1e293b 0%, #05070a 100%);
+                font-family: 'Inter', sans-serif;
+            }
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .neon-hover:hover {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+            border-color: rgba(59, 130, 246, 0.8);
+            color: white;
+        }
+        .search-glow:focus {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .btn-pulse {
+            animation: pulse-glow 2s infinite;
+        }
+        .glow-accent {
+            text-shadow: 0 0 8px theme('colors.primary');
+        }
+        .neon-text {
+            text-shadow: 0 0 12px theme('colors.neon-price');
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.4);
+        }
+        .spec-bar {
+            @apply h-1 rounded-full bg-white/10 overflow-hidden relative;
+        }
+        .spec-bar-fill {
+            @apply absolute left-0 top-0 h-full bg-primary;
+            box-shadow: 0 0 8px theme('colors.primary');
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+<div class="relative w-full max-w-[1440px] h-[92vh] glass-panel rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden">
+<header class="flex items-center justify-between gap-8 px-12 py-10 border-b border-white/10 relative z-10 bg-white/[0.02]">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/40 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+<span class="material-symbols-outlined text-3xl text-primary glow-accent">memory</span>
+</div>
+<div>
+<h1 class="text-3xl font-black tracking-tighter text-white uppercase italic">Nexus<span class="text-primary">Pro</span></h1>
+<p class="text-[10px] text-primary font-bold tracking-[0.4em] uppercase opacity-80">Forged in Silicon</p>
+</div>
+</div>
+<div class="h-12 w-px bg-white/10 hidden lg:block"></div>
+<div class="hidden lg:block">
+<p class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] mb-1.5">System Category</p>
+<span class="text-xs font-black text-white bg-primary/20 px-4 py-1.5 rounded-lg border border-primary/30 shadow-[0_0_10px_rgba(59,130,246,0.1)]">Extreme Performance RAM</span>
+</div>
+</div>
+<div class="flex-1 max-w-2xl relative group">
+<span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full pl-14 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:border-primary/50 transition-all text-white placeholder:text-slate-600 search-glow" placeholder="Search architecture, latency, or frequency..." type="text"/>
+</div>
+<button class="w-12 h-12 flex items-center justify-center rounded-2xl hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-all border border-white/5 hover:border-red-500/40 neon-hover">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-80 border-r border-white/10 overflow-y-auto custom-scrollbar p-10 space-y-12 bg-black/30 backdrop-blur-3xl">
+<div class="space-y-5">
+<h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">Tier 1 Vendors</h3>
+<div class="flex flex-wrap gap-2.5">
+<button class="px-4 py-2 rounded-xl bg-primary/20 border border-primary/40 text-primary text-[11px] font-black glow-accent neon-hover">CORSAIR</button>
+<button class="px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 text-[11px] font-bold hover:bg-white/10 transition-all neon-hover">G.SKILL</button>
+<button class="px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 text-[11px] font-bold hover:bg-white/10 transition-all neon-hover">KINGSTON</button>
+</div>
+</div>
+<div class="space-y-6">
+<h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">Interface Standard</h3>
+<div class="space-y-4">
+<label class="flex items-center gap-4 cursor-pointer group">
+<div class="w-6 h-6 rounded-lg border border-primary/50 flex items-center justify-center bg-primary/20 shadow-[0_0_10px_rgba(59,130,246,0.2)]">
+<div class="w-2.5 h-2.5 bg-primary rounded-sm shadow-[0_0_10px_#3b82f6]"></div>
+</div>
+<span class="text-sm font-bold text-white group-hover:text-primary transition-colors">DDR5 Architecture</span>
+</label>
+<label class="flex items-center gap-4 cursor-pointer group">
+<div class="w-6 h-6 rounded-lg border border-white/10 flex items-center justify-center bg-white/5 group-hover:border-primary/30 transition-all"></div>
+<span class="text-sm font-bold text-slate-400 group-hover:text-white transition-colors">DDR4 Legacy</span>
+</label>
+</div>
+</div>
+<div class="space-y-5">
+<h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">Module Capacity</h3>
+<div class="grid grid-cols-2 gap-3">
+<button class="p-3 rounded-xl border border-white/5 bg-white/5 text-[10px] font-bold text-slate-400 hover:border-primary/50 transition-all neon-hover">16GB (2x8)</button>
+<button class="p-3 rounded-xl border border-primary/50 bg-primary/20 text-[10px] font-black text-primary glow-accent neon-hover">32GB (2x16)</button>
+<button class="p-3 rounded-xl border border-white/5 bg-white/5 text-[10px] font-bold text-slate-400 hover:border-primary/50 transition-all neon-hover">64GB (2x32)</button>
+<button class="p-3 rounded-xl border border-white/5 bg-white/5 text-[10px] font-bold text-slate-400 hover:border-primary/50 transition-all neon-hover">128GB (4x32)</button>
+</div>
+</div>
+<div class="space-y-6 pt-6">
+<div class="flex justify-between items-end">
+<h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">Budget Matrix</h3>
+<span class="text-xs font-black text-primary glow-accent">$750</span>
+</div>
+<div class="h-1.5 bg-white/5 rounded-full relative">
+<div class="absolute left-0 top-0 h-full w-2/3 bg-primary rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
+<div class="absolute left-[66%] top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full border-4 border-primary shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col bg-black/40">
+<div class="px-12 py-6 flex items-center justify-between border-b border-white/5 bg-white/[0.02] backdrop-blur-md">
+<div class="flex gap-10">
+<button class="text-[11px] font-black text-primary tracking-[0.2em] uppercase glow-accent relative pb-2 group">
+                        PRO RECOMMENDATION
+                        <div class="absolute bottom-[-24px] left-0 w-full h-[3px] bg-primary shadow-[0_0_12px_theme('colors.primary')]"></div>
+</button>
+<button class="text-[11px] font-black text-slate-500 tracking-[0.2em] uppercase hover:text-white transition-colors">LATENCY LOWEST</button>
+<button class="text-[11px] font-black text-slate-500 tracking-[0.2em] uppercase hover:text-white transition-colors">FREQUENCY PEAK</button>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#3b82f6]"></div>
+<p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">1,248 Units Verified</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 grid grid-cols-1 xl:grid-cols-2 gap-6">
+<div class="glass-card group flex flex-col md:flex-row items-center p-6 rounded-2xl relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1.5 h-full bg-primary/0 group-hover:bg-primary transition-all shadow-[0_0_15px_theme('colors.primary')]"></div>
+<div class="w-32 h-32 bg-black/40 rounded-2xl p-4 mr-8 border border-white/10 flex-shrink-0 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<img alt="DDR5 RAM" class="w-full h-full object-contain brightness-90 group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPZYY3SryUprFUBc_VVA0MMGdipQnY6dU3lZI6LBuBnO318TulKWuhH1JomfDSp01CMqeN6kW9t-8X-etGk8TXc5aiLc4P4wkhqV8dIi69OMpAnoa4G-f3lvHXd4mJHMjRiQa4EE9nyDx3HmjzADQc49oHb6e9f0RBVjfVuO6aYhz_lE5KQQNYroPuEBjNj097UE6ZEQqAlFQJLb6-kEr2tb1E7I-qnygxsYRpma9YOvmW_CEvLB68s3bEhTFkkJbCf8WPyjU0hY4p"/>
+</div>
+<div class="flex-1 w-full space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-base font-black text-white leading-tight uppercase tracking-tight group-hover:text-primary transition-colors">Vengeance RGB 32GB DDR5</h3>
+<p class="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-widest">Dual Channel Kit • IC-Grade A</p>
+</div>
+<span class="text-lg font-black text-neon-price neon-text tracking-tighter">$124.99</span>
+</div>
+<div class="grid grid-cols-2 gap-x-8 gap-y-3">
+<div class="space-y-1.5">
+<div class="flex justify-between text-[9px] font-black text-slate-500 uppercase">
+<span>Clock Speed</span>
+<span class="text-primary">6000MHz</span>
+</div>
+<div class="spec-bar"><div class="spec-bar-fill w-[80%]"></div></div>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between text-[9px] font-black text-slate-500 uppercase">
+<span>CAS Latency</span>
+<span class="text-primary">CL36</span>
+</div>
+<div class="spec-bar"><div class="spec-bar-fill w-[65%]"></div></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div class="flex gap-2">
+<span class="px-3 py-1 rounded-md text-[9px] font-black bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 uppercase tracking-widest">In Stock</span>
+<span class="px-3 py-1 rounded-md text-[9px] font-black bg-white/5 text-slate-400 border border-white/10 uppercase tracking-widest">XMP 3.0</span>
+</div>
+<button class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center group-hover:btn-pulse transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined font-bold">add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="glass-card group flex flex-col md:flex-row items-center p-6 rounded-2xl relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1.5 h-full bg-primary/0 group-hover:bg-primary transition-all shadow-[0_0_15px_theme('colors.primary')]"></div>
+<div class="w-32 h-32 bg-black/40 rounded-2xl p-4 mr-8 border border-white/10 flex-shrink-0 relative">
+<img alt="Trident Z5 RAM" class="w-full h-full object-contain brightness-90 group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5f7UBcyB3-Uc6SxS3qYzDWep6583D1oLtmk3mQa9yaradxow2BmQQdPxv3vFrRI8KqdmgDH0kVfdPNLvty2ZydIzmxIDcTxakcoDm8-LbEgDXsVOGS5Ja_XiO7FZ_TIFlrx8f6Y4JBwWbFTrZoZIMmtqnTFlpN1aUrsehNHJP_BxXFk5zndi-8dcXfr8oMolgjqWyoQJ8M9GDNiVs1XEq4Gpy0A8hR99qNSEGwBy-KVaYu41QBdNEKp9Oizc4SRr02_ZYE185YM3b"/>
+</div>
+<div class="flex-1 w-full space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-base font-black text-white leading-tight uppercase tracking-tight group-hover:text-primary transition-colors">Trident Z5 RGB High-Perf</h3>
+<p class="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-widest">Samsung B-Die • Overclocked</p>
+</div>
+<span class="text-lg font-black text-neon-price neon-text tracking-tighter">$149.99</span>
+</div>
+<div class="grid grid-cols-2 gap-x-8 gap-y-3">
+<div class="space-y-1.5">
+<div class="flex justify-between text-[9px] font-black text-slate-500 uppercase">
+<span>Clock Speed</span>
+<span class="text-primary">6400MHz</span>
+</div>
+<div class="spec-bar"><div class="spec-bar-fill w-[88%]"></div></div>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between text-[9px] font-black text-slate-500 uppercase">
+<span>CAS Latency</span>
+<span class="text-primary">CL32</span>
+</div>
+<div class="spec-bar"><div class="spec-bar-fill w-[78%]"></div></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div class="flex gap-2">
+<span class="px-3 py-1 rounded-md text-[9px] font-black bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase tracking-widest">Premium</span>
+<span class="px-3 py-1 rounded-md text-[9px] font-black bg-white/5 text-slate-400 border border-white/10 uppercase tracking-widest">EXPO Ready</span>
+</div>
+<button class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center group-hover:btn-pulse transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined font-bold">add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="glass-card group flex flex-col md:flex-row items-center p-6 rounded-2xl relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1.5 h-full bg-primary/0 group-hover:bg-primary transition-all shadow-[0_0_15px_theme('colors.primary')]"></div>
+<div class="w-32 h-32 bg-black/40 rounded-2xl p-4 mr-8 border border-white/10 flex-shrink-0 relative">
+<img alt="Kingston Fury" class="w-full h-full object-contain brightness-90 group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtv3Y-rWvcS-czv2QpfqnqsRzQAacUqUCuMVLjObXu021K3JHRiLJcRt89twt3WzP_qcakIJCYZ5fmE3-Yj5mVHCQycFCpK5ZsAR9C-FP5AODwxxFiUPKHAmTxigU0jie_NAwCBVorfyx2fd2SXjfDDFU9SWgXz3T1iQ2X-AWFl-KVNGWMkK3a_Buvzq_CirYg0np_518uA1vPCFNQVdeTt1barf-4LyUIN_uNDdnFuRityz8B4qaACS4QNH3Pj19_y91K3AImNkmu"/>
+</div>
+<div class="flex-1 w-full space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-base font-black text-white leading-tight uppercase tracking-tight group-hover:text-primary transition-colors">Fury Renegade Enthusiast</h3>
+<p class="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-widest">Aluminum Spreader • 1.45V</p>
+</div>
+<span class="text-lg font-black text-neon-price neon-text tracking-tighter">$189.99</span>
+</div>
+<div class="grid grid-cols-2 gap-x-8 gap-y-3">
+<div class="space-y-1.5">
+<div class="flex justify-between text-[9px] font-black text-slate-500 uppercase">
+<span>Clock Speed</span>
+<span class="text-primary">7200MHz</span>
+</div>
+<div class="spec-bar"><div class="spec-bar-fill w-[96%]"></div></div>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between text-[9px] font-black text-slate-500 uppercase">
+<span>CAS Latency</span>
+<span class="text-primary">CL38</span>
+</div>
+<div class="spec-bar"><div class="spec-bar-fill w-[55%]"></div></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div class="flex gap-2">
+<span class="px-3 py-1 rounded-md text-[9px] font-black bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 uppercase tracking-widest">In Stock</span>
+<span class="px-3 py-1 rounded-md text-[9px] font-black bg-white/5 text-slate-400 border border-white/10 uppercase tracking-widest">7200 MT/s</span>
+</div>
+<button class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center group-hover:btn-pulse transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined font-bold">add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="glass-card group flex flex-col md:flex-row items-center p-6 rounded-2xl relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1.5 h-full bg-primary/0 group-hover:bg-primary transition-all shadow-[0_0_15px_theme('colors.primary')]"></div>
+<div class="w-32 h-32 bg-black/40 rounded-2xl p-4 mr-8 border border-white/10 flex-shrink-0 relative">
+<img alt="Dominator Titan" class="w-full h-full object-contain brightness-90 group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPZYY3SryUprFUBc_VVA0MMGdipQnY6dU3lZI6LBuBnO318TulKWuhH1JomfDSp01CMqeN6kW9t-8X-etGk8TXc5aiLc4P4wkhqV8dIi69OMpAnoa4G-f3lvHXd4mJHMjRiQa4EE9nyDx3HmjzADQc49oHb6e9f0RBVjfVuO6aYhz_lE5KQQNYroPuEBjNj097UE6ZEQqAlFQJLb6-kEr2tb1E7I-qnygxsYRpma9YOvmW_CEvLB68s3bEhTFkkJbCf8WPyjU0hY4p"/>
+</div>
+<div class="flex-1 w-full space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-base font-black text-white leading-tight uppercase tracking-tight group-hover:text-primary transition-colors">Dominator Titan Special Ed.</h3>
+<p class="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-widest">Hand-Sorted ICs • Patented Cooling</p>
+</div>
+<span class="text-lg font-black text-neon-price neon-text tracking-tighter">$210.00</span>
+</div>
+<div class="grid grid-cols-2 gap-x-8 gap-y-3">
+<div class="space-y-1.5">
+<div class="flex justify-between text-[9px] font-black text-slate-500 uppercase">
+<span>Clock Speed</span>
+<span class="text-primary">6600MHz</span>
+</div>
+<div class="spec-bar"><div class="spec-bar-fill w-[90%]"></div></div>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between text-[9px] font-black text-slate-500 uppercase">
+<span>CAS Latency</span>
+<span class="text-primary">CL32</span>
+</div>
+<div class="spec-bar"><div class="spec-bar-fill w-[78%]"></div></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div class="flex gap-2">
+<span class="px-3 py-1 rounded-md text-[9px] font-black bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 uppercase tracking-widest">In Stock</span>
+<span class="px-3 py-1 rounded-md text-[9px] font-black bg-white/5 text-slate-400 border border-white/10 uppercase tracking-widest">DHX Cooling</span>
+</div>
+<button class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center group-hover:btn-pulse transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined font-bold">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<footer class="px-12 py-8 border-t border-white/10 flex items-center justify-between bg-white/[0.03] backdrop-blur-xl">
+<div class="flex items-center gap-6">
+<button class="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black text-slate-400 hover:text-white transition-all uppercase tracking-[0.2em] flex items-center gap-3 neon-hover">
+<span class="material-symbols-outlined text-base">chevron_left</span> Previous
+                    </button>
+<div class="flex gap-3">
+<button class="w-10 h-10 rounded-xl bg-primary text-white font-black text-xs shadow-[0_0_20px_rgba(59,130,246,0.4)] btn-pulse">1</button>
+<button class="w-10 h-10 rounded-xl bg-white/5 border border-white/5 text-slate-500 font-black text-xs hover:border-primary/50 hover:text-primary transition-all neon-hover">2</button>
+<button class="w-10 h-10 rounded-xl bg-white/5 border border-white/5 text-slate-500 font-black text-xs hover:border-primary/50 hover:text-primary transition-all neon-hover">3</button>
+<span class="w-10 h-10 flex items-center justify-center text-slate-600">...</span>
+<button class="w-10 h-10 rounded-xl bg-white/5 border border-white/5 text-slate-500 font-black text-xs hover:border-primary/50 hover:text-primary transition-all neon-hover">42</button>
+</div>
+<button class="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black text-slate-400 hover:text-white transition-all uppercase tracking-[0.2em] flex items-center gap-3 neon-hover">
+                        Next <span class="material-symbols-outlined text-base">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-4 text-[11px] font-black text-slate-500 uppercase tracking-widest">
+                    Units per Grid: 
+                    <div class="relative group">
+<select class="appearance-none bg-black/40 border-white/10 rounded-xl text-[11px] py-2.5 pl-4 pr-10 focus:ring-0 focus:border-primary/50 text-slate-300 cursor-pointer search-glow">
+<option>12 Modules</option>
+<option>24 Modules</option>
+<option>48 Modules</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none text-slate-500">expand_more</span>
+</div>
+</div>
+</footer>
+</main>
+</div>
+</div>
+
+</body></html>
