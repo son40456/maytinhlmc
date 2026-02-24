@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
@@ -47,7 +48,7 @@ const getMenuIcon = (label: string, cssClasses: string[] = []) => {
     return <Monitor size={22} />;
 };
 
-export const Header = () => {
+export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const [mounted, setMounted] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const itemCount = useCartStore((state) => state.getItemCount());
@@ -74,7 +75,18 @@ export const Header = () => {
                 <div className="container mx-auto px-4 flex items-center justify-between gap-6">
                     {/* Logo LMC */}
                     <Link href="/" className="flex-shrink-0">
-                        <span className="text-4xl md:text-5xl font-black italic tracking-tighter drop-shadow-sm">LMC</span>
+                        {logoUrl ? (
+                            <Image
+                                src={logoUrl}
+                                alt="LMC"
+                                width={160}
+                                height={48}
+                                className="h-10 md:h-12 w-auto object-contain"
+                                priority
+                            />
+                        ) : (
+                            <span className="text-4xl md:text-5xl font-black italic tracking-tighter drop-shadow-sm">LMC</span>
+                        )}
                     </Link>
 
                     {/* Search Bar */}
