@@ -306,6 +306,36 @@ export const GET_NODE_BY_SLUG = `
       name
       description
       slug
+      parent {
+        node {
+          id
+          name
+          slug
+          image {
+            sourceUrl
+          }
+          children(first: 100) {
+            nodes {
+              id
+              name
+              slug
+              image {
+                sourceUrl
+              }
+            }
+          }
+        }
+      }
+      children(first: 100) {
+        nodes {
+          id
+          name
+          slug
+          image {
+            sourceUrl
+          }
+        }
+      }
     }
     categoryProducts: products(
       first: $first, 
@@ -347,8 +377,22 @@ export const GET_NODE_BY_SLUG = `
         }
       }
     }
+  }
+`;
+
+export const GET_CATEGORY_FILTERS = `
+  query GetCategoryFilters(
+    $slugId: ID!
+    $slugStr: String!
+  ) {
+    productCategory(id: $slugId, idType: SLUG) {
+      id
+      databaseId
+      name
+      slug
+    }
     filterDiscovery: products(
-      first: 50, 
+      first: 250, 
       where: { categoryIn: [$slugStr] }
     ) {
       nodes {

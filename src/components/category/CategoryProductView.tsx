@@ -6,6 +6,8 @@ import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
 import { GET_PRODUCTS_BY_CATEGORY } from "@/lib/graphql/queries";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 interface CategoryProductViewProps {
     category: any;
@@ -116,6 +118,84 @@ export function CategoryProductView({
                     <div className="text-gray-500 text-sm max-w-3xl leading-relaxed" dangerouslySetInnerHTML={{ __html: category.description }} />
                 )}
             </div>
+
+            {/* Child Categories Block */}
+            {(() => {
+                // Determine if we show children of current category or siblings
+                const hasChildren = category.children?.nodes && category.children.nodes.length > 0;
+                const hasParent = !!category.parent?.node;
+
+                let activeCategory: any = null;
+                let otherCategories: any[] = [];
+                let isTopLevel = false;
+
+                if (hasChildren) {
+                    activeCategory = category;
+                    otherCategories = category.children.nodes;
+                    isTopLevel = true;
+                } else if (hasParent) {
+                    activeCategory = category;
+                    otherCategories = [category.parent.node, ...category.parent.node.children.nodes.filter((c: any) => c.slug !== category.slug)];
+                    isTopLevel = false;
+                }
+
+                if (!activeCategory && otherCategories.length === 0) return null;
+
+                return (
+                    <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
+                        <div className="flex gap-4 min-w-max">
+                            {/* Active/Parent Block */}
+                            {isTopLevel ? (
+                                <div className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-[#d32f2f] text-white rounded-xl shadow-sm flex items-center justify-center p-4 text-center cursor-default transition-transform hover:scale-105">
+                                    <span className="font-bold text-sm md:text-base leading-tight break-words">{activeCategory.name}</span>
+                                </div>
+                            ) : (
+                                <Link
+                                    href={`/${category.parent.node.slug}`}
+                                    className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-white border-2 border-transparent hover:border-red-500 rounded-xl shadow-sm flex flex-col items-center justify-center p-4 text-center transition-all hover:shadow-md cursor-pointer group"
+                                >
+                                    <span className="font-bold text-sm md:text-base leading-tight break-words text-gray-800 group-hover:text-red-500">{category.parent.node.name}</span>
+                                </Link>
+                            )}
+
+                            {/* Sibling/Child Blocks */}
+                            {otherCategories.map((cat: any) => {
+                                const isActive = cat.slug === category.slug;
+                                if (isActive && !isTopLevel) {
+                                    return (
+                                        <div key={cat.slug} className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-[#d32f2f] text-white rounded-xl shadow-sm flex items-center justify-center p-4 text-center cursor-default transition-transform hover:scale-105">
+                                            <span className="font-bold text-sm md:text-base leading-tight break-words">{cat.name}</span>
+                                        </div>
+                                    );
+                                }
+                                return (
+                                    <Link
+                                        key={cat.slug}
+                                        href={`/${cat.slug}`}
+                                        className={`flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-white border border-gray-100/80 rounded-xl shadow-sm flex flex-col items-center justify-center p-4 text-center transition-all hover:shadow-md hover:border-red-400 group relative overflow-hidden`}
+                                    >
+                                        {cat.image?.sourceUrl ? (
+                                            <>
+                                                <div className="relative w-16 h-16 md:w-20 md:h-20 mb-2 transition-transform group-hover:scale-110">
+                                                    <Image
+                                                        src={cat.image.sourceUrl}
+                                                        alt={cat.name}
+                                                        fill
+                                                        className="object-contain"
+                                                    />
+                                                </div>
+                                                <span className="font-semibold text-xs md:text-sm text-blue-600 line-clamp-2 leading-tight">{cat.name}</span>
+                                            </>
+                                        ) : (
+                                            <span className="font-semibold text-sm md:text-base text-gray-800 group-hover:text-red-500 leading-tight break-words">{cat.name}</span>
+                                        )}
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                );
+            })()}
 
             {/* Horizontal Filter Component */}
             <CategoryFilterSort

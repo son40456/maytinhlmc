@@ -1,5 +1,5 @@
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
-import { GET_NODE_BY_SLUG, GET_PRODUCTS_BY_CATEGORY } from "@/lib/graphql/queries";
+import { GET_NODE_BY_SLUG, GET_PRODUCTS_BY_CATEGORY, GET_CATEGORY_FILTERS } from "@/lib/graphql/queries";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { AddToCartButton } from "@/components/ui/AddToCartButton";
@@ -101,6 +101,13 @@ export default async function SlugPage({ params, searchParams }: {
         orderBy,
         taxFilters: taxFilters.length > 0 ? taxFilters : null
     });
+
+    let filterData: any = null;
+    if (nodeData?.productCategory) {
+        // Fetch attribute filters in a separate cached query to prevent ?after and ?minPrice from breaking the cache
+        const { data } = await wpgraphqlFetch<any>(GET_CATEGORY_FILTERS, { slugId: slug, slugStr: slug });
+        filterData = data;
+    }
 
 
     // --- TRƯỜNG HỢP: SẢN PHẨM ---
@@ -261,11 +268,11 @@ export default async function SlugPage({ params, searchParams }: {
         const products = nodeData.categoryProducts?.nodes || [];
         const pageInfo = nodeData.categoryProducts?.pageInfo;
 
-        // Trích xuất các bộ lọc khả dụng từ filterDiscovery
+        // Trích xuất các bộ lọc khả dụng từ filterDiscovery đã được tách rời cache
         const availableFilters: any[] = [];
         const seenAttrs = new Set();
 
-        nodeData.filterDiscovery?.nodes?.forEach((p: any) => {
+        filterData?.filterDiscovery?.nodes?.forEach((p: any) => {
             p.attributes?.nodes?.forEach((attr: any) => {
                 const key = attr.slug || attr.name;
                 const terms = attr.terms?.nodes || [];
@@ -326,14 +333,16 @@ export default async function SlugPage({ params, searchParams }: {
         };
 
         return (
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <CategoryProductView
-                    category={category}
-                    initialProducts={products}
-                    initialPageInfo={pageInfo}
-                    availableFilters={availableFilters}
-                    categorySlug={slug}
-                />
+            <div className="bg-[#F6F7F8] min-h-screen">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <CategoryProductView
+                        category={category}
+                        initialProducts={products}
+                        initialPageInfo={pageInfo}
+                        availableFilters={availableFilters}
+                        categorySlug={slug}
+                    />
+                </div>
             </div>
         );
     }
