@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tech Store Shopping Cart Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#25aff4",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101c22",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(37, 175, 244, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between border-b border-primary/10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 md:px-20 py-4 sticky top-0 z-50">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">rocket_launch</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold tracking-tight">TechStore</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="hover:text-primary transition-colors text-sm font-medium" href="#">Laptops</a>
+<a class="hover:text-primary transition-colors text-sm font-medium" href="#">Phones</a>
+<a class="hover:text-primary transition-colors text-sm font-medium" href="#">Components</a>
+<a class="text-primary text-sm font-bold" href="#">Deals</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="bg-slate-100 dark:bg-slate-800 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Search gadgets..."/>
+</div>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-primary/10 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute top-1 right-1 size-4 bg-primary text-[10px] text-white rounded-full flex items-center justify-center font-bold border-2 border-white">3</span>
+</button>
+<button class="p-2 hover:bg-primary/10 rounded-full transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<div class="size-10 rounded-full bg-slate-200 overflow-hidden border-2 border-primary/20">
+<img class="w-full h-full object-cover" data-alt="User profile avatar smiling professional" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLaYguezEq5OKyETZROnI-rfRL1FnnvlaogPyPUfdfdzy7fAwjJvH9QLPtxiok4PuCSFX_NBX5UPZHBgRxYldY1Fs7mg8elWbqe8kSO5KZtbnxRUcC4AAu6PYpfGWXy_KCbgB7lm-ef4LcSfos1kXHn6XpdXRgbzXUy7Y_7IfCvi9yAndn-l4Ch__e8g4GzkzpA47t-EfEIr_b60E2jNaT0hp2CrTWSE2d1ro7lNgPcz9afziaD5zFMS_hy0DoAJ2XJb6L9x1AfYSw"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto w-full px-6 py-10">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 mb-8 text-sm text-slate-500">
+<a class="hover:text-primary" href="#">Store</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-900 font-medium dark:text-slate-100">Shopping Cart</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+<!-- Left Side: Product List -->
+<div class="lg:col-span-2 space-y-6">
+<div class="flex justify-between items-end">
+<h1 class="text-4xl font-black tracking-tight">Your Cart <span class="text-primary font-normal text-lg ml-2">(3 items)</span></h1>
+<button class="text-sm text-primary font-bold hover:underline">Clear Cart</button>
+</div>
+<!-- Cart Item 1 -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="w-full md:w-32 h-32 bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Sleek silver high-end laptop display" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEf27nsShzAVn3C_CON4cfu1Yqaqm3SrPI6WT9kQBpMN7BPaWK2Ygbq3UQWtvK_GlbWoEr95yxYhX3Derxn9NfNn7m90tZnTdZs0zROCptC-FsYRB7n94PeGlDevRCOZc39vu7KpTWTqZMSfOiel2vomqXpX3NaHJ0ebhuWFfLzOSvw_Z_KC1HSaHvgO5-7X-EqgvzRFVDzgcrA4AnQatkoB2n8RV8QVTVJd-UPnNgvee-odVXlOSfy4V_JotBSLuT_XicR6P7snZW"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<h3 class="text-lg font-bold">ProBook 16" Ultra</h3>
+<p class="text-xl font-black">$1,899.00</p>
+</div>
+<p class="text-slate-500 text-sm mt-1">16GB Unified Memory, 1TB SSD, M3 Pro Chip</p>
+<div class="flex items-center gap-6 mt-6">
+<div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg">
+<button class="px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800">-</button>
+<span class="px-4 py-1 border-x border-slate-200 dark:border-slate-700 font-medium">1</span>
+<button class="px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800">+</button>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare
+                                    </button>
+<button class="flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span> Remove
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Cart Item 2 -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="w-full md:w-32 h-32 bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Latest flagship smartphone with triple camera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtmFi0klIzX_1UyussRTZVaLa94F9fwIr743Vd1d6iIfUXg8758MeGbc7JzB0V2BdP3YpVg9f3SHyPOtdtlulhCbSAEocCvVE3lk9G0t4gA6ke25SGPW9qE0WOHE63QofNpokN3vslvzGwc1JZA_b_ZTCrbLc6SwZWik0VVSJ-z4v8U9tAcqu41KNbf1KuJFp6g3GIMbwYCPJEE2094hqW38y7SadSPnIEDk2kXC-iQpivr4HOU5IzU--vj7E_7z1qOMH2-spd_QcZ"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<h3 class="text-lg font-bold">Titan X Smartphone</h3>
+<p class="text-xl font-black">$999.00</p>
+</div>
+<p class="text-slate-500 text-sm mt-1">256GB, Phantom Black, 5G Enabled</p>
+<div class="flex items-center gap-6 mt-6">
+<div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg">
+<button class="px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800">-</button>
+<span class="px-4 py-1 border-x border-slate-200 dark:border-slate-700 font-medium">1</span>
+<button class="px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800">+</button>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare
+                                    </button>
+<button class="flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span> Remove
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Cart Item 3 -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="w-full md:w-32 h-32 bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="High fidelity studio wireless headphones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDFaZPNDgf2h2JYnERvd-7xjzygXdx6rEzhn4kGWdonB2v-ruXAMQNa9z7jXD8ed--AI-64WIJGFIuCTQMrY5Ek8d1yrFFh9jysj6rXc7DtTLNl1EV0vNEAJgDZtWcjnU-yzjdaSyxAGFzlAZFerjtk61m9YIQiYOgpuYbZhN9bQBSBsKCHHjrAjpyYYxJPWTA3DWBeBDV66i6QsvkT-V-IcbKk8sFGGQm7cyJPwGA7oHRiX2JIxe4dXjcAFGjo-4B1mUZFGpkohyq"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<h3 class="text-lg font-bold">SonicWave Elite Headphones</h3>
+<p class="text-xl font-black">$349.00</p>
+</div>
+<p class="text-slate-500 text-sm mt-1">Active Noise Cancelling, 40h Battery</p>
+<div class="flex items-center gap-6 mt-6">
+<div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg">
+<button class="px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800">-</button>
+<span class="px-4 py-1 border-x border-slate-200 dark:border-slate-700 font-medium">1</span>
+<button class="px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800">+</button>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare
+                                    </button>
+<button class="flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span> Remove
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side: Order Summary Panel -->
+<div class="space-y-6">
+<div class="glass-panel p-8 rounded-2xl shadow-xl space-y-6 sticky top-28">
+<h2 class="text-2xl font-black border-b border-primary/10 pb-4">Order Summary</h2>
+<!-- Shipping Progress -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium">Free Shipping Progress</span>
+<span class="text-primary font-bold">90%</span>
+</div>
+<div class="h-2 w-full bg-primary/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 90%;"></div>
+</div>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Add $51.00 more for free delivery</p>
+</div>
+<!-- Calculations -->
+<div class="space-y-4 py-4 border-y border-primary/10">
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Subtotal</span>
+<span class="font-bold text-slate-900 dark:text-slate-100">$3,247.00</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Shipping estimate</span>
+<span class="font-bold text-slate-900 dark:text-slate-100">$25.00</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Tax estimate</span>
+<span class="font-bold text-slate-900 dark:text-slate-100">$276.00</span>
+</div>
+<div class="pt-4 flex justify-between text-xl font-black">
+<span>Total</span>
+<span class="text-primary">$3,548.00</span>
+</div>
+</div>
+<!-- Promo Code -->
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-400">Discount Code</label>
+<div class="flex gap-2">
+<input class="flex-grow bg-white/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 text-sm focus:ring-primary" placeholder="Enter code" type="text"/>
+<button class="bg-primary/20 text-primary font-bold px-4 rounded-lg text-sm hover:bg-primary/30 transition-colors">Apply</button>
+</div>
+</div>
+<!-- Checkout Button -->
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-black py-4 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-transform hover:scale-[1.02]">
+                            Go to Checkout
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<!-- Safe Checkout -->
+<div class="flex items-center justify-center gap-4 pt-2">
+<span class="material-symbols-outlined text-slate-300">security</span>
+<span class="material-symbols-outlined text-slate-300">credit_card</span>
+<span class="material-symbols-outlined text-slate-300">verified_user</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Frequently Bought Together Carousel -->
+<div class="mt-20">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-2xl font-black tracking-tight">Complete Your Setup</h2>
+<div class="flex gap-2">
+<button class="size-10 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-white transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="size-10 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+<!-- Tech Accessory Card -->
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 group cursor-pointer hover:border-primary transition-colors">
+<div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-lg mb-4 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Ergonomic wireless mouse on desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASzwl2GLjsEOVbNfw4ZvH3h4v5lRrbJnq4v_aPlSYw0oT_ZkilAb0KzhouPNIes5JFZKCJx-yAGKTkimLgoD0dgczlhqeARruKCG1g7_8ZEPo5rdrT-zh4utGcUCXdfdB08I4KQKHfxADUytkxENaPYlzfOpPlwq-FL4dONaS6-XNzgUX4AnbYEa6z-h49bBsDkftTflXU8hDRbWBbHMn589mG4BRvFOPyNtPNGYf8JdSKcpn403TeGexfXBVrQOtXRNcefZdaZNGh"/>
+<button class="absolute bottom-2 right-2 size-8 bg-primary text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<h4 class="font-bold text-sm truncate">Ergo Wireless Mouse</h4>
+<p class="text-primary font-black mt-1">$49.99</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 group cursor-pointer hover:border-primary transition-colors">
+<div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-lg mb-4 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Mechanical backlit keyboard top view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1uejA-1VRApVtgcVrDFPOTAVWEE4cw4rGayhzjD0byU5WEy6MeKeu9sIY6h9dXxTzpisg8IjsyxpAtvGeAlqfJ_e1Yhq8B_Ni7G5MiE80p_vGaniqzXFQZLf1qT2VG2DD-lG_c0UQ3Df39gDJFfZqcWIb410NbvnTRswQM4urcxnenSmtdBq1iJd1unvYMprBz2-K_7_fGiyqDKFOS5xQZuV0BK7yvomvc3wa92rG4PKgP0z4nBPBtPXpV-M21FF6uGR0Eauyd7MQ"/>
+<button class="absolute bottom-2 right-2 size-8 bg-primary text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<h4 class="font-bold text-sm truncate">Mechanical Keyboard</h4>
+<p class="text-primary font-black mt-1">$129.00</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 group cursor-pointer hover:border-primary transition-colors">
+<div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-lg mb-4 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Compact white wireless earbuds case" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgYmdsuLBOhjn1C_RotlhhS3_Ns9dcvDj3scnmKnxSoDwmzQB0ynDzvtxNPf8MV5kOkqm-5odKM565kWNjAhR8YL2luzmSOtpaDhH2-SCUgN-oz3TNI1ff0K4Ozs1s9aWUIjardVGiksqGBNQKaemP8gU759Prd7OlAPUAwQKhdPz_evL_9mn53Cudn4g_BjVRLLACvu5kCif2wVFGlo3HAfGsRsISmOKbx0oCD62sgT5pYkjYznwPM2otNGoygm9Zn6OF-LLrQhYR"/>
+<button class="absolute bottom-2 right-2 size-8 bg-primary text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<h4 class="font-bold text-sm truncate">AirPods Pro Gen 2</h4>
+<p class="text-primary font-black mt-1">$249.00</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 group cursor-pointer hover:border-primary transition-colors">
+<div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-lg mb-4 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="High speed portable SSD drive" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWuYtrdWjoxJUEss-IvxNcwlfNyggMoCX1KAYE7kl8O4znFwzitxQ9tReb_fru18V7ubsMg76PSz_EB0LX8RJXLQOgw4a60H-5rwSnMmrGtoOxAnZOoHqH2Wapgf6fZQxvrgBxv15Yv8wnE-rXEgIWdrqIT0xoBlTGlDWyRid6XoEEcIulyTn80wBHA-naeH77v67dABdFmMyFKeSwkOk5q5SQybUKz5pj9mnxKRkcC3d3GROh5cRWvDp6T6LPG1gUGoEIDZGKjj0K"/>
+<button class="absolute bottom-2 right-2 size-8 bg-primary text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<h4 class="font-bold text-sm truncate">Portable 2TB SSD</h4>
+<p class="text-primary font-black mt-1">$179.00</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 group cursor-pointer hover:border-primary transition-colors">
+<div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-lg mb-4 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Protective tablet sleeve case" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDufUr9R4pN2x_YoVHSQKLkRKZZuQo14fK7ves_1s9JX2SvM1zlxj794xiMH0Idgwb9E4WhomfH9jLII8C0B_b169CO_R3ALsBCokc6IDCHbIKiVtRI1KI23TdKWZYZc8cK3j1VWxfsO1uIJBCjQgobWT3tbTsxTpYdT645Z2ekPxswa8vKTcHxPOeXiSiLF7ytpPCo3laUxKjMr9JtP66KTgC_YlcfhIkCwIZbQ1OOZl2eqMcsOVOll7r5unaGkPbsHIJZDlokAA5a"/>
+<button class="absolute bottom-2 right-2 size-8 bg-primary text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<h4 class="font-bold text-sm truncate">Pro Sleeve Case</h4>
+<p class="text-primary font-black mt-1">$35.00</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-auto border-t border-primary/10 bg-white dark:bg-background-dark py-10">
+<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2 text-primary font-bold">
+<span class="material-symbols-outlined">rocket_launch</span>
+<span>TechStore Dashboard</span>
+</div>
+<div class="flex gap-8 text-sm text-slate-500">
+<a class="hover:text-primary" href="#">Help Center</a>
+<a class="hover:text-primary" href="#">Returns Policy</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Contact</a>
+</div>
+<div class="text-sm text-slate-400">
+                    © 2024 TechStore E-commerce Platform.
+                </div>
+</div>
+</footer>
+</div>
+</body></html>

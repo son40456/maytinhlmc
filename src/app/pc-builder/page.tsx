@@ -165,7 +165,7 @@ export default function BuildPcPage() {
 
     // Component layout
     return (
-        <div className="bg-gray-50/50 min-h-screen py-8 lg:py-12">
+        <div className="py-8 lg:py-12">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="mb-8">
                     <h1 className="text-3xl lg:text-4xl font-black text-gray-900 mb-2 tracking-tight">Xây dựng cấu hình PC</h1>

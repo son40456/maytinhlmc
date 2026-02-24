@@ -76,7 +76,7 @@ export default async function Home() {
     : dummyProducts;
 
   return (
-    <div className="flex flex-col gap-10 pb-12 bg-gray-50 min-h-screen">
+    <div className="flex flex-col gap-10 pb-12">
       {/* Hero Banner */}
       <section className="bg-blue-600 text-white py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">

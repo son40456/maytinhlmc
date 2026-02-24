@@ -39,7 +39,7 @@ export default async function SearchPage({
                     <p className="text-sm text-gray-500">Thử kiểm tra lại lỗi chính tả hoặc dùng từ khoá chung chung hơn.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 xl:gap-8">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 xl:gap-6">
                     {products.map((product: any) => (
                         <ProductCard
                             key={product.id}
@@ -49,6 +49,9 @@ export default async function SearchPage({
                             price={product.price || product.regularPrice || '0₫'}
                             imageUrl={product.image?.sourceUrl || ''}
                             slug={product.slug}
+                            sku={product.sku}
+                            regularPrice={product.regularPrice}
+                            salePrice={product.salePrice}
                         />
                     ))}
                 </div>

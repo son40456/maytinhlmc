@@ -18,30 +18,34 @@ export const ProductSlider: React.FC<ProductSliderProps> = ({ products }) => {
     if (!products || products.length === 0) return null;
 
     return (
-        <div className="relative group">
+        <div className="relative slider-container">
             <Swiper
                 modules={[Navigation, Pagination, Mousewheel, Keyboard]}
                 spaceBetween={16}
                 slidesPerView={2.2}
                 navigation={true}
-                mousewheel={true}
+                mousewheel={{ forceToAxis: true }}
                 keyboard={true}
                 breakpoints={{
                     480: {
                         slidesPerView: 2.5,
-                        spaceBetween: 16,
+                        spaceBetween: 12,
                     },
                     768: {
                         slidesPerView: 3.5,
-                        spaceBetween: 20,
+                        spaceBetween: 16,
                     },
                     1024: {
                         slidesPerView: 4,
-                        spaceBetween: 20,
+                        spaceBetween: 16,
                     },
                     1280: {
                         slidesPerView: 5,
-                        spaceBetween: 24,
+                        spaceBetween: 16,
+                    },
+                    1536: {
+                        slidesPerView: 6,
+                        spaceBetween: 16,
                     },
                 }}
                 className="product-swiper !pb-12"
@@ -67,8 +71,8 @@ export const ProductSlider: React.FC<ProductSliderProps> = ({ products }) => {
                     margin-top: -30px;
                 }
                 
-                .group:hover .product-swiper .swiper-button-next,
-                .group:hover .product-swiper .swiper-button-prev {
+                .slider-container:hover .product-swiper .swiper-button-next,
+                .slider-container:hover .product-swiper .swiper-button-prev {
                     opacity: 1;
                 }
 

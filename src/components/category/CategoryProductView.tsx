@@ -56,7 +56,7 @@ export function CategoryProductView({
             const { data } = await wpgraphqlFetch<any>(GET_PRODUCTS_BY_CATEGORY, {
                 slugId: categorySlug,
                 slugStr: categorySlug,
-                first: 12,
+                first: 24,
                 after: isLoadMore ? pageInfo?.endCursor : null,
                 minPrice: priceRange.min,
                 maxPrice: priceRange.max,
@@ -216,10 +216,22 @@ export function CategoryProductView({
 
             {/* Product List */}
             <div className="relative min-h-[400px]">
-                {loading && products.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-20 gap-4">
-                        <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-                        <p className="text-gray-400 font-medium">Đang tải danh sách sản phẩm...</p>
+                {loading ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4">
+                        {[...Array(24)].map((_, i) => (
+                            <div key={i} className="flex flex-col overflow-hidden rounded-xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                                <div className="aspect-square w-full animate-shimmer" />
+                                <div className="flex flex-1 flex-col p-3">
+                                    <div className="h-3 animate-shimmer rounded w-1/4 mb-2" />
+                                    <div className="h-4 animate-shimmer rounded w-3/4 mb-1.5" />
+                                    <div className="h-4 animate-shimmer rounded w-1/2 mb-4" />
+                                    <div className="mt-auto pt-3 flex items-center justify-between gap-2 border-t border-gray-50">
+                                        <div className="h-6 animate-shimmer rounded w-1/2" />
+                                        <div className="w-10 h-10 animate-shimmer rounded-xl shrink-0" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 ) : products.length === 0 ? (
                     <div className="bg-gray-50 rounded-3xl py-20 text-center border-2 border-dashed border-gray-100">
@@ -232,7 +244,7 @@ export function CategoryProductView({
                         </button>
                     </div>
                 ) : (
-                    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6 transition-opacity ${loading ? 'opacity-50' : 'opacity-100'}`}>
+                    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4 transition-opacity ${loading ? 'opacity-50' : 'opacity-100'}`}>
                         {products.map((p: any) => (
                             <ProductCard
                                 key={p.id}
@@ -242,6 +254,9 @@ export function CategoryProductView({
                                 price={(p.price || p.regularPrice || "Liên hệ").replace(/&nbsp;/g, ' ')}
                                 imageUrl={p.image?.sourceUrl || ""}
                                 slug={p.slug}
+                                sku={p.sku}
+                                regularPrice={p.regularPrice}
+                                salePrice={p.salePrice}
                             />
                         ))}
                     </div>

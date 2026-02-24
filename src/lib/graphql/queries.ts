@@ -8,6 +8,7 @@ export const GET_FEATURED_PRODUCTS = `
         slug
         ... on SimpleProduct {
           price
+          sku
           regularPrice
           salePrice
           image {
@@ -17,6 +18,7 @@ export const GET_FEATURED_PRODUCTS = `
         }
         ... on VariableProduct {
           price
+          sku
           regularPrice
           salePrice
           image {
@@ -50,7 +52,7 @@ export const GET_PRODUCTS_BY_CATEGORY = `
   query GetProductsByCategory(
     $slugId: ID!, 
     $slugStr: String!,
-    $first: Int = 12, 
+    $first: Int = 24, 
     $after: String = "",
     $minPrice: Float,
     $maxPrice: Float,
@@ -84,6 +86,7 @@ export const GET_PRODUCTS_BY_CATEGORY = `
         slug
         ... on SimpleProduct {
           price
+          sku
           regularPrice
           salePrice
           image {
@@ -93,6 +96,7 @@ export const GET_PRODUCTS_BY_CATEGORY = `
         }
         ... on VariableProduct {
           price
+          sku
           regularPrice
           salePrice
           image {
@@ -133,13 +137,15 @@ export const GET_PRODUCT_BY_SLUG = `
       }
       ... on SimpleProduct {
         price
-        regularPrice
+        sku
+          regularPrice
         salePrice
         stockStatus
       }
       ... on VariableProduct {
         price
-        regularPrice
+        sku
+          regularPrice
         salePrice
         stockStatus
         attributes {
@@ -154,7 +160,7 @@ export const GET_PRODUCT_BY_SLUG = `
 `;
 
 export const SEARCH_PRODUCTS = `
-  query SearchProducts($search: String!, $first: Int = 12, $after: String = "") {
+  query SearchProducts($search: String!, $first: Int = 24, $after: String = "") {
     products(where: { search: $search }, first: $first, after: $after) {
       pageInfo {
         hasNextPage
@@ -167,6 +173,7 @@ export const SEARCH_PRODUCTS = `
         slug
         ... on SimpleProduct {
           price
+          sku
           regularPrice
           salePrice
           image {
@@ -176,6 +183,7 @@ export const SEARCH_PRODUCTS = `
         }
         ... on VariableProduct {
           price
+          sku
           regularPrice
           salePrice
           image {
@@ -198,6 +206,25 @@ export const GET_CUSTOMER_DETAILS = `
       lastName
       displayName
       email
+      billing {
+        firstName
+        lastName
+        address1
+        city
+        state
+        postcode
+        phone
+        email
+      }
+      shipping {
+        firstName
+        lastName
+        address1
+        city
+        state
+        postcode
+        phone
+      }
       orders {
         nodes {
           id
@@ -206,8 +233,29 @@ export const GET_CUSTOMER_DETAILS = `
           date
           status
           total
+          subtotal
+          paymentMethodTitle
+          shippingTotal
+          shippingMethod
+          lineItems {
+            nodes {
+              product {
+                node {
+                  name
+                  slug
+                  image {
+                    sourceUrl
+                  }
+                }
+              }
+              quantity
+              total
+              subtotal
+            }
+          }
         }
       }
+    }
   }
 `;
 
@@ -230,7 +278,7 @@ export const GET_NODE_BY_SLUG = `
   query GetNodeBySlug(
     $slugId: ID!, 
     $slugStr: String!,
-    $first: Int = 12, 
+    $first: Int = 24, 
     $after: String = "",
     $minPrice: Float,
     $maxPrice: Float,
@@ -272,25 +320,29 @@ export const GET_NODE_BY_SLUG = `
           }
           ... on SimpleProduct {
             price
-            regularPrice
+            sku
+          regularPrice
             salePrice
           }
           ... on VariableProduct {
             price
-            regularPrice
+            sku
+          regularPrice
             salePrice
           }
         }
       }
       ... on SimpleProduct {
         price
-        regularPrice
+        sku
+          regularPrice
         salePrice
         stockStatus
       }
       ... on VariableProduct {
         price
-        regularPrice
+        sku
+          regularPrice
         salePrice
         stockStatus
         attributes {
@@ -359,6 +411,7 @@ export const GET_NODE_BY_SLUG = `
         slug
         ... on SimpleProduct {
           price
+          sku
           regularPrice
           salePrice
           image {
@@ -368,6 +421,7 @@ export const GET_NODE_BY_SLUG = `
         }
         ... on VariableProduct {
           price
+          sku
           regularPrice
           salePrice
           image {

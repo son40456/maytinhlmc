@@ -94,7 +94,7 @@ export default async function SlugPage({ params, searchParams }: {
     const { data: nodeData } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
         slugId: slug,
         slugStr: slug,
-        first: 12,
+        first: 24,
         after,
         minPrice,
         maxPrice,
@@ -119,7 +119,7 @@ export default async function SlugPage({ params, searchParams }: {
         const imageUrl = product.image?.sourceUrl || "";
 
         return (
-            <div className="bg-gray-50/50 min-h-screen">
+            <div>
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
                     {/* Breadcrumbs */}
                     <nav className="text-sm text-gray-500 mb-8 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-2">
@@ -232,16 +232,18 @@ export default async function SlugPage({ params, searchParams }: {
                             <h2 className="text-2xl font-bold text-gray-900 mb-8">
                                 Sản phẩm liên quan
                             </h2>
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4">
                                 {product.related.nodes.map((p: any) => (
                                     <ProductCard
-                                        key={p.id}
                                         id={p.id}
                                         databaseId={p.databaseId}
                                         name={p.name}
                                         price={(p.price || p.regularPrice || "Liên hệ").replace(/&nbsp;/g, ' ')}
                                         imageUrl={p.image?.sourceUrl || ""}
                                         slug={p.slug}
+                                        sku={p.sku}
+                                        regularPrice={p.regularPrice}
+                                        salePrice={p.salePrice}
                                     />
                                 ))}
                             </div>
@@ -333,7 +335,7 @@ export default async function SlugPage({ params, searchParams }: {
         };
 
         return (
-            <div className="bg-[#F6F7F8] min-h-screen">
+            <div>
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <CategoryProductView
                         category={category}

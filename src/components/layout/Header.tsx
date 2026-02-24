@@ -16,19 +16,19 @@ const LayoutIcon = ({ size }: { size: number }) => (
 );
 
 const menuIconsMap: { [key: string]: React.ReactNode } = {
-    'BỘ PC': <MonitorPlay size={18} />,
-    'MAINBOARD': <LayoutIcon size={18} />,
-    'CPU': <Cpu size={18} />,
-    'RAM': <HardDrive size={18} />,
-    'VGA': <Monitor size={18} />,
-    'Ổ CỨNG HDD': <HardDrive size={18} />,
-    'Ổ CỨNG SSD': <HardDrive size={18} />,
-    'PSU': <Fan size={18} />,
-    'CASE': <CaseIcon size={18} />,
-    'MÀN HÌNH': <Monitor size={18} />,
-    'TẢN NHIỆT': <Fan size={18} />,
-    'PHÍM CHUỘT': <MousePointer2 size={18} />,
-    'TAI NGHE': <Headphones size={18} />,
+    'BỘ PC': <MonitorPlay size={22} />,
+    'MAINBOARD': <LayoutIcon size={22} />,
+    'CPU': <Cpu size={22} />,
+    'RAM': <HardDrive size={22} />,
+    'VGA': <Monitor size={22} />,
+    'Ổ CỨNG HDD': <HardDrive size={22} />,
+    'Ổ CỨNG SSD': <HardDrive size={22} />,
+    'PSU': <Fan size={22} />,
+    'CASE': <CaseIcon size={22} />,
+    'MÀN HÌNH': <Monitor size={22} />,
+    'TẢN NHIỆT': <Fan size={22} />,
+    'PHÍM CHUỘT': <MousePointer2 size={22} />,
+    'TAI NGHE': <Headphones size={22} />,
 };
 
 // Hàm lấy icon dựa trên nhãn hoặc class
@@ -41,10 +41,10 @@ const getMenuIcon = (label: string, cssClasses: string[] = []) => {
     // 2. Kiểm tra CSS Classes (Hỗ trợ Flatsome/Mega Menu icons)
     const iconClass = cssClasses.find(c => c.startsWith('icon-') || c.startsWith('fa-'));
     if (iconClass) {
-        return <i className={`${iconClass}`} style={{ fontSize: '18px' }}></i>;
+        return <i className={`${iconClass}`} style={{ fontSize: '22px' }}></i>;
     }
 
-    return <Monitor size={18} />;
+    return <Monitor size={22} />;
 };
 
 export const Header = () => {
@@ -70,25 +70,28 @@ export const Header = () => {
     return (
         <header className="sticky top-0 z-50 w-full shadow-md font-sans">
             {/* Tier 1: Blue Bar */}
-            <div className="bg-[#004b91] text-white py-3">
-                <div className="container mx-auto px-4 flex items-center justify-between gap-4">
+            <div className="bg-[#004b91] text-white py-4 md:py-5">
+                <div className="container mx-auto px-4 flex items-center justify-between gap-6">
                     {/* Logo LMC */}
                     <Link href="/" className="flex-shrink-0">
-                        <span className="text-4xl font-black italic tracking-tighter">LMC</span>
+                        <span className="text-4xl md:text-5xl font-black italic tracking-tighter drop-shadow-sm">LMC</span>
                     </Link>
 
                     {/* Search Bar */}
-                    <div className="flex-1 max-w-2xl px-4">
-                        <form onSubmit={handleSearch} className="relative">
+                    <div className="flex-1 max-w-3xl px-2 lg:px-8">
+                        <form onSubmit={handleSearch} className="relative group/search">
                             <input
                                 type="search"
-                                placeholder="Bạn tìm gì..."
-                                className="w-full h-10 pl-4 pr-10 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                placeholder="Nhập tên sản phẩm, mã SKU, từ khoá..."
+                                className="w-full h-11 md:h-12 pl-5 pr-14 rounded-full text-gray-800 bg-white/95 focus:bg-white focus:outline-none focus:ring-4 focus:ring-yellow-400/50 shadow-inner transition-all text-sm md:text-base"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                            <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors">
-                                <Search className="h-5 w-5" />
+                            <button
+                                type="submit"
+                                className="absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 md:h-9 md:w-9 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-yellow-400 hover:text-blue-900 transition-colors shadow-sm"
+                            >
+                                <Search className="h-4 w-4 md:h-5 md:w-5" />
                             </button>
                         </form>
                     </div>
@@ -164,14 +167,14 @@ export const Header = () => {
                                 <div key={item.id} className="group/menu static lg:static">
                                     <Link
                                         href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
-                                        className="flex flex-col items-center justify-center py-2 px-3 hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-yellow-400"
+                                        className="flex flex-col items-center justify-center py-3 px-4 hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-yellow-400"
                                     >
-                                        <span className="mb-0.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
+                                        <span className="mb-1.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
                                             {getMenuIcon(cleanLabel, item.cssClasses)}
                                         </span>
-                                        <span className="text-[9px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-0.5 uppercase whitespace-nowrap">
+                                        <span className="text-[10px] md:text-[11px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-1 uppercase whitespace-nowrap">
                                             {cleanLabel}
-                                            {hasChildren && <ChevronDown size={10} />}
+                                            {hasChildren && <ChevronDown size={12} />}
                                         </span>
                                     </Link>
 
