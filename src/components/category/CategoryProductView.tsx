@@ -92,6 +92,11 @@ export function CategoryProductView({
 
     const handleFilterChange = (attrSlug: string, value: string) => {
         setSelectedAttributes(prev => {
+            if (value === 'all') {
+                const newAttrs = { ...prev };
+                delete newAttrs[attrSlug];
+                return newAttrs;
+            }
             const current = prev[attrSlug] || [];
             const updated = current.includes(value)
                 ? current.filter(v => v !== value)
