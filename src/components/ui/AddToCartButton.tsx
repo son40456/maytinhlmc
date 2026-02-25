@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import { Button } from './Button';
 import { useCartStore } from '@/store/useCartStore';
+import { useRelatedProductsModalStore } from '@/store/useRelatedProductsModalStore';
+import { fetchRelatedProducts } from '@/app/actions/productActions';
+import { Loader2 } from 'lucide-react';
 
 interface AddToCartButtonProps {
     id: string;
@@ -19,6 +22,7 @@ export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
     id, databaseId, name, price, imageUrl, slug, stockStatus, size = 'lg'
 }) => {
     const [quantity, setQuantity] = useState(1);
+    const [isPending, startTransition] = React.useTransition();
     const addItem = useCartStore((state) => state.addItem);
 
     const isOutOfStock = stockStatus === 'OUT_OF_STOCK';
@@ -36,7 +40,12 @@ export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
             imageUrl,
             slug
         });
-        alert('Đã thêm sản phẩm vào giỏ hàng!');
+
+        // Use transition to fetch related products without blocking
+        startTransition(async () => {
+            const related = await fetchRelatedProducts(slug);
+            useRelatedProductsModalStore.getState().openModal(related);
+        });
     };
 
     if (isOutOfStock) {
@@ -72,8 +81,10 @@ export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
             <Button
                 size={size}
                 onClick={handleAddToCart}
-                className={`w-full uppercase font-bold tracking-wide ${size === 'lg' ? 'h-14 text-base mt-2' : 'h-10 text-xs px-4'}`}
+                disabled={isPending}
+                className={`w-full uppercase font-bold tracking-wide flex items-center justify-center gap-2 ${size === 'lg' ? 'h-14 text-base mt-2' : 'h-10 text-xs px-4'}`}
             >
+                {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                 {size === 'sm' ? 'Mua ngay' : 'Thêm vào giỏ hàng'}
             </Button>
         </div>

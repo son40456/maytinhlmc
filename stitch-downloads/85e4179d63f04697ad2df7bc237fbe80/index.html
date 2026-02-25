@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex items-center justify-center p-4">
+<!-- Modal Container -->
+<div class="relative w-full max-w-[800px] bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+<!-- Header Illustration & Success Message -->
+<div class="relative flex flex-col items-center text-center pt-10 pb-6 px-8">
+<div class="absolute top-4 right-4 cursor-pointer text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+<span class="material-symbols-outlined text-3xl">close</span>
+</div>
+<!-- Success Illustration -->
+<div class="w-32 h-32 mb-6 bg-primary/10 rounded-full flex items-center justify-center relative">
+<div class="absolute inset-0 bg-primary/20 rounded-full scale-110 blur-sm"></div>
+<span class="material-symbols-outlined text-primary text-6xl relative z-10">task_alt</span>
+<!-- Fun decorative dots -->
+<div class="absolute -top-2 -right-2 w-4 h-4 bg-primary rounded-full"></div>
+<div class="absolute top-1/2 -left-6 w-3 h-3 bg-primary/40 rounded-full"></div>
+<div class="absolute -bottom-2 left-4 w-5 h-5 bg-primary/60 rounded-full"></div>
+</div>
+<h2 class="text-3xl font-bold tracking-tight mb-2 text-slate-900 dark:text-white">Tuyệt vời! Lựa chọn rất chuẩn!</h2>
+<p class="text-slate-600 dark:text-slate-400 max-w-md mx-auto">Sản phẩm đã được thêm vào giỏ hàng thành công. Bạn muốn tiếp tục khám phá hay thanh toán ngay?</p>
+<!-- Action Buttons -->
+<div class="flex flex-wrap justify-center gap-4 mt-8 w-full">
+<button class="px-8 py-3 bg-background-light dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined">arrow_back</span>
+                    Tiếp tục xem đồ
+                </button>
+<button class="px-8 py-3 bg-primary text-background-dark font-bold rounded-full shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
+                    Vào giỏ hàng
+                    <span class="material-symbols-outlined">shopping_cart_checkout</span>
+</button>
+</div>
+</div>
+<!-- Cross-sell Section -->
+<div class="bg-slate-50 dark:bg-slate-800/50 p-8 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+                    Có thể bạn cũng thích
+                </h3>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Product Card 1 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-xl bg-slate-200 dark:bg-slate-700 mb-3 overflow-hidden">
+<div class="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-110" data-alt="Modern lifestyle product image A" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBYcBviK_J_-DbnuJ2P6SW9iRIqX_uljJuv465qgMmF8MsN9cEsRrz8suIMns_Skc-VSnBN2V3dvCv4twXmdtU8gebqtNgyl-V16bmRY6UHCim2z8ALvZTSi3FUGaMfGdIluvz__1SpSx2ZzivrEjucyNQ9R_4pkAIxxdQ7f0XoFV96er9nNrzN0ADclgAgesUHkByZgxXu8doUzr9n9ryvxhESYo9J-Kj8UVOLPjXTwo9Hd3EV1VcJPGACQVpleXhSXidj3VVEADk");'></div>
+<div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 bg-white/90 dark:bg-slate-900/90 rounded-full flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-primary text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<p class="text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-1 mb-1">Sản phẩm A</p>
+<p class="text-primary font-bold text-sm">150.000đ</p>
+</div>
+<!-- Product Card 2 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-xl bg-slate-200 dark:bg-slate-700 mb-3 overflow-hidden">
+<div class="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-110" data-alt="Modern lifestyle product image B" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAJGyC828hGxlcCzkOZ_6gK3pZ_NSXkn6gngukH9XbUvH11zA7AVuMxcuE9kMBJZNnEYIlcxGmTvLEMwjD9SAA3xEU7HGbY6AQ5NmjI4UrWCeWUhEJPLDa0gnPLamRVgnB-STKYzPmI7XaFix5Gr2O3QlQiv_pZLONcXTf2KpHMXDY1Pd1IDrh9nbrdbR7W_0YT9GzPuS0CdcPCuf0xsLnmwPmWkxKvpNG-WEasL2-U3Z1yfyfPhG6tvz6O70VeiPcPHgMKodDrZp0");'></div>
+<div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 bg-white/90 dark:bg-slate-900/90 rounded-full flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-primary text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<p class="text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-1 mb-1">Sản phẩm B</p>
+<p class="text-primary font-bold text-sm">220.000đ</p>
+</div>
+<!-- Product Card 3 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-xl bg-slate-200 dark:bg-slate-700 mb-3 overflow-hidden">
+<div class="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-110" data-alt="Modern lifestyle product image C" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAGn_NW2-P7REvTpe9pz9LeajQShzEMWzl9x4n6uwzpcQ_orKzqMn23QwhoYpsQ0NopcDcftTLk0jNjXd2pEqfEUGiB3Fs06FrGLI6Gj0r-VT8j4Ol2FzVCuM8Hzm-AI5mFScnvkw2uYiOPnmBEPEZmgacbmWTLXfcu7QTeQrHgGg4nSVJ2IFzeDpc1iGCUN-zg_A6SNlyVNLS6fWxd_mQPgIrmL0q69ypXRaTgqCaZAdg2mUxUxHHCGYRg-4sZFA84W90nE5CDJTM");'></div>
+<div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 bg-white/90 dark:bg-slate-900/90 rounded-full flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-primary text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<p class="text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-1 mb-1">Sản phẩm C</p>
+<p class="text-primary font-bold text-sm">310.000đ</p>
+</div>
+<!-- Product Card 4 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-xl bg-slate-200 dark:bg-slate-700 mb-3 overflow-hidden">
+<div class="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-110" data-alt="Modern lifestyle product image D" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAj4jkAXQ2pWAIK9njgfo7MSGYU2PLhb4oiC9wbbUq8YUVl8A4JInHAS-FGpygYv8P8dptI-hAv5Lv_8rgiieodW8829SrusGMM-ywG4eSd-XRZkQQZiNhiMO8Bm6sDDgF6n-MoL9Gph_oR5JsemLARngoaWWjO8arRG8zDQ1R48kITGLmvBOJkWWzEaTX16jQimERceYlhOlHpT3E4dypB4drErEbyyjHe3ytDJHumNn2u_vWUPtqbKR5igUVKPq_YjB7WQAj8JMo");'></div>
+<div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 bg-white/90 dark:bg-slate-900/90 rounded-full flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-primary text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<p class="text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-1 mb-1">Sản phẩm D</p>
+<p class="text-primary font-bold text-sm">185.000đ</p>
+</div>
+</div>
+</div>
+</div>
+</body></html>

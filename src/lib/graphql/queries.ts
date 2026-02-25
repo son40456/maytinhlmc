@@ -506,3 +506,64 @@ export const GET_CATEGORY_FILTERS = `
     }
   }
 `;
+
+export const GET_RELATED_PRODUCTS = `
+  query GetRelatedProducts($slug: ID!) {
+    product(id: $slug, idType: SLUG) {
+      id
+      related {
+        nodes {
+          id
+          databaseId
+          name
+          slug
+          image {
+            sourceUrl
+            altText
+          }
+          ... on SimpleProduct {
+            price
+            regularPrice
+            salePrice
+          }
+          ... on VariableProduct {
+            price
+            regularPrice
+            salePrice
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_RANDOM_PRODUCTS = `
+  query GetRandomProducts($first: Int = 20) {
+    products(first: $first) {
+      nodes {
+        id
+        databaseId
+        name
+        slug
+        ... on SimpleProduct {
+          price
+          regularPrice
+          salePrice
+          image {
+            sourceUrl
+            altText
+          }
+        }
+        ... on VariableProduct {
+          price
+          regularPrice
+          salePrice
+          image {
+            sourceUrl
+            altText
+          }
+        }
+      }
+    }
+  }
+`;
