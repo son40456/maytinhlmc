@@ -1,8 +1,7 @@
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
 import { GET_PRODUCTS_BY_CATEGORY } from "@/lib/graphql/queries";
-import { ProductSlider } from "@/components/home/ProductSlider";
+import { ProductCard } from "@/components/ui/ProductCard";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
 
 interface HomeSectionProps {
     title: string;
@@ -19,7 +18,7 @@ export async function HomeSection({ title, categorySlug, subFilters }: HomeSecti
             {
                 slugId: categorySlug,
                 slugStr: categorySlug,
-                first: 10, // Tăng lên 10 để slider có thể trượt nhiều hơn
+                first: 12, // Tăng lên 12 để hiển thị 2 dòng full cho lưới 6 cột
             },
             {
                 next: { revalidate: 3600 } // ISR 1 hour
@@ -45,35 +44,47 @@ export async function HomeSection({ title, categorySlug, subFilters }: HomeSecti
     }));
 
     return (
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12 overflow-hidden">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 border-b-2 border-red-600 pb-3 gap-4">
-                <h2 className="text-xl md:text-2xl font-bold uppercase text-gray-900 tracking-wide z-10">
-                    {title}
-                </h2>
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                    <div className="flex items-center bg-blue-600 rounded-md overflow-hidden flex-shrink-0 shadow-sm h-11">
+                        <div className="bg-orange-500 w-3 h-full"></div>
+                        <span className="px-5 text-white font-bold tracking-wider text-lg uppercase whitespace-nowrap">
+                            {title}
+                        </span>
+                    </div>
 
-                <div className="flex flex-wrap items-center gap-2 md:gap-3 z-10">
-                    {subFilters && subFilters.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                            {subFilters.map((sub, idx) => (
-                                <Link
-                                    key={idx}
-                                    href={`/${categorySlug}?pa_thuong-hieu=${sub.slug}`}
-                                    className="px-4 py-1.5 bg-white hover:bg-gray-50 text-gray-700 hover:text-blue-600 border border-gray-200 hover:border-blue-500 text-xs md:text-sm font-bold rounded-full shadow-sm transition-all whitespace-nowrap"
-                                >
-                                    {sub.name}
-                                </Link>
-                            ))}
-                        </div>
-                    )}
-                    <Link href={`/${categorySlug}`}>
-                        <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white font-bold h-8 md:h-9 px-4 rounded-full text-xs md:text-sm whitespace-nowrap shadow-sm">
-                            Xem tất cả &rarr;
-                        </Button>
-                    </Link>
+                    <div className="flex gap-2">
+                        {subFilters && subFilters.length > 0 && subFilters.map((sub, idx) => (
+                            <Link
+                                key={idx}
+                                href={`/${categorySlug}?pa_thuong-hieu=${sub.slug}`}
+                                className="whitespace-nowrap px-4 py-2 bg-white border border-gray-200 rounded-md text-sm font-medium hover:border-blue-600 hover:text-blue-600 transition-colors shadow-sm"
+                            >
+                                {sub.name}
+                            </Link>
+                        ))}
+                    </div>
                 </div>
+
+                <Link href={`/${categorySlug}`} className="text-blue-600 font-semibold text-sm hover:underline flex items-center gap-1 flex-shrink-0 bg-white border border-gray-200 hover:border-blue-600 px-4 py-2 rounded-md transition-colors shadow-sm">
+                    XEM TẤT CẢ <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                </Link>
             </div>
 
-            <ProductSlider products={displayProducts} />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 lg:gap-4">
+                {displayProducts.map((p: any) => (
+                    <ProductCard
+                        key={p.id}
+                        id={p.id}
+                        databaseId={p.databaseId}
+                        name={p.name}
+                        price={(p.price || "Liên hệ").replace(/&nbsp;/g, ' ')}
+                        imageUrl={p.imageUrl}
+                        slug={p.slug}
+                    />
+                ))}
+            </div>
         </section>
     );
 }

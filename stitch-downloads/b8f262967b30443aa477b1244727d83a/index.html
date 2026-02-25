@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Modern Mainboard Category Grid V1</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1d4ed8", // Deep blue from image
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        accent: "#f97316", // Orange accent
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .product-card:hover .cart-btn {
+            background-color: #1d4ed8;
+            color: white;
+        }
+        .main-gradient {
+            background: linear-gradient(135deg, #f97316 25%, #1d4ed8 25%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300">
+<div class="max-w-7xl mx-auto px-4 py-8">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div class="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
+<div class="flex items-center bg-primary rounded-md overflow-hidden flex-shrink-0 shadow-sm">
+<div class="bg-accent w-4 h-full py-3"></div>
+<span class="px-6 py-2 text-white font-bold tracking-wider text-xl">MAIN</span>
+</div>
+<div class="flex gap-2">
+<button class="whitespace-nowrap px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium hover:border-primary transition-colors">Mainboard ASROCK</button>
+<button class="whitespace-nowrap px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium hover:border-primary transition-colors">Mainboard ASUS</button>
+<button class="whitespace-nowrap px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium hover:border-primary transition-colors">Mainboard INTEL</button>
+<button class="whitespace-nowrap px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium hover:border-primary transition-colors">Mainboard MSI</button>
+<button class="whitespace-nowrap px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium hover:border-primary transition-colors">Mainboard GIGABYTE</button>
+</div>
+</div>
+<a class="text-primary font-semibold text-sm hover:underline flex items-center gap-1 flex-shrink-0" href="#">
+                XEM TẤT CẢ <span class="material-icons-outlined text-sm">chevron_right</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+<div class="product-card group bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800 flex flex-col h-full">
+<div class="relative mb-4">
+<img alt="Mainboard MSI Z790" class="w-full aspect-square object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9R79xLvKWvqSWGHa29a7Mqx7iZ9cYdCZQxHKXCnDq3j1kn4Hx0ram-knlx7eAV0la1hrNllx5NrZBMYP95cCzMOys0KoEycJiWjS9QBIa6MdHz_fOh6mAfV1bY5KoFBHgTo52WdEwByfS0vYrk4QoQAk8EreD5RyBrA0DWtyVL0TmYBFN_NpwtWWtnLBjeBRWhj7Ve1m-GzQC2O0Dk3JblnQGaL71r6-uN96SA9eFeoAjCp2-llYG1tETVHggWi4irZa3uioIHAg"/>
+<div class="absolute top-0 left-0">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">TIẾT KIỆM</span>
+<div class="bg-primary text-white text-xs font-bold px-2 py-1 rounded-sm mt-1">470.000 ₫</div>
+</div>
+</div>
+<h3 class="text-sm font-semibold mb-2 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
+                    Mainboard MSI Z790 GAMING PLUS WIFI (Intel Z790, Socket LGA1700, DDR5)
+                </h3>
+<div class="mt-auto">
+<div class="text-primary font-bold text-lg mb-1">5.870.000 ₫</div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-slate-400 line-through text-xs">6.340.000 ₫</span>
+<span class="text-primary text-xs font-bold">-7%</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-green-600 mb-3">
+<span class="material-icons-outlined text-[14px]">check</span>
+                        Còn hàng
+                    </div>
+<div class="flex items-center justify-between">
+<button class="flex items-center gap-1 text-[11px] text-slate-500 hover:text-primary transition-colors">
+<span class="material-icons-outlined text-[16px]">add_circle_outline</span>
+                            So sánh
+                        </button>
+<button class="cart-btn w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md transition-colors">
+<span class="material-icons-outlined text-lg">shopping_bag</span>
+</button>
+</div>
+</div>
+</div>
+<div class="product-card group bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800 flex flex-col h-full">
+<div class="relative mb-4">
+<img alt="Mainboard MSI MAG B650M" class="w-full aspect-square object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsu5nJXrJTSedewUIGXHU09lIXT00AXkodYItSAZxgscDLlLGFLtaxO7ncfm1Z4To4mPS1kyo_W3vjznUr9HBCMrHqVuSFW4GYAtTEyjGowIbFcQntZBoD8v8bCvIfKNTdPTiec146cby7D2-TcXe3bKluPQWujpmfnNDK0WN4V_FG1gJ1n6NjezAgBloLCu3bqpnY9WmFirSEiRfUWLgFohM--Ds8Q9htcflyivRIPCGQuTOyMXhQyDNhWa4aaSxFWn2S9cG9o0Q"/>
+<div class="absolute top-0 left-0">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">TIẾT KIỆM</span>
+<div class="bg-primary text-white text-xs font-bold px-2 py-1 rounded-sm mt-1">736.000 ₫</div>
+</div>
+</div>
+<h3 class="text-sm font-semibold mb-2 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
+                    Mainboard MSI MAG B650M MORTAR WIFI (AMD B650, Socket AM5, DDR5)
+                </h3>
+<div class="mt-auto">
+<div class="text-primary font-bold text-lg mb-1">6.690.000 ₫</div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-slate-400 line-through text-xs">7.426.000 ₫</span>
+<span class="text-primary text-xs font-bold">-10%</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-green-600 mb-3">
+<span class="material-icons-outlined text-[14px]">check</span>
+                        Còn hàng
+                    </div>
+<div class="flex items-center justify-between">
+<button class="flex items-center gap-1 text-[11px] text-slate-500 hover:text-primary transition-colors">
+<span class="material-icons-outlined text-[16px]">add_circle_outline</span>
+                            So sánh
+                        </button>
+<button class="cart-btn w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md transition-colors">
+<span class="material-icons-outlined text-lg">shopping_bag</span>
+</button>
+</div>
+</div>
+</div>
+<div class="product-card group bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800 flex flex-col h-full">
+<div class="relative mb-4">
+<img alt="Mainboard Gigabyte H610M" class="w-full aspect-square object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-D2Xl5hZC9xAIXxTdDwGflI1mX1C9mqxIMYsirr5A2gbXW0M3HDA_a_ftcrJ-0qJWB-O8NFXJqn4mZBI26HsLR6iyXHJTwsQ3ruH2YEWcHiXfOaBhzWpn9X__XrtPmKy5OAPVkeEYjd_Ko7ahQY8N5QaM4QFQniZE3Rlw2v2pQGu7PEqTKLGvS9HRNJnAco2qYEobqWNCO229MPoXXwdu77BU4v91Z8-V1_0ppGyzW2RAcZkEMmw2p6P9JnaCFHajI-vCR5p1UUQ"/>
+<div class="absolute top-0 left-0">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">TIẾT KIỆM</span>
+<div class="bg-primary text-white text-xs font-bold px-2 py-1 rounded-sm mt-1">250.000 ₫</div>
+</div>
+</div>
+<h3 class="text-sm font-semibold mb-2 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
+                    Mainboard Gigabyte H610M H V2 DDR4 (Intel H610, Socket LGA1700)
+                </h3>
+<div class="mt-auto">
+<div class="text-primary font-bold text-lg mb-1">2.050.000 ₫</div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-slate-400 line-through text-xs">2.300.000 ₫</span>
+<span class="text-primary text-xs font-bold">-11%</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-green-600 mb-3">
+<span class="material-icons-outlined text-[14px]">check</span>
+                        Còn hàng
+                    </div>
+<div class="flex items-center justify-between">
+<button class="flex items-center gap-1 text-[11px] text-slate-500 hover:text-primary transition-colors">
+<span class="material-icons-outlined text-[16px]">add_circle_outline</span>
+                            So sánh
+                        </button>
+<button class="cart-btn w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md transition-colors">
+<span class="material-icons-outlined text-lg">shopping_bag</span>
+</button>
+</div>
+</div>
+</div>
+<div class="product-card group bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800 flex flex-col h-full">
+<div class="relative mb-4">
+<img alt="Mainboard Gigabyte B650I" class="w-full aspect-square object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRY1COuqe2dI5BA_S86HEeiDmVESY72jftmeMqy6PNt3DlJ-T5N3cyK5QCnuh-w6rEawOmk3FyUpYqHrPxLxhbwBiR_-BHPFhIGL3XVwLJCUFalfPgdhgvZSwuL_0_2sP3mmtAjlrbKR4xbEWHBoBZOXuX1iNb50jX6P45AAG-7yrhppcdGncoaeanq5Zc-YfO7HKN5F6rTal2jiNsyHSIx4APdQOGjCqFGXhnWJGmVb8oD59u0ZAmMYutTspVhqtxneizbiXAkyo"/>
+<div class="absolute top-0 left-0">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">TIẾT KIỆM</span>
+<div class="bg-primary text-white text-xs font-bold px-2 py-1 rounded-sm mt-1">947.000 ₫</div>
+</div>
+</div>
+<h3 class="text-sm font-semibold mb-2 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
+                    Mainboard Gigabyte B650I AORUS ULTRA (DDR5, AM5, Mini-ITX)
+                </h3>
+<div class="mt-auto">
+<div class="text-primary font-bold text-lg mb-1">7.890.000 ₫</div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-slate-400 line-through text-xs">8.837.000 ₫</span>
+<span class="text-primary text-xs font-bold">-11%</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-green-600 mb-3">
+<span class="material-icons-outlined text-[14px]">check</span>
+                        Còn hàng
+                    </div>
+<div class="flex items-center justify-between">
+<button class="flex items-center gap-1 text-[11px] text-slate-500 hover:text-primary transition-colors">
+<span class="material-icons-outlined text-[16px]">add_circle_outline</span>
+                            So sánh
+                        </button>
+<button class="cart-btn w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md transition-colors">
+<span class="material-icons-outlined text-lg">shopping_bag</span>
+</button>
+</div>
+</div>
+</div>
+<div class="product-card group bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800 flex flex-col h-full">
+<div class="relative mb-4">
+<img alt="Mainboard GIGABYTE Z790M" class="w-full aspect-square object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPzrMCad6T7WzIDxbNtmSOSX7PJ6DfMno8XmLz2FFArUkIy9PdMFjF8NDZpuK2E-9CjLXugxiE3AEHaYn6AdkH762ICUqLAATBrVOE-Fw8SMyOa_RhfaNDHBcn8OcYA7nyPhL3Mh8_m06ugqLRPuXRWctfhMfi66EtUol7tgaqCLU9ajZe7nt4_qNA7V7w3tNasZ_dROYc0hJxyQrFeTdq1VGs0oTA-vD9iZ0YynTEWn3R9qZLTG__Nayz1mRd7pCkI5IqKEO888U"/>
+<div class="absolute top-0 left-0">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">TIẾT KIỆM</span>
+<div class="bg-primary text-white text-xs font-bold px-2 py-1 rounded-sm mt-1">520.000 ₫</div>
+</div>
+</div>
+<h3 class="text-sm font-semibold mb-2 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
+                    Mainboard GIGABYTE Z790M AORUS ELITE AX DDR5 (Intel Z790)
+                </h3>
+<div class="mt-auto">
+<div class="text-primary font-bold text-lg mb-1">5.240.000 ₫</div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-slate-400 line-through text-xs">5.760.000 ₫</span>
+<span class="text-primary text-xs font-bold">-9%</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-green-600 mb-3">
+<span class="material-icons-outlined text-[14px]">check</span>
+                        Còn hàng
+                    </div>
+<div class="flex items-center justify-between">
+<button class="flex items-center gap-1 text-[11px] text-slate-500 hover:text-primary transition-colors">
+<span class="material-icons-outlined text-[16px]">add_circle_outline</span>
+                            So sánh
+                        </button>
+<button class="cart-btn w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md transition-colors">
+<span class="material-icons-outlined text-lg">shopping_bag</span>
+</button>
+</div>
+</div>
+</div>
+<div class="product-card group bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-800 flex flex-col h-full">
+<div class="relative mb-4">
+<img alt="Mainboard Gigabyte B650M" class="w-full aspect-square object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx6j0tvBjx3gMuxFUUwri5K6FDIz2QeG21cmZ_A7bpwzhoe3f68GO3R5dW7unZFNX2tq3GmeEBqaKsNY4-Ue4y8X6Z6Dp8UOv_dCgYxGR4iCCzFS6FFisqG6VxbVFo0PDFpgZsYaGUm5sd_EZC1D_G6f4NhBbZcowFkTybow83u7ns8uywphs9g-43L6Gu9eeEGEtJVpU0pTydq6e5gpJj93YHsEpSfqclz6Ma6D_7jTZxIPC1dvQ3q7VyLChUgNLuIoEsDY46KzA"/>
+<div class="absolute top-0 left-0">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">TIẾT KIỆM</span>
+<div class="bg-primary text-white text-xs font-bold px-2 py-1 rounded-sm mt-1">510.000 ₫</div>
+</div>
+</div>
+<h3 class="text-sm font-semibold mb-2 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
+                    Mainboard Gigabyte B650M AORUS ELITE AX (AMD AM5)
+                </h3>
+<div class="mt-auto">
+<div class="text-primary font-bold text-lg mb-1">4.230.000 ₫</div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-slate-400 line-through text-xs">4.740.000 ₫</span>
+<span class="text-primary text-xs font-bold">-11%</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-green-600 mb-3">
+<span class="material-icons-outlined text-[14px]">check</span>
+                        Còn hàng
+                    </div>
+<div class="flex items-center justify-between">
+<button class="flex items-center gap-1 text-[11px] text-slate-500 hover:text-primary transition-colors">
+<span class="material-icons-outlined text-[16px]">add_circle_outline</span>
+                            So sánh
+                        </button>
+<button class="cart-btn w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md transition-colors">
+<span class="material-icons-outlined text-lg">shopping_bag</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed right-6 bottom-24 flex flex-col gap-3 z-50">
+<button class="w-12 h-12 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+<span class="material-icons-outlined">settings</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-red-600 text-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+<span class="material-icons-outlined">arrow_upward</span>
+</button>
+<button class="bg-orange-500 text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-2 font-bold hover:bg-orange-600 transition-colors">
+<span class="material-icons-outlined">chat</span>
+                CHAT NGAY
+            </button>
+</div>
+</div>
+<div class="fixed left-6 bottom-6 z-50">
+<button class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shadow-lg" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-icons-outlined dark:hidden">dark_mode</span>
+<span class="material-icons-outlined hidden dark:block text-yellow-400">light_mode</span>
+</button>
+</div>
+
+</body></html>

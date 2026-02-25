@@ -18,9 +18,10 @@ interface ProductCardProps {
     sku?: string;
     regularPrice?: string;
     salePrice?: string;
+    stockStatus?: string;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, price, imageUrl, slug, sku, regularPrice, salePrice }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, price, imageUrl, slug, sku, regularPrice, salePrice, stockStatus = 'IN_STOCK' }) => {
     const [isPending, startTransition] = React.useTransition();
     const addItem = useCartStore(state => state.addItem);
 
@@ -53,49 +54,84 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
         : 0;
 
     return (
-        <div className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300 relative">
-            {discountPercent > 0 && (
-                <div className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">
-                    GIẢM {discountPercent}%
-                </div>
-            )}
-            <Link href={`/${slug}`} className="relative aspect-square w-full bg-white overflow-hidden p-2 md:p-3">
+        <div className="product-card group bg-white rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 flex flex-col h-full relative">
+            <Link href={`/${slug}`} className="relative mb-4 block aspect-square w-full">
                 {imageUrl ? (
                     <Image
                         src={imageUrl}
                         alt={name}
                         fill
-                        className="object-contain transition-transform duration-300 group-hover:scale-105"
+                        className="object-contain rounded-lg transition-transform duration-300 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gray-50 text-gray-400 rounded-lg">
+                    <div className="flex h-full w-full items-center justify-center bg-slate-100 rounded-lg text-slate-400">
                         No Image
                     </div>
                 )}
-            </Link>
-            <div className="flex flex-1 flex-col p-3">
-                <Link href={`/${slug}`}>
-                    {sku && <p className="text-[10px] font-medium text-gray-400 mb-1 tracking-wider">Mã: {sku}</p>}
-                    <h3 className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2 uppercase leading-snug">{name}</h3>
-                </Link>
-                <div className="mt-auto pt-3 flex items-center justify-between gap-2">
-                    <div className="flex flex-col">
-                        <p className="text-lg font-black text-gray-900 leading-none">{price.replace(/&nbsp;/g, ' ')}</p>
-                        {discountPercent > 0 && regularPrice && (
-                            <p className="text-xs text-gray-400 line-through mt-1">{regularPrice.replace(/&nbsp;/g, ' ')}</p>
-                        )}
+                {discountPercent > 0 && numericRegular > 0 && numericSale > 0 && (
+                    <div className="absolute top-0 left-0 z-10 pointer-events-none flex">
+                        <span className="bg-blue-600 text-white text-[9px] font-medium px-1.5 py-1 rounded-l-sm shadow-sm border-r border-blue-500 flex items-center">TIẾT KIỆM</span>
+                        <span className="bg-blue-600 text-white text-[10px] font-medium px-1.5 py-1 rounded-r-sm shadow-sm flex items-center">
+                            {new Intl.NumberFormat('vi-VN').format(numericRegular - numericSale)} ₫
+                        </span>
                     </div>
+                )}
+            </Link>
+
+            <Link href={`/${slug}`} className="mb-2 block">
+                <div className="flex items-center justify-between mb-1 min-h-[15px]">
+                    <div className="text-[10px] font-medium text-slate-400 truncate pr-2">
+                        {sku ? `Mã: ${sku}` : ''}
+                    </div>
+                    <div className="flex items-center gap-[1px] shrink-0">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <svg key={star} className="w-2.5 h-2.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        ))}
+                    </div>
+                </div>
+                <h3 className="text-sm font-semibold uppercase leading-snug line-clamp-2 min-h-[40px] group-hover:text-blue-600 transition-colors">
+                    {name}
+                </h3>
+            </Link>
+
+            <div className="mt-auto">
+                <div className="text-blue-600 font-extrabold text-xl mb-1">{price.replace(/&nbsp;/g, ' ')}</div>
+                <div className="flex items-center gap-2 mb-2 min-h-[16px]">
+                    {discountPercent > 0 && regularPrice ? (
+                        <>
+                            <span className="text-slate-400 line-through text-xs">{regularPrice.replace(/&nbsp;/g, ' ')}</span>
+                            <span className="text-blue-600 text-xs font-bold">-{discountPercent}%</span>
+                        </>
+                    ) : null}
+                </div>
+
+                <div className={`flex items-center gap-1 text-[11px] mb-3 font-medium ${stockStatus === 'IN_STOCK' ? 'text-green-600' : 'text-red-500'}`}>
+                    {stockStatus === 'IN_STOCK' ? (
+                        <svg className="w-[14px] h-[14px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                    ) : (
+                        <svg className="w-[14px] h-[14px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    )}
+                    {stockStatus === 'IN_STOCK' ? 'Còn hàng' : 'Hết hàng'}
+                </div>
+
+                <div className="flex items-center justify-between">
+                    <button className="flex items-center gap-1 text-[11px] text-slate-500 hover:text-blue-600 transition-colors">
+                        <svg className="w-[16px] h-[16px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        So sánh
+                    </button>
                     <button
                         onClick={handleAddToCart}
                         disabled={isPending}
-                        className="w-10 h-10 rounded-xl bg-[#0f172a] text-white hover:bg-blue-600 focus:outline-none transition-colors flex items-center justify-center shrink-0 shadow-md shadow-slate-900/20 disabled:bg-slate-400 disabled:cursor-wait"
+                        className="group-hover:bg-blue-600 group-hover:text-white text-slate-500 w-8 h-8 flex items-center justify-center bg-slate-100 rounded-md transition-colors disabled:bg-slate-300 disabled:cursor-wait"
                         title="Thêm vào giỏ"
                     >
                         {isPending ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                         )}
                     </button>
                 </div>

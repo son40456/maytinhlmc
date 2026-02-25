@@ -1,16 +1,24 @@
 [
   {
     "id": "section-1771836888677",
-    "title": "Main 238",
-    "categorySlug": "man-hinh-may-tinh",
+    "title": "Bo mạch chủ",
+    "categorySlug": "mainboard-bo-mach-chu",
     "subFilters": [
       {
-        "name": "Main Gigabyte",
+        "name": "Mainboard ASROCK",
         "slug": "gigabyte"
       },
       {
-        "name": "Main MSI",
+        "name": "Mainboard Gigabyte",
         "slug": "msi"
+      },
+      {
+        "name": "Mainboard ASUS",
+        "slug": ""
+      },
+      {
+        "name": "Mainboard MSI",
+        "slug": ""
       }
     ]
   },
