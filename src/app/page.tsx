@@ -45,16 +45,11 @@ const dummyProducts = [
   },
 ];
 
+import { getHomepageConfig } from '@/app/actions/configActions';
+
 export default async function Home() {
-  // Read dynamic homepage config
-  let sections = [];
-  try {
-    const dataFilePath = path.join(process.cwd(), 'src', 'data', 'homepageConfig.json');
-    const fileData = await fs.readFile(dataFilePath, 'utf-8');
-    sections = JSON.parse(fileData);
-  } catch (error) {
-    console.error('Error reading homepage config in Home:', error);
-  }
+  // Read dynamic homepage config (via KV or fallback to fs)
+  let sections = await getHomepageConfig();
 
   // Fetch real data from WPGraphQL
   const { data } = await wpgraphqlFetch<any>(GET_FEATURED_PRODUCTS, { first: 10 }, {
