@@ -26,30 +26,107 @@
     "id": "section-1771837064005",
     "title": "Màn hình máy tính",
     "categorySlug": "man-hinh-may-tinh",
-    "subFilters": []
+    "subFilters": [
+      {
+        "name": "Dell",
+        "slug": "dell"
+      },
+      {
+        "name": "ViewSonic",
+        "slug": "viewsonic"
+      },
+      {
+        "name": "ASUS",
+        "slug": "asus"
+      },
+      {
+        "name": "BenQ",
+        "slug": "benq"
+      },
+      {
+        "name": "MSI",
+        "slug": "msi"
+      }
+    ]
   },
   {
     "id": "section-1771837092587",
     "title": "Ổ cứng",
     "categorySlug": "o-cung-hdd",
-    "subFilters": []
+    "subFilters": [
+      {
+        "name": "Seagate",
+        "slug": "seagate"
+      },
+      {
+        "name": "Western Digital",
+        "slug": "western-digital"
+      }
+    ]
   },
   {
     "id": "section-1771997965751",
     "title": "Bàn phím chuột",
     "categorySlug": "phim-chuot-ban-ghe-gear",
-    "subFilters": []
+    "subFilters": [
+      {
+        "name": "Corsair",
+        "slug": "corsair"
+      },
+      {
+        "name": "ASUS",
+        "slug": "asus"
+      },
+      {
+        "name": "Dareu",
+        "slug": "dareu"
+      },
+      {
+        "name": "EDRA",
+        "slug": "edra"
+      },
+      {
+        "name": "Fuhlen",
+        "slug": "fuhlen"
+      }
+    ]
   },
   {
     "id": "section-1771997987684",
     "title": "Thiết bị mạng",
     "categorySlug": "thiet-bi-chia-mang-switch",
-    "subFilters": []
+    "subFilters": [
+      {
+        "name": "ASUS",
+        "slug": "asus"
+      }
+    ]
   },
   {
     "id": "section-1771998108249",
     "title": "Tản nhiệt nước",
     "categorySlug": "tan-nhiet-nuoc",
-    "subFilters": []
+    "subFilters": [
+      {
+        "name": "NZXT",
+        "slug": "nzxt"
+      },
+      {
+        "name": "JONSBO",
+        "slug": "jonsbo"
+      },
+      {
+        "name": "DeepCool",
+        "slug": "deepcool"
+      },
+      {
+        "name": "Lian Li",
+        "slug": "lian-li"
+      },
+      {
+        "name": "ASUS",
+        "slug": "asus"
+      }
+    ]
   }
 ]

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
-import { fetchAdminCategories } from "@/app/actions/adminActions";
+import { fetchAdminCategories, fetchPopularBrandsByCategory } from "@/app/actions/adminActions";
 import {
     Save,
     Plus,
@@ -12,7 +12,9 @@ import {
     X,
     MoveUp,
     MoveDown,
-    Trash2
+    Trash2,
+    Sparkles,
+    Loader2
 } from "lucide-react";
 
 interface SubFilter {
@@ -45,6 +47,7 @@ export default function AdminHomepage() {
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [autoDetecting, setAutoDetecting] = useState<Record<number, boolean>>({});
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
@@ -143,6 +146,39 @@ export default function AdminHomepage() {
         setSections(newSections);
     };
 
+    const handleAutoDetectFilters = async (sectionIndex: number) => {
+        const section = sections[sectionIndex];
+        if (!section.categorySlug) {
+            setError(`Vui lòng chọn hoặc nhập "Slug Root Menu" cho khối #${sectionIndex + 1} trước khi nhận diện tự động.`);
+            return;
+        }
+
+        setAutoDetecting(prev => ({ ...prev, [sectionIndex]: true }));
+        setError("");
+
+        try {
+            const detectedBrands = await fetchPopularBrandsByCategory(section.categorySlug);
+
+            if (detectedBrands && detectedBrands.length > 0) {
+                const newSections = [...sections];
+                // Thay thế bộ lọc hiện tại bằng dữ liệu mới hoặc nối thêm tùy ý. Ở đây mình thay thế để làm mới hoàn toàn.
+                newSections[sectionIndex].subFilters = detectedBrands.map(b => ({
+                    name: b.name,
+                    slug: b.slug
+                }));
+                setSections(newSections);
+                setSuccess(`Đã tự động trích xuất ${detectedBrands.length} thương hiệu phổ biến nhất cho khối #${sectionIndex + 1}.`);
+                setTimeout(() => setSuccess(""), 3000);
+            } else {
+                setError(`Không tìm thấy thương hiệu/lọc phụ nào phù hợp cho slug "${section.categorySlug}".`);
+            }
+        } catch (err) {
+            setError(`Có lỗi xảy ra khi tự động quét danh mục ${section.categorySlug}.`);
+        } finally {
+            setAutoDetecting(prev => ({ ...prev, [sectionIndex]: false }));
+        }
+    };
+
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center p-20 text-slate-500 space-y-4">
@@ -216,9 +252,19 @@ export default function AdminHomepage() {
                                     <label className="block text-sm font-bold text-slate-800">Cấu hình Lọc phụ (Tab ngang bên phải)</label>
                                     <p className="text-xs text-slate-500 mt-0.5">Để trống nếu không muốn hiển thị tabs chuyển đổi.</p>
                                 </div>
-                                <button onClick={() => addSubFilter(index)} className="flex items-center gap-1.5 text-xs text-blue-700 font-bold hover:bg-blue-100 px-3 py-1.5 bg-blue-50 rounded-lg transition-colors border border-blue-200/50 shadow-sm">
-                                    <Plus className="w-3.5 h-3.5" /> Thêm Tab Lọc
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleAutoDetectFilters(index)}
+                                        disabled={autoDetecting[index]}
+                                        className="flex items-center gap-1.5 text-xs text-purple-700 font-bold hover:bg-purple-100 px-3 py-1.5 bg-purple-50 rounded-lg transition-colors border border-purple-200/50 shadow-sm disabled:opacity-50 disabled:cursor-wait"
+                                        title="AI sẽ tự động quét data hiện tại của danh mục để lấy ra 5 thương hiệu bán chạy nhất"
+                                    >
+                                        {autoDetecting[index] ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />} Tự động nhận diện
+                                    </button>
+                                    <button onClick={() => addSubFilter(index)} className="flex items-center gap-1.5 text-xs text-blue-700 font-bold hover:bg-blue-100 px-3 py-1.5 bg-blue-50 rounded-lg transition-colors border border-blue-200/50 shadow-sm">
+                                        <Plus className="w-3.5 h-3.5" /> Thêm Tab Lọc
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="space-y-3">
@@ -226,7 +272,7 @@ export default function AdminHomepage() {
                                     <div key={sIdx} className="flex gap-3 items-center bg-white p-2.5 border border-slate-200 rounded-xl shadow-sm hover:border-blue-200 transition-colors">
                                         <input
                                             type="text"
-                                            placeholder="Tên nút (VD: PC HACOM)"
+                                            placeholder="Tên nút (VD: PC LMC)"
                                             value={sub.name}
                                             onChange={(e) => updateSubFilter(index, sIdx, 'name', e.target.value)}
                                             className="flex-1 border border-transparent hover:border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 font-medium bg-slate-50 focus:bg-white transition-all focus:ring-2 focus:ring-blue-500/20"
@@ -234,7 +280,7 @@ export default function AdminHomepage() {
                                         <input
                                             type="text"
                                             list="category-slugs"
-                                            placeholder="Nối slug đuôi (VD: pc-hacom)"
+                                            placeholder="Nối slug đuôi (VD: pc-lmc)"
                                             value={sub.slug}
                                             onChange={(e) => updateSubFilter(index, sIdx, 'slug', e.target.value)}
                                             className="flex-1 border border-transparent hover:border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 bg-slate-50 focus:bg-white transition-all focus:ring-2 focus:ring-blue-500/20"

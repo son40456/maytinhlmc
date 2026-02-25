@@ -1,8 +1,5 @@
-import { ProductSlider } from "@/components/home/ProductSlider";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
-import { GET_FEATURED_PRODUCTS } from "@/lib/graphql/queries";
 import { HomeSection } from "@/components/home/HomeSection";
 import fs from "fs/promises";
 import path from "path";
@@ -51,25 +48,6 @@ export default async function Home() {
   // Read dynamic homepage config (via KV or fallback to fs)
   let sections = await getHomepageConfig();
 
-  // Fetch real data from WPGraphQL
-  const { data } = await wpgraphqlFetch<any>(GET_FEATURED_PRODUCTS, { first: 10 }, {
-    next: { revalidate: 3600 } // ISR: Revalidate mỗi giờ
-  });
-
-  const rawProducts = data?.products?.nodes;
-
-  // Ánh xạ dữ liệu trả về hoặc dùng fallback
-  const displayProducts = rawProducts && rawProducts.length > 0
-    ? rawProducts.map((p: any) => ({
-      id: p.id,
-      databaseId: p.databaseId,
-      name: p.name,
-      price: p.price || p.regularPrice || "Liên hệ",
-      imageUrl: p.image?.sourceUrl || "",
-      slug: p.slug,
-    }))
-    : dummyProducts;
-
   return (
     <div className="flex flex-col gap-10 pb-12">
       {/* Hero Banner */}
@@ -108,17 +86,6 @@ export default async function Home() {
         ))}
       </div>
 
-      {/* Featured Products */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mt-6 overflow-hidden">
-        <div className="flex justify-between items-center mb-6 border-b-2 border-red-600 pb-3">
-          <h2 className="text-xl md:text-2xl font-bold uppercase text-gray-900 tracking-wide z-10">Sản phẩm nổi bật</h2>
-          <Link href="/category/new" className="text-gray-700 hover:text-blue-600 border border-gray-200 hover:border-blue-500 font-bold text-sm bg-white px-4 py-1.5 rounded-full transition-all shadow-sm whitespace-nowrap z-10">
-            Xem tất cả &rarr;
-          </Link>
-        </div>
-
-        <ProductSlider products={displayProducts} />
-      </section>
     </div>
   );
 }
