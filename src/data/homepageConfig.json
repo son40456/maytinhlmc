@@ -2,11 +2,15 @@
   {
     "id": "section-1771836888677",
     "title": "Main",
-    "categorySlug": "mainboard-bo-mach-chu",
+    "categorySlug": "man-hinh-may-tinh",
     "subFilters": [
       {
         "name": "Main Gigabyte",
         "slug": "gigabyte"
+      },
+      {
+        "name": "Main MSI",
+        "slug": "msi"
       }
     ]
   },
@@ -20,6 +24,24 @@
     "id": "section-1771837092587",
     "title": "Ổ cứng",
     "categorySlug": "o-cung-hdd",
+    "subFilters": []
+  },
+  {
+    "id": "section-1771997965751",
+    "title": "Bàn phím chuột",
+    "categorySlug": "phim-chuot-ban-ghe-gear",
+    "subFilters": []
+  },
+  {
+    "id": "section-1771997987684",
+    "title": "Thiết bị mạng",
+    "categorySlug": "thiet-bi-chia-mang-switch",
+    "subFilters": []
+  },
+  {
+    "id": "section-1771998108249",
+    "title": "Tản nhiệt nước",
+    "categorySlug": "tan-nhiet-nuoc",
     "subFilters": []
   }
 ]

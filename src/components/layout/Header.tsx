@@ -102,6 +102,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
+        setShowLiveResults(false);
         if (searchQuery.trim()) {
             router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
         }

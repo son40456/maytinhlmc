@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
+import { fetchAdminCategories } from "@/app/actions/adminActions";
 
 interface SubFilter {
     name: string;
@@ -15,18 +16,27 @@ interface SectionConfig {
     subFilters: SubFilter[];
 }
 
+interface Category {
+    name: string;
+    slug: string;
+}
+
 export default function AdminHomepage() {
     const [sections, setSections] = useState<SectionConfig[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
     useEffect(() => {
-        fetch("/api/admin/homepage")
-            .then((res) => res.json())
-            .then((data) => {
-                setSections(data);
+        Promise.all([
+            fetch("/api/admin/homepage").then((res) => res.json()),
+            fetchAdminCategories()
+        ])
+            .then(([homepageData, categoriesData]) => {
+                setSections(homepageData);
+                setCategories(categoriesData.map((c: any) => ({ name: c.name, slug: c.slug })));
                 setLoading(false);
             })
             .catch((err) => {
@@ -153,9 +163,10 @@ export default function AdminHomepage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1">Slug Root Menu (VD: pc-gaming)</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">Slug Root Menu (chọn hoặc nhập)</label>
                                 <input
                                     type="text"
+                                    list="category-slugs"
                                     value={section.categorySlug}
                                     onChange={(e) => updateSection(index, 'categorySlug', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 transition-all"
@@ -183,6 +194,7 @@ export default function AdminHomepage() {
                                         />
                                         <input
                                             type="text"
+                                            list="category-slugs"
                                             placeholder="Nối slug đuôi (VD: pc-hacom)"
                                             value={sub.slug}
                                             onChange={(e) => updateSubFilter(index, sIdx, 'slug', e.target.value)}
@@ -201,6 +213,12 @@ export default function AdminHomepage() {
             <button onClick={addSection} className="mt-8 w-full py-4 border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl text-gray-500 font-bold text-lg hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm block text-center">
                 + Thêm Khối Sản Phẩm Mới
             </button>
+
+            <datalist id="category-slugs">
+                {categories.map(c => (
+                    <option key={c.slug} value={c.slug}>{c.name}</option>
+                ))}
+            </datalist>
         </div>
     );
 }
