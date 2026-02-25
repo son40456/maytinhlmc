@@ -1,0 +1,67 @@
+[
+  {
+    "id": "ram",
+    "name": "RAM - Bộ Nhớ Trong",
+    "slug": "ram-bo-nho-trong"
+  },
+  {
+    "id": "mainboard",
+    "name": "Mainboard - Bo Mạch Chủ",
+    "slug": "mainboard-bo-mach-chu"
+  },
+  {
+    "id": "cpu",
+    "name": "CPU - Bộ Vi Xử Lý",
+    "slug": "cpu-bo-vi-xu-ly"
+  },
+  {
+    "id": "vga",
+    "name": "VGA - Card Màn Hình",
+    "slug": "vga-card-man-hinh"
+  },
+  {
+    "id": "ssd",
+    "name": "Ổ Cứng SSD",
+    "slug": "o-cung-ssd"
+  },
+  {
+    "id": "hdd",
+    "name": "Ổ Cứng HDD",
+    "slug": "o-cung-hdd"
+  },
+  {
+    "id": "psu",
+    "name": "Nguồn - PSU",
+    "slug": "psu-nguon-may-tinh"
+  },
+  {
+    "id": "case",
+    "name": "Vỏ Case",
+    "slug": "case-vo-may-tinh"
+  },
+  {
+    "id": "cooler",
+    "name": "Tản Nhiệt",
+    "slug": "fan-led-tan-nhiet-may-tinh"
+  },
+  {
+    "id": "comp-1772013032092",
+    "name": "Tản nhiệt nước",
+    "slug": "tan-nhiet-nuoc"
+  },
+  {
+    "id": "monitor",
+    "name": "Màn Hình",
+    "slug": "man-hinh-may-tinh"
+  },
+  {
+    "id": "keyboard_mouse",
+    "name": "Phím Chuột",
+    "slug": "phim-chuot-ban-ghe-gear"
+  },
+  {
+    "id": "headphone",
+    "name": "Tai Nghe",
+    "slug": "loa-tai-nghe-mic-webcam"
+  }
+]

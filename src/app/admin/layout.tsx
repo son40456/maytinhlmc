@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Menu } from "lucide-react";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 
 export const metadata: Metadata = {
     title: "Admin Dashboard - LMC",
-    description: "Quản trị viên LMC",
+    description: "Hệ thống Quản trị LMC",
 };
 
 export default function AdminLayout({
@@ -11,20 +13,32 @@ export default function AdminLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex flex-col">
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-                <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                    <h1 className="text-xl font-bold text-gray-900">LMC Admin</h1>
-                    <nav className="flex items-center gap-4">
-                        <a href="/" className="text-sm font-medium text-blue-600 hover:text-blue-800">
-                            Quay lại Website
-                        </a>
-                    </nav>
-                </div>
-            </header>
-            <main className="flex-1 container mx-auto px-4 py-8">
-                {children}
-            </main>
+        <div className="min-h-screen bg-slate-50 flex font-sans">
+            <AdminSidebar />
+
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col md:ml-64 min-h-screen">
+                {/* Header (Top Nav) */}
+                <header className="h-16 bg-white border-b border-slate-200 sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 shadow-sm">
+                    <div className="flex items-center gap-4">
+                        <button className="md:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-lg">
+                            <Menu className="w-5 h-5" />
+                        </button>
+                        <h2 className="text-lg font-bold text-slate-800 hidden sm:block">Dashboard</h2>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200">
+                            <span className="text-blue-700 font-bold text-sm">AD</span>
+                        </div>
+                    </div>
+                </header>
+
+                {/* Page Content */}
+                <main className="flex-1 p-4 sm:p-6 lg:p-8">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

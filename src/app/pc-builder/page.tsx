@@ -10,9 +10,10 @@ import { toPng } from 'html-to-image';
 import download from 'downloadjs';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { getPcBuilderConfig } from '@/app/actions/configActions';
 
 export default function BuildPcPage() {
-    const { components, totalPrice, removeProduct, clearAll } = usePcBuilderStore();
+    const { components, totalPrice, removeProduct, clearAll, initComponents } = usePcBuilderStore();
     const addItem = useCartStore(state => state.addItem);
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -20,12 +21,21 @@ export default function BuildPcPage() {
 
     const summaryRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        // Fetch dynamic configuration from Redis/File
+        getPcBuilderConfig().then((config) => {
+            if (config && Object.keys(config).length > 0) {
+                initComponents(config);
+            }
+        });
+    }, [initComponents]);
+
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     };
 
     const getSelectedComponentsList = () => {
-        return Object.values(components).filter(c => c.product).map(comp => ({
+        return components.filter(c => c.product).map(comp => ({
             category: comp.name,
             name: comp.product?.name || '',
             price: comp.product?.price || comp.product?.regularPrice || '0',
@@ -185,7 +195,7 @@ export default function BuildPcPage() {
 
                             {/* Components */}
                             <div className="divide-y divide-gray-100">
-                                {Object.values(components).map((comp) => (
+                                {components.map((comp) => (
                                     <div key={comp.id} className="p-4 md:p-6 hover:bg-gray-50/50 transition-colors">
                                         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                                             {/* Category Name */}
@@ -293,11 +303,11 @@ export default function BuildPcPage() {
                             </div>
 
                             <div className="space-y-4 pt-4 border-t border-gray-100">
-                                {Object.values(components).filter(c => c.product).length === 0 ? (
+                                {components.filter(c => c.product).length === 0 ? (
                                     <p className="text-sm text-gray-400 italic">Chưa có linh kiện nào được chọn.</p>
                                 ) : (
                                     <div className="space-y-3">
-                                        {Object.values(components).filter(c => c.product).map(comp => (
+                                        {components.filter(c => c.product).map(comp => (
                                             <div key={comp.id} className="flex justify-between items-start text-sm">
                                                 <span className="text-gray-500 w-2/3 truncate pr-4">{comp.product?.name}</span>
                                                 <span className="text-gray-900 font-bold whitespace-nowrap">

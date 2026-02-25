@@ -3,6 +3,17 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { fetchAdminCategories } from "@/app/actions/adminActions";
+import {
+    Save,
+    Plus,
+    LayoutList,
+    MonitorDot,
+    GripVertical,
+    X,
+    MoveUp,
+    MoveDown,
+    Trash2
+} from "lucide-react";
 
 interface SubFilter {
     name: string;
@@ -16,14 +27,22 @@ interface SectionConfig {
     subFilters: SubFilter[];
 }
 
+interface ComponentCategory {
+    id: string;
+    name: string;
+    slug: string;
+}
+
 interface Category {
     name: string;
     slug: string;
 }
 
 export default function AdminHomepage() {
+
     const [sections, setSections] = useState<SectionConfig[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
@@ -51,15 +70,18 @@ export default function AdminHomepage() {
         setError("");
         setSuccess("");
         try {
-            const res = await fetch("/api/admin/homepage", {
+            // Save Homepage
+            const resHome = await fetch("/api/admin/homepage", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(sections)
             });
-            if (res.ok) {
-                setSuccess("Lưu cấu hình thành công!");
+
+            if (resHome.ok) {
+                setSuccess("Lưu cấu hình Trang chủ thành công!");
+                setTimeout(() => setSuccess(""), 3000);
             } else {
-                setError("Lưu cấu hình thất bại.");
+                setError("Có lỗi khi lưu cấu hình Trang chủ.");
             }
         } catch (err) {
             setError("Có lỗi xảy ra khi lưu.");
@@ -68,6 +90,7 @@ export default function AdminHomepage() {
         }
     };
 
+    // --- HOMEPAGE LOGIC ---
     const addSection = () => {
         setSections([...sections, {
             id: `section-${Date.now()}`,
@@ -120,35 +143,48 @@ export default function AdminHomepage() {
         setSections(newSections);
     };
 
-    if (loading) return <div>Đang tải...</div>;
+
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center p-20 text-slate-500 space-y-4">
+            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <p className="font-medium animate-pulse">Đang tải cấu hình hệ thống...</p>
+        </div>
+    );
 
     return (
-        <div className="max-w-4xl mx-auto pb-20">
-            <div className="flex justify-between items-center mb-6">
+        <div className="max-w-5xl mx-auto pb-20">
+            {/* Page Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Quản lý Trang chủ</h1>
-                    <p className="text-sm text-gray-500 mt-1">Sắp xếp Khối danh mục, sửa tên tiêu đề và thêm nút lọc phụ</p>
+                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Cấu Hình Trang Chủ</h1>
+                    <p className="text-sm text-slate-500 mt-1">Sắp xếp các khối Sản phẩm hiển thị ngoài Homepage.</p>
                 </div>
-                <Button onClick={handleSave} disabled={saving} className="bg-blue-600 text-white min-w-[120px]">
-                    {saving ? "Đang lưu..." : "Lưu cấu hình"}
+                <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-white min-w-[140px] shadow-sm flex items-center gap-2 rounded-xl transition-all">
+                    <Save className="w-4 h-4" />
+                    {saving ? "Đang xử lý..." : "Lưu Thay Đổi"}
                 </Button>
             </div>
 
             {error && <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg font-medium">{error}</div>}
             {success && <div className="p-4 mb-4 text-green-700 bg-green-100 rounded-lg font-medium">{success}</div>}
 
-            <div className="space-y-6">
+            {/* TAB CONTENT: HOMEPAGE */}
+            <div className="space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300">
                 {sections.map((section, index) => (
-                    <div key={section.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <div className="flex justify-between items-start mb-4">
-                            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm">{index + 1}</span>
-                                Khối Sản Phẩm
+                    <div key={section.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group hover:border-blue-200 transition-colors">
+                        <div className="flex justify-between items-start mb-6">
+                            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm border border-blue-100 shadow-sm cursor-grab">
+                                    <GripVertical className="w-4 h-4 opacity-50 absolute" />
+                                    <span className="relative z-10 bg-blue-50/80 px-1">{index + 1}</span>
+                                </div>
+                                Khối Sản Phẩm Homepage
                             </h2>
-                            <div className="flex gap-2">
-                                <button onClick={() => moveSection(index, 'up')} disabled={index === 0} className="p-1 px-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold">↑ Lên</button>
-                                <button onClick={() => moveSection(index, 'down')} disabled={index === sections.length - 1} className="p-1 px-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 disabled:opacity-30 transition-all font-bold">↓ Xuống</button>
-                                <button onClick={() => removeSection(index)} className="p-1 px-3 bg-red-50 text-red-600 rounded hover:bg-red-100 uppercase text-xs font-bold transition-all">Xoá</button>
+                            <div className="flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => moveSection(index, 'up')} disabled={index === 0} className="p-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-blue-600 disabled:opacity-30 transition-all bg-white" title="Di chuyển lên"><MoveUp className="w-4 h-4" /></button>
+                                <button onClick={() => moveSection(index, 'down')} disabled={index === sections.length - 1} className="p-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-blue-600 disabled:opacity-30 transition-all bg-white" title="Di chuyển xuống"><MoveDown className="w-4 h-4" /></button>
+                                <div className="w-px h-8 bg-slate-200 mx-1"></div>
+                                <button onClick={() => removeSection(index)} className="p-2 bg-red-50/50 text-red-500 border border-red-100 rounded-lg hover:bg-red-100 hover:text-red-700 transition-all" title="Xoá khối này"><Trash2 className="w-4 h-4" /></button>
                             </div>
                         </div>
 
@@ -174,23 +210,26 @@ export default function AdminHomepage() {
                             </div>
                         </div>
 
-                        <div className="border-t border-gray-100 pt-4 mt-4 bg-gray-50 p-4 rounded-lg">
-                            <div className="flex justify-between items-center mb-3">
-                                <label className="block text-sm font-semibold text-gray-700">Sub-Filters (Các nút lọc góc phải header)</label>
-                                <button onClick={() => addSubFilter(index)} className="text-xs text-blue-600 font-bold hover:underline px-2 py-1 bg-blue-50 rounded">
-                                    + Thêm Lọc phụ
+                        <div className="border-t border-slate-100 pt-5 mt-5 bg-slate-50 -mx-6 -mb-6 p-6 rounded-b-2xl">
+                            <div className="flex justify-between items-center mb-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-800">Cấu hình Lọc phụ (Tab ngang bên phải)</label>
+                                    <p className="text-xs text-slate-500 mt-0.5">Để trống nếu không muốn hiển thị tabs chuyển đổi.</p>
+                                </div>
+                                <button onClick={() => addSubFilter(index)} className="flex items-center gap-1.5 text-xs text-blue-700 font-bold hover:bg-blue-100 px-3 py-1.5 bg-blue-50 rounded-lg transition-colors border border-blue-200/50 shadow-sm">
+                                    <Plus className="w-3.5 h-3.5" /> Thêm Tab Lọc
                                 </button>
                             </div>
 
                             <div className="space-y-3">
                                 {section.subFilters.map((sub, sIdx) => (
-                                    <div key={sIdx} className="flex gap-2 items-center bg-white p-2 border border-gray-200 rounded">
+                                    <div key={sIdx} className="flex gap-3 items-center bg-white p-2.5 border border-slate-200 rounded-xl shadow-sm hover:border-blue-200 transition-colors">
                                         <input
                                             type="text"
                                             placeholder="Tên nút (VD: PC HACOM)"
                                             value={sub.name}
                                             onChange={(e) => updateSubFilter(index, sIdx, 'name', e.target.value)}
-                                            className="flex-1 border border-transparent hover:border-gray-200 rounded px-2 py-1.5 text-sm outline-none focus:border-blue-500 font-medium bg-gray-50 focus:bg-white transition-all"
+                                            className="flex-1 border border-transparent hover:border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 font-medium bg-slate-50 focus:bg-white transition-all focus:ring-2 focus:ring-blue-500/20"
                                         />
                                         <input
                                             type="text"
@@ -198,22 +237,21 @@ export default function AdminHomepage() {
                                             placeholder="Nối slug đuôi (VD: pc-hacom)"
                                             value={sub.slug}
                                             onChange={(e) => updateSubFilter(index, sIdx, 'slug', e.target.value)}
-                                            className="flex-1 border border-transparent hover:border-gray-200 rounded px-2 py-1.5 text-sm outline-none focus:border-blue-500 bg-gray-50 focus:bg-white transition-all"
+                                            className="flex-1 border border-transparent hover:border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 bg-slate-50 focus:bg-white transition-all focus:ring-2 focus:ring-blue-500/20"
                                         />
-                                        <button onClick={() => removeSubFilter(index, sIdx)} className="text-red-400 hover:text-red-600 font-bold px-3 py-1 bg-red-50 hover:bg-red-100 rounded transition-all">&times;</button>
+                                        <button onClick={() => removeSubFilter(index, sIdx)} className="text-red-400 hover:text-red-700 p-2 bg-slate-50 hover:bg-red-50 rounded-lg transition-all" title="Xoá Tab Lọc Này"><X className="w-4 h-4" /></button>
                                     </div>
                                 ))}
-                                {section.subFilters.length === 0 && <p className="text-xs text-gray-500 italic pb-2">Chưa có sub-filter nào. Hệ thống sẽ bỏ qua phần Header phụ nếu trống.</p>}
+                                {section.subFilters.length === 0 && <p className="text-xs text-slate-400 italic pb-2 text-center border-2 border-dashed border-slate-200 rounded-xl py-4 bg-white/50">Chưa có sub-filter nào. Hệ thống sẽ bỏ qua phần Header phụ.</p>}
                             </div>
                         </div>
                     </div>
                 ))}
+
+                <button onClick={addSection} className="mt-8 w-full py-6 border-2 border-dashed border-slate-300 bg-slate-50/50 rounded-2xl text-slate-500 font-bold text-lg hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all flex items-center justify-center gap-3">
+                    <Plus className="w-6 h-6" /> Thêm Khối Sản Phẩm Mới
+                </button>
             </div>
-
-            <button onClick={addSection} className="mt-8 w-full py-4 border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl text-gray-500 font-bold text-lg hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm block text-center">
-                + Thêm Khối Sản Phẩm Mới
-            </button>
-
             <datalist id="category-slugs">
                 {categories.map(c => (
                     <option key={c.slug} value={c.slug}>{c.name}</option>
