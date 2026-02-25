@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Header with Live Search Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3b82f6", // Adjusted to a modern blue as requested in the description
+                        "background-light": "#f7f7f7",
+                        "background-dark": "#191919",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Main Header Container -->
+<header class="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-10 py-4">
+<div class="flex items-center justify-between gap-8">
+<!-- Logo Section -->
+<div class="flex items-center gap-2 flex-shrink-0">
+<div class="size-9 bg-primary flex items-center justify-center rounded-lg text-white">
+<span class="material-symbols-outlined text-2xl">bolt</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-extrabold leading-tight tracking-tight">LUXER</h2>
+</div>
+<!-- Centered Prominent Search Bar Section -->
+<div class="relative flex-1 max-w-2xl">
+<div class="group relative flex w-full items-stretch rounded-xl overflow-hidden border-2 border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 transition-all focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10">
+<div class="flex items-center justify-center pl-4 text-slate-400">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full border-none bg-transparent py-3 px-3 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-0 text-base" placeholder="Search for premium products, brands, and articles..." type="text" value="running shoes"/>
+<div class="flex items-center pr-2">
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-400 transition-colors">
+<span class="material-symbols-outlined text-xl">cancel</span>
+</button>
+</div>
+</div>
+<!-- Live Search Dropdown -->
+<div class="absolute top-full left-0 mt-2 w-full bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+<div class="max-h-[70vh] overflow-y-auto custom-scrollbar">
+<!-- Suggestions Section -->
+<div class="p-4 border-b border-slate-100 dark:border-slate-800">
+<h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-2">Suggestions</h4>
+<div class="flex flex-wrap gap-2 px-2">
+<a class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                                            trail running shoes
+                                        </a>
+<a class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                                            men's road runners
+                                        </a>
+<a class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                                            waterproof sneakers
+                                        </a>
+</div>
+</div>
+<!-- Products Section -->
+<div class="p-4 border-b border-slate-100 dark:border-slate-800">
+<h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-2">Top Products</h4>
+<div class="grid grid-cols-1 gap-2">
+<a class="flex items-center gap-4 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group" href="#">
+<div class="w-16 h-16 rounded-md bg-slate-100 overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Red running shoe in dynamic pose" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi6xy41vqvjRT-bO4GBcf-ISIxL2TTWyXqr7Y-1fI6dVKtGrw5TccvknsZMdQBWT76FmrtfeXzSpEshIkTe-EJGrwfxK1d5sl1mh2DhMF7xzFmpZwinMcN7qOa--1-vrBhfc8WdR9m82fwQkaDgEtGcFUpeadR3WP5zGmSNTSdxFyLPcoHh0lS3FevoKKHmedywNLe4QZCfVBjn5lEsdIsHHL_C3Q1NRUZOnNEZtJvlbczETqLMEjjjFgCrvahrCSpW15zPlAo9has"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-slate-900 dark:text-slate-100 font-semibold text-sm truncate group-hover:text-primary">Apex Velocity Runner 2.0</h3>
+<p class="text-slate-500 text-xs mt-0.5">Performance • Lightweight</p>
+<p class="text-slate-900 dark:text-slate-100 font-bold text-sm mt-1">$129.00</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</a>
+<a class="flex items-center gap-4 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group" href="#">
+<div class="w-16 h-16 rounded-md bg-slate-100 overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Neon green athletic shoe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRzg_7DQOQCZqyl-a_9gxwn1OpUzUVGU-MOdoI_ScP1iFhRsk4z1lF0dkwO-6y-WYOzhnSMPgSFUUBvcAXD3-9yDsf-6cLhLQc-x5MJwolXwnR6OzmU7gBQ5OHr6YckHU6UZDi_RjZa28AvGle52NmvvPKcMUySLSsRWqWEj1IXc26kGIiyWIA-kpRsM4j9ekcEOhaeHgDxmEBwXp0v3eWtLu04uZapYVnzRFEQEInr_B_i7fqbyxbu3XQwr1IWO0or_JcqGN7fPtB"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-slate-900 dark:text-slate-100 font-semibold text-sm truncate group-hover:text-primary">Neon Sprint Pro</h3>
+<p class="text-slate-500 text-xs mt-0.5">Pro Series • Competition</p>
+<p class="text-slate-900 dark:text-slate-100 font-bold text-sm mt-1">$155.00</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</a>
+<a class="flex items-center gap-4 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group" href="#">
+<div class="w-16 h-16 rounded-md bg-slate-100 overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Stylish white and pink sneaker" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxBNfZY0OUqczxN-JkMV_dJS8Rr_dkcW4T6zWQZlcUGELQlV3Z6Pg8mF-srg9v4CP832XVsUyFbib-joA7fKmNIcL5SMPpAosTUVTfi8X3vcI2lxh06WQBXJojErrgAE-8tnW_o7fJv0oEpC6AsXFaGM9w8pD5QjKk7dqgjk2Cd6cUkQa0qE_DW0qtbvGqEqRjRnjRuPjdqQRxgZdr-2nFlpFyMHuRAFH4LKbBjZ8GjnGIV44UWQCY5-BYOmjhO53sNaFPurWkCp1g"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-slate-900 dark:text-slate-100 font-semibold text-sm truncate group-hover:text-primary">CloudWalk Street</h3>
+<p class="text-slate-500 text-xs mt-0.5">Lifestyle • Daily Comfort</p>
+<p class="text-slate-900 dark:text-slate-100 font-bold text-sm mt-1">$89.99</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Articles Section -->
+<div class="p-4 bg-slate-50 dark:bg-slate-800/50">
+<h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-2">From the Blog</h4>
+<div class="grid grid-cols-2 gap-4 px-2">
+<a class="group" href="#">
+<div class="aspect-video w-full rounded-lg bg-slate-200 overflow-hidden mb-2">
+<img class="w-full h-full object-cover transition-transform group-hover:scale-105" data-alt="Person running on a scenic trail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSZgkAJiQ17UieL3YTHCNkczvfl-ydiw6MmujhGNfbUr86Gj7HcwA2g-tIhdWWdSJjCzVUFBulSGsbcRzZhvUN1XrB7rQRDbOtGKKs8xU4ueTyigu77WcPVzum8pNHtNzEbURXNUWF7l-QNPLhBkfQkkLig5hwE-6-Yi5c56jI6j_VICro9cdapTtrqotRQ93xaaIFzT3gjbQH7EvL0y_tNStGUs9apzQUVwt9WiT1w2Wj6LvDcw9YGDoAeEgXNH2U-tH_coI2sR5W"/>
+</div>
+<h5 class="text-xs font-bold text-slate-900 dark:text-slate-100 line-clamp-2 leading-snug group-hover:text-primary transition-colors">How to Choose the Right Running Shoes for Marathons</h5>
+</a>
+<a class="group" href="#">
+<div class="aspect-video w-full rounded-lg bg-slate-200 overflow-hidden mb-2">
+<img class="w-full h-full object-cover transition-transform group-hover:scale-105" data-alt="Fitness equipment in a gym" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmBERJvXFWskAYP42AnRq8yhwtWfzqThAdL_E4T3v5zmtHOYw2B8lpphFFXQ2YlQzxDOBQon8ERzk6zKJNRdmP7PSNeU5f_nX4MHjmBeCqanITul3akPEBs5bLyx9Zahk-0xLafzBH3j3AePmMDGusTSkszwcDDmOZax6t-mJUw6Adz5rAK9dmGUHMpyssjRXLph2qT_I2PbXBdfaEY109ybSPb6prn2kiXW7WWD0VElrnXBNnd7F-vf-o9dTvg8qJ2ZIsj6HPpJ0V"/>
+</div>
+<h5 class="text-xs font-bold text-slate-900 dark:text-slate-100 line-clamp-2 leading-snug group-hover:text-primary transition-colors">10 Tips for Better Running Form and Speed</h5>
+</a>
+</div>
+</div>
+<div class="p-3 bg-primary text-white text-center text-sm font-bold cursor-pointer hover:bg-blue-600 transition-colors">
+                                    View all 124 results for "running shoes"
+                                </div>
+</div>
+</div>
+</div>
+<!-- Navigation and Icons -->
+<div class="flex items-center gap-6">
+<nav class="hidden xl:flex items-center gap-7">
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-slate-900 dark:text-slate-100 text-sm font-bold border-b-2 border-primary py-1" href="#">Shop</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">About</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Contact</a>
+</nav>
+<div class="h-6 w-px bg-slate-200 dark:bg-slate-800 hidden lg:block"></div>
+<div class="flex items-center gap-1.5">
+<button class="p-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Account">
+<span class="material-symbols-outlined">person</span>
+</button>
+<button class="p-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative" title="Wishlist">
+<span class="material-symbols-outlined">favorite</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+<button class="flex items-center gap-2 p-2 bg-primary text-white rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all ml-2" title="Shopping Cart">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-xs font-bold pr-1">3</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Dummy Content to show header scroll/state -->
+<main class="flex-1 max-w-[1440px] mx-auto w-full px-10 py-12">
+<div class="flex flex-col gap-8">
+<div class="h-64 rounded-2xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700">
+<div class="text-center">
+<h1 class="text-3xl font-bold text-slate-800 dark:text-slate-200">Main Content Area</h1>
+<p class="text-slate-500 mt-2">The live search dropdown is currently active to demonstrate the UI variant.</p>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-6">
+<div class="h-48 rounded-xl bg-slate-100 dark:bg-slate-800/50"></div>
+<div class="h-48 rounded-xl bg-slate-100 dark:bg-slate-800/50"></div>
+<div class="h-48 rounded-xl bg-slate-100 dark:bg-slate-800/50"></div>
+<div class="h-48 rounded-xl bg-slate-100 dark:bg-slate-800/50"></div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

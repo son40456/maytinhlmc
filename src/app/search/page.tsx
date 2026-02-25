@@ -1,18 +1,24 @@
-import { wpgraphqlFetch } from '@/lib/graphql/fetcher';
-import { SEARCH_PRODUCTS } from '@/lib/graphql/queries';
 import { ProductCard } from '@/components/ui/ProductCard';
+import { searchProductsLive } from '@/app/actions/searchActions';
 
-export const metadata = {
-    title: 'Kết quả tìm kiếm | StoreNext',
-    description: 'Tìm kiếm sản phẩm tốt nhất tại StoreNext.',
-};
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+    const params = await searchParams;
+    const q = params?.q || '';
+    return {
+        title: `Kết quả tìm kiếm cho "${q}" | LMC`,
+        description: 'Tìm kiếm sản phẩm tốt nhất tại LMC.',
+    };
+}
 
 export default async function SearchPage({
     searchParams,
 }: {
-    searchParams: { q?: string };
+    searchParams: Promise<{ q?: string }>;
 }) {
-    const query = searchParams.q || '';
+    const params = await searchParams;
+    const query = params?.q || '';
 
     if (!query) {
         return (
@@ -23,9 +29,8 @@ export default async function SearchPage({
         );
     }
 
-    // Lấy dữ liệu tìm kiếm từ API WPGraphQL
-    const { data } = await wpgraphqlFetch<any>(SEARCH_PRODUCTS, { search: query, first: 20 });
-    const products = data?.products?.nodes || [];
+    // Fetch up to 24 products for the search page from Algolia
+    const products = await searchProductsLive(query, 24);
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[60vh]">
@@ -48,10 +53,10 @@ export default async function SearchPage({
                             name={product.name}
                             price={product.price || product.regularPrice || '0₫'}
                             imageUrl={product.image?.sourceUrl || ''}
-                            slug={product.slug}
-                            sku={product.sku}
-                            regularPrice={product.regularPrice}
-                            salePrice={product.salePrice}
+                            slug={product.slug || ''}
+                            sku={product.sku || ''}
+                            regularPrice={product.regularPrice || ''}
+                            salePrice={product.salePrice || ''}
                         />
                     ))}
                 </div>
