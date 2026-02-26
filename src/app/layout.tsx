@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { GlobalModalProvider } from "@/components/common/GlobalModalProvider";
+import { CompareBar } from "@/components/common/CompareBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default async function RootLayout({
             </GlobalModalProvider>
           </main>
           <Footer />
+          <CompareBar />
         </div>
       </body>
     </html>

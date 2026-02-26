@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCartStore } from '@/store/useCartStore';
 import { useRelatedProductsModalStore } from '@/store/useRelatedProductsModalStore';
+import { useCompareStore } from '@/store/useCompareStore';
 import { fetchRelatedProducts } from '@/app/actions/productActions';
 import { Loader2 } from 'lucide-react';
 
@@ -24,6 +25,10 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, price, imageUrl, slug, sku, regularPrice, salePrice, stockStatus = 'IN_STOCK' }) => {
     const [isPending, startTransition] = React.useTransition();
     const addItem = useCartStore(state => state.addItem);
+    const addCompare = useCompareStore(state => state.addItem);
+    const removeCompare = useCompareStore(state => state.removeItem);
+    const isInCompare = useCompareStore(state => state.hasItem(id));
+    const [compareFull, setCompareFull] = React.useState(false);
 
     const handleAddToCart = () => {
         // Parse simple price logic (strip spaces/VND symbol for a raw number if possible, or just default to 0 and handle real parsing later if complex)
@@ -118,9 +123,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                 </div>
 
                 <div className="flex items-center justify-between">
-                    <button className="flex items-center gap-1 text-[11px] text-slate-500 hover:text-blue-600 transition-colors">
-                        <svg className="w-[16px] h-[16px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        So sánh
+                    <button
+                        onClick={() => {
+                            if (isInCompare) {
+                                removeCompare(id);
+                                setCompareFull(false);
+                            } else {
+                                const ok = addCompare({ id, databaseId, name, price, imageUrl, slug, sku });
+                                if (!ok) {
+                                    setCompareFull(true);
+                                    setTimeout(() => setCompareFull(false), 2000);
+                                }
+                            }
+                        }}
+                        className={`flex items-center gap-1 text-[11px] transition-colors ${isInCompare
+                                ? 'text-blue-600 font-bold'
+                                : compareFull
+                                    ? 'text-red-500 font-bold'
+                                    : 'text-slate-500 hover:text-blue-600'
+                            }`}
+                    >
+                        <svg className="w-[16px] h-[16px]" fill={isInCompare ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {isInCompare ? '✓ Đã chọn' : compareFull ? 'Tối đa 4 SP!' : 'So sánh'}
                     </button>
                     <button
                         onClick={handleAddToCart}
