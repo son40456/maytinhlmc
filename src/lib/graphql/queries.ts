@@ -567,3 +567,23 @@ export const GET_RANDOM_PRODUCTS = `
     }
   }
 `;
+
+export const GET_RECENT_POSTS = `
+  query GetRecentPosts($first: Int = 3) {
+    posts(first: $first) {
+      nodes {
+        id
+        title
+        slug
+        date
+        excerpt
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+      }
+    }
+  }
+`;

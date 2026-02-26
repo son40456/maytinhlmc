@@ -1,6 +1,8 @@
 "use server";
 
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
+import { revalidatePath } from "next/cache";
+import { Redis } from '@upstash/redis';
 
 const GET_ALL_CATEGORIES_FOR_ADMIN = `
   query GetAllCategoriesForAdmin {
@@ -100,5 +102,25 @@ export async function fetchPopularBrandsByCategory(categorySlug: string) {
   } catch (e) {
     console.error("Error fetching popular brands:", e);
     return [];
+  }
+}
+
+export async function saveHardwareGridConfig(config: any) {
+  const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+  const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+
+  if (!kvUrl || !kvToken) {
+    throw new Error('KV credentials are not configured');
+  }
+
+  try {
+    const redis = new Redis({ url: kvUrl, token: kvToken });
+    await redis.set('hardwareGridConfig', JSON.stringify(config));
+
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error('Error saving hardware grid config:', error);
+    return { success: false, error: 'Failed to save configuration.' };
   }
 }

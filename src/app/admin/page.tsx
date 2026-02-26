@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
-import { fetchAdminCategories, fetchPopularBrandsByCategory } from "@/app/actions/adminActions";
+import { fetchAdminCategories, fetchPopularBrandsByCategory, saveHardwareGridConfig } from "@/app/actions/adminActions";
+import { getHardwareGridConfig, HardwareGridConfig, HardwareGridCategory } from "@/app/actions/configActions";
 import {
     Save,
     Plus,
@@ -44,6 +45,7 @@ export default function AdminHomepage() {
 
     const [sections, setSections] = useState<SectionConfig[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [hardwareGrid, setHardwareGrid] = useState<HardwareGridConfig | null>(null);
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -54,11 +56,13 @@ export default function AdminHomepage() {
     useEffect(() => {
         Promise.all([
             fetch("/api/admin/homepage").then((res) => res.json()),
-            fetchAdminCategories()
+            fetchAdminCategories(),
+            getHardwareGridConfig()
         ])
-            .then(([homepageData, categoriesData]) => {
+            .then(([homepageData, categoriesData, hardwareData]) => {
                 setSections(homepageData);
                 setCategories(categoriesData.map((c: any) => ({ name: c.name, slug: c.slug })));
+                setHardwareGrid(hardwareData);
                 setLoading(false);
             })
             .catch((err) => {
@@ -80,8 +84,15 @@ export default function AdminHomepage() {
                 body: JSON.stringify(sections)
             });
 
-            if (resHome.ok) {
-                setSuccess("Lưu cấu hình Trang chủ thành công!");
+            // Save Hardware Grid
+            let hardwareSuccess = true;
+            if (hardwareGrid) {
+                const hwRes = await saveHardwareGridConfig(hardwareGrid);
+                hardwareSuccess = !!hwRes.success;
+            }
+
+            if (resHome.ok && hardwareSuccess) {
+                setSuccess("Lưu cấu hình thành công!");
                 setTimeout(() => setSuccess(""), 3000);
             } else {
                 setError("Có lỗi khi lưu cấu hình Trang chủ.");
@@ -179,6 +190,42 @@ export default function AdminHomepage() {
         }
     };
 
+    // --- HARDWARE GRID LOGIC ---
+    const addHardwareCategory = () => {
+        if (!hardwareGrid) return;
+        setHardwareGrid({
+            ...hardwareGrid,
+            categories: [
+                ...hardwareGrid.categories,
+                { id: `hc-${Date.now()}`, title: "Tiêu đề mới", subtitle: "Mô tả phụ", image: "", level: "Level", pulse: false }
+            ]
+        });
+    };
+
+    const updateHardwareCategory = (index: number, field: keyof HardwareGridCategory, value: any) => {
+        if (!hardwareGrid) return;
+        const newCats = [...hardwareGrid.categories];
+        newCats[index] = { ...newCats[index], [field]: value };
+        setHardwareGrid({ ...hardwareGrid, categories: newCats });
+    };
+
+    const removeHardwareCategory = (index: number) => {
+        if (!hardwareGrid) return;
+        const newCats = hardwareGrid.categories.filter((_, i) => i !== index);
+        setHardwareGrid({ ...hardwareGrid, categories: newCats });
+    };
+
+    const moveHardwareCategory = (index: number, direction: 'up' | 'down') => {
+        if (!hardwareGrid) return;
+        const newCats = [...hardwareGrid.categories];
+        if (direction === 'up' && index > 0) {
+            [newCats[index - 1], newCats[index]] = [newCats[index], newCats[index - 1]];
+        } else if (direction === 'down' && index < newCats.length - 1) {
+            [newCats[index], newCats[index + 1]] = [newCats[index + 1], newCats[index]];
+        }
+        setHardwareGrid({ ...hardwareGrid, categories: newCats });
+    };
+
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center p-20 text-slate-500 space-y-4">
@@ -204,8 +251,74 @@ export default function AdminHomepage() {
             {error && <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg font-medium">{error}</div>}
             {success && <div className="p-4 mb-4 text-green-700 bg-green-100 rounded-lg font-medium">{success}</div>}
 
+            {/* TAB CONTENT: HARDWARE GRID */}
+            {hardwareGrid && (
+                <div className="mb-10 animate-in slide-in-from-bottom-2 fade-in duration-300">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group hover:border-blue-200 transition-colors">
+                        <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-sm">
+                                    <MonitorDot className="w-5 h-5" />
+                                </div>
+                                Danh mục Thiết bị Nổi bật
+                            </h2>
+                            <div className="flex items-center gap-3">
+                                <span className="text-sm font-semibold text-slate-600">Trạng thái:</span>
+                                <button
+                                    onClick={() => setHardwareGrid({ ...hardwareGrid, isEnabled: !hardwareGrid.isEnabled })}
+                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${hardwareGrid.isEnabled ? 'bg-blue-600' : 'bg-slate-300'}`}
+                                >
+                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${hardwareGrid.isEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {hardwareGrid.isEnabled ? (
+                            <div className="space-y-4">
+                                {hardwareGrid.categories.map((cat, idx) => (
+                                    <div key={cat.id || idx} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                        <div className="md:col-span-3 space-y-3">
+                                            <input type="text" value={cat.title} onChange={(e) => updateHardwareCategory(idx, 'title', e.target.value)} placeholder="Tiêu đề chính" className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 font-bold" />
+                                            <input type="text" value={cat.subtitle} onChange={(e) => updateHardwareCategory(idx, 'subtitle', e.target.value)} placeholder="Mô tả phụ" className="w-full border-gray-300 rounded-lg px-3 py-2 text-xs outline-none focus:border-blue-500" />
+                                        </div>
+                                        <div className="md:col-span-5">
+                                            <input type="text" value={cat.image} onChange={(e) => updateHardwareCategory(idx, 'image', e.target.value)} placeholder="Link Hình Ảnh (URL)" className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 mb-2" />
+                                            {cat.image && <div className="h-16 w-32 bg-white rounded border border-slate-200 flex items-center justify-center p-1"><img src={cat.image} className="max-h-full max-w-full object-contain" alt="" /></div>}
+                                        </div>
+                                        <div className="md:col-span-3 space-y-3">
+                                            <input type="text" value={cat.level} onChange={(e) => updateHardwareCategory(idx, 'level', e.target.value)} placeholder="Cấp độ (VD: Level: Extreme)" className="w-full border-gray-300 rounded-lg px-3 py-2 text-xs outline-none focus:border-blue-500" />
+                                            <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-700">
+                                                <input type="checkbox" checked={cat.pulse} onChange={(e) => updateHardwareCategory(idx, 'pulse', e.target.checked)} className="rounded text-blue-600 w-4 h-4 cursor-pointer" />
+                                                Nháy hiệu ứng đèn?
+                                            </label>
+                                        </div>
+                                        <div className="md:col-span-1 flex flex-row md:flex-col gap-2 justify-end self-stretch">
+                                            <button onClick={() => moveHardwareCategory(idx, 'up')} disabled={idx === 0} className="p-1.5 text-slate-400 hover:text-blue-600 disabled:opacity-30 bg-white border border-slate-200 rounded flex-1"><MoveUp className="w-4 h-4 mx-auto" /></button>
+                                            <button onClick={() => moveHardwareCategory(idx, 'down')} disabled={idx === hardwareGrid.categories.length - 1} className="p-1.5 text-slate-400 hover:text-blue-600 disabled:opacity-30 bg-white border border-slate-200 rounded flex-1"><MoveDown className="w-4 h-4 mx-auto" /></button>
+                                            <button onClick={() => removeHardwareCategory(idx)} className="p-1.5 text-red-400 hover:text-red-600 bg-white border border-red-100 rounded flex-1"><Trash2 className="w-4 h-4 mx-auto" /></button>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                <button onClick={addHardwareCategory} className="w-full py-4 border border-dashed border-blue-300 bg-blue-50/50 rounded-xl text-blue-600 font-bold text-sm hover:bg-blue-100 transition-colors flex items-center justify-center gap-2">
+                                    <Plus className="w-4 h-4" /> Thêm Danh Mục Thiết Bị
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="text-center py-6 text-slate-500 font-medium">
+                                Khối danh mục đang bị tắt. Bật công tắc phía trên để chỉnh sửa và hiển thị Khối này ở trang chủ.
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
             {/* TAB CONTENT: HOMEPAGE */}
             <div className="space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300">
+                <div className="flex items-center gap-3 mb-4 mt-8">
+                    <LayoutList className="w-6 h-6 text-slate-800" />
+                    <h2 className="text-2xl font-bold text-slate-800">Cấu hình Khối Sản Phẩm Thường</h2>
+                </div>
                 {sections.map((section, index) => (
                     <div key={section.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group hover:border-blue-200 transition-colors">
                         <div className="flex justify-between items-start mb-6">

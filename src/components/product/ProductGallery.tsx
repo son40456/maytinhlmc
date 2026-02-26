@@ -13,11 +13,21 @@ interface ProductGalleryProps {
         altText?: string;
     }>;
     name: string;
+    salePrice?: string;
+    regularPrice?: string;
 }
 
-export function ProductGallery({ mainImage, galleryNodes, name }: ProductGalleryProps) {
+export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regularPrice }: ProductGalleryProps) {
     const allImages = [mainImage, ...galleryNodes].filter(img => img?.sourceUrl);
     const [activeImage, setActiveImage] = useState(allImages[0]);
+
+    // Calculate Discount Percent
+    const numericRegular = regularPrice ? parseInt(regularPrice.replace(/\D/g, ''), 10) : 0;
+    const numericSale = salePrice ? parseInt(salePrice.replace(/\D/g, ''), 10) : 0;
+    const discountPercent = numericRegular > numericSale && numericSale > 0
+        ? Math.round(((numericRegular - numericSale) / numericRegular) * 100)
+        : 0;
+
 
     if (!activeImage?.sourceUrl) {
         return (
@@ -31,6 +41,14 @@ export function ProductGallery({ mainImage, galleryNodes, name }: ProductGallery
         <div className="space-y-4">
             {/* Main Image */}
             <div className="relative aspect-square overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm group">
+                {discountPercent > 0 && (
+                    <div className="absolute top-4 left-4 z-10 pointer-events-none">
+                        <span className="bg-red-600 text-white text-sm font-bold px-2 py-1 rounded-md shadow-sm">
+                            -{discountPercent}%
+                        </span>
+                    </div>
+                )}
+
                 <Image
                     src={activeImage.sourceUrl}
                     alt={activeImage.altText || name}
@@ -49,8 +67,8 @@ export function ProductGallery({ mainImage, galleryNodes, name }: ProductGallery
                             key={idx}
                             onClick={() => setActiveImage(img)}
                             className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all duration-200 bg-white ${activeImage.sourceUrl === img.sourceUrl
-                                    ? "border-blue-600 ring-2 ring-blue-100"
-                                    : "border-gray-100 hover:border-blue-300"
+                                ? "border-blue-600 ring-2 ring-blue-100/50 scale-[1.02]"
+                                : "border-transparent border-gray-100 hover:border-blue-300 hover:shadow-sm"
                                 }`}
                         >
                             <Image

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gamer's Hub - High Performance Hardware (Light Edition)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&amp;family=Rajdhani:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0066FF", // Professional Electric Blue
+                        accent: "#0044CC",
+                        "gamer-bg": "#f4f4f5", // Zinc-50/100ish
+                        "gamer-card": "#ffffff",
+                        "gamer-border": "#e4e4e7",
+                    },
+                    fontFamily: {
+                        display: ["Orbitron", "sans-serif"],
+                        body: ["Rajdhani", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --accent-glow: rgba(0, 102, 255, 0.15);
+        }
+        body {
+            background-color: #f8f9fa;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 102, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 102, 255, 0.03) 0%, transparent 50%);
+        }
+        .gamer-card {
+            clip-path: polygon(20px 0%, 100% 0%, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0% 100%, 0% 20px);
+            @apply relative overflow-hidden transition-all duration-300 border border-gamer-border bg-gamer-card shadow-sm;
+        }
+        .gamer-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0%;
+            background: #0066FF;
+            transition: height 0.3s ease;
+        }
+        .gamer-card:hover::after {
+            height: 100%;
+        }
+        .gamer-card:hover {
+            border-color: #0066FF;
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 102, 255, 0.08);
+        }
+        .title-accent {
+            background: linear-gradient(90deg, #0066FF, #00CCFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .image-container {
+            position: relative;
+            background: radial-gradient(circle, rgba(0,102,255,0.05) 0%, transparent 70%);
+        }
+    </style>
+</head>
+<body class="font-body text-zinc-700 min-h-screen">
+<div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+<div class="mb-16 text-left border-l-8 border-primary pl-8">
+<h2 class="text-4xl md:text-5xl font-black font-display text-zinc-900 uppercase tracking-tight">
+            DANH MỤC <span class="title-accent">NỔI BẬT</span>
+</h2>
+<p class="text-zinc-500 mt-2 font-semibold tracking-[0.25em] uppercase text-xs">High Performance Hardware Hub</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="gamer-card group">
+<div class="h-full flex flex-col p-8">
+<div class="relative z-10 mb-6">
+<h3 class="font-display font-bold text-xl text-zinc-900 group-hover:text-primary transition-colors">CPU INTEL</h3>
+<p class="text-primary font-bold text-[10px] tracking-widest uppercase mt-1">Extreme Performance</p>
+</div>
+<div class="flex-grow flex items-center justify-center image-container py-6">
+<img alt="Intel Core Processor Box" class="max-h-48 w-full object-contain relative z-10 transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_SkKTAiuzlLf5vWaiKkrm6Qj0CaQKY7ilr-NlQWuoTgMGlji0ScNQu5Hi57xoKNDQ26GPsHEnv4nxKoHfOJ1XzZ73bWrjqtH_az3c6nZ9PvsSRiHfPBNEoNF90HtD6ZCe0_b5yi_rt93M6lOFc96VW2PDHWJCmUBJ0-RKaOFTki_hZPowhmgJNay0MON0KuMf39IZaxWlI2FFpO2KBrmr9bfZVn1xp6bsOx0b5ON6XmmO8F-7cMUZ0NhaLgkueZvQGr2mkyQg0gI"/>
+</div>
+<div class="mt-6 pt-4 border-t border-zinc-100 flex justify-between items-center">
+<span class="text-[10px] text-zinc-400 font-display font-bold uppercase tracking-widest">Level: Extreme</span>
+<div class="w-3 h-3 bg-primary/20 rounded-full flex items-center justify-center">
+<div class="w-1.5 h-1.5 bg-primary rounded-full group-hover:animate-ping"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="gamer-card group">
+<div class="h-full flex flex-col p-8">
+<div class="relative z-10 mb-6">
+<h3 class="font-display font-bold text-xl text-zinc-900 group-hover:text-primary transition-colors">CPU AMD</h3>
+<p class="text-primary font-bold text-[10px] tracking-widest uppercase mt-1">Unrivaled Power</p>
+</div>
+<div class="flex-grow flex items-center justify-center image-container py-6">
+<img alt="AMD Ryzen Processor Box" class="max-h-48 w-full object-contain relative z-10 transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlajHSQ6Nx560hi1PSFJzw8SCQKJ9hJ57CgdH4x4LhUR1cQg5XJXn-PdWJfrOktAEPgQzhORfNeZ7045AFMxrIy1lrujLg1QPDkYs1T5zoh2pOkXYn3LH-qMTa5Y7mqpv-RtW-UiDNJH0AEDFFSrdj9UfVX2LxTXAxV0UtRyIfNY2COVHCrqMxh9nAGhgOiR0YMh4MM5_DTCAuSbmOFdMyfA5lv2FcVm_jNcvjOUq_6D5dgrD3xVktEnNnJMriG1DP-f2B3jIYR4M"/>
+</div>
+<div class="mt-6 pt-4 border-t border-zinc-100 flex justify-between items-center">
+<span class="text-[10px] text-zinc-400 font-display font-bold uppercase tracking-widest">Multicore King</span>
+<div class="w-1.5 h-1.5 bg-primary"></div>
+</div>
+</div>
+</div>
+<div class="gamer-card group">
+<div class="h-full flex flex-col p-8">
+<div class="relative z-10 mb-6">
+<h3 class="font-display font-bold text-xl text-zinc-900 group-hover:text-primary transition-colors">CARD ĐỒ HỌA</h3>
+<p class="text-primary font-bold text-[10px] tracking-widest uppercase mt-1">Immersive Gaming</p>
+</div>
+<div class="flex-grow flex items-center justify-center image-container py-6">
+<img alt="AMD Radeon Graphics Card" class="max-h-48 w-full object-contain relative z-10 transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwr1N1dT9UTsYvjmTPFLSQITE2-zJyyQfAtlZ2i6chKp93B3D3oNVX2FY_VteUy-tTnf9LUIyK5tyBxGyHYXsNVm_WYr2Ju77LehrnrmvQHLRYSdhgklf2RBdwoHn7D4c7DQtBzMiabPNCz3N6c85CY2VAvzFFGR4mHoxUn56y3R6RVxU5FdqhRmHT3xya6jX1NwGXj2NiU6NERoRj6eVi0rA_Ng3yoyi6sIvZCuwpnHnZTpGjHcBrYinIR5ttboIiawZmbWrXLL8"/>
+</div>
+<div class="mt-6 pt-4 border-t border-zinc-100 flex justify-between items-center">
+<span class="text-[10px] text-zinc-400 font-display font-bold uppercase tracking-widest">RDNA Architecture</span>
+<div class="w-1.5 h-1.5 bg-primary"></div>
+</div>
+</div>
+</div>
+<div class="gamer-card group">
+<div class="h-full flex flex-col p-8">
+<div class="relative z-10 mb-6">
+<h3 class="font-display font-bold text-xl text-zinc-900 group-hover:text-primary transition-colors">MÀN HÌNH</h3>
+<p class="text-primary font-bold text-[10px] tracking-widest uppercase mt-1">Fluid Motion</p>
+</div>
+<div class="flex-grow flex items-center justify-center image-container py-6">
+<img alt="Curved UltraWide Computer Monitor" class="max-h-48 w-full object-contain relative z-10 transform group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRL1dd8gdpwdGcCdKhEsjRT47PCG8Z0D2BzDV_H4uMuUOWsJr2UUHQs6HB0Pr1O3KDR1MQSllVlhbirgir-SLBaqkpFUvMcdzSIENwdL7kJu5KJB5fPs_-i9Zo2gxJ2I10C9u8hhy2RDc4dMD_gCqPUgrWoXX5pp3n1YfO0JosLBGjnkdkCXLQA1PWz9GLbVdprpvfFfoHY97zLNY1cE-JQyWGOJissuk9xF9tlPVUgOQ-Vq8iEzQP3cO9ojdUXsYytv-vkbtPWnU"/>
+</div>
+<div class="mt-6 pt-4 border-t border-zinc-100 flex justify-between items-center">
+<span class="text-[10px] text-zinc-400 font-display font-bold uppercase tracking-widest">Ultra High Refresh</span>
+<div class="w-1.5 h-1.5 bg-primary"></div>
+</div>
+</div>
+</div>
+<div class="gamer-card group">
+<div class="h-full flex flex-col p-8">
+<div class="relative z-10 mb-6">
+<h3 class="font-display font-bold text-xl text-zinc-900 group-hover:text-primary transition-colors">TẢN NHIỆT</h3>
+<p class="text-primary font-bold text-[10px] tracking-widest uppercase mt-1">Cool &amp; Quiet</p>
+</div>
+<div class="flex-grow flex items-center justify-center image-container py-6">
+<img alt="Liquid AIO Cooler" class="max-h-48 w-full object-contain relative z-10 transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhhjx2NO3o5pa3zTgfUuiFFo38fb6ekgTe-nnAgTV3hpUHkF66dxxYnLxvRwxqa0y25rUrOvUxJI1cpZwqnQ_LIQrJDwiKKYdwF7zrRmYsLq5X4d_-lpbIOC_XLegj8s9vkAVT6d8_4-bW8NSX49iAw12IAkS4RD7ID1oAAEnaS0A6ZU_Jeo3tL2nEDWmdRRRrEFV5Mqp43ZdZ655V-qwrKvHlnrpShnCgTruvPSFNUpE5S8U4EabtaB3Ov_x6uO0C7SVF7DzExTg"/>
+</div>
+<div class="mt-6 pt-4 border-t border-zinc-100 flex justify-between items-center">
+<span class="text-[10px] text-zinc-400 font-display font-bold uppercase tracking-widest">Sub-zero Cool</span>
+<div class="w-1.5 h-1.5 bg-primary"></div>
+</div>
+</div>
+</div>
+<div class="gamer-card group">
+<div class="h-full flex flex-col p-8">
+<div class="relative z-10 mb-6">
+<h3 class="font-display font-bold text-xl text-zinc-900 group-hover:text-primary transition-colors">Ổ CỨNG NVME</h3>
+<p class="text-primary font-bold text-[10px] tracking-widest uppercase mt-1">Instant Loading</p>
+</div>
+<div class="flex-grow flex items-center justify-center image-container py-6">
+<img alt="NVMe M.2 Solid State Drive" class="max-h-48 w-full object-contain relative z-10 transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJj3VAwFGzK7GtKuZV136opPgNfdR7U5W_o22MWYGpHkLVC0ULW6DQQG3G0LrXdECa7czSjB3jqsPli10Cv8ooq5VjZ7TM0OUIOMVegUpWGDv04YozFAWq1AdCV_Zk6YkRAiZGFxTAROBOSUUSO-bNYdJcEAJL5VsngTLYMbt0_txcRVmnPtN3Dlt9KqSYze5J3QIdT2yUurZ7-dC2GXQc7XpSbyN2gHBB6EVriQ4Ips6lXUe1GVY-EiRTi-PZFklzdlnXLUCYPss"/>
+</div>
+<div class="mt-6 pt-4 border-t border-zinc-100 flex justify-between items-center">
+<span class="text-[10px] text-zinc-400 font-display font-bold uppercase tracking-widest">PCIe 5.0 Ready</span>
+<div class="w-1.5 h-1.5 bg-primary"></div>
+</div>
+</div>
+</div>
+<div class="gamer-card group">
+<div class="h-full flex flex-col p-8">
+<div class="relative z-10 mb-6">
+<h3 class="font-display font-bold text-xl text-zinc-900 group-hover:text-primary transition-colors">BO MẠCH CHỦ</h3>
+<p class="text-primary font-bold text-[10px] tracking-widest uppercase mt-1">Core Synergy</p>
+</div>
+<div class="flex-grow flex items-center justify-center image-container py-6">
+<img alt="High-end Gaming Motherboard" class="max-h-48 w-full object-contain relative z-10 transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIIo-K8IMVFNEND5CNNQkc7KP-pPWo-Le7iC6WY2TIrpUto7LD0a10-wNpdt5XV82f_D3IktQLx2fnUEacoeByMw238-EnqfkcFzFJVOxzSSE6WXt3YVX1MT6ULiBWLKDN-_3eKKj-4oCTLqtC72K-cYdOYJV4qZffJjJELr_Ukf24tABODSl4LW9yiy1q5ONvGDBdrCTyryRds9CtGUp2kGQU0acviktCDlZM1Ec8OHCu5aVD0rXhPKL0hLs5PLKntigJYhKqlGQ"/>
+</div>
+<div class="mt-6 pt-4 border-t border-zinc-100 flex justify-between items-center">
+<span class="text-[10px] text-zinc-400 font-display font-bold uppercase tracking-widest">Power Delivery</span>
+<div class="w-1.5 h-1.5 bg-primary"></div>
+</div>
+</div>
+</div>
+<div class="gamer-card group">
+<div class="h-full flex flex-col p-8">
+<div class="relative z-10 mb-6">
+<h3 class="font-display font-bold text-xl text-zinc-900 group-hover:text-primary transition-colors">RAM MÁY TÍNH</h3>
+<p class="text-primary font-bold text-[10px] tracking-widest uppercase mt-1">Seamless Multitask</p>
+</div>
+<div class="flex-grow flex items-center justify-center image-container py-6">
+<img alt="Desktop RAM Module" class="max-h-48 w-full object-contain relative z-10 transform group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7BQpHzPaJIsS6OhuHcVli_sY-nvQH8traJSTxYSOlQ0uuusfduUpD9ZKzyEbRXUtLlTiwciz7CsE-fZIfs_OhyHF6kowSzmprc6Dury0tqwbt09a2hGa9TQ6kGNgAHEgvdv5ET-kiREdC_JETtRH6yYbT-X6PGDu8b9DTuCGxPbJmwzgyQ0i0YYDl6sJOhHoz6c-fmNA7rPsR7NbCYdIIGn6XEqIvGS7QN5LXWZufI_Ho6m-hTFmjoyXRxW8rO8azpcuL0gSOSrI"/>
+</div>
+<div class="mt-6 pt-4 border-t border-zinc-100 flex justify-between items-center">
+<span class="text-[10px] text-zinc-400 font-display font-bold uppercase tracking-widest">DDR5 Boost</span>
+<div class="w-1.5 h-1.5 bg-primary"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-24 flex flex-col items-center">
+<div class="h-px w-24 bg-zinc-200 mb-10"></div>
+<button class="group relative px-10 py-4 bg-white font-display font-bold text-xs tracking-widest uppercase text-zinc-900 transition-all border border-zinc-200 hover:border-primary hover:text-primary overflow-hidden">
+<span class="relative z-10">Xem Tất Cả Sản Phẩm</span>
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</button>
+<p class="mt-8 text-zinc-400 text-[10px] font-display font-bold uppercase tracking-[0.3em]">© 2024 Gamer Hub • Sophisticated Performance</p>
+</div>
+</div>
+
+</body></html>

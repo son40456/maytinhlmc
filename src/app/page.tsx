@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { HomeSection } from "@/components/home/HomeSection";
+import { HardwareCategoryGrid } from "@/components/home/HardwareCategoryGrid";
 import fs from "fs/promises";
 import path from "path";
 
@@ -42,11 +43,12 @@ const dummyProducts = [
   },
 ];
 
-import { getHomepageConfig } from '@/app/actions/configActions';
+import { getHomepageConfig, getHardwareGridConfig } from '@/app/actions/configActions';
 
 export default async function Home() {
   // Read dynamic homepage config (via KV or fallback to fs)
   let sections = await getHomepageConfig();
+  let hardwareGridConfig = await getHardwareGridConfig();
 
   return (
     <div className="flex flex-col gap-10 pb-12">
@@ -73,6 +75,11 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Danh mục nổi bật */}
+      <div className="mb-4">
+        <HardwareCategoryGrid config={hardwareGridConfig} />
+      </div>
 
       {/* Dynamic Sections từ Cấu hình Admin */}
       <div className="flex flex-col gap-6">
