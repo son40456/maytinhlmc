@@ -155,6 +155,9 @@ export const GET_PRODUCT_BY_SLUG = `
           }
         }
       }
+      thongsokythuatsonbn {
+        thongsochitiet
+      }
     }
   }
 `;

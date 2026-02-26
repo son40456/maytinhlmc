@@ -61,6 +61,7 @@ export async function fetchProductsForCompare(slugs: string[]) {
                 options: a.options,
             })) || [],
             categories: p.productCategories?.nodes?.map((c: any) => c.name) || [],
+            acfSpecs: p.thongsokythuatsonbn?.thongsochitiet || '',
         }));
     } catch (error) {
         console.error("fetchProductsForCompare Exception:", error);

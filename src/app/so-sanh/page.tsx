@@ -21,6 +21,43 @@ interface CompareProduct {
     shortDescription: string;
     attributes: { name: string; options: string[] }[];
     categories: string[];
+    acfSpecs: string;
+}
+
+// Parse ACF HTML specs into key-value pairs
+function parseAcfSpecs(html: string): { label: string; value: string }[] {
+    if (!html) return [];
+    const rows: { label: string; value: string }[] = [];
+    // Match table rows: <tr><td>Label</td><td>Value</td></tr>
+    const trRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+    let trMatch;
+    while ((trMatch = trRegex.exec(html)) !== null) {
+        const tdRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+        const cells: string[] = [];
+        let tdMatch;
+        while ((tdMatch = tdRegex.exec(trMatch[1])) !== null) {
+            cells.push(tdMatch[1].replace(/<[^>]+>/g, '').trim());
+        }
+        if (cells.length >= 2 && cells[0]) {
+            rows.push({ label: cells[0], value: cells[1] || '—' });
+        }
+    }
+    // If no table, try parsing <p> or <li> tags as "key: value"
+    if (rows.length === 0) {
+        const lineRegex = /<(?:p|li)[^>]*>([\s\S]*?)<\/(?:p|li)>/gi;
+        let lineMatch;
+        while ((lineMatch = lineRegex.exec(html)) !== null) {
+            const text = lineMatch[1].replace(/<[^>]+>/g, '').trim();
+            const colonIdx = text.indexOf(':');
+            if (colonIdx > 0) {
+                rows.push({
+                    label: text.slice(0, colonIdx).trim(),
+                    value: text.slice(colonIdx + 1).trim() || '—',
+                });
+            }
+        }
+    }
+    return rows;
 }
 
 export default function ComparePage() {
@@ -48,6 +85,12 @@ export default function ComparePage() {
     // Collect all unique attribute names across all products
     const allAttrNames = Array.from(
         new Set(products.flatMap(p => p.attributes.map(a => a.name)))
+    );
+
+    // Parse ACF specs for each product and collect all unique spec labels
+    const parsedAcfSpecs = products.map(p => parseAcfSpecs(p.acfSpecs));
+    const allAcfSpecLabels = Array.from(
+        new Set(parsedAcfSpecs.flatMap(specs => specs.map(s => s.label)))
     );
 
     const handleRemove = (id: string) => {
@@ -220,6 +263,36 @@ export default function ComparePage() {
                                         })}
                                     </tr>
                                 ))}
+
+                                {/* ACF Detailed Specs Section Header */}
+                                {allAcfSpecLabels.length > 0 && (
+                                    <tr className="bg-blue-50 border-b-2 border-blue-200">
+                                        <td colSpan={products.length + 1} className="p-3 text-sm font-bold text-blue-700 uppercase tracking-wider">
+                                            📋 Thông số kỹ thuật chi tiết
+                                        </td>
+                                    </tr>
+                                )}
+
+                                {/* ACF Detailed Spec Rows */}
+                                {allAcfSpecLabels.map((specLabel, idx) => {
+                                    const rowIdx = specRows.length + allAttrNames.length + idx;
+                                    return (
+                                        <tr key={`acf-${specLabel}`} className={`border-b border-slate-50 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
+                                            <td className={`p-4 text-sm font-semibold text-slate-600 sticky left-0 z-10 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+                                                {specLabel}
+                                            </td>
+                                            {products.map((product, pIdx) => {
+                                                const specs = parsedAcfSpecs[pIdx];
+                                                const spec = specs.find(s => s.label === specLabel);
+                                                return (
+                                                    <td key={product.id} className="p-4 text-sm text-slate-700 text-center">
+                                                        {spec?.value || '—'}
+                                                    </td>
+                                                );
+                                            })}
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
