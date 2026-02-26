@@ -32,8 +32,10 @@ export async function POST(req: Request) {
 
         // Trả về URL tương đối để hiển thị ở frontend
         return NextResponse.json({ url: `/uploads/${finalFilename}` });
-    } catch (error) {
+    } catch (error: any) {
         console.error('API /api/admin/upload error:', error);
-        return NextResponse.json({ error: 'Đã xảy ra lỗi khi tải ảnh lên server.' }, { status: 500 });
+        return NextResponse.json({
+            error: 'Đã xảy ra lỗi khi tải ảnh lên server. Chi tiết: ' + (error?.message || String(error))
+        }, { status: 500 });
     }
 }
