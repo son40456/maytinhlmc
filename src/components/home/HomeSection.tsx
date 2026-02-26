@@ -82,6 +82,7 @@ export async function HomeSection({ title, categorySlug, subFilters }: HomeSecti
                         price={(p.price || "Liên hệ").replace(/&nbsp;/g, ' ')}
                         imageUrl={p.imageUrl}
                         slug={p.slug}
+                        category={categorySlug}
                     />
                 ))}
             </div>

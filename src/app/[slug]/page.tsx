@@ -292,6 +292,7 @@ export default async function SlugPage({ params, searchParams }: {
                                             sku={p.sku}
                                             regularPrice={p.regularPrice}
                                             salePrice={p.salePrice}
+                                            category={product.productCategories?.nodes?.[0]?.slug}
                                         />
                                     ))}
                                 </div>

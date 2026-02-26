@@ -20,15 +20,17 @@ interface ProductCardProps {
     regularPrice?: string;
     salePrice?: string;
     stockStatus?: string;
+    category?: string;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, price, imageUrl, slug, sku, regularPrice, salePrice, stockStatus = 'IN_STOCK' }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, price, imageUrl, slug, sku, regularPrice, salePrice, stockStatus = 'IN_STOCK', category }) => {
     const [isPending, startTransition] = React.useTransition();
     const addItem = useCartStore(state => state.addItem);
     const addCompare = useCompareStore(state => state.addItem);
     const removeCompare = useCompareStore(state => state.removeItem);
     const isInCompare = useCompareStore(state => state.hasItem(id));
-    const [compareFull, setCompareFull] = React.useState(false);
+    const [compareMsg, setCompareMsg] = React.useState<string | null>(null);
+    const [compareAnim, setCompareAnim] = React.useState(false);
 
     const handleAddToCart = () => {
         // Parse simple price logic (strip spaces/VND symbol for a raw number if possible, or just default to 0 and handle real parsing later if complex)
@@ -125,26 +127,36 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                 <div className="flex items-center justify-between">
                     <button
                         onClick={() => {
+                            setCompareAnim(true);
+                            setTimeout(() => setCompareAnim(false), 400);
+
                             if (isInCompare) {
                                 removeCompare(id);
-                                setCompareFull(false);
+                                setCompareMsg(null);
                             } else {
-                                const ok = addCompare({ id, databaseId, name, price, imageUrl, slug, sku });
-                                if (!ok) {
-                                    setCompareFull(true);
-                                    setTimeout(() => setCompareFull(false), 2000);
+                                const result = addCompare({ id, databaseId, name, price, imageUrl, slug, sku, category });
+                                if (result === 'full') {
+                                    setCompareMsg('Tối đa 4 SP!');
+                                    setTimeout(() => setCompareMsg(null), 2500);
+                                } else if (result === 'wrong_category') {
+                                    setCompareMsg('Khác danh mục!');
+                                    setTimeout(() => setCompareMsg(null), 2500);
                                 }
                             }
                         }}
-                        className={`flex items-center gap-1 text-[11px] transition-colors ${isInCompare
+                        className={`flex items-center gap-1 text-[11px] transition-all duration-200 ${compareAnim ? 'scale-125' : 'scale-100'} ${isInCompare
                                 ? 'text-blue-600 font-bold'
-                                : compareFull
+                                : compareMsg
                                     ? 'text-red-500 font-bold'
                                     : 'text-slate-500 hover:text-blue-600'
                             }`}
                     >
-                        <svg className="w-[16px] h-[16px]" fill={isInCompare ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        {isInCompare ? '✓ Đã chọn' : compareFull ? 'Tối đa 4 SP!' : 'So sánh'}
+                        {isInCompare ? (
+                            <svg className="w-[16px] h-[16px] text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        ) : (
+                            <svg className={`w-[16px] h-[16px] transition-transform ${compareAnim ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        )}
+                        {isInCompare ? '✓ Đã chọn' : compareMsg || 'So sánh'}
                     </button>
                     <button
                         onClick={handleAddToCart}

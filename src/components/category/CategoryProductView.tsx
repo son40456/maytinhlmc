@@ -257,6 +257,7 @@ export function CategoryProductView({
                                 sku={p.sku}
                                 regularPrice={p.regularPrice}
                                 salePrice={p.salePrice}
+                                category={categorySlug}
                             />
                         ))}
                     </div>
