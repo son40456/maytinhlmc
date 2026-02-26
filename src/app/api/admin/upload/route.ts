@@ -17,6 +17,7 @@ export async function POST(req: Request) {
         // Upload to Vercel Blob
         const blob = await put(finalFilename, file, {
             access: 'public',
+            token: process.env.BLOB_READ_WRITE_TOKEN,
         });
 
         // Trả về URL từ Vercel Blob để hiển thị ở frontend
