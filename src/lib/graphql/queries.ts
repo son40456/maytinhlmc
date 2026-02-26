@@ -355,6 +355,9 @@ export const GET_NODE_BY_SLUG = `
           }
         }
       }
+      thongsokythuatsonbn {
+        thongsochitiet
+      }
     }
     productCategory(id: $slugId, idType: SLUG) {
       id

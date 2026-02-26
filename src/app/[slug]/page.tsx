@@ -268,6 +268,7 @@ export default async function SlugPage({ params, searchParams }: {
                                 <DetailedSpecsTable
                                     shortDescription={product.shortDescription}
                                     attributes={product.attributes}
+                                    acfDetailedSpecs={product.thongsokythuatsonbn?.thongsochitiet || ''}
                                 />
                                 <RelatedNews />
                             </div>
