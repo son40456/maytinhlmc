@@ -4,8 +4,9 @@ import React, { useEffect, useState, useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCompareStore } from '@/store/useCompareStore';
+import { useCartStore } from '@/store/useCartStore';
 import { fetchProductsForCompare } from '@/app/actions/productActions';
-import { X, ArrowLeft, Loader2, GitCompareArrows } from 'lucide-react';
+import { X, ArrowLeft, Loader2, GitCompareArrows, ShoppingBag, Eye } from 'lucide-react';
 
 interface CompareProduct {
     id: string;
@@ -130,10 +131,8 @@ export default function ComparePage() {
 
     const specRows: { label: string; key: string }[] = [
         { label: 'Giá bán', key: 'price' },
-        { label: 'Giá gốc', key: 'regularPrice' },
         { label: 'Tình trạng', key: 'stockStatus' },
         { label: 'Mã SKU', key: 'sku' },
-        { label: 'Danh mục', key: 'categories' },
         { label: 'Mô tả ngắn', key: 'shortDescription' },
     ];
 
@@ -223,6 +222,34 @@ export default function ComparePage() {
                                                     {product.price}
                                                 </p>
                                             </Link>
+                                            <div className="flex items-center gap-2 mt-3 justify-center">
+                                                <Link
+                                                    href={`/${product.slug}`}
+                                                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
+                                                >
+                                                    <Eye className="w-3.5 h-3.5" />
+                                                    Xem chi tiết
+                                                </Link>
+                                                <button
+                                                    onClick={() => {
+                                                        const numericPrice = parseInt(product.price.replace(/\D/g, '')) || 0;
+                                                        useCartStore.getState().addItem({
+                                                            id: product.id,
+                                                            productId: product.databaseId.toString(),
+                                                            databaseId: product.databaseId,
+                                                            name: product.name,
+                                                            price: numericPrice,
+                                                            quantity: 1,
+                                                            imageUrl: product.image || '',
+                                                            slug: product.slug,
+                                                        });
+                                                    }}
+                                                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                                                >
+                                                    <ShoppingBag className="w-3.5 h-3.5" />
+                                                    Thêm vào giỏ
+                                                </button>
+                                            </div>
                                         </th>
                                     ))}
                                 </tr>
