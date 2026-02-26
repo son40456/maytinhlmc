@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { put } from '@vercel/blob';
 
 export async function POST(req: Request) {
     try {
@@ -11,27 +10,17 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Không tìm thấy file tải lên.' }, { status: 400 });
         }
 
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
         // Replace spaces and special characters from filename
         const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         const finalFilename = `${Date.now()}-${safeName}`;
 
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+        // Upload to Vercel Blob
+        const blob = await put(finalFilename, file, {
+            access: 'public',
+        });
 
-        // Cố gắng tạo thư mục nếu chưa tồn tại
-        try {
-            await fs.access(uploadDir);
-        } catch {
-            await fs.mkdir(uploadDir, { recursive: true });
-        }
-
-        const filepath = path.join(uploadDir, finalFilename);
-        await fs.writeFile(filepath, buffer);
-
-        // Trả về URL tương đối để hiển thị ở frontend
-        return NextResponse.json({ url: `/uploads/${finalFilename}` });
+        // Trả về URL từ Vercel Blob để hiển thị ở frontend
+        return NextResponse.json({ url: blob.url });
     } catch (error: any) {
         console.error('API /api/admin/upload error:', error);
         return NextResponse.json({
