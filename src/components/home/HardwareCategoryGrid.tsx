@@ -28,10 +28,6 @@ export function HardwareCategoryGrid({ config }: Props) {
                             <div className="relative overflow-hidden transition-all duration-300 border border-zinc-200 bg-white shadow-sm hover:border-blue-600 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,102,255,0.08)] group hover:after:h-full after:content-[''] after:absolute after:top-0 after:left-0 after:w-1 after:h-0 after:bg-blue-600 after:transition-all after:duration-300 [clip-path:polygon(20px_0%,100%_0%,100%_calc(100%-20px),calc(100%-20px)_100%,0%_100%,0%_20px)] h-full">
                                 <div className="h-full flex flex-col p-8 cursor-pointer">
                                     <div className="relative z-10 mb-6">
-                                        <div className="text-sm font-bold tracking-wider text-blue-600 mb-2 font-mono flex items-center gap-2">
-                                            <span className="w-8 h-px bg-blue-600/50"></span>
-                                            0{idx + 1}
-                                        </div>
                                         <h3 className="text-2xl font-black text-zinc-900 group-hover:text-blue-600 transition-colors uppercase italic leading-tight">
                                             {cat.title}
                                         </h3>
