@@ -90,7 +90,7 @@ export function DetailedSpecsTable({ shortDescription, attributes, acfDetailedSp
             {/* Modal: ACF Detailed Specs */}
             {showModal && acfDetailedSpecs && (
                 <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+                    className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
                     onClick={() => setShowModal(false)}
                 >
                     {/* Backdrop */}
