@@ -76,7 +76,7 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                     {allImages.length > 5 && (
                         <button
                             onClick={() => scrollThumbs('up')}
-                            className="w-[80px] h-6 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors rounded hover:bg-slate-50"
+                            className="w-[96px] h-6 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors rounded hover:bg-slate-50"
                         >
                             <ChevronUp className="w-4 h-4" />
                         </button>
@@ -92,7 +92,7 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                             <button
                                 key={idx}
                                 onClick={() => setActiveIndex(idx)}
-                                className={`relative w-[80px] h-[80px] rounded-lg overflow-hidden border-2 transition-all duration-200 bg-white shrink-0 ${activeIndex === idx
+                                className={`relative w-[96px] h-[96px] rounded-lg overflow-hidden border-2 transition-all duration-200 bg-white shrink-0 ${activeIndex === idx
                                     ? "border-blue-600 shadow-md"
                                     : "border-slate-200 opacity-60 hover:opacity-100 hover:border-slate-300"
                                     }`}
@@ -102,7 +102,7 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                                     alt={img.altText || `${name} thumbnail ${idx}`}
                                     fill
                                     className="object-cover p-1.5"
-                                    sizes="80px"
+                                    sizes="96px"
                                 />
                             </button>
                         ))}
@@ -112,7 +112,7 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                     {allImages.length > 5 && (
                         <button
                             onClick={() => scrollThumbs('down')}
-                            className="w-[80px] h-6 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors rounded hover:bg-slate-50"
+                            className="w-[96px] h-6 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors rounded hover:bg-slate-50"
                         >
                             <ChevronDown className="w-4 h-4" />
                         </button>

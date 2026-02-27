@@ -284,7 +284,7 @@ export default async function SlugPage({ params, searchParams }: {
                     {/* ===== BOTTOM SECTION: Description + Specs + News ===== */}
                     <div className="lg:grid gap-8 items-start" style={{ gridTemplateColumns: '62% 1fr' }}>
                         {/* Left: Description */}
-                        <div>
+                        <div className="lg:sticky lg:top-[88px]">
                             {product.description && (
                                 <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
                                     <div className="p-6 lg:p-8 border-b border-slate-100">
