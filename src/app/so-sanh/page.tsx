@@ -112,15 +112,15 @@ export default function ComparePage() {
     if (items.length === 0) {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <div className="text-center space-y-6 max-w-md mx-auto px-4">
-                    <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto">
-                        <GitCompareArrows className="w-10 h-10 text-slate-300" />
+                <div className="text-center space-y-4 md:space-y-6 max-w-md mx-auto px-4">
+                    <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto">
+                        <GitCompareArrows className="w-7 h-7 md:w-10 md:h-10 text-slate-300" />
                     </div>
-                    <h1 className="text-2xl font-bold text-slate-800">Chưa có sản phẩm nào để so sánh</h1>
+                    <h1 className="text-xl md:text-2xl font-bold text-slate-800">Chưa có sản phẩm nào để so sánh</h1>
                     <p className="text-slate-500">
                         Hãy bấm nút <strong>"So sánh"</strong> trên các thẻ sản phẩm để thêm sản phẩm vào danh sách so sánh.
                     </p>
-                    <Link href="/" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold text-sm transition-colors">
+                    <Link href="/" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-bold text-sm transition-colors">
                         <ArrowLeft className="w-4 h-4" />
                         Quay lại Trang chủ
                     </Link>
@@ -156,20 +156,20 @@ export default function ComparePage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-slate-50 py-4 md:py-8">
+            <div className="container mx-auto px-2 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                        <Link href="/" className="p-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 transition-colors">
-                            <ArrowLeft className="w-5 h-5 text-slate-600" />
+                <div className="flex items-center justify-between mb-4 md:mb-8 px-1">
+                    <div className="flex items-center gap-2 md:gap-4">
+                        <Link href="/" className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-white border border-slate-200 hover:bg-slate-50 transition-colors">
+                            <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-slate-600" />
                         </Link>
                         <div>
-                            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-                                <GitCompareArrows className="w-6 h-6 text-blue-600" />
-                                So sánh Sản phẩm
+                            <h1 className="text-lg md:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2 md:gap-3">
+                                <GitCompareArrows className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+                                So sánh
                             </h1>
-                            <p className="text-sm text-slate-500 mt-1">Đang so sánh {products.length} sản phẩm</p>
+                            <p className="text-xs md:text-sm text-slate-500 mt-0.5 md:mt-1">{products.length} sản phẩm</p>
                         </div>
                     </div>
                     <button
@@ -181,17 +181,17 @@ export default function ComparePage() {
                 </div>
 
                 {/* Comparison Table */}
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[600px]">
+                        <table className="w-full min-w-[400px] md:min-w-[600px]">
                             {/* Product Header Row */}
                             <thead>
                                 <tr className="border-b-2 border-slate-100">
-                                    <th className="p-4 text-left w-[160px] bg-slate-50 text-xs font-bold text-slate-500 uppercase tracking-wider sticky left-0 z-10">
+                                    <th className="p-2 md:p-4 text-left w-[100px] md:w-[160px] bg-slate-50 text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider sticky left-0 z-10">
                                         Sản phẩm
                                     </th>
                                     {products.map((product) => (
-                                        <th key={product.id} className="p-4 text-center min-w-[200px] relative">
+                                        <th key={product.id} className="p-2 md:p-4 text-center min-w-[140px] md:min-w-[200px] relative">
                                             <button
                                                 onClick={() => handleRemove(product.id)}
                                                 className="absolute top-2 right-2 w-6 h-6 rounded-full bg-slate-100 hover:bg-red-500 hover:text-white text-slate-400 flex items-center justify-center transition-colors"
@@ -200,7 +200,7 @@ export default function ComparePage() {
                                                 <X className="w-3.5 h-3.5" />
                                             </button>
                                             <Link href={`/${product.slug}`} className="block group">
-                                                <div className="w-32 h-32 mx-auto relative mb-3">
+                                                <div className="w-20 h-20 md:w-32 md:h-32 mx-auto relative mb-2 md:mb-3">
                                                     {product.image ? (
                                                         <Image
                                                             src={product.image}
@@ -215,20 +215,21 @@ export default function ComparePage() {
                                                         </div>
                                                     )}
                                                 </div>
-                                                <h3 className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                                                <h3 className="text-[11px] md:text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
                                                     {product.name}
                                                 </h3>
-                                                <p className="text-lg font-extrabold text-blue-600 mt-2">
+                                                <p className="text-sm md:text-lg font-extrabold text-blue-600 mt-1 md:mt-2">
                                                     {product.price}
                                                 </p>
                                             </Link>
-                                            <div className="flex items-center gap-2 mt-3 justify-center">
+                                            <div className="flex items-center gap-1.5 md:gap-2 mt-2 md:mt-3 justify-center flex-wrap">
                                                 <Link
                                                     href={`/${product.slug}`}
-                                                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
+                                                    className="inline-flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
                                                 >
-                                                    <Eye className="w-3.5 h-3.5" />
-                                                    Xem chi tiết
+                                                    <Eye className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                                                    <span className="hidden md:inline">Xem chi tiết</span>
+                                                    <span className="md:hidden">Xem</span>
                                                 </Link>
                                                 <button
                                                     onClick={() => {
@@ -244,10 +245,11 @@ export default function ComparePage() {
                                                             slug: product.slug,
                                                         });
                                                     }}
-                                                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                                                    className="inline-flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
                                                 >
-                                                    <ShoppingBag className="w-3.5 h-3.5" />
-                                                    Thêm vào giỏ
+                                                    <ShoppingBag className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                                                    <span className="hidden md:inline">Thêm vào giỏ</span>
+                                                    <span className="md:hidden">Giỏ</span>
                                                 </button>
                                             </div>
                                         </th>
@@ -259,11 +261,11 @@ export default function ComparePage() {
                             <tbody>
                                 {specRows.map((row, idx) => (
                                     <tr key={row.key} className={`border-b border-slate-50 ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
-                                        <td className={`p-4 text-sm font-semibold text-slate-600 sticky left-0 z-10 ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+                                        <td className={`p-2 md:p-4 text-xs md:text-sm font-semibold text-slate-600 sticky left-0 z-10 ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
                                             {row.label}
                                         </td>
                                         {products.map((product) => (
-                                            <td key={product.id} className="p-4 text-sm text-slate-700 text-center">
+                                            <td key={product.id} className="p-2 md:p-4 text-xs md:text-sm text-slate-700 text-center">
                                                 {row.key === 'price' ? (
                                                     <span className="font-bold text-blue-600">{getFieldValue(product, row.key)}</span>
                                                 ) : (
@@ -277,13 +279,13 @@ export default function ComparePage() {
                                 {/* Dynamic Attribute Rows */}
                                 {allAttrNames.map((attrName, idx) => (
                                     <tr key={attrName} className={`border-b border-slate-50 ${(specRows.length + idx) % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
-                                        <td className={`p-4 text-sm font-semibold text-slate-600 sticky left-0 z-10 ${(specRows.length + idx) % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+                                        <td className={`p-2 md:p-4 text-xs md:text-sm font-semibold text-slate-600 sticky left-0 z-10 ${(specRows.length + idx) % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
                                             {attrName}
                                         </td>
                                         {products.map((product) => {
                                             const attr = product.attributes.find(a => a.name === attrName);
                                             return (
-                                                <td key={product.id} className="p-4 text-sm text-slate-700 text-center">
+                                                <td key={product.id} className="p-2 md:p-4 text-xs md:text-sm text-slate-700 text-center">
                                                     {attr ? attr.options.join(', ') : '—'}
                                                 </td>
                                             );
@@ -294,7 +296,7 @@ export default function ComparePage() {
                                 {/* ACF Detailed Specs Section Header */}
                                 {allAcfSpecLabels.length > 0 && (
                                     <tr className="bg-blue-50 border-b-2 border-blue-200">
-                                        <td colSpan={products.length + 1} className="p-3 text-sm font-bold text-blue-700 uppercase tracking-wider">
+                                        <td colSpan={products.length + 1} className="p-2 md:p-3 text-xs md:text-sm font-bold text-blue-700 uppercase tracking-wider">
                                             📋 Thông số kỹ thuật chi tiết
                                         </td>
                                     </tr>
@@ -305,14 +307,14 @@ export default function ComparePage() {
                                     const rowIdx = specRows.length + allAttrNames.length + idx;
                                     return (
                                         <tr key={`acf-${specLabel}`} className={`border-b border-slate-50 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
-                                            <td className={`p-4 text-sm font-semibold text-slate-600 sticky left-0 z-10 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+                                            <td className={`p-2 md:p-4 text-xs md:text-sm font-semibold text-slate-600 sticky left-0 z-10 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
                                                 {specLabel}
                                             </td>
                                             {products.map((product, pIdx) => {
                                                 const specs = parsedAcfSpecs[pIdx];
                                                 const spec = specs.find(s => s.label === specLabel);
                                                 return (
-                                                    <td key={product.id} className="p-4 text-sm text-slate-700 text-center">
+                                                    <td key={product.id} className="p-2 md:p-4 text-xs md:text-sm text-slate-700 text-center">
                                                         {spec?.value || '—'}
                                                     </td>
                                                 );
@@ -326,8 +328,8 @@ export default function ComparePage() {
                 </div>
 
                 {/* CTA back */}
-                <div className="mt-8 text-center">
-                    <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-bold text-sm transition-colors">
+                <div className="mt-4 md:mt-8 text-center">
+                    <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-bold text-xs md:text-sm transition-colors">
                         <ArrowLeft className="w-4 h-4" />
                         Tiếp tục mua sắm
                     </Link>
