@@ -188,7 +188,7 @@ export default async function SlugPage({ params, searchParams }: {
                             </div>
 
                             {/* RIGHT: Product Info (scrolls naturally) */}
-                            <div className="space-y-6 mt-6 lg:mt-0">
+                            <div className="space-y-6 mt-6 lg:mt-0 lg:pr-2">
                                 {/* Title + Meta */}
                                 <div>
                                     <h1 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">

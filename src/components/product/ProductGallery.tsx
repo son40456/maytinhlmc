@@ -121,7 +121,7 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
             )}
 
             {/* Main Image with Navigation Arrows */}
-            <div className="relative flex-1 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-slate-100 group">
+            <div className="relative flex-1 rounded-xl bg-white flex items-start justify-center overflow-hidden border border-slate-100 group">
                 {discountPercent > 0 && (
                     <div className="absolute top-4 left-4 z-10 pointer-events-none flex flex-col gap-2">
                         <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm shadow">
