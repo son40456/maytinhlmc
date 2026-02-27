@@ -310,8 +310,9 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
             </div>
 
             {/* Tier 2: Navy Menu Bar */}
-            <div className={`bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative transition-all duration-300 ease-in-out overflow-hidden ${scrolled && !menuOpen ? 'max-h-0 opacity-0' : 'max-h-[200px] opacity-100'
-                }`}>
+            <div className={`bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative transition-all duration-300 ease-in-out ${scrolled && !menuOpen ? 'h-0 opacity-0 pointer-events-none' : 'opacity-100'}`}
+                style={scrolled && !menuOpen ? { height: 0, overflow: 'hidden' } : {}}
+            >
                 <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative">
                     <nav className="flex items-center justify-between w-full min-w-max lg:min-w-0">
                         {menuTree.map((item) => {
