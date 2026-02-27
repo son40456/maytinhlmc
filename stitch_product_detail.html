@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#0d6cf2",
+              "background-light": "#f8fafc",
+              "background-dark": "#0f172a",
+              "hacom-red": "#ee2d24",
+              "hacom-purple": "#8e2de2",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem",
+              "lg": "0.75rem",
+              "xl": "0.75rem",
+              "2xl": "1rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .grid-62-38 {
+                grid-template-columns: 62% 38%;
+            }
+        }
+    </style>
+<title>Premium Tech Product Detail | TechPremium</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<header class="sticky top-0 z-50 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-[1600px] mx-auto px-4 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined text-xl block">developer_board</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight">TechPremium</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Laptops</a>
+<a class="text-sm font-semibold hover:text-primary transition-colors" href="#">PCs</a>
+<a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Gaming Gear</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg px-3 py-1.5 w-96">
+<span class="material-symbols-outlined text-slate-400 text-lg">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full" placeholder="Search for premium tech..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="relative p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">3</span>
+</button>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1600px] mx-auto px-4 py-4">
+<nav class="flex items-center gap-2 text-xs text-slate-500 mb-6">
+<a class="hover:text-primary" href="#">Home</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="hover:text-primary" href="#">Laptops</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-900 dark:text-white font-medium">Flagship Gaming Laptop</span>
+</nav>
+<div class="lg:grid lg:grid-62-38 gap-8 items-start">
+<div class="space-y-8">
+<section class="space-y-4">
+<div class="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200 dark:border-slate-800 flex gap-6">
+<div class="flex flex-col gap-3 shrink-0">
+<div class="w-20 h-20 rounded-lg border-2 border-primary overflow-hidden cursor-pointer bg-white">
+<div class="w-full h-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCwRIuEIopYuln_pBryLW6YVK42Ng7FZOn77yx3p209abjzCI6Z5yL8-OxC2jb1TN-vZtHAyQryhOW1mnd4vceHILDsUVEifDGhK3Rzx0RYGQAU02tTBRRfc1UXfMxq9WBQO7j4sgEHI9_C0TGHP9GBGu9ap5yoBt5n5unLLPtH1DFDjQpx1AEJ4guV-pDNseGA8DJtRxiLSfbll3tpNUYJDJEoB1VTqQ1kfN8OGUmKcTBJkSIBtwNqOgpdqvfDCkbD2vei-cYraH4')"></div>
+</div>
+<div class="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden cursor-pointer bg-white opacity-60 hover:opacity-100 transition-all">
+<div class="w-full h-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAHgkTBFqdL5iTWNFsFPS4W1JUfAM_RVGJ9Ygrrr-SprcBZTiMWI00EAMI_lyEpPDzxZKxsIzur6EGap8BxWE8qMnl6DZICzpCT0JyBE4CjlkPqyfGNi_oay0YbA69w8esoCbHsSd0isBLZGjAbBZJV0u_EsMSNxiDnLGbGfnX8Mm6gcMcfNVjLDTg-_61osuvpLBDxI8fSfRf5-inPYqNXz4NQLa9jFVQ5O7xhQgfPZ4mcKhd4J6z4EzHOhBNCx9NvHU9-4l4tEJs')"></div>
+</div>
+<div class="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden cursor-pointer bg-white opacity-60 hover:opacity-100 transition-all">
+<div class="w-full h-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAxnLDKqbrju_28Mve7LQZ2odJaiAfubgx3g5w1IcdIoIhD8mqmIn9vOq15LLNEhNXLf_Gqtq28bR26aDFq0EXVSAFhvrNXSp08gExKFQ3685hbaXNv5oMqt6nN6wyt4sGpW3_HdTMUgKLUjpF46lFBonuc9VJ8yAFpthW1-d3Utb0H88BnEYO2KQXL10XNpnt1P9Yqr-J2Y6Ry29agfuPy4pO9AbEmivTTQGZR2Daomtw3URJ_3sPTaAJUoEFokAGrbiCv7JbE1kc')"></div>
+</div>
+<div class="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden cursor-pointer bg-white opacity-60 hover:opacity-100 transition-all">
+<div class="w-full h-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCTAFIyoszl3xP9frV0ajMM3fMVG_bnzgt7RnxZwUElLbTtCzJQncdnHzVsJnlR8en8th3RrHO-z9hHuBral5QdFq3O94Ga1wo1KM9lXjdhrxR2AF5YSEgRlcnTQcRlb88M0c9WmLH-kxIyejhM5oh5sE_37hGww0P3onQBZfT2UQt-Z9hJEZqFDIWVRik-AGZpbK0Meb7fWGutTzpt0HgDfPnrCUd_9uYxBePlfhLQyhW-0LklffmOtu0-KJcbAxG4QvSrHDkWqO0')"></div>
+</div>
+</div>
+<div class="relative flex-1 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-slate-50 dark:border-slate-800">
+<div class="absolute top-4 left-4 z-10 flex flex-col gap-2">
+<span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">-10%</span>
+</div>
+<img alt="Main Product Image" class="w-full h-auto max-h-[600px] object-contain transition-transform duration-500 hover:scale-[1.02]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA40Rs33X0RjzhWefBau0Ohb8KHp47DdxVG-YIJvD59NMUM5YKBLcXPpfn6YwjaTBs6grdIydHx5ABv6UdBhZMusPTU1RAqGmyNhmIS5CJj87OyLirN9OI5g72-Q2YjCkdBhi2IgCMHJbldNr1YM2T_qwYJ7162BP_bVeAM1iiUmIZmyR9qIpO2gFJByYC7EaD8PezEigThJxgMiHtpiooTfTuM8JtrGubpRyak9jv3D6GRv3OxBEDF2wY8_226nqt8Cij3r-0PfBM"/>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-center justify-around">
+<button class="flex items-center gap-2 group px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">compare_arrows</span>
+<span class="text-xs font-semibold text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white uppercase tracking-wider">Compare</span>
+</button>
+<div class="w-px h-6 bg-slate-100 dark:bg-slate-800"></div>
+<button class="flex items-center gap-2 group px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">share</span>
+<span class="text-xs font-semibold text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white uppercase tracking-wider">Share</span>
+</button>
+<div class="w-px h-6 bg-slate-100 dark:bg-slate-800"></div>
+<button class="flex items-center gap-2 group px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-hacom-red">favorite</span>
+<span class="text-xs font-semibold text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white uppercase tracking-wider">Wishlist</span>
+</button>
+<div class="w-px h-6 bg-slate-100 dark:bg-slate-800"></div>
+<button class="flex items-center gap-2 group px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">360</span>
+<span class="text-xs font-semibold text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white uppercase tracking-wider">View 360</span>
+</button>
+<div class="w-px h-6 bg-slate-100 dark:bg-slate-800"></div>
+<button class="flex items-center gap-2 group px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">play_circle</span>
+<span class="text-xs font-semibold text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white uppercase tracking-wider">Video</span>
+</button>
+</div>
+</section>
+<section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-8 border-b border-slate-100 dark:border-slate-800">
+<h3 class="text-xl font-bold">Detailed Product Review</h3>
+</div>
+<div class="p-8">
+<div class="prose dark:prose-invert max-w-none text-slate-600 dark:text-slate-400 space-y-6">
+<p class="text-lg leading-relaxed">This next-generation portable gaming machine redefines the category with an all-new CNC-machined aluminum chassis. It balances premium aesthetics with uncompromising raw power, making it perfect for both creative professionals and hardcore gamers.</p>
+<img alt="Detail Preview" class="rounded-xl w-full object-cover my-8 shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWG1gvqp5vHShIJzlttlEhqmftdIUzs4oz_Pduj0CvDgNkUb0X-AcmJlNC7dVXHVxerZAuNr-FGlldk0D4flwjsn7U0j3rEyySlV-GcUyBZjGwa2yyCMFzWgZHsnU6wT72es_t0r-fQ2LpNm5Sjq0pFnEWGj84cuv1IBZPKVyoDNuDyfN_Za5IvNV5LwvApvSVrpJCS1iPuk4nTTzVNZZfDRkbxRmWQkYBpfWa5mkQzqrReZVjy3yMC-mEoi5fJwAEr3_mn9LK8AU"/>
+<p class="leading-relaxed">The highlight is the OLED Nebula Display, providing HDR performance with deep blacks and 100% DCI-P3 color accuracy. Thermal management is refined with an upgraded intelligent cooling system featuring custom vapor chambers.</p>
+</div>
+<div class="mt-10 flex justify-center">
+<button class="px-10 py-3 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all text-sm uppercase tracking-wider">Show More Information</button>
+</div>
+</div>
+</section>
+<section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8">
+<h3 class="text-xl font-bold mb-8">Customer Reviews &amp; Ratings</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-10 pb-10 border-b border-slate-100 dark:border-slate-800">
+<div class="text-center">
+<p class="text-6xl font-black text-primary">5.0</p>
+<div class="flex text-amber-400 justify-center my-3">
+<span class="material-symbols-outlined fill-1 text-2xl">star</span>
+<span class="material-symbols-outlined fill-1 text-2xl">star</span>
+<span class="material-symbols-outlined fill-1 text-2xl">star</span>
+<span class="material-symbols-outlined fill-1 text-2xl">star</span>
+<span class="material-symbols-outlined fill-1 text-2xl">star</span>
+</div>
+<p class="text-[10px] text-slate-500 uppercase font-bold tracking-[0.2em]">Overall Rating</p>
+</div>
+<div class="md:col-span-2 space-y-3">
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold w-4">5</span>
+<div class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-amber-400 w-full"></div>
+</div>
+<span class="text-xs text-slate-400 w-8">124</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold w-4">4</span>
+<div class="flex-1 h-2 bg-slate-100 dark:border-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-amber-400 w-4"></div>
+</div>
+<span class="text-xs text-slate-400 w-8">4</span>
+</div>
+</div>
+</div>
+<div class="space-y-8">
+<div class="flex gap-6">
+<div class="w-12 h-12 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center text-slate-500 font-bold">JD</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-bold">John Doe</h4>
+<span class="bg-emerald-100 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded">Verified Owner</span>
+</div>
+<div class="flex text-amber-400 mb-3">
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">The best laptop I have ever owned. The screen is incredible and the performance is smooth even on high settings.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div class="space-y-8 mt-8 lg:mt-0">
+<section class="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col">
+<div class="mb-6">
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 leading-tight">Flagship Performance Laptop (2024) - OLED 3K 120Hz | RTX 4070 | 32GB RAM</h2>
+<div class="flex items-center gap-4 text-sm mb-4">
+<span class="text-slate-400">SKU: <span class="text-primary font-medium">TP-FL-2024</span></span>
+<div class="flex items-center gap-1">
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-lg fill-1">star</span>
+<span class="material-symbols-outlined text-lg fill-1">star</span>
+<span class="material-symbols-outlined text-lg fill-1">star</span>
+<span class="material-symbols-outlined text-lg fill-1">star</span>
+<span class="material-symbols-outlined text-lg fill-1">star</span>
+</div>
+<span class="text-slate-500">(128)</span>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-xl border border-slate-100 dark:border-slate-800 mb-6">
+<div class="flex items-center justify-between mb-2">
+<span class="text-slate-400 text-sm line-through">$2,499.00</span>
+<div class="text-red-600 font-bold text-sm">Save $249.90</div>
+</div>
+<div class="bg-gradient-to-r from-red-600 to-purple-600 p-4 rounded-xl text-center">
+<span class="text-white text-3xl font-black">$2,249.10</span>
+<p class="text-[10px] text-white/80 font-bold uppercase tracking-widest mt-1">Exclusive Online Price</p>
+</div>
+</div>
+<ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400 mb-6">
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span> 24-Month Official Warranty</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span> 0% Installment via Credit Card</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Free Express Shipping</li>
+</ul>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<div class="flex items-center border border-slate-300 dark:border-slate-700 rounded-lg h-12">
+<button class="px-3 py-1 hover:text-primary"><span class="material-symbols-outlined">remove</span></button>
+<span class="px-3 font-bold">1</span>
+<button class="px-3 py-1 hover:text-primary"><span class="material-symbols-outlined">add</span></button>
+</div>
+<button class="flex-1 bg-white border-2 border-primary text-primary font-bold h-12 rounded-lg hover:bg-primary/5 transition-colors uppercase text-sm tracking-wide">
+                            Add to Cart
+                        </button>
+</div>
+<button class="w-full bg-hacom-red text-white font-black text-lg h-14 rounded-lg shadow-lg shadow-red-500/10 hover:brightness-110 active:scale-[0.99] transition-all uppercase">
+                        Buy Now
+                    </button>
+</div>
+</section>
+<section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+<div class="p-5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+<h3 class="font-bold text-xs uppercase tracking-widest">Technical Specifications</h3>
+</div>
+<div class="text-sm">
+<div class="flex border-b border-slate-100 dark:border-slate-800">
+<div class="w-1/3 p-4 bg-slate-50/50 dark:bg-slate-800/20 font-semibold text-slate-500">CPU</div>
+<div class="w-2/3 p-4">AMD Ryzen 9 8945HS</div>
+</div>
+<div class="flex border-b border-slate-100 dark:border-slate-800">
+<div class="w-1/3 p-4 bg-slate-50/50 dark:bg-slate-800/20 font-semibold text-slate-500">Memory</div>
+<div class="w-2/3 p-4">32GB LPDDR5X-6400</div>
+</div>
+<div class="flex border-b border-slate-100 dark:border-slate-800">
+<div class="w-1/3 p-4 bg-slate-50/50 dark:bg-slate-800/20 font-semibold text-slate-500">GPU</div>
+<div class="w-2/3 p-4">RTX 4070 Laptop GPU</div>
+</div>
+<div class="flex border-b border-slate-100 dark:border-slate-800">
+<div class="w-1/3 p-4 bg-slate-50/50 dark:bg-slate-800/20 font-semibold text-slate-500">Storage</div>
+<div class="w-2/3 p-4">1TB PCIe Gen4 SSD</div>
+</div>
+<div class="flex border-b border-slate-100 dark:border-slate-800">
+<div class="w-1/3 p-4 bg-slate-50/50 dark:bg-slate-800/20 font-semibold text-slate-500">Display</div>
+<div class="w-2/3 p-4">14" 3K OLED 120Hz</div>
+</div>
+<div class="flex border-b border-slate-100 dark:border-slate-800">
+<div class="w-1/3 p-4 bg-slate-50/50 dark:bg-slate-800/20 font-semibold text-slate-500">Weight</div>
+<div class="w-2/3 p-4">1.50 Kg (3.31 lbs)</div>
+</div>
+</div>
+<button class="w-full py-4 text-primary font-bold text-xs hover:bg-primary/5 transition-all uppercase tracking-widest border-t border-slate-100 dark:border-slate-800">Download Full PDF Specs</button>
+</section>
+<section class="space-y-6">
+<h3 class="font-bold text-lg px-1">Related Articles</h3>
+<div class="space-y-8">
+<div class="group cursor-pointer">
+<div class="aspect-video w-full rounded-xl overflow-hidden mb-4 border border-slate-100 dark:border-slate-800">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCi_vXbBXnjE5Yx9inbqCz4FCU-mgpaJ5mAX7g-Q6tHegME704MAzRZ4nhHsn1FSIQ8_1M-Eg4QFgA8_HRGQDKqsDpbjgHUstdgO5ZDA9PvwFin8hXhrftXQU7Ic7MT9oe0Xzn6dCBFhyy75zRn5xX8ylpnWZwlqclPWVLcf2GN0Akn7Pg098j2JuG-cCbnBOB-2DmqCR2RD_qYheZE8nq12hwT1A4SflgBZCgmboTFifnSpziZdAV9XHICcKcn_CilHSh-W47Jh3E')"></div>
+</div>
+<h4 class="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors line-clamp-2">Choosing the Perfect Gaming Display in 2024</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Understanding response times, color gamuts, and refresh rates for the ultimate competitive edge in modern gaming titles.</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-video w-full rounded-xl overflow-hidden mb-4 border border-slate-100 dark:border-slate-800">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD0zTgXzmBAoARdE3LyDVLwJwBNvm9eps1JSPsARC88X7j4ypgerga7PFNldFnmgD78S3x8LMZk0zBT6Y_A13cy3xrk8-M292LbDqSpjPf0vWR2qhG3g0H3_MNhDMSa9iqLgc57G8-Bs1njabDo_Wctzx3S9Ci3c-ZeeAsWj2jt2FQRQRs7bA3dSarmjS7HOts_oTi4VOtx6sFdgGJcxhLhUCmyidi9yueaccr8_-oV0tudaAOlYN0Mdlu2hJAD4Zs95Z8RZ6liuDw')"></div>
+</div>
+<h4 class="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors line-clamp-2">Why OLED is the Future of Professional Laptops</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">How self-emissive pixels are revolutionizing color accuracy for designers and video editors worldwide.</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-video w-full rounded-xl overflow-hidden mb-4 border border-slate-100 dark:border-slate-800">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCTAFIyoszl3xP9frV0ajMM3fMVG_bnzgt7RnxZwUElLbTtCzJQncdnHzVsJnlR8en8th3RrHO-z9hHuBral5QdFq3O94Ga1wo1KM9lXjdhrxR2AF5YSEgRlcnTQcRlb88M0c9WmLH-kxIyejhM5oh5sE_37hGww0P3onQBZfT2UQt-Z9hJEZqFDIWVRik-AGZpbK0Meb7fWGutTzpt0HgDfPnrCUd_9uYxBePlfhLQyhW-0LklffmOtu0-KJcbAxG4QvSrHDkWqO0')"></div>
+</div>
+<h4 class="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors line-clamp-2">Maxing Out Your Performance: Cooling Guide</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Tips and tricks to keep your thermal throttles away and your framerates high during intense gaming sessions.</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-video w-full rounded-xl overflow-hidden mb-4 border border-slate-100 dark:border-slate-800">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAxnLDKqbrju_28Mve7LQZ2odJaiAfubgx3g5w1IcdIoIhD8mqmIn9vOq15LLNEhNXLf_Gqtq28bR26aDFq0EXVSAFhvrNXSp08gExKFQ3685hbaXNv5oMqt6nN6wyt4sGpW3_HdTMUgKLUjpF46lFBonuc9VJ8yAFpthW1-d3Utb0H88BnEYO2KQXL10XNpnt1P9Yqr-J2Y6Ry29agfuPy4pO9AbEmivTTQGZR2Daomtw3URJ_3sPTaAJUoEFokAGrbiCv7JbE1kc')"></div>
+</div>
+<h4 class="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors line-clamp-2">The Rise of AI in 2024 Tech Hardware</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Exploring the NPU integration in new-gen processors and how it enhances your daily productivity and creative tasks.</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-video w-full rounded-xl overflow-hidden mb-4 border border-slate-100 dark:border-slate-800">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAHgkTBFqdL5iTWNFsFPS4W1JUfAM_RVGJ9Ygrrr-SprcBZTiMWI00EAMI_lyEpPDzxZKxsIzur6EGap8BxWE8qMnl6DZICzpCT0JyBE4CjlkPqyfGNi_oay0YbA69w8esoCbHsSd0isBLZGjAbBZJV0u_EsMSNxiDnLGbGfnX8Mm6gcMcfNVjLDTg-_61osuvpLBDxI8fSfRf5-inPYqNXz4NQLa9jFVQ5O7xhQgfPZ4mcKhd4J6z4EzHOhBNCx9NvHU9-4l4tEJs')"></div>
+</div>
+<h4 class="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors line-clamp-2">Peripherals: The Forgotten Performance Boost</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Why a high-end mouse and mechanical keyboard are essential upgrades for any serious workstation or gaming rig.</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<section class="space-y-12 my-16">
+<div>
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-2xl font-bold">Customers Also Viewed</h3>
+<div class="flex gap-2">
+<button class="p-2 rounded-full border border-slate-200 hover:bg-primary hover:text-white transition-all"><span class="material-symbols-outlined text-xl">chevron_left</span></button>
+<button class="p-2 rounded-full border border-slate-200 hover:bg-primary hover:text-white transition-all"><span class="material-symbols-outlined text-xl">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all p-4">
+<div class="relative aspect-square rounded-lg overflow-hidden bg-slate-50 mb-4">
+<img class="w-full h-full object-contain transition-transform group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi_vXbBXnjE5Yx9inbqCz4FCU-mgpaJ5mAX7g-Q6tHegME704MAzRZ4nhHsn1FSIQ8_1M-Eg4QFgA8_HRGQDKqsDpbjgHUstdgO5ZDA9PvwFin8hXhrftXQU7Ic7MT9oe0Xzn6dCBFhyy75zRn5xX8ylpnWZwlqclPWVLcf2GN0Akn7Pg098j2JuG-cCbnBOB-2DmqCR2RD_qYheZE8nq12hwT1A4SflgBZCgmboTFifnSpziZdAV9XHICcKcn_CilHSh-W47Jh3E"/>
+</div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">Elite Series 14" Portable Powerhouse</h4>
+<div class="text-[10px] text-slate-500 mb-4 space-y-1 font-medium">
+<p>• Ryzen 9 8945HS</p>
+<p>• RTX 4070 8GB</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+<span class="text-lg font-black text-primary">$1,999.00</span>
+<button class="bg-primary/10 text-primary p-2 rounded-lg hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all p-4">
+<div class="relative aspect-square rounded-lg overflow-hidden bg-slate-50 mb-4">
+<img class="w-full h-full object-contain transition-transform group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0zTgXzmBAoARdE3LyDVLwJwBNvm9eps1JSPsARC88X7j4ypgerga7PFNldFnmgD78S3x8LMZk0zBT6Y_A13cy3xrk8-M292LbDqSpjPf0vWR2qhG3g0H3_MNhDMSa9iqLgc57G8-Bs1njabDo_Wctzx3S9Ci3c-ZeeAsWj2jt2FQRQRs7bA3dSarmjS7HOts_oTi4VOtx6sFdgGJcxhLhUCmyidi9yueaccr8_-oV0tudaAOlYN0Mdlu2hJAD4Zs95Z8RZ6liuDw"/>
+</div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">Studio 14 Ultra-Thin Mobile Station</h4>
+<div class="text-[10px] text-slate-500 mb-4 space-y-1 font-medium">
+<p>• i7-13620H</p>
+<p>• RTX 4060 8GB</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+<span class="text-lg font-black text-primary">$1,549.00</span>
+<button class="bg-primary/10 text-primary p-2 rounded-lg hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all p-4">
+<div class="relative aspect-square rounded-lg overflow-hidden bg-slate-50 mb-4">
+<img class="w-full h-full object-contain transition-transform group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMeimC0tPb75Czb7t9SWgw0Mw2eAMSRAxvcbUnI1TlylW5IW3asOoxKw9PJSRJRB5rPGfNVpxKPSmGTPDF0tfmzqCLld8x3wM52XQBmKacIqsLnXDah6pcnlWQZXJo5oWmglOftb7AF4WjRpOIYO1ZYmZzfRWqLbwuqtMU-rdkEoYZrcZbqEFoQoAwujhqSh2mI8XE3sqq99U2_Obq2pUhfCyjj8yOrYzjxXHJ72A4qpbbniVFbCkfIjdl2WHDWOkY6IEl-34DNDE"/>
+</div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">Apex Stealth X14 Performance</h4>
+<div class="text-[10px] text-slate-500 mb-4 space-y-1 font-medium">
+<p>• i7-13620H</p>
+<p>• RTX 4060 8GB</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+<span class="text-lg font-black text-primary">$1,799.00</span>
+<button class="bg-primary/10 text-primary p-2 rounded-lg hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all p-4">
+<div class="relative aspect-square rounded-lg overflow-hidden bg-slate-50 mb-4">
+<img class="w-full h-full object-contain transition-transform group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWie7_sI2Ws3-EteZtaKgO-VuxaKf2glsK2Zz1iyvKMqH3rfwZRu8Qi9Wq_eS3Pz28qmIsPgfrSE40xQrS-S8E0Jxx2cNhS52Rg1hGWXlBixh-rztZb5UmMNV5iplcbIXVBonZuPNK7s15X3tcYruVQc05tuQ3JbBjfwYQQorMX1gO4eb1pME9LXL6R0nph6q7euLFseXor5taUgzmBp4KzbgWctxJvUWoGJj-op66yvKBIgvwZu2bV-bPUVaIpvbtpZHHjZffNOk"/>
+</div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">Titan Pro 16" Gen 9 Workhorse</h4>
+<div class="text-[10px] text-slate-500 mb-4 space-y-1 font-medium">
+<p>• i9-14900HX</p>
+<p>• RTX 4070 8GB</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+<span class="text-lg font-black text-primary">$2,099.00</span>
+<button class="bg-primary/10 text-primary p-2 rounded-lg hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<div class="hidden lg:block group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all p-4">
+<div class="relative aspect-square rounded-lg overflow-hidden bg-slate-50 mb-4">
+<img class="w-full h-full object-contain transition-transform group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwRIuEIopYuln_pBryLW6YVK42Ng7FZOn77yx3p209abjzCI6Z5yL8-OxC2jb1TN-vZtHAyQryhOW1mnd4vceHILDsUVEifDGhK3Rzx0RYGQAU02tTBRRfc1UXfMxq9WBQO7j4sgEHI9_C0TGHP9GBGu9ap5yoBt5n5unLLPtH1DFDjQpx1AEJ4guV-pDNseGA8DJtRxiLSfbll3tpNUYJDJEoB1VTqQ1kfN8OGUmKcTBJkSIBtwNqOgpdqvfDCkbD2vei-cYraH4"/>
+</div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">Nebula X-Strix 16 Gaming Laptop</h4>
+<div class="text-[10px] text-slate-500 mb-4 space-y-1 font-medium">
+<p>• i7-13650HX</p>
+<p>• RTX 4060 8GB</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+<span class="text-lg font-black text-primary">$1,649.00</span>
+<button class="bg-primary/10 text-primary p-2 rounded-lg hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800/20 p-10 rounded-2xl border border-slate-200 dark:border-slate-800">
+<h3 class="text-xl font-bold mb-8">Recently Viewed</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+<div class="bg-white dark:bg-slate-900 rounded-xl p-3 border border-slate-100 dark:border-slate-800 hover:shadow-lg transition-all">
+<div class="aspect-square mb-3 bg-white flex items-center justify-center p-3 rounded-lg border border-slate-50">
+<img class="max-w-full max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHgkTBFqdL5iTWNFsFPS4W1JUfAM_RVGJ9Ygrrr-SprcBZTiMWI00EAMI_lyEpPDzxZKxsIzur6EGap8BxWE8qMnl6DZICzpCT0JyBE4CjlkPqyfGNi_oay0YbA69w8esoCbHsSd0isBLZGjAbBZJV0u_EsMSNxiDnLGbGfnX8Mm6gcMcfNVjLDTg-_61osuvpLBDxI8fSfRf5-inPYqNXz4NQLa9jFVQ5O7xhQgfPZ4mcKhd4J6z4EzHOhBNCx9NvHU9-4l4tEJs"/>
+</div>
+<h5 class="text-[10px] font-bold line-clamp-1 mb-2 uppercase">High-End Rig 17"</h5>
+<p class="text-sm font-black text-primary">$3,299.00</p>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-3 border border-slate-100 dark:border-slate-800 hover:shadow-lg transition-all">
+<div class="aspect-square mb-3 bg-white flex items-center justify-center p-3 rounded-lg border border-slate-50">
+<img class="max-w-full max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxnLDKqbrju_28Mve7LQZ2odJaiAfubgx3g5w1IcdIoIhD8mqmIn9vOq15LLNEhNXLf_Gqtq28bR26aDFq0EXVSAFhvrNXSp08gExKFQ3685hbaXNv5oMqt6nN6wyt4sGpW3_HdTMUgKLUjpF46lFBonuc9VJ8yAFpthW1-d3Utb0H88BnEYO2KQXL10XNpnt1P9Yqr-J2Y6Ry29agfuPy4pO9AbEmivTTQGZR2Daomtw3URJ_3sPTaAJUoEFokAGrbiCv7JbE1kc"/>
+</div>
+<h5 class="text-[10px] font-bold line-clamp-1 mb-2 uppercase">Ultra Precision Mouse</h5>
+<p class="text-sm font-black text-primary">$149.00</p>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-3 border border-slate-100 dark:border-slate-800 hover:shadow-lg transition-all">
+<div class="aspect-square mb-3 bg-white flex items-center justify-center p-3 rounded-lg border border-slate-50">
+<img class="max-w-full max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTAFIyoszl3xP9frV0ajMM3fMVG_bnzgt7RnxZwUElLbTtCzJQncdnHzVsJnlR8en8th3RrHO-z9hHuBral5QdFq3O94Ga1wo1KM9lXjdhrxR2AF5YSEgRlcnTQcRlb88M0c9WmLH-kxIyejhM5oh5sE_37hGww0P3onQBZfT2UQt-Z9hJEZqFDIWVRik-AGZpbK0Meb7fWGutTzpt0HgDfPnrCUd_9uYxBePlfhLQyhW-0LklffmOtu0-KJcbAxG4QvSrHDkWqO0"/>
+</div>
+<h5 class="text-[10px] font-bold line-clamp-1 mb-2 uppercase">27" 4K OLED Monitor</h5>
+<p class="text-sm font-black text-primary">$899.00</p>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-3 border border-slate-100 dark:border-slate-800 hover:shadow-lg transition-all">
+<div class="aspect-square mb-3 bg-white flex items-center justify-center p-3 rounded-lg border border-slate-50">
+<img class="max-w-full max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi_vXbBXnjE5Yx9inbqCz4FCU-mgpaJ5mAX7g-Q6tHegME704MAzRZ4nhHsn1FSIQ8_1M-Eg4QFgA8_HRGQDKqsDpbjgHUstdgO5ZDA9PvwFin8hXhrftXQU7Ic7MT9oe0Xzn6dCBFhyy75zRn5xX8ylpnWZwlqclPWVLcf2GN0Akn7Pg098j2JuG-cCbnBOB-2DmqCR2RD_qYheZE8nq12hwT1A4SflgBZCgmboTFifnSpziZdAV9XHICcKcn_CilHSh-W47Jh3E"/>
+</div>
+<h5 class="text-[10px] font-bold line-clamp-1 mb-2 uppercase">Wireless Mech Keyboard</h5>
+<p class="text-sm font-black text-primary">$199.00</p>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-3 border border-slate-100 dark:border-slate-800 hover:shadow-lg transition-all">
+<div class="aspect-square mb-3 bg-white flex items-center justify-center p-3 rounded-lg border border-slate-50">
+<img class="max-w-full max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0zTgXzmBAoARdE3LyDVLwJwBNvm9eps1JSPsARC88X7j4ypgerga7PFNldFnmgD78S3x8LMZk0zBT6Y_A13cy3xrk8-M292LbDqSpjPf0vWR2qhG3g0H3_MNhDMSa9iqLgc57G8-Bs1njabDo_Wctzx3S9Ci3c-ZeeAsWj2jt2FQRQRs7bA3dSarmjS7HOts_oTi4VOtx6sFdgGJcxhLhUCmyidi9yueaccr8_-oV0tudaAOlYN0Mdlu2hJAD4Zs95Z8RZ6liuDw"/>
+</div>
+<h5 class="text-[10px] font-bold line-clamp-1 mb-2 uppercase">DDR5 64GB RAM Kit</h5>
+<p class="text-sm font-black text-primary">$279.00</p>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl p-3 border border-slate-100 dark:border-slate-800 hover:shadow-lg transition-all">
+<div class="aspect-square mb-3 bg-white flex items-center justify-center p-3 rounded-lg border border-slate-50">
+<img class="max-w-full max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMeimC0tPb75Czb7t9SWgw0Mw2eAMSRAxvcbUnI1TlylW5IW3asOoxKw9PJSRJRB5rPGfNVpxKPSmGTPDF0tfmzqCLld8x3wM52XQBmKacIqsLnXDah6pcnlWQZXJo5oWmglOftb7AF4WjRpOIYO1ZYmZzfRWqLbwuqtMU-rdkEoYZrcZbqEFoQoAwujhqSh2mI8XE3sqq99U2_Obq2pUhfCyjj8yOrYzjxXHJ72A4qpbbniVFbCkfIjdl2WHDWOkY6IEl-34DNDE"/>
+</div>
+<h5 class="text-[10px] font-bold line-clamp-1 mb-2 uppercase">2TB NVMe Gen5 SSD</h5>
+<p class="text-sm font-black text-primary">$209.00</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 pt-20 pb-10">
+<div class="max-w-[1600px] mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+<div class="space-y-6">
+<div class="flex items-center gap-2">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined text-sm block">developer_board</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight">TechPremium</h1>
+</div>
+<p class="text-slate-500 text-sm leading-relaxed">Defining excellence in high-end computing since 2012. We provide the tools for creators and gamers who refuse to compromise on quality or performance.</p>
+</div>
+<div>
+<h5 class="font-bold mb-8 text-xs uppercase tracking-widest text-slate-400">Categories</h5>
+<ul class="space-y-4 text-sm text-slate-500">
+<li><a class="hover:text-primary transition-colors" href="#">Gaming Laptops</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Workstation PCs</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Peripherals</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Components</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-bold mb-8 text-xs uppercase tracking-widest text-slate-400">Support</h5>
+<ul class="space-y-4 text-sm text-slate-500">
+<li><a class="hover:text-primary transition-colors" href="#">Premium Shipping</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Global Warranty</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Technical Support</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Business Solutions</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-bold mb-8 text-xs uppercase tracking-widest text-slate-400">Newsletter</h5>
+<p class="text-xs text-slate-500 mb-6">Join our inner circle for early access to flagship releases.</p>
+<div class="flex gap-2">
+<input class="flex-1 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-primary px-4" placeholder="Email address" type="email"/>
+<button class="bg-primary text-white p-3 rounded-lg hover:brightness-110">
+<span class="material-symbols-outlined block text-lg">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-[1600px] mx-auto px-4 pt-10 border-t border-slate-100 dark:border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">
+<p>© 2024 TechPremium Inc. All rights reserved.</p>
+<div class="flex gap-8">
+<a class="hover:text-slate-900 dark:hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-slate-900 dark:hover:text-white transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-slate-900 dark:hover:text-white transition-colors" href="#">Cookie Policy</a>
+</div>
+</div>
+</footer>
+
+</body></html>

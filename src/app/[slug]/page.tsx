@@ -121,32 +121,46 @@ export default async function SlugPage({ params, searchParams }: {
         const displayPrice = cleanPrice(product.price || product.regularPrice);
         const imageUrl = product.image?.sourceUrl || "";
 
-        return (
-            <div className="bg-slate-50 min-h-screen pb-12">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-                    {/* Main Product Card Background */}
-                    <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 lg:p-10 mb-8">
-                        {/* Breadcrumbs */}
-                        <nav className="text-sm text-gray-500 mb-8 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-2">
-                            <Link href="/" className="hover:text-blue-600 transition-colors">Trang chủ</Link>
-                            <span>/</span>
-                            {product.productCategories?.nodes?.[0] && (
-                                <>
-                                    <Link
-                                        href={`/${product.productCategories.nodes[0].slug}`}
-                                        className="hover:text-blue-600 transition-colors"
-                                    >
-                                        {product.productCategories.nodes[0].name}
-                                    </Link>
-                                    <span>/</span>
-                                </>
-                            )}
-                            <span className="text-gray-900 font-medium truncate">{product.name}</span>
-                        </nav>
+        // Calculate savings
+        const getSavingsInfo = () => {
+            if (!product.regularPrice || !product.salePrice) return null;
+            const regNum = parseInt(product.regularPrice.replace(/[^\d]/g, ''));
+            const saleNum = parseInt(product.salePrice.replace(/[^\d]/g, ''));
+            if (!regNum || !saleNum || regNum <= saleNum) return null;
+            const saved = regNum - saleNum;
+            const percent = Math.round((saved / regNum) * 100);
+            return { saved: saved.toLocaleString('vi-VN') + '₫', percent };
+        };
+        const savings = getSavingsInfo();
 
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                            {/* Left: Photos */}
-                            <div className="lg:col-span-5 xl:col-span-6">
+        return (
+            <div className="bg-[#f8fafc] min-h-screen pb-16">
+                <div className="max-w-[1600px] mx-auto px-4 py-4">
+                    {/* Breadcrumbs */}
+                    <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6">
+                        <Link href="/" className="hover:text-blue-600 transition-colors">Trang chủ</Link>
+                        <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                        {product.productCategories?.nodes?.[0] && (
+                            <>
+                                <Link
+                                    href={`/${product.productCategories.nodes[0].slug}`}
+                                    className="hover:text-blue-600 transition-colors"
+                                >
+                                    {product.productCategories.nodes[0].name}
+                                </Link>
+                                <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                            </>
+                        )}
+                        <span className="text-slate-900 font-medium truncate">{product.name}</span>
+                    </nav>
+
+                    {/* Main Grid: 62% / 38% */}
+                    <div className="lg:grid gap-8 items-start" style={{ gridTemplateColumns: '62% 1fr' }}>
+
+                        {/* ====== LEFT COLUMN: Gallery + Action Bar + Description ====== */}
+                        <div className="space-y-6">
+                            {/* Gallery Section */}
+                            <section className="bg-white rounded-xl border border-slate-200 p-6 lg:p-8">
                                 <ProductGallery
                                     mainImage={product.image}
                                     galleryNodes={product.galleryImages?.nodes || []}
@@ -154,166 +168,177 @@ export default async function SlugPage({ params, searchParams }: {
                                     salePrice={product.salePrice}
                                     regularPrice={product.regularPrice}
                                 />
+                            </section>
+
+                            {/* Action Bar */}
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 flex items-center justify-around">
+                                <button className="flex items-center gap-2 group px-4 py-2 hover:bg-slate-50 rounded-lg transition-all">
+                                    <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
+                                    <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-900 uppercase tracking-wider">So sánh</span>
+                                </button>
+                                <div className="w-px h-6 bg-slate-100"></div>
+                                <button className="flex items-center gap-2 group px-4 py-2 hover:bg-slate-50 rounded-lg transition-all">
+                                    <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                                    <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-900 uppercase tracking-wider">Chia sẻ</span>
+                                </button>
+                                <div className="w-px h-6 bg-slate-100"></div>
+                                <button className="flex items-center gap-2 group px-4 py-2 hover:bg-slate-50 rounded-lg transition-all">
+                                    <svg className="w-5 h-5 text-slate-400 group-hover:text-red-500 transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                                    <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-900 uppercase tracking-wider">Yêu thích</span>
+                                </button>
                             </div>
 
-                            {/* Right: Info & Buy */}
-                            <div className="lg:col-span-7 xl:col-span-6 space-y-6">
-                                <div>
-                                    <h1 className="text-2xl lg:text-3xl xl:text-4xl font-extrabold text-gray-900 leading-tight mb-4 tracking-tight">
+                            {/* Detailed Product Description */}
+                            {product.description && (
+                                <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                    <div className="p-6 lg:p-8 border-b border-slate-100">
+                                        <h3 className="text-xl font-bold">Mô tả chi tiết sản phẩm</h3>
+                                    </div>
+                                    <div className="p-6 lg:p-8">
+                                        <ExpandableDescription content={product.description} />
+                                    </div>
+                                </section>
+                            )}
+                        </div>
+
+                        {/* ====== RIGHT COLUMN: Product Info + Specs + News ====== */}
+                        <div className="space-y-6 mt-6 lg:mt-0">
+                            {/* Product Info Card */}
+                            <section className="bg-white rounded-xl border border-slate-200 p-6 lg:p-8 flex flex-col">
+                                <div className="mb-6">
+                                    <h1 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
                                         {product.name}
                                     </h1>
-                                    <div className="flex items-center gap-4 flex-wrap pb-4 border-b border-gray-100">
+                                    <div className="flex items-center gap-4 text-sm mb-4 flex-wrap">
+                                        <span className="text-slate-400">SKU: <span className="text-blue-600 font-medium">{product.sku || product.databaseId}</span></span>
                                         <div className="flex items-center gap-1">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <svg key={star} className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                </svg>
-                                            ))}
-                                            <span className="text-sm font-medium text-blue-600 ml-2 hover:underline cursor-pointer">128 đánh giá</span>
+                                            <div className="flex text-amber-400">
+                                                {[1, 2, 3, 4, 5].map((s) => (
+                                                    <svg key={s} className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                                ))}
+                                            </div>
+                                            <span className="text-slate-500">(128)</span>
                                         </div>
-                                        <span className="text-gray-300">|</span>
-                                        <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider">
-                                            {product.stockStatus === 'IN_STOCK' ? '● Còn hàng' : '○ Hết hàng'}
+                                    </div>
+
+                                    {/* Price Block */}
+                                    <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 mb-6">
+                                        {savings && (
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-slate-400 text-sm line-through">{cleanPrice(product.regularPrice)}</span>
+                                                <div className="text-red-600 font-bold text-sm">Tiết kiệm {savings.saved}</div>
+                                            </div>
+                                        )}
+                                        <div className="bg-gradient-to-r from-red-600 to-purple-600 p-4 rounded-xl text-center">
+                                            <span className="text-white text-3xl font-black">{displayPrice}</span>
+                                            <p className="text-[10px] text-white/80 font-bold uppercase tracking-widest mt-1">Giá ưu đãi trực tuyến</p>
                                         </div>
-                                        <span className="text-gray-300">|</span>
-                                        <span className="text-sm font-medium text-gray-500">Mã: {product.sku || product.databaseId}</span>
+                                    </div>
+
+                                    {/* Benefits */}
+                                    <ul className="space-y-2 text-sm text-slate-600 mb-6">
+                                        <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Bảo hành chính hãng 24 tháng</li>
+                                        <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Trả góp 0% qua thẻ tín dụng</li>
+                                        <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Miễn phí giao hàng toàn quốc</li>
+                                    </ul>
+
+                                    {/* Stock Status */}
+                                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${product.stockStatus === 'IN_STOCK' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                                        {product.stockStatus === 'IN_STOCK' ? 'Còn hàng' : 'Hết hàng'}
                                     </div>
                                 </div>
 
-                                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-                                    <div className="space-y-1 bg-red-50/50 p-4 rounded-2xl border border-red-100">
-                                        <p className="text-sm text-red-500 font-bold uppercase tracking-wider">Giá bán ưu đãi</p>
-                                        <div className="flex items-baseline gap-3">
-                                            <span className="text-4xl font-black text-red-600 tracking-tighter">
-                                                {displayPrice}
-                                            </span>
-                                            {product.regularPrice && product.salePrice && (
-                                                <span className="text-lg text-slate-400 font-medium line-through decoration-slate-300">
-                                                    {cleanPrice(product.regularPrice)}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
+                                {/* CTA Buttons */}
+                                <div className="flex flex-col gap-3">
+                                    <AddToCartButton
+                                        id={product.id}
+                                        databaseId={product.databaseId}
+                                        name={product.name}
+                                        price={displayPrice}
+                                        imageUrl={imageUrl}
+                                        slug={product.slug}
+                                        stockStatus={product.stockStatus || "IN_STOCK"}
+                                    />
+                                </div>
+                            </section>
 
-                                    {/* Promotions Box */}
-                                    <div className="bg-white border-2 border-dashed border-blue-200 rounded-2xl overflow-hidden mt-4">
-                                        <div className="bg-gradient-to-r from-blue-50 to-white px-4 py-3 border-b border-blue-100 flex items-center gap-2">
-                                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" /></svg>
-                                            <h3 className="font-bold text-blue-800 uppercase text-sm tracking-wide">Khuyến mãi đặc biệt</h3>
-                                        </div>
-                                        <div className="p-4 space-y-3">
-                                            <div className="flex items-start gap-3">
-                                                <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5"><span className="text-[10px] font-bold">1</span></div>
-                                                <p className="text-sm text-slate-700 leading-snug">Nhập mã <strong className="text-blue-600">LMC500</strong> giảm ngay 500.000đ khi thanh toán qua VNPay-QR (Áp dụng cho đơn hàng từ 10 Triệu).</p>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5"><span className="text-[10px] font-bold">2</span></div>
-                                                <p className="text-sm text-slate-700 leading-snug">Miễn phí giao hàng toàn quốc.</p>
-                                            </div>
-                                            <div className="flex items-start gap-3">
-                                                <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5"><span className="text-[10px] font-bold">3</span></div>
-                                                <p className="text-sm text-slate-700 leading-snug">Tặng gói bảo dưỡng, vệ sinh PC miễn phí trọn đời (trị giá 1.500.000đ).</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                            {/* Technical Specifications */}
+                            <DetailedSpecsTable
+                                shortDescription={product.shortDescription}
+                                attributes={product.attributes}
+                                acfDetailedSpecs={product.thongsokythuatsonbn?.thongsochitiet || ''}
+                            />
 
-                                    <div className="pt-4 border-t border-slate-100">
-                                        <ProductSpecs
-                                            shortDescription={product.shortDescription}
-                                            attributes={product.attributes}
-                                        />
+                            {/* Promotions Box */}
+                            <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                <div className="p-5 bg-gradient-to-r from-blue-50 to-white border-b border-slate-200">
+                                    <h3 className="font-bold text-xs uppercase tracking-widest flex items-center gap-2 text-blue-800">
+                                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" /></svg>
+                                        Khuyến mãi đặc biệt
+                                    </h3>
+                                </div>
+                                <div className="p-5 space-y-3">
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5"><span className="text-[10px] font-bold">1</span></div>
+                                        <p className="text-sm text-slate-700 leading-snug">Nhập mã <strong className="text-blue-600">LMC500</strong> giảm ngay 500.000đ khi thanh toán qua VNPay-QR.</p>
                                     </div>
-
-                                    <div className="pt-2">
-                                        <AddToCartButton
-                                            id={product.id}
-                                            databaseId={product.databaseId}
-                                            name={product.name}
-                                            price={displayPrice}
-                                            imageUrl={imageUrl}
-                                            slug={product.slug}
-                                            stockStatus={product.stockStatus || "IN_STOCK"}
-                                        />
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5"><span className="text-[10px] font-bold">2</span></div>
+                                        <p className="text-sm text-slate-700 leading-snug">Miễn phí giao hàng toàn quốc.</p>
                                     </div>
-
-                                    <div className="grid grid-cols-2 gap-4 mt-4">
-                                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 shadow-sm shrink-0 border border-slate-100">
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                                            </div>
-                                            <span className="text-xs font-bold text-slate-700">Chính hãng 100%</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 shadow-sm shrink-0 border border-slate-100">
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                            </div>
-                                            <span className="text-xs font-bold text-slate-700">Bảo hành siêu tốc</span>
-                                        </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5"><span className="text-[10px] font-bold">3</span></div>
+                                        <p className="text-sm text-slate-700 leading-snug">Tặng gói bảo dưỡng, vệ sinh PC miễn phí trọn đời.</p>
                                     </div>
                                 </div>
-                            </div>
+                            </section>
+
+                            {/* Related News */}
+                            <RelatedNews />
                         </div>
-
-                        {/* Main Content Area: Description + Sidebar (Specs & News) */}
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-12">
-                            {/* Left Column: Description */}
-                            <div className="lg:col-span-8 space-y-8">
-                                {product.description && (
-                                    <ExpandableDescription content={product.description} />
-                                )}
-                            </div>
-
-                            {/* Right Column: Sidebar */}
-                            <div className="lg:col-span-4 space-y-8 lg:sticky lg:top-24 h-max">
-                                <DetailedSpecsTable
-                                    shortDescription={product.shortDescription}
-                                    attributes={product.attributes}
-                                    acfDetailedSpecs={product.thongsokythuatsonbn?.thongsochitiet || ''}
-                                />
-                                <RelatedNews />
-                            </div>
-                        </div>
-
-                        {/* Related Products Section */}
-                        {product.related?.nodes && product.related.nodes.length > 0 && (
-                            <div className="mt-8">
-                                <h2 className="text-2xl font-bold text-gray-900 mb-6 uppercase tracking-tight">
-                                    Sản phẩm tương tự
-                                </h2>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4">
-                                    {product.related.nodes.map((p: any) => (
-                                        <ProductCard
-                                            key={p.id}
-                                            id={p.id}
-                                            databaseId={p.databaseId}
-                                            name={p.name}
-                                            price={(p.price || p.regularPrice || "Liên hệ").replace(/&nbsp;/g, ' ')}
-                                            imageUrl={p.image?.sourceUrl || ""}
-                                            slug={p.slug}
-                                            sku={p.sku}
-                                            regularPrice={p.regularPrice}
-                                            salePrice={p.salePrice}
-                                            category={product.productCategories?.nodes?.[0]?.slug}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        <StickyBuyBar
-                            id={product.id}
-                            databaseId={product.databaseId}
-                            name={product.name}
-                            price={displayPrice}
-                            imageUrl={imageUrl}
-                            slug={product.slug}
-                            stockStatus={product.stockStatus || "IN_STOCK"}
-                        />
                     </div>
+
+                    {/* Related Products Section */}
+                    {product.related?.nodes && product.related.nodes.length > 0 && (
+                        <section className="mt-16">
+                            <div className="flex items-center justify-between mb-8">
+                                <h3 className="text-2xl font-bold">Sản phẩm tương tự</h3>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                                {product.related.nodes.map((p: any) => (
+                                    <ProductCard
+                                        key={p.id}
+                                        id={p.id}
+                                        databaseId={p.databaseId}
+                                        name={p.name}
+                                        price={(p.price || p.regularPrice || "Liên hệ").replace(/&nbsp;/g, ' ')}
+                                        imageUrl={p.image?.sourceUrl || ""}
+                                        slug={p.slug}
+                                        sku={p.sku}
+                                        regularPrice={p.regularPrice}
+                                        salePrice={p.salePrice}
+                                        category={product.productCategories?.nodes?.[0]?.slug}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    <StickyBuyBar
+                        id={product.id}
+                        databaseId={product.databaseId}
+                        name={product.name}
+                        price={displayPrice}
+                        imageUrl={imageUrl}
+                        slug={product.slug}
+                        stockStatus={product.stockStatus || "IN_STOCK"}
+                    />
                 </div>
             </div>
         );
     }
+
 
     // --- TRƯỜNG HỢP: DANH MỤC ---
     if (nodeData?.productCategory) {
