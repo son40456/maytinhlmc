@@ -55,6 +55,8 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const [liveResults, setLiveResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
     const [showLiveResults, setShowLiveResults] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const searchRef = React.useRef<HTMLFormElement>(null);
     const itemCount = useCartStore((state) => state.getItemCount());
@@ -72,6 +74,23 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // Scroll detection: collapse menu after 80px scroll
+    useEffect(() => {
+        let lastScrollY = 0;
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > 80) {
+                setScrolled(true);
+                setMenuOpen(false);
+            } else {
+                setScrolled(false);
+            }
+            lastScrollY = currentScrollY;
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     useEffect(() => {
@@ -277,11 +296,22 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                     <button className="lg:hidden p-2 text-white">
                         <Menu size={24} />
                     </button>
+
+                    {/* Desktop Menu Toggle (visible when scrolled) */}
+                    <button
+                        onClick={() => setMenuOpen(prev => !prev)}
+                        className={`hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-300 text-white hover:bg-white/10 ${scrolled ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none w-0 px-0 overflow-hidden'}`}
+                        title={menuOpen ? 'Ẩn menu' : 'Hiện menu'}
+                    >
+                        <Menu size={20} />
+                        <span className="text-[10px] font-bold uppercase tracking-wide">Menu</span>
+                    </button>
                 </div>
             </div>
 
             {/* Tier 2: Navy Menu Bar */}
-            <div className="bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative">
+            <div className={`bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative transition-all duration-300 ease-in-out overflow-hidden ${scrolled && !menuOpen ? 'max-h-0 opacity-0' : 'max-h-[200px] opacity-100'
+                }`}>
                 <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative">
                     <nav className="flex items-center justify-between w-full min-w-max lg:min-w-0">
                         {menuTree.map((item) => {
