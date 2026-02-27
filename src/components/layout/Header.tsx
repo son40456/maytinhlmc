@@ -83,9 +83,9 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
             const currentScrollY = window.scrollY;
             if (currentScrollY > 80) {
                 setScrolled(true);
-                setMenuOpen(false);
             } else {
                 setScrolled(false);
+                setMenuOpen(false);
             }
             lastScrollY = currentScrollY;
         };
@@ -147,6 +147,16 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                             <span className="text-4xl md:text-5xl font-black italic tracking-tighter drop-shadow-sm">LMC</span>
                         )}
                     </Link>
+
+                    {/* Danh mục Toggle (visible when scrolled) */}
+                    <button
+                        onClick={() => setMenuOpen(prev => !prev)}
+                        className={`hidden lg:flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 text-white hover:bg-white/15 flex-shrink-0 ${scrolled ? 'opacity-100 bg-white/10' : 'opacity-0 scale-90 pointer-events-none w-0 px-0 overflow-hidden'}`}
+                        title={menuOpen ? 'Ẩn danh mục' : 'Hiện danh mục'}
+                    >
+                        <Menu size={20} />
+                        <span className="text-sm font-bold">Danh mục</span>
+                    </button>
 
                     {/* Search Bar */}
                     <div className="flex-1 max-w-3xl px-2 lg:px-8 relative">
@@ -295,16 +305,6 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                     {/* Mobile Menu Icon */}
                     <button className="lg:hidden p-2 text-white">
                         <Menu size={24} />
-                    </button>
-
-                    {/* Desktop Menu Toggle (visible when scrolled) */}
-                    <button
-                        onClick={() => setMenuOpen(prev => !prev)}
-                        className={`hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-300 text-white hover:bg-white/10 ${scrolled ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none w-0 px-0 overflow-hidden'}`}
-                        title={menuOpen ? 'Ẩn menu' : 'Hiện menu'}
-                    >
-                        <Menu size={20} />
-                        <span className="text-[10px] font-bold uppercase tracking-wide">Menu</span>
                     </button>
                 </div>
             </div>
