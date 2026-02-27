@@ -91,11 +91,11 @@ export function CategoryFilterSort({
             {/* Thương hiệu */}
             {brandFilter && (
                 <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-center gap-3'}>
-                    <span className="text-xs font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Thương hiệu:</span>
+                    <span className="text-sm font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Thương hiệu:</span>
                     <div className={`flex gap-2 ${isMobile ? 'flex-wrap' : 'flex-wrap'}`}>
                         <button
                             onClick={() => onFilterChange(brandFilter.slug, 'all')}
-                            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${!selectedAttributes[brandFilter.slug]?.length
+                            className={`px-5 py-2 rounded-lg text-sm font-bold transition-all ${!selectedAttributes[brandFilter.slug]?.length
                                 ? 'bg-orange-600 text-white shadow-sm'
                                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                                 }`}
@@ -109,15 +109,15 @@ export function CategoryFilterSort({
                                 <button
                                     key={opt.slug}
                                     onClick={() => onFilterChange(brandFilter.slug, opt.slug)}
-                                    className={`relative h-8 px-3 rounded-lg border-2 transition-all flex items-center justify-center bg-white ${isSelected ? 'border-orange-500' : 'border-gray-100 hover:border-orange-200'
+                                    className={`relative h-10 px-3 rounded-lg border-2 transition-all flex items-center justify-center bg-white ${isSelected ? 'border-orange-500' : 'border-gray-100 hover:border-orange-200'
                                         }`}
                                 >
                                     {logo ? (
-                                        <div className="relative w-14 h-5">
+                                        <div className="relative w-20 h-7">
                                             <Image src={logo} alt={opt.name} fill className="object-contain" />
                                         </div>
                                     ) : (
-                                        <span className="text-[10px] font-bold">{opt.name}</span>
+                                        <span className="text-xs font-bold">{opt.name}</span>
                                     )}
                                 </button>
                             );
@@ -129,15 +129,15 @@ export function CategoryFilterSort({
             {/* Khoảng giá */}
             {dynamicPriceFilter && (
                 <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-center gap-3'}>
-                    <span className="text-xs font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Khoảng giá:</span>
-                    <div className="flex flex-wrap gap-1.5">
+                    <span className="text-sm font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Khoảng giá:</span>
+                    <div className="flex flex-wrap gap-2">
                         {dynamicPriceFilter.options.map((opt) => {
                             const isSelected = selectedAttributes[dynamicPriceFilter.slug]?.includes(opt.slug);
                             return (
                                 <button
                                     key={opt.slug}
                                     onClick={() => onFilterChange(dynamicPriceFilter.slug, opt.slug)}
-                                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${isSelected
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border ${isSelected
                                         ? 'bg-orange-600 border-orange-600 text-white shadow-sm'
                                         : 'bg-gray-50 border-gray-100 text-gray-600 hover:border-orange-300'
                                         }`}
