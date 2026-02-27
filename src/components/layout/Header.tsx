@@ -130,8 +130,8 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     return (
         <header className="sticky top-0 z-50 w-full shadow-md font-sans">
             {/* Tier 1: Blue Bar */}
-            <div className="bg-[#004b91] text-white py-4 md:py-5">
-                <div className="container mx-auto px-4 flex items-center justify-between gap-6">
+            <div className="bg-[#004b91] text-white h-[72px]">
+                <div className="container mx-auto px-4 flex items-center justify-between gap-6 h-full">
                     {/* Logo LMC */}
                     <Link href="/" className="flex-shrink-0">
                         {logoUrl ? (
