@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Search, X, Plus, Cpu, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, X, Plus, Cpu, ChevronLeft, ChevronRight, Sparkles, Filter } from "lucide-react";
 
 // Local query to fetch all required products upfront for instant client-side filtering
 const GET_ALL_CATEGORY_PRODUCTS = `
@@ -58,10 +58,11 @@ interface ProductSelectModalProps {
     categoryId: string;
     categoryName: string;
     categorySlug: string;
+    compatibilityFilter?: { keywords: string[]; label: string } | null;
     onSelect: (product: any) => void;
 }
 
-export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, categorySlug, onSelect }: ProductSelectModalProps) {
+export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, categorySlug, compatibilityFilter, onSelect }: ProductSelectModalProps) {
     const [allProducts, setAllProducts] = useState<any[]>([]);
     const [displayedProducts, setDisplayedProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
@@ -77,6 +78,9 @@ export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, 
     const [sortOrder, setSortOrder] = useState("DATE_DESC");
     const [selectedAttributes, setSelectedAttributes] = useState<{ [key: string]: string[] }>({});
     const [availableFilters, setAvailableFilters] = useState<any[]>([]);
+
+    // Compatibility auto-filter state
+    const [compatFilterActive, setCompatFilterActive] = useState(true);
 
     useEffect(() => {
         const timer = setTimeout(() => setDebouncedSearch(searchTermInput), 150); // Faster debounce for local array
@@ -206,6 +210,15 @@ export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, 
     useEffect(() => {
         let result = [...allProducts];
 
+        // 0. Compatibility filter (auto-filter by platform/DDR)
+        if (compatFilterActive && compatibilityFilter && compatibilityFilter.keywords.length > 0) {
+            const keywords = compatibilityFilter.keywords.map(k => k.toLowerCase());
+            result = result.filter(p => {
+                const name = p.name.toLowerCase();
+                return keywords.some(kw => name.includes(kw.toLowerCase()));
+            });
+        }
+
         // 1. Search filter
         if (debouncedSearch.trim() !== "") {
             const lowerSearch = debouncedSearch.toLowerCase();
@@ -244,7 +257,7 @@ export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, 
 
         setDisplayedProducts(result);
         setCurrentPage(1); // Reset page on filter changes
-    }, [allProducts, debouncedSearch, sortOrder, selectedAttributes]);
+    }, [allProducts, debouncedSearch, sortOrder, selectedAttributes, compatFilterActive, compatibilityFilter]);
 
     if (!isOpen) return null;
 
@@ -378,6 +391,28 @@ export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, 
                                 <p className="text-[10px] md:text-[11px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap shrink-0">{displayedProducts.length} Món</p>
                             </div>
                         </div>
+
+                        {/* Compatibility Filter Banner */}
+                        {compatibilityFilter && (
+                            <div className={`px-4 md:px-8 py-2.5 border-b border-white/5 flex items-center justify-between gap-3 shrink-0 ${compatFilterActive ? 'bg-emerald-500/10' : 'bg-white/5'}`}>
+                                <div className="flex items-center gap-2">
+                                    <Sparkles className={`w-4 h-4 ${compatFilterActive ? 'text-emerald-400' : 'text-slate-500'}`} />
+                                    <span className={`text-[11px] font-bold uppercase tracking-wider ${compatFilterActive ? 'text-emerald-400' : 'text-slate-500'}`}>
+                                        {compatibilityFilter.label}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={() => setCompatFilterActive(!compatFilterActive)}
+                                    className={`flex items-center gap-1.5 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors ${compatFilterActive
+                                        ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-400'
+                                        : 'bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:text-emerald-400'
+                                        }`}
+                                >
+                                    <Filter className="w-3 h-3" />
+                                    {compatFilterActive ? 'Tắt lọc' : 'Bật lọc'}
+                                </button>
+                            </div>
+                        )}
 
                         {/* Selected Tags */}
                         {Object.values(selectedAttributes).some(arr => arr.length > 0) && (

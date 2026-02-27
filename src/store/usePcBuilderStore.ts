@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { getCompatibilityHints, CompatibilityHint } from '@/lib/pc-builder/compatibilityEngine';
 
 export interface ComponentCategory {
     id: string;
@@ -10,6 +11,7 @@ export interface ComponentCategory {
 interface PcBuilderState {
     components: ComponentCategory[];
     totalPrice: number;
+    compatibilityHints: CompatibilityHint[];
     selectProduct: (categoryId: string, product: any) => void;
     removeProduct: (categoryId: string) => void;
     clearAll: () => void;
@@ -17,8 +19,8 @@ interface PcBuilderState {
 }
 
 const initialComponents: ComponentCategory[] = [
-    { id: 'cpu', name: 'CPU - Bộ Vi Xử Lý', slug: 'cpu-bo-vi-xu-ly', product: null },
     { id: 'mainboard', name: 'Mainboard - Bo Mạch Chủ', slug: 'mainboard-bo-mach-chu', product: null },
+    { id: 'cpu', name: 'CPU - Bộ Vi Xử Lý', slug: 'cpu-bo-vi-xu-ly', product: null },
     { id: 'ram', name: 'RAM - Bộ Nhớ Trong', slug: 'ram-bo-nho-trong', product: null },
     { id: 'vga', name: 'VGA - Card Màn Hình', slug: 'vga-card-man-hinh', product: null },
     { id: 'ssd', name: 'Ổ Cứng SSD', slug: 'o-cung-ssd', product: null },
@@ -31,9 +33,22 @@ const initialComponents: ComponentCategory[] = [
     { id: 'headphone', name: 'Tai Nghe', slug: 'loa-tai-nghe-mic-webcam', product: null },
 ];
 
+function calculateTotal(components: ComponentCategory[]): number {
+    let total = 0;
+    components.forEach(comp => {
+        if (comp.product && (comp.product.price || comp.product.regularPrice)) {
+            const priceString = comp.product.price || comp.product.regularPrice;
+            const numPrice = parseInt(priceString.replace(/&nbsp;/g, " ").replace(/\D/g, '')) || 0;
+            total += numPrice;
+        }
+    });
+    return total;
+}
+
 export const usePcBuilderStore = create<PcBuilderState>((set) => ({
     components: initialComponents,
     totalPrice: 0,
+    compatibilityHints: [],
     selectProduct: (categoryId, product) => {
         set((state) => {
             const newComponents = [...state.components];
@@ -41,18 +56,11 @@ export const usePcBuilderStore = create<PcBuilderState>((set) => ({
             if (idx > -1) {
                 newComponents[idx] = { ...newComponents[idx], product };
             }
-
-            // Recalculate total price
-            let total = 0;
-            newComponents.forEach(comp => {
-                if (comp.product && (comp.product.price || comp.product.regularPrice)) {
-                    const priceString = comp.product.price || comp.product.regularPrice;
-                    const numPrice = parseInt(priceString.replace(/&nbsp;/g, " ").replace(/\D/g, '')) || 0;
-                    total += numPrice;
-                }
-            });
-
-            return { components: newComponents, totalPrice: total };
+            return {
+                components: newComponents,
+                totalPrice: calculateTotal(newComponents),
+                compatibilityHints: getCompatibilityHints(newComponents),
+            };
         });
     },
     removeProduct: (categoryId) => {
@@ -62,24 +70,17 @@ export const usePcBuilderStore = create<PcBuilderState>((set) => ({
             if (idx > -1) {
                 newComponents[idx] = { ...newComponents[idx], product: null };
             }
-
-            // Recalculate total price
-            let total = 0;
-            newComponents.forEach(comp => {
-                if (comp.product && (comp.product.price || comp.product.regularPrice)) {
-                    const priceString = comp.product.price || comp.product.regularPrice;
-                    const numPrice = parseInt(priceString.replace(/&nbsp;/g, " ").replace(/\D/g, '')) || 0;
-                    total += numPrice;
-                }
-            });
-
-            return { components: newComponents, totalPrice: total };
+            return {
+                components: newComponents,
+                totalPrice: calculateTotal(newComponents),
+                compatibilityHints: getCompatibilityHints(newComponents),
+            };
         });
     },
     clearAll: () => {
         set((state) => {
             const clearedComponents = state.components.map(c => ({ ...c, product: null }));
-            return { components: clearedComponents, totalPrice: 0 };
+            return { components: clearedComponents, totalPrice: 0, compatibilityHints: [] };
         });
     },
     initComponents: (config) => {

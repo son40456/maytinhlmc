@@ -5,7 +5,8 @@ import Image from "next/image";
 import { usePcBuilderStore } from "@/store/usePcBuilderStore";
 import { ProductSelectModal } from "@/components/pc-builder/ProductSelectModal";
 import { useCartStore } from "@/store/useCartStore";
-import { FileSpreadsheet, DownloadCloud, Share2, Printer } from "lucide-react";
+import { getAutoFilterForCategory } from "@/lib/pc-builder/compatibilityEngine";
+import { FileSpreadsheet, DownloadCloud, Share2, Printer, AlertTriangle, Lightbulb, CheckCircle2 } from "lucide-react";
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
 import ExcelJS from 'exceljs';
@@ -13,7 +14,7 @@ import { saveAs } from 'file-saver';
 import { getPcBuilderConfig } from '@/app/actions/configActions';
 
 export default function BuildPcPage() {
-    const { components, totalPrice, removeProduct, clearAll, initComponents } = usePcBuilderStore();
+    const { components, totalPrice, removeProduct, clearAll, initComponents, compatibilityHints } = usePcBuilderStore();
     const addItem = useCartStore(state => state.addItem);
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -256,6 +257,18 @@ export default function BuildPcPage() {
                                                 )}
                                             </div>
                                         </div>
+                                        {/* Compatibility Hint */}
+                                        {compatibilityHints.filter(h => h.targetCategory === comp.id).map((hint, hIdx) => (
+                                            <div key={hIdx} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium mt-1 ${hint.type === 'warning' ? 'bg-red-50 text-red-600 border border-red-200' :
+                                                    hint.type === 'info' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
+                                                        'bg-green-50 text-green-600 border border-green-200'
+                                                }`}>
+                                                {hint.type === 'warning' && <AlertTriangle className="w-3.5 h-3.5 shrink-0" />}
+                                                {hint.type === 'info' && <Lightbulb className="w-3.5 h-3.5 shrink-0" />}
+                                                {hint.type === 'success' && <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />}
+                                                <span>{hint.message}</span>
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             </div>
@@ -355,6 +368,7 @@ export default function BuildPcPage() {
                     categoryId={activeCategory.id}
                     categoryName={activeCategory.name}
                     categorySlug={activeCategory.slug}
+                    compatibilityFilter={getAutoFilterForCategory(activeCategory.id, components)}
                     onSelect={(product) => {
                         usePcBuilderStore.getState().selectProduct(activeCategory.id, product);
                     }}
