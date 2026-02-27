@@ -204,27 +204,27 @@ export function CategoryFilterSort({
                             <div key={filter.slug} className="relative">
                                 <button
                                     onClick={() => setOpenDropdown(openDropdown === filter.slug ? null : filter.slug)}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${selectedAttributes[filter.slug]?.length > 0
+                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-bold uppercase tracking-wider transition-all ${selectedAttributes[filter.slug]?.length > 0
                                         ? 'border-orange-500 bg-orange-50 text-orange-700'
                                         : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-400'
                                         }`}
                                 >
                                     {filter.name}
-                                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === filter.slug ? 'rotate-180' : ''}`} />
+                                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === filter.slug ? 'rotate-180' : ''}`} />
                                 </button>
 
                                 {openDropdown === filter.slug && (
                                     <>
                                         <div className="fixed inset-0 z-10" onClick={() => setOpenDropdown(null)} />
-                                        <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-20 py-3 animate-in fade-in zoom-in duration-200">
-                                            <div className="max-h-64 overflow-y-auto px-2 space-y-1">
+                                        <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 z-20 py-3 animate-in fade-in zoom-in duration-200">
+                                            <div className="max-h-72 overflow-y-auto px-2 space-y-1">
                                                 {filter.options.map((opt) => {
                                                     const isSelected = selectedAttributes[filter.slug]?.includes(opt.slug);
                                                     return (
                                                         <button
                                                             key={opt.slug}
                                                             onClick={() => onFilterChange(filter.slug, opt.slug)}
-                                                            className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-colors flex items-center justify-between ${isSelected ? 'bg-orange-50 text-orange-600 font-bold' : 'hover:bg-gray-50 text-gray-700'}`}
+                                                            className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between ${isSelected ? 'bg-orange-50 text-orange-600 font-bold' : 'hover:bg-gray-50 text-gray-700'}`}
                                                         >
                                                             {opt.name}
                                                             {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />}
@@ -244,13 +244,13 @@ export function CategoryFilterSort({
 
             {/* Sắp xếp */}
             <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-center gap-3 pt-3 border-t border-gray-50'}>
-                <span className="text-xs font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Sắp xếp:</span>
-                <div className="flex flex-wrap gap-1.5 flex-grow">
+                <span className="text-sm font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Sắp xếp:</span>
+                <div className="flex flex-wrap gap-2 flex-grow">
                     {SORT_OPTIONS.map((opt) => (
                         <button
                             key={opt.value}
                             onClick={() => { onSortChange(opt.value); if (isMobile) setMobileOpen(false); }}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all border ${sortOrder === opt.value
+                            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all border ${sortOrder === opt.value
                                 ? 'bg-orange-600 border-orange-600 text-white font-bold shadow-sm'
                                 : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-white hover:border-orange-300'
                                 }`}
