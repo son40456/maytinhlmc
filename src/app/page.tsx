@@ -51,17 +51,17 @@ export default async function Home() {
   let hardwareGridConfig = await getHardwareGridConfig();
 
   return (
-    <div className="flex flex-col gap-10 pb-12">
+    <div className="flex flex-col gap-6 md:gap-10 pb-6 md:pb-12">
       {/* Hero Banner */}
-      <section className="bg-blue-600 text-white py-20">
+      <section className="bg-blue-600 text-white py-10 md:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+          <h1 className="text-2xl md:text-5xl font-extrabold tracking-tight mb-3 md:mb-6">
             Nâng Tầm Trải Nghiệm Công Nghệ
           </h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-blue-100">
+          <p className="text-sm md:text-xl max-w-2xl mx-auto mb-4 md:mb-8 text-blue-100">
             Săn deal công nghệ siêu hot mỗi ngày. Tận hưởng trải nghiệm mua sắm nhanh chóng, tiện lợi qua hệ thống Next.js siêu tốc.
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-3 md:gap-4">
             <Link href="/category/all">
               <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 font-bold">
                 Khám phá ngay
@@ -77,12 +77,12 @@ export default async function Home() {
       </section>
 
       {/* Danh mục nổi bật */}
-      <div className="mb-4">
+      <div className="mb-2 md:mb-4">
         <HardwareCategoryGrid config={hardwareGridConfig} />
       </div>
 
       {/* Dynamic Sections từ Cấu hình Admin */}
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 md:gap-6">
         {sections.map((section: any) => (
           <HomeSection
             key={section.id}

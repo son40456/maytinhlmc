@@ -13,30 +13,30 @@ export function HardwareCategoryGrid({ config }: Props) {
     }
 
     return (
-        <div className="font-body text-zinc-700 w-full mb-12">
-            <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                <div className="mb-12 text-left border-l-8 border-blue-600 pl-8">
-                    <h2 className="text-4xl md:text-5xl font-black font-display text-zinc-900 uppercase tracking-tight">
+        <div className="font-body text-zinc-700 w-full mb-6 md:mb-12">
+            <div className="max-w-[1600px] mx-auto py-4 md:py-8 px-3 sm:px-6 lg:px-8">
+                <div className="mb-6 md:mb-12 text-left border-l-4 md:border-l-8 border-blue-600 pl-4 md:pl-8">
+                    <h2 className="text-xl md:text-5xl font-black font-display text-zinc-900 uppercase tracking-tight">
                         DANH MỤC <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">NỔI BẬT</span>
                     </h2>
-                    <p className="text-zinc-500 mt-2 font-semibold tracking-[0.25em] uppercase text-xs">High Performance Hardware Hub</p>
+                    <p className="text-zinc-500 mt-1 md:mt-2 font-semibold tracking-[0.15em] md:tracking-[0.25em] uppercase text-[10px] md:text-xs">High Performance Hardware Hub</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8">
                     {config.categories.map((cat, idx) => {
                         const CardContent = (
                             <div className="relative overflow-hidden transition-all duration-300 border border-zinc-200 bg-white shadow-sm hover:border-blue-600 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,102,255,0.08)] group hover:after:h-full after:content-[''] after:absolute after:top-0 after:left-0 after:w-1 after:h-0 after:bg-blue-600 after:transition-all after:duration-300 [clip-path:polygon(20px_0%,100%_0%,100%_calc(100%-20px),calc(100%-20px)_100%,0%_100%,0%_20px)] h-full">
-                                <div className="h-full flex flex-col p-8 cursor-pointer">
-                                    <div className="relative z-10 mb-6">
-                                        <h3 className="text-2xl font-black text-zinc-900 group-hover:text-blue-600 transition-colors uppercase italic leading-tight">
+                                <div className="h-full flex flex-col p-4 md:p-8 cursor-pointer">
+                                    <div className="relative z-10 mb-3 md:mb-6">
+                                        <h3 className="text-sm md:text-2xl font-black text-zinc-900 group-hover:text-blue-600 transition-colors uppercase italic leading-tight">
                                             {cat.title}
                                         </h3>
-                                        <p className="text-zinc-500 mt-2 font-medium text-sm">
+                                        <p className="text-zinc-500 mt-1 md:mt-2 font-medium text-[10px] md:text-sm hidden md:block">
                                             {cat.subtitle}
                                         </p>
                                     </div>
 
-                                    <div className="relative h-48 mt-auto mb-8 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-2">
+                                    <div className="relative h-24 md:h-48 mt-auto mb-3 md:mb-8 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-2">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/5 to-transparent rounded-full blur-2xl group-hover:from-blue-600/20 transition-colors duration-500"></div>
                                         <div className="relative h-full w-full drop-shadow-[0_10px_20px_rgba(0,0,0,0.1)]">
                                             <Image
@@ -49,16 +49,16 @@ export function HardwareCategoryGrid({ config }: Props) {
                                         </div>
                                     </div>
 
-                                    <div className="relative z-10 flex items-center justify-between border-t border-zinc-100 pt-4 mt-auto">
-                                        <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest font-mono">
+                                    <div className="relative z-10 flex items-center justify-between border-t border-zinc-100 pt-2 md:pt-4 mt-auto">
+                                        <span className="text-[8px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest font-mono">
                                             {cat.level}
                                         </span>
                                         <div className="flex items-center gap-2">
                                             <span className="text-xs font-bold text-blue-600 uppercase tracking-widest opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                                                 Khám phá
                                             </span>
-                                            <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                                <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                                 </svg>
                                             </div>
@@ -66,8 +66,8 @@ export function HardwareCategoryGrid({ config }: Props) {
                                     </div>
 
                                     {/* Tech Decals */}
-                                    <div className="absolute top-4 right-4 text-zinc-200">
-                                        <svg className="w-12 h-12 opacity-50" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1">
+                                    <div className="absolute top-2 right-2 md:top-4 md:right-4 text-zinc-200">
+                                        <svg className="w-6 h-6 md:w-12 md:h-12 opacity-50" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1">
                                             <rect x="10" y="10" width="80" height="80" />
                                             <rect x="30" y="30" width="40" height="40" />
                                             <circle cx="50" cy="50" r="10" />
