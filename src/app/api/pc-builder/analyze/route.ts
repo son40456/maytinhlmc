@@ -3,24 +3,28 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 
+// Models to try in order (fallback chain for rate limits)
+const MODELS = [
+    'gemini-2.0-flash-lite',
+    'gemini-2.0-flash',
+];
+
 interface AnalyzeRequest {
     products: {
         categoryId: string;
         name: string;
-        specs?: string; // ACF HTML stripped text
+        specs?: string;
     }[];
 }
 
-interface ComponentAnalysis {
-    categoryId: string;
-    platform: 'intel' | 'amd' | null;
-    socket: string | null;
-    ddrType: 'ddr4' | 'ddr5' | null;
-    formFactor: string | null;
-}
-
 interface CompatibilityResult {
-    analyses: ComponentAnalysis[];
+    analyses: {
+        categoryId: string;
+        platform: 'intel' | 'amd' | null;
+        socket: string | null;
+        ddrType: 'ddr4' | 'ddr5' | null;
+        formFactor: string | null;
+    }[];
     warnings: string[];
     suggestions: string[];
 }
@@ -39,59 +43,54 @@ export async function POST(request: NextRequest) {
         }
 
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-        // Build prompt
-        const productDescriptions = products.map(p => {
+        // Build compact prompt
+        const items = products.map(p => {
             let desc = `[${p.categoryId}] ${p.name}`;
-            if (p.specs) desc += `\nThông số: ${p.specs}`;
+            if (p.specs) desc += ` | ${p.specs.slice(0, 300)}`;
             return desc;
-        }).join('\n\n');
+        }).join('\n');
 
-        const prompt = `Bạn là chuyên gia phần cứng máy tính. Phân tích các linh kiện sau và trả về JSON:
+        const prompt = `Phân tích tương thích linh kiện PC. Trả về JSON duy nhất:
+${items}
 
-${productDescriptions}
+JSON format:
+{"analyses":[{"categoryId":"...","platform":"intel|amd|null","socket":"...","ddrType":"ddr4|ddr5|null","formFactor":"ATX|mATX|ITX|null"}],"warnings":["tiếng Việt"],"suggestions":["tiếng Việt"]}
 
-Trả về JSON duy nhất (không markdown, không giải thích):
-{
-  "analyses": [
-    {
-      "categoryId": "id của category",
-      "platform": "intel" hoặc "amd" hoặc null,
-      "socket": "tên socket nếu biết" hoặc null,
-      "ddrType": "ddr4" hoặc "ddr5" hoặc null,
-      "formFactor": "ATX/mATX/ITX" hoặc null
-    }
-  ],
-  "warnings": ["cảnh báo tương thích nếu có - viết tiếng Việt"],
-  "suggestions": ["gợi ý cho người dùng nếu có - viết tiếng Việt"]
-}
+Rules: CPU Intel=intel, AMD=amd. Mainboard chipset B760/Z790/H610=intel, B650/X670/A620=amd. Nếu CPU≠Mainboard platform → warning. RAM DDR≠Mainboard → warning. Chỉ JSON.`;
 
-Quy tắc:
-- CPU Intel (Core i3/i5/i7/i9, Pentium, Celeron) → platform: "intel"
-- CPU AMD (Ryzen 3/5/7/9, Athlon) → platform: "amd"  
-- Mainboard dùng chipset Intel (B760, Z790, H610...) → platform: "intel"
-- Mainboard dùng chipset AMD (B650, X670, A620...) → platform: "amd"
-- Nếu CPU và Mainboard khác platform → warning
-- Nếu RAM DDR type khác Mainboard → warning
-- Chỉ trả về JSON, không giải thích gì thêm`;
+        // Try models in order
+        let lastError: any = null;
+        for (const modelName of MODELS) {
+            try {
+                const model = genAI.getGenerativeModel({ model: modelName });
+                const result = await model.generateContent(prompt);
+                const text = result.response.text();
 
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
+                let jsonStr = text.trim();
+                if (jsonStr.startsWith('```')) {
+                    jsonStr = jsonStr.replace(/```json?\n?/g, '').replace(/```\s*$/g, '').trim();
+                }
 
-        // Parse JSON from response (handle potential markdown wrapping)
-        let jsonStr = text.trim();
-        if (jsonStr.startsWith('```')) {
-            jsonStr = jsonStr.replace(/```json?\n?/g, '').replace(/```\s*$/g, '').trim();
+                const parsed: CompatibilityResult = JSON.parse(jsonStr);
+                return NextResponse.json(parsed);
+            } catch (err: any) {
+                lastError = err;
+                console.warn(`Model ${modelName} failed:`, err.message?.slice(0, 100));
+                // If rate limited, try next model
+                if (err.message?.includes('429') || err.message?.includes('quota')) {
+                    continue;
+                }
+                // For other errors, throw immediately
+                throw err;
+            }
         }
 
-        const parsed: CompatibilityResult = JSON.parse(jsonStr);
-
-        return NextResponse.json(parsed);
+        throw lastError || new Error('All models failed');
     } catch (error: any) {
         console.error('Gemini analysis error:', error);
         return NextResponse.json(
-            { error: 'Analysis failed', details: error.message },
+            { error: 'Analysis failed', details: error.message?.slice(0, 200) },
             { status: 500 }
         );
     }
