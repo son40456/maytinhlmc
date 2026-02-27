@@ -38,7 +38,7 @@ export default async function RootLayout({
       >
         <div className="flex flex-col min-h-screen text-gray-900">
           <Header logoUrl={logoUrl} />
-          <main className="flex-1">
+          <main className="flex-1 pb-16 lg:pb-0">
             <GlobalModalProvider>
               {children}
             </GlobalModalProvider>
