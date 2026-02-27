@@ -156,7 +156,7 @@ export default async function SlugPage({ params, searchParams }: {
 
                     {/* ===== TOP CARD: Gallery + Product Info ===== */}
                     <div className="bg-white rounded-xl border border-slate-200 p-6 lg:p-8 mb-8">
-                        <div className="lg:grid gap-8 items-start" style={{ gridTemplateColumns: '55% 1fr' }}>
+                        <div className="lg:grid gap-8 items-start" style={{ gridTemplateColumns: '62% 38%' }}>
 
                             {/* LEFT: Gallery (sticky) */}
                             <div className="lg:sticky lg:top-[88px] space-y-4">
@@ -282,7 +282,7 @@ export default async function SlugPage({ params, searchParams }: {
                     </div>
 
                     {/* ===== BOTTOM SECTION: Description + Specs + News ===== */}
-                    <div className="lg:grid gap-8" style={{ gridTemplateColumns: '62% 1fr' }}>
+                    <div className="lg:grid gap-8 items-start" style={{ gridTemplateColumns: '62% 1fr' }}>
                         {/* Left: Description */}
                         <div>
                             {product.description && (
@@ -298,7 +298,7 @@ export default async function SlugPage({ params, searchParams }: {
                         </div>
 
                         {/* Right: Specs + News */}
-                        <div className="space-y-6 mt-6 lg:mt-0">
+                        <div className="space-y-6 mt-6 lg:mt-0 lg:sticky lg:top-[88px]">
                             <DetailedSpecsTable
                                 shortDescription={product.shortDescription}
                                 attributes={product.attributes}
