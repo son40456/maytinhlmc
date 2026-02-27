@@ -135,9 +135,9 @@ export default async function SlugPage({ params, searchParams }: {
 
         return (
             <div className="bg-[#f8fafc] min-h-screen pb-16">
-                <div className="max-w-[1600px] mx-auto px-4 py-4">
+                <div className="max-w-[1600px] mx-auto px-3 md:px-4 py-2 md:py-4">
                     {/* Breadcrumbs */}
-                    <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6">
+                    <nav className="flex items-center gap-1.5 md:gap-2 text-[11px] md:text-xs text-slate-500 mb-3 md:mb-6 overflow-x-auto whitespace-nowrap">
                         <Link href="/" className="hover:text-blue-600 transition-colors">Trang chủ</Link>
                         <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                         {product.productCategories?.nodes?.[0] && (
@@ -155,11 +155,11 @@ export default async function SlugPage({ params, searchParams }: {
                     </nav>
 
                     {/* ===== TOP CARD: Gallery + Product Info ===== */}
-                    <div className="bg-white rounded-xl border border-slate-200 p-6 lg:p-8 mb-8">
+                    <div className="bg-white rounded-lg md:rounded-xl border border-slate-200 p-3 md:p-6 lg:p-8 mb-4 md:mb-8">
                         <div className="lg:grid gap-8 items-start" style={{ gridTemplateColumns: '62% 38%' }}>
 
                             {/* LEFT: Gallery (sticky) */}
-                            <div className="lg:sticky lg:top-[88px] space-y-4">
+                            <div className="lg:sticky lg:top-[88px] space-y-3 md:space-y-4">
                                 <ProductGallery
                                     mainImage={product.image}
                                     galleryNodes={product.galleryImages?.nodes || []}
@@ -169,7 +169,7 @@ export default async function SlugPage({ params, searchParams }: {
                                 />
 
                                 {/* Action Bar */}
-                                <div className="bg-slate-50 rounded-xl p-3 flex items-center justify-around">
+                                <div className="hidden md:flex bg-slate-50 rounded-xl p-3 items-center justify-around">
                                     <button className="flex items-center gap-2 group px-4 py-2 hover:bg-white rounded-lg transition-all">
                                         <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
                                         <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-900 uppercase tracking-wider">So sánh</span>
@@ -188,13 +188,13 @@ export default async function SlugPage({ params, searchParams }: {
                             </div>
 
                             {/* RIGHT: Product Info (scrolls naturally) */}
-                            <div className="space-y-6 mt-6 lg:mt-0 lg:pr-2">
+                            <div className="space-y-4 md:space-y-6 mt-4 lg:mt-0 lg:pr-2">
                                 {/* Title + Meta */}
                                 <div>
-                                    <h1 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
+                                    <h1 className="text-lg md:text-2xl font-bold text-slate-900 mb-2 md:mb-3 leading-tight">
                                         {product.name}
                                     </h1>
-                                    <div className="flex items-center gap-4 text-sm mb-4 flex-wrap">
+                                    <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm mb-3 md:mb-4 flex-wrap">
                                         <span className="text-slate-400">Mã SP: <span className="text-blue-600 font-medium">{product.sku || product.databaseId}</span></span>
                                         <div className="flex items-center gap-1">
                                             <div className="flex text-amber-400">
@@ -221,21 +221,21 @@ export default async function SlugPage({ params, searchParams }: {
                                 </div>
 
                                 {/* Price Block */}
-                                <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                                <div className="bg-slate-50 p-3 md:p-5 rounded-lg md:rounded-xl border border-slate-100">
                                     {savings && (
                                         <div className="flex items-center justify-between mb-3">
                                             <span className="text-slate-400 text-sm">Giá niêm yết: <span className="line-through">{cleanPrice(product.regularPrice)}</span></span>
                                             <div className="text-red-600 font-bold text-sm">Tiết kiệm {savings.saved}</div>
                                         </div>
                                     )}
-                                    <div className="bg-gradient-to-r from-red-600 to-purple-600 p-4 rounded-xl text-center">
-                                        <span className="text-white text-3xl font-black">{displayPrice}</span>
-                                        <p className="text-[10px] text-white/80 font-bold uppercase tracking-widest mt-1">Giá ưu đãi trực tuyến</p>
+                                    <div className="bg-gradient-to-r from-red-600 to-purple-600 p-3 md:p-4 rounded-lg md:rounded-xl text-center">
+                                        <span className="text-white text-2xl md:text-3xl font-black">{displayPrice}</span>
+                                        <p className="text-[9px] md:text-[10px] text-white/80 font-bold uppercase tracking-widest mt-0.5 md:mt-1">Giá ưu đãi trực tuyến</p>
                                     </div>
                                 </div>
 
                                 {/* Benefits */}
-                                <ul className="space-y-2 text-sm text-slate-600">
+                                <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm text-slate-600">
                                     <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Bảo hành chính hãng 24 tháng</li>
                                     <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Trả góp 0% qua thẻ tín dụng</li>
                                     <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Miễn phí giao hàng toàn quốc</li>
@@ -282,15 +282,15 @@ export default async function SlugPage({ params, searchParams }: {
                     </div>
 
                     {/* ===== BOTTOM SECTION: Description + Specs + News ===== */}
-                    <div className="lg:grid gap-8 items-start" style={{ gridTemplateColumns: '62% 1fr' }}>
+                    <div className="lg:grid gap-4 md:gap-8 items-start mt-4 md:mt-0" style={{ gridTemplateColumns: '62% 1fr' }}>
                         {/* Left: Description */}
                         <div className="lg:sticky lg:top-[88px]">
                             {product.description && (
-                                <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                                    <div className="p-6 lg:p-8 border-b border-slate-100">
-                                        <h3 className="text-xl font-bold">Mô tả chi tiết sản phẩm</h3>
+                                <section className="bg-white rounded-lg md:rounded-xl border border-slate-200 overflow-hidden">
+                                    <div className="p-4 md:p-6 lg:p-8 border-b border-slate-100">
+                                        <h3 className="text-base md:text-xl font-bold">Mô tả chi tiết sản phẩm</h3>
                                     </div>
-                                    <div className="p-6 lg:p-8">
+                                    <div className="p-4 md:p-6 lg:p-8">
                                         <ExpandableDescription content={product.description} />
                                     </div>
                                 </section>
@@ -298,7 +298,7 @@ export default async function SlugPage({ params, searchParams }: {
                         </div>
 
                         {/* Right: Specs + News */}
-                        <div className="space-y-6 mt-6 lg:mt-0 lg:sticky lg:top-[88px]">
+                        <div className="space-y-4 md:space-y-6 mt-4 md:mt-6 lg:mt-0 lg:sticky lg:top-[88px]">
                             <DetailedSpecsTable
                                 shortDescription={product.shortDescription}
                                 attributes={product.attributes}
@@ -310,11 +310,11 @@ export default async function SlugPage({ params, searchParams }: {
 
                     {/* Related Products Section */}
                     {product.related?.nodes && product.related.nodes.length > 0 && (
-                        <section className="mt-16">
-                            <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-2xl font-bold">Sản phẩm tương tự</h3>
+                        <section className="mt-8 md:mt-16">
+                            <div className="flex items-center justify-between mb-4 md:mb-8">
+                                <h3 className="text-lg md:text-2xl font-bold">Sản phẩm tương tự</h3>
                             </div>
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-6">
                                 {product.related.nodes.map((p: any) => (
                                     <ProductCard
                                         key={p.id}
