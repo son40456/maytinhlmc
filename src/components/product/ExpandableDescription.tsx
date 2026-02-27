@@ -19,11 +19,7 @@ export function ExpandableDescription({ content }: ExpandableDescriptionProps) {
     }, [content]);
 
     return (
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 lg:p-12 overflow-hidden relative">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8 pb-4 border-b-2 border-blue-600 w-max">
-                Thông tin chi tiết
-            </h2>
-
+        <div className="overflow-hidden relative">
             <div
                 ref={contentRef}
                 className={`prose max-w-none prose-blue prose-img:rounded-2xl transition-all duration-500 overflow-hidden ${!isExpanded && needsExpansion ? "max-h-[600px]" : "max-h-[10000px]"
