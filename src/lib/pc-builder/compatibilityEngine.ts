@@ -9,6 +9,14 @@
 export type Platform = 'intel' | 'amd' | null;
 export type DdrType = 'ddr4' | 'ddr5' | null;
 
+/**
+ * Normalize string for comparison: remove all spaces, uppercase.
+ * This handles variations like 'LGA1700' vs 'LGA 1700' vs 'LGA  1700'.
+ */
+function normalize(str: string): string {
+    return str.replace(/\s+/g, '').toUpperCase();
+}
+
 // Intel chipsets (motherboard names)
 const INTEL_CHIPSETS = [
     'B760', 'Z790', 'H770', 'B660', 'Z690', 'H670', 'H610',
@@ -39,17 +47,14 @@ const AMD_CPU_KEYWORDS = [
     'AMD Ryzen', 'Ryzen AI',
 ];
 
-// Intel socket keywords
+// Intel sockets (canonical forms, matched after normalization)
 const INTEL_SOCKETS = [
-    'LGA1700', 'LGA 1700', 'LGA1200', 'LGA 1200',
-    'LGA1151', 'LGA 1151', 'LGA1150', 'LGA 1150',
-    'LGA1851', 'LGA 1851',
+    'LGA1851', 'LGA1700', 'LGA1200', 'LGA1151', 'LGA1150',
 ];
 
-// AMD socket keywords
+// AMD sockets
 const AMD_SOCKETS = [
-    'AM5', 'AM4', 'sTRX4', 'sTR4', 'TR4',
-    'Socket AM5', 'Socket AM4',
+    'AM5', 'AM4', 'STRX4', 'STR4', 'TR4',
 ];
 
 // --- ACF Specs Parser ---
@@ -137,18 +142,18 @@ function extractDdrFromSpecs(specs: ParsedSpec[]): DdrType {
 function detectPlatformFromSpecs(specs: ParsedSpec[]): Platform {
     const socket = extractSocketFromSpecs(specs);
     if (!socket) return null;
-    const upper = socket.toUpperCase();
+    const norm = normalize(socket);
 
     for (const s of INTEL_SOCKETS) {
-        if (upper.includes(s.toUpperCase())) return 'intel';
+        if (norm.includes(normalize(s))) return 'intel';
     }
     for (const s of AMD_SOCKETS) {
-        if (upper.includes(s.toUpperCase())) return 'amd';
+        if (norm.includes(normalize(s))) return 'amd';
     }
 
     // Also check for Intel/AMD keywords in socket value
-    if (upper.includes('INTEL') || upper.includes('LGA')) return 'intel';
-    if (upper.includes('AMD') || upper.includes('AM4') || upper.includes('AM5')) return 'amd';
+    if (norm.includes('INTEL') || norm.includes('LGA')) return 'intel';
+    if (norm.includes('AMD')) return 'amd';
 
     return null;
 }
@@ -168,6 +173,7 @@ export function detectPlatform(productName: string, acfHtml?: string): Platform 
 
     // 2. Fallback to product name keyword matching
     const upper = productName.toUpperCase();
+    const norm = normalize(productName);
 
     for (const kw of INTEL_CPU_KEYWORDS) {
         if (upper.includes(kw.toUpperCase())) return 'intel';
@@ -176,10 +182,18 @@ export function detectPlatform(productName: string, acfHtml?: string): Platform 
         if (upper.includes(kw.toUpperCase())) return 'amd';
     }
     for (const chipset of INTEL_CHIPSETS) {
-        if (upper.includes(chipset.toUpperCase())) return 'intel';
+        if (norm.includes(normalize(chipset))) return 'intel';
     }
     for (const chipset of AMD_CHIPSETS) {
-        if (upper.includes(chipset.toUpperCase())) return 'amd';
+        if (norm.includes(normalize(chipset))) return 'amd';
+    }
+
+    // Socket detection from product name
+    for (const s of INTEL_SOCKETS) {
+        if (norm.includes(normalize(s))) return 'intel';
+    }
+    for (const s of AMD_SOCKETS) {
+        if (norm.includes(normalize(s))) return 'amd';
     }
 
     return null;
@@ -218,9 +232,9 @@ export function extractSocket(productName: string, acfHtml?: string): string | n
     }
 
     // From product name
-    const upper = productName.toUpperCase();
+    const norm = normalize(productName);
     for (const s of [...INTEL_SOCKETS, ...AMD_SOCKETS]) {
-        if (upper.includes(s.toUpperCase())) return s;
+        if (norm.includes(normalize(s))) return s;
     }
 
     return null;
