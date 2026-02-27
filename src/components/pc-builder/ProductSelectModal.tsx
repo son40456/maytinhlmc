@@ -31,6 +31,9 @@ const GET_ALL_CATEGORY_PRODUCTS = `
               }
             }
           }
+          thongsokythuatsonbn {
+            thongsochitiet
+          }
         }
         ... on VariableProduct {
           price
@@ -45,6 +48,9 @@ const GET_ALL_CATEGORY_PRODUCTS = `
                 terms { nodes { name slug } }
               }
             }
+          }
+          thongsokythuatsonbn {
+            thongsochitiet
           }
         }
       }
