@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getCompatibilityHints, CompatibilityHint } from '@/lib/pc-builder/compatibilityEngine';
+import { getCompatibilityHints, CompatibilityHint, parseAcfSpecs } from '@/lib/pc-builder/compatibilityEngine';
 
 export interface ComponentCategory {
     id: string;
@@ -8,14 +8,30 @@ export interface ComponentCategory {
     product: any | null; // Selected product data from GraphQL
 }
 
+interface AiAnalysisResult {
+    analyses: {
+        categoryId: string;
+        platform: 'intel' | 'amd' | null;
+        socket: string | null;
+        ddrType: 'ddr4' | 'ddr5' | null;
+        formFactor: string | null;
+    }[];
+    warnings: string[];
+    suggestions: string[];
+}
+
 interface PcBuilderState {
     components: ComponentCategory[];
     totalPrice: number;
     compatibilityHints: CompatibilityHint[];
+    aiAnalysis: AiAnalysisResult | null;
+    aiLoading: boolean;
+    aiError: string | null;
     selectProduct: (categoryId: string, product: any) => void;
     removeProduct: (categoryId: string) => void;
     clearAll: () => void;
     initComponents: (config: any) => void;
+    triggerAiAnalysis: () => Promise<void>;
 }
 
 const initialComponents: ComponentCategory[] = [
@@ -45,10 +61,21 @@ function calculateTotal(components: ComponentCategory[]): number {
     return total;
 }
 
-export const usePcBuilderStore = create<PcBuilderState>((set) => ({
+/**
+ * Strip HTML tags from ACF specs for sending to AI.
+ */
+function stripHtml(html: string): string {
+    if (!html) return '';
+    return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+export const usePcBuilderStore = create<PcBuilderState>((set, get) => ({
     components: initialComponents,
     totalPrice: 0,
     compatibilityHints: [],
+    aiAnalysis: null,
+    aiLoading: false,
+    aiError: null,
     selectProduct: (categoryId, product) => {
         set((state) => {
             const newComponents = [...state.components];
@@ -62,6 +89,13 @@ export const usePcBuilderStore = create<PcBuilderState>((set) => ({
                 compatibilityHints: getCompatibilityHints(newComponents),
             };
         });
+
+        // Trigger AI analysis after selecting key components
+        const keyCategories = ['mainboard', 'cpu', 'ram'];
+        if (keyCategories.includes(categoryId)) {
+            // Small delay to batch multiple selections
+            setTimeout(() => get().triggerAiAnalysis(), 300);
+        }
     },
     removeProduct: (categoryId) => {
         set((state) => {
@@ -74,18 +108,25 @@ export const usePcBuilderStore = create<PcBuilderState>((set) => ({
                 components: newComponents,
                 totalPrice: calculateTotal(newComponents),
                 compatibilityHints: getCompatibilityHints(newComponents),
+                aiAnalysis: null, // Clear AI analysis on removal
             };
         });
     },
     clearAll: () => {
         set((state) => {
             const clearedComponents = state.components.map(c => ({ ...c, product: null }));
-            return { components: clearedComponents, totalPrice: 0, compatibilityHints: [] };
+            return {
+                components: clearedComponents,
+                totalPrice: 0,
+                compatibilityHints: [],
+                aiAnalysis: null,
+                aiLoading: false,
+                aiError: null,
+            };
         });
     },
     initComponents: (config) => {
         set((state) => {
-            // Normalize config to array
             let configArray: ComponentCategory[] = [];
             if (Array.isArray(config)) {
                 configArray = config;
@@ -93,7 +134,6 @@ export const usePcBuilderStore = create<PcBuilderState>((set) => ({
                 configArray = Object.keys(config).map(key => ({ ...config[key], id: key }));
             }
 
-            // Merge existing config with new config to preserve selected products if any
             const newComponents = configArray.map(c => {
                 const existing = state.components.find(ex => ex.id === c.id);
                 return {
@@ -103,5 +143,41 @@ export const usePcBuilderStore = create<PcBuilderState>((set) => ({
             });
             return { components: newComponents };
         });
-    }
+    },
+    triggerAiAnalysis: async () => {
+        const state = get();
+        const selectedProducts = state.components.filter(c => c.product !== null);
+
+        // Need at least 2 selected products (one being mainboard/cpu/ram) to analyze
+        const keySelected = selectedProducts.filter(p =>
+            ['mainboard', 'cpu', 'ram'].includes(p.id)
+        );
+        if (keySelected.length < 1) return;
+
+        set({ aiLoading: true, aiError: null });
+
+        try {
+            const products = selectedProducts.map(c => ({
+                categoryId: c.id,
+                name: c.product.name,
+                specs: stripHtml(c.product?.thongsokythuatsonbn?.thongsochitiet || ''),
+            }));
+
+            const response = await fetch('/api/pc-builder/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ products }),
+            });
+
+            if (!response.ok) {
+                throw new Error('AI analysis failed');
+            }
+
+            const result: AiAnalysisResult = await response.json();
+            set({ aiAnalysis: result, aiLoading: false });
+        } catch (error: any) {
+            console.error('AI analysis error:', error);
+            set({ aiLoading: false, aiError: error.message });
+        }
+    },
 }));
