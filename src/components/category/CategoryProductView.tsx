@@ -117,8 +117,8 @@ export function CategoryProductView({
 
     return (
         <div className="w-full space-y-8">
-            <div className="mb-8 border-b border-gray-100 pb-8">
-                <h1 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">{category.name}</h1>
+            <div className="mb-4 md:mb-8 border-b border-gray-100 pb-4 md:pb-8">
+                <h1 className="text-xl md:text-3xl font-black text-gray-900 mb-2 md:mb-3 tracking-tight">{category.name}</h1>
                 {category.description && (
                     <div className="text-gray-500 text-sm max-w-3xl leading-relaxed" dangerouslySetInnerHTML={{ __html: category.description }} />
                 )}
@@ -147,19 +147,19 @@ export function CategoryProductView({
                 if (!activeCategory && otherCategories.length === 0) return null;
 
                 return (
-                    <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
-                        <div className="flex gap-4 min-w-max">
+                    <div className="mb-4 md:mb-8 overflow-x-auto pb-3 md:pb-4 scrollbar-hide">
+                        <div className="flex gap-2 md:gap-4 min-w-max">
                             {/* Active/Parent Block */}
                             {isTopLevel ? (
-                                <div className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-[#d32f2f] text-white rounded-xl shadow-sm flex items-center justify-center p-4 text-center cursor-default transition-transform hover:scale-105">
-                                    <span className="font-bold text-sm md:text-base leading-tight break-words">{activeCategory.name}</span>
+                                <div className="flex-shrink-0 w-20 h-20 md:w-40 md:h-40 bg-[#d32f2f] text-white rounded-lg md:rounded-xl shadow-sm flex items-center justify-center p-2 md:p-4 text-center cursor-default">
+                                    <span className="font-bold text-[10px] md:text-base leading-tight break-words">{activeCategory.name}</span>
                                 </div>
                             ) : (
                                 <Link
                                     href={`/${category.parent.node.slug}`}
-                                    className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-white border-2 border-transparent hover:border-red-500 rounded-xl shadow-sm flex flex-col items-center justify-center p-4 text-center transition-all hover:shadow-md cursor-pointer group"
+                                    className="flex-shrink-0 w-20 h-20 md:w-40 md:h-40 bg-white border-2 border-transparent hover:border-red-500 rounded-lg md:rounded-xl shadow-sm flex flex-col items-center justify-center p-2 md:p-4 text-center transition-all hover:shadow-md cursor-pointer group"
                                 >
-                                    <span className="font-bold text-sm md:text-base leading-tight break-words text-gray-800 group-hover:text-red-500">{category.parent.node.name}</span>
+                                    <span className="font-bold text-[10px] md:text-base leading-tight break-words text-gray-800 group-hover:text-red-500">{category.parent.node.name}</span>
                                 </Link>
                             )}
 
@@ -168,8 +168,8 @@ export function CategoryProductView({
                                 const isActive = cat.slug === category.slug;
                                 if (isActive && !isTopLevel) {
                                     return (
-                                        <div key={cat.slug} className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-[#d32f2f] text-white rounded-xl shadow-sm flex items-center justify-center p-4 text-center cursor-default transition-transform hover:scale-105">
-                                            <span className="font-bold text-sm md:text-base leading-tight break-words">{cat.name}</span>
+                                        <div key={cat.slug} className="flex-shrink-0 w-20 h-20 md:w-40 md:h-40 bg-[#d32f2f] text-white rounded-lg md:rounded-xl shadow-sm flex items-center justify-center p-2 md:p-4 text-center cursor-default">
+                                            <span className="font-bold text-[10px] md:text-base leading-tight break-words">{cat.name}</span>
                                         </div>
                                     );
                                 }
@@ -177,11 +177,11 @@ export function CategoryProductView({
                                     <Link
                                         key={cat.slug}
                                         href={`/${cat.slug}`}
-                                        className={`flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-white border border-gray-100/80 rounded-xl shadow-sm flex flex-col items-center justify-center p-4 text-center transition-all hover:shadow-md hover:border-red-400 group relative overflow-hidden`}
+                                        className={`flex-shrink-0 w-20 h-20 md:w-40 md:h-40 bg-white border border-gray-100/80 rounded-lg md:rounded-xl shadow-sm flex flex-col items-center justify-center p-2 md:p-4 text-center transition-all hover:shadow-md hover:border-red-400 group relative overflow-hidden`}
                                     >
                                         {cat.image?.sourceUrl ? (
                                             <>
-                                                <div className="relative w-16 h-16 md:w-20 md:h-20 mb-2 transition-transform group-hover:scale-110">
+                                                <div className="relative w-10 h-10 md:w-20 md:h-20 mb-1 md:mb-2 transition-transform group-hover:scale-110">
                                                     <Image
                                                         src={cat.image.sourceUrl}
                                                         alt={cat.name}
@@ -189,7 +189,7 @@ export function CategoryProductView({
                                                         className="object-contain"
                                                     />
                                                 </div>
-                                                <span className="font-semibold text-xs md:text-sm text-blue-600 line-clamp-2 leading-tight">{cat.name}</span>
+                                                <span className="font-semibold text-[9px] md:text-sm text-blue-600 line-clamp-2 leading-tight">{cat.name}</span>
                                             </>
                                         ) : (
                                             <span className="font-semibold text-sm md:text-base text-gray-800 group-hover:text-red-500 leading-tight break-words">{cat.name}</span>
@@ -218,7 +218,7 @@ export function CategoryProductView({
             <div className="relative min-h-[400px]">
                 {loading ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4">
-                        {[...Array(24)].map((_, i) => (
+                        {[...Array(12)].map((_, i) => (
                             <div key={i} className="flex flex-col overflow-hidden rounded-xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
                                 <div className="aspect-square w-full animate-shimmer" />
                                 <div className="flex flex-1 flex-col p-3">
@@ -265,11 +265,11 @@ export function CategoryProductView({
 
                 {/* Load More */}
                 {pageInfo?.hasNextPage && (
-                    <div className="mt-12 flex justify-center">
+                    <div className="mt-6 md:mt-12 flex justify-center">
                         <button
                             onClick={() => fetchProducts(true)}
                             disabled={loading}
-                            className="px-8 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-700 hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
+                            className="px-6 py-2.5 bg-white border border-gray-200 rounded-xl font-bold text-sm text-gray-700 hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
                         >
                             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                             Tải thêm sản phẩm
