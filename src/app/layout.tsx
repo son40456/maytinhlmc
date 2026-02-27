@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { GlobalModalProvider } from "@/components/common/GlobalModalProvider";
 import { CompareBar } from "@/components/common/CompareBar";
+import { ToastContainer } from "@/components/common/ToastContainer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,7 @@ export default async function RootLayout({
           </main>
           <Footer />
           <CompareBar />
+          <ToastContainer />
         </div>
       </body>
     </html>
