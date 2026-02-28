@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 
 function SuccessContent() {
     const searchParams = useSearchParams();
-    const orderKey = searchParams.get('orderKey') || 'LMC-' + Math.floor(Math.random() * 1000000);
+    const orderNumber = searchParams.get('orderNumber') || searchParams.get('orderKey') || '123456';
 
     return (
         <div className="bg-gray-50/50 min-h-screen">
@@ -24,7 +24,7 @@ function SuccessContent() {
                         </div>
                         <h2 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">Đặt hàng thành công!</h2>
                         <p className="text-gray-500 max-w-md mx-auto leading-relaxed">
-                            Cảm ơn bạn đã tin tưởng <span className="text-blue-600 font-bold">maytinhlmc.vn</span>. Đơn hàng <span className="font-mono font-bold text-gray-900 px-1.5 py-0.5 bg-gray-100 rounded">#{orderKey}</span> của bạn đang được xử lý.
+                            Cảm ơn bạn đã tin tưởng <span className="text-blue-600 font-bold">maytinhlmc.vn</span>. Đơn hàng <span className="font-mono font-bold text-gray-900 px-1.5 py-0.5 bg-gray-100 rounded">#{orderNumber}</span> của bạn đang được xử lý.
                         </p>
                     </div>
 

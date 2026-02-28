@@ -135,7 +135,7 @@ export default function CheckoutPage() {
 
             if (result?.result === 'success') {
                 clearCart();
-                router.push(`/checkout/success?orderKey=${result.order.orderKey}`);
+                router.push(`/checkout/success?orderNumber=${result.order.orderNumber || result.order.id || result.order.orderKey}`);
             } else {
                 alert("Không thể đặt hàng. Vui lòng thử lại!");
             }
