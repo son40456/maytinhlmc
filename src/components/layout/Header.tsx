@@ -191,7 +191,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                             className={`hidden lg:flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 text-white hover:bg-white/15 flex-shrink-0 ${scrolled ? 'opacity-100 bg-white/10' : 'opacity-0 scale-90 pointer-events-none w-0 px-0 overflow-hidden'}`}
                             title={menuOpen ? 'Ẩn danh mục' : 'Hiện danh mục'}
                         >
-                            <Menu size={20} />
+                            <Menu size={20} className={`transition-transform duration-300 ${menuOpen ? 'rotate-90' : 'rotate-0'}`} />
                             <span className="text-sm font-bold">Danh mục</span>
                         </button>
 
@@ -346,8 +346,8 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                 </div>
 
                 {/* Tier 2: Desktop Nav Bar - hidden on mobile */}
-                <div className={`hidden lg:block bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative transition-all duration-300 ease-in-out ${scrolled && !menuOpen ? 'h-0 opacity-0 pointer-events-none' : 'opacity-100'}`}
-                    style={scrolled && !menuOpen ? { height: 0, overflow: 'hidden' } : {}}
+                <div className={`hidden lg:block bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[80px] opacity-100 scale-y-100'}`}
+                    style={scrolled && !menuOpen ? { overflow: 'hidden' } : {}}
                 >
                     <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative">
                         <nav className="flex items-center justify-between w-full min-w-max lg:min-w-0">
