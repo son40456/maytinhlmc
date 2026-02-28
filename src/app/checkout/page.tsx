@@ -134,9 +134,8 @@ export default function CheckoutPage() {
             const result = checkoutData?.data?.checkout;
 
             if (result?.result === 'success') {
-                alert(`Đặt hàng thành công! Mã đơn: ${result.order.orderKey}`);
                 clearCart();
-                router.push('/');
+                router.push(`/checkout/success?orderKey=${result.order.orderKey}`);
             } else {
                 alert("Không thể đặt hàng. Vui lòng thử lại!");
             }
