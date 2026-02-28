@@ -6,7 +6,7 @@ import { usePcBuilderStore } from "@/store/usePcBuilderStore";
 import { ProductSelectModal } from "@/components/pc-builder/ProductSelectModal";
 import { useCartStore } from "@/store/useCartStore";
 import { getAutoFilterForCategory } from "@/lib/pc-builder/compatibilityEngine";
-import { FileSpreadsheet, DownloadCloud, Share2, Printer, AlertTriangle, Lightbulb, CheckCircle2, Sparkles, Bot, Loader2 } from "lucide-react";
+import { FileSpreadsheet, DownloadCloud, Share2, Printer, AlertTriangle, Lightbulb, CheckCircle2 } from "lucide-react";
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
 import ExcelJS from 'exceljs';
@@ -14,7 +14,7 @@ import { saveAs } from 'file-saver';
 import { getPcBuilderConfig } from '@/app/actions/configActions';
 
 export default function BuildPcPage() {
-    const { components, totalPrice, removeProduct, clearAll, initComponents, compatibilityHints, aiAnalysis, aiLoading, aiError, triggerAiAnalysis } = usePcBuilderStore();
+    const { components, totalPrice, removeProduct, clearAll, initComponents, compatibilityHints } = usePcBuilderStore();
     const addItem = useCartStore(state => state.addItem);
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -273,68 +273,6 @@ export default function BuildPcPage() {
                                 ))}
                             </div>
                         </div>
-
-                        {/* AI Analysis Panel */}
-                        {(aiLoading || aiAnalysis || aiError) && (
-                            <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-3 md:p-4 space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white ${aiLoading ? 'animate-pulse' : ''}`}>
-                                            <Bot className="w-4 h-4 md:w-5 md:h-5" />
-                                        </div>
-                                        <div>
-                                            <span className="text-xs md:text-sm font-bold text-purple-800">AI Compatibility Check</span>
-                                            <span className="text-[10px] md:text-xs text-purple-500 ml-2">Powered by Gemini</span>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => triggerAiAnalysis()}
-                                        disabled={aiLoading}
-                                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] md:text-xs font-bold text-purple-600 bg-white border border-purple-200 hover:bg-purple-50 transition-colors disabled:opacity-50"
-                                    >
-                                        {aiLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                                        {aiLoading ? 'Đang phân tích...' : 'Phân tích lại'}
-                                    </button>
-                                </div>
-
-                                {aiLoading && (
-                                    <div className="flex items-center gap-2 text-xs text-purple-600">
-                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                        <span>AI đang phân tích tương thích linh kiện...</span>
-                                    </div>
-                                )}
-
-                                {aiError && (
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-xs text-red-600">
-                                        <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                                        <span>Không thể phân tích: {aiError}</span>
-                                    </div>
-                                )}
-
-                                {aiAnalysis && !aiLoading && (
-                                    <div className="space-y-1.5">
-                                        {aiAnalysis.warnings.map((w, i) => (
-                                            <div key={`w-${i}`} className="flex items-start gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700">
-                                                <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                                                <span>{w}</span>
-                                            </div>
-                                        ))}
-                                        {aiAnalysis.suggestions.map((s, i) => (
-                                            <div key={`s-${i}`} className="flex items-start gap-2 px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-700">
-                                                <Lightbulb className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                                                <span>{s}</span>
-                                            </div>
-                                        ))}
-                                        {aiAnalysis.warnings.length === 0 && aiAnalysis.suggestions.length === 0 && (
-                                            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 border border-green-200 text-xs text-green-700">
-                                                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                                                <span>✅ Tất cả linh kiện tương thích với nhau!</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        )}
 
                         {/* Action Buttons */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
