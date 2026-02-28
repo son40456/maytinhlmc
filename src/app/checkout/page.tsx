@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/Input';
 import { useRouter } from 'next/navigation';
 import { ADD_TO_CART, CHECKOUT_MUTATION } from '@/lib/graphql/mutations';
 import { useAuthStore } from '@/store/useAuthStore';
+import { ShieldCheck, Truck, CreditCard, CheckCircle2, ShoppingBag, MapPin, Package, ArrowLeft, Info } from 'lucide-react';
+import Link from 'next/link';
 
 export default function CheckoutPage() {
     const [mounted, setMounted] = useState(false);
@@ -146,118 +148,226 @@ export default function CheckoutPage() {
 
     if (items.length === 0) {
         return (
-            <div className="container mx-auto px-4 py-12 min-h-[50vh] flex flex-col items-center justify-center">
-                <h1 className="text-2xl font-bold text-gray-900 mb-4">Giỏ hàng trống</h1>
-                <p className="text-gray-600 mb-8">Bạn cần có sản phẩm trong giỏ hàng để tiến hành thanh toán.</p>
-                <Button onClick={() => router.push('/')}>Quay lại trang chủ</Button>
+            <div className="container mx-auto px-4 py-16 min-h-[60vh] flex flex-col items-center justify-center text-center bg-gray-50/50">
+                <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-6">
+                    <ShoppingBag className="w-10 h-10 text-blue-400" />
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Giỏ hàng của bạn đang trống</h1>
+                <p className="text-gray-500 mb-8 max-w-md">Vui lòng thêm sản phẩm vào giỏ hàng trước khi tiến hành thanh toán.</p>
+                <Link href="/category/all">
+                    <Button size="lg" className="rounded-xl px-8 shadow-lg shadow-blue-500/20 gap-2">
+                        <ArrowLeft className="w-4 h-4" /> Tiếp tục mua sắm
+                    </Button>
+                </Link>
             </div>
         );
     }
 
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[60vh]">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">Thanh toán</h1>
-
-            <div className="flex flex-col lg:flex-row gap-12">
-                {/* Form Thanh Toán */}
-                <div className="w-full lg:w-2/3">
-                    <form id="checkout-form" onSubmit={handlePlaceOrder} className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                        <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Thông tin giao hàng</h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Họ và tên *</label>
-                                <Input name="lastName" required placeholder="Họ" className="mb-2" defaultValue={user?.lastName || ''} />
-                                <Input name="firstName" required placeholder="Tên" defaultValue={user?.firstName || ''} />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Số điện thoại *</label>
-                                <Input name="phone" required type="tel" placeholder="Nhập số điện thoại" />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Email *</label>
-                            <Input name="email" required type="email" placeholder="Nhập email" defaultValue={user?.email || ''} />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Địa chỉ chi tiết *</label>
-                            <Input name="address" required placeholder="Nhập địa chỉ nhà, tên đường..." />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Tỉnh/Thành phố *</label>
-                            <Input name="city" required placeholder="Ví dụ: Hà Nội" />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Ghi chú đơn hàng (tuỳ chọn)</label>
-                            <textarea
-                                name="note"
-                                className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent min-h-[100px]"
-                                placeholder="Ghi chú thêm về đơn hàng"
-                            />
-                        </div>
-
-                        <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2 pt-6">Phương thức thanh toán</h2>
-                        <div className="space-y-4">
-                            <label className="flex items-center space-x-3 p-4 border border-blue-600 rounded-md bg-blue-50 cursor-pointer">
-                                <input type="radio" name="paymentMethod" value="cod" className="w-5 h-5 text-blue-600" defaultChecked />
-                                <span className="font-medium text-blue-900">Thanh toán khi nhận hàng (COD)</span>
-                            </label>
-                            <label className="flex items-center space-x-3 p-4 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-50 opacity-70">
-                                <input type="radio" name="paymentMethod" value="bacs" className="w-5 h-5" disabled />
-                                <span className="font-medium text-gray-600">Chuyển khoản ngân hàng (Sắp ra mắt)</span>
-                            </label>
-                        </div>
-                    </form>
-                </div>
-
-                {/* Order Summary */}
-                <div className="w-full lg:w-1/3">
-                    <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 p-6 sticky top-24">
-                        <h2 className="text-xl font-bold text-gray-900 mb-6 border-b pb-2">Đơn hàng của bạn</h2>
-
-                        <div className="space-y-4 mb-6">
-                            {items.map((item) => (
-                                <div key={item.id} className="flex justify-between items-center text-sm">
-                                    <div className="flex-1 pr-4">
-                                        <span className="text-gray-900 font-medium">{item.name}</span>
-                                        <span className="text-gray-500 ml-2">x {item.quantity}</span>
-                                    </div>
-                                    <span className="text-gray-900 font-semibold">{formatPrice(item.price * item.quantity)}</span>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="border-t border-gray-200 pt-4 flex justify-between mb-4 text-gray-600">
-                            <span>Tạm tính</span>
-                            <span className="font-medium text-gray-900">{formatPrice(total)}</span>
-                        </div>
-
-                        <div className="flex justify-between mb-6 text-gray-600 border-b border-gray-200 pb-4">
-                            <span>Phí vận chuyển</span>
-                            <span>Miễn phí</span>
-                        </div>
-
-                        <div className="flex justify-between items-center mb-8">
-                            <span className="text-lg font-bold text-gray-900">Tổng cộng</span>
-                            <span className="text-2xl font-bold text-red-600">{formatPrice(total)}</span>
-                        </div>
-
-                        <Button
-                            type="submit"
-                            form="checkout-form"
-                            size="lg"
-                            className="w-full text-base font-bold uppercase tracking-wider py-4 h-14 bg-blue-600 hover:bg-blue-700"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? 'Đang xử lý...' : 'Đặt hàng ngay'}
-                        </Button>
+        <div className="bg-gray-50/50 min-h-screen pb-16">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+                <div className="flex items-center gap-3 mb-8">
+                    <Link href="/cart" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-blue-600 hover:border-blue-200 transition-colors shadow-sm">
+                        <ArrowLeft className="w-5 h-5" />
+                    </Link>
+                    <div>
+                        <h1 className="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight">Thanh toán an toàn</h1>
+                        <p className="text-sm text-gray-500 mt-1 flex items-center gap-1.5 font-medium">
+                            <ShieldCheck className="w-4 h-4 text-emerald-500" /> Thông tin của bạn được bảo mật tuyệt đối
+                        </p>
                     </div>
                 </div>
-            </div>
+
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+                    {/* Form Thanh Toán */}
+                    <div className="w-full lg:w-[60%] xl:w-[65%] order-2 lg:order-1">
+                        <form id="checkout-form" onSubmit={handlePlaceOrder} className="space-y-6 lg:space-y-8">
+
+                            {/* Khối 1: Thông tin liên hệ */}
+                            <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-blue-100 transition-colors">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
+                                <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-6 flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">1</div>
+                                    Thông tin liên hệ
+                                </h2>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Tên của bạn <span className="text-red-500">*</span></label>
+                                        <div className="flex gap-3">
+                                            <Input name="lastName" required placeholder="Họ" className="w-1/3 rounded-xl bg-gray-50/50 border-gray-200 focus:bg-white" defaultValue={user?.lastName || ''} />
+                                            <Input name="firstName" required placeholder="Tên" className="w-2/3 rounded-xl bg-gray-50/50 border-gray-200 focus:bg-white" defaultValue={user?.firstName || ''} />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Số điện thoại <span className="text-red-500">*</span></label>
+                                        <Input name="phone" required type="tel" placeholder="Ví dụ: 0912345678" className="rounded-xl bg-gray-50/50 border-gray-200 focus:bg-white" />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 mt-5 lg:mt-6">
+                                    <label className="text-sm font-bold text-gray-700">Email <span className="text-red-500">*</span></label>
+                                    <Input name="email" required type="email" placeholder="Địa chỉ email để nhận thông báo đơn hàng" className="rounded-xl bg-gray-50/50 border-gray-200 focus:bg-white" defaultValue={user?.email || ''} />
+                                </div>
+                            </div>
+
+                            {/* Khối 2: Địa chỉ giao hàng */}
+                            <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-blue-100 transition-colors">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
+                                <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-6 flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">2</div>
+                                    Địa chỉ nhận hàng
+                                </h2>
+
+                                <div className="space-y-5 lg:space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Địa chỉ chi tiết <span className="text-red-500">*</span></label>
+                                        <div className="relative">
+                                            <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                                            <Input name="address" required placeholder="Số nhà, tên đường, phường/xã..." className="pl-11 rounded-xl bg-gray-50/50 border-gray-200 focus:bg-white" />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Tỉnh/Thành phố <span className="text-red-500">*</span></label>
+                                        <Input name="city" required placeholder="Ví dụ: Hà Nội" className="rounded-xl bg-gray-50/50 border-gray-200 focus:bg-white" />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                                            Ghi chú đơn hàng <span className="text-gray-400 font-normal text-xs">(tuỳ chọn)</span>
+                                            <Info className="w-3.5 h-3.5 text-gray-400" />
+                                        </label>
+                                        <textarea
+                                            name="note"
+                                            className="flex w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 focus:bg-white transition-all min-h-[100px] resize-y"
+                                            placeholder="Giao hàng vào giờ hành chính, gọi trước khi giao..."
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Khối 3: Phương thức thanh toán */}
+                            <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-blue-100 transition-colors">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
+                                <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-6 flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">3</div>
+                                    Phương thức thanh toán
+                                </h2>
+
+                                <div className="space-y-3">
+                                    <label className="relative flex items-center p-4 lg:p-5 border-2 border-blue-600 rounded-xl bg-blue-50/30 cursor-pointer shadow-sm">
+                                        <input type="radio" name="paymentMethod" value="cod" className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-offset-0 peer" defaultChecked />
+                                        <div className="ml-3 sm:ml-4 flex-1">
+                                            <span className="block font-bold text-blue-900">Thanh toán khi nhận hàng (COD)</span>
+                                            <span className="block text-sm text-blue-600/80 mt-0.5">Thanh toán bằng tiền mặt cho nhân viên giao hàng</span>
+                                        </div>
+                                        <Truck className="w-6 h-6 text-blue-500 opacity-50 absolute right-5 top-1/2 -translate-y-1/2 hidden sm:block" />
+                                    </label>
+
+                                    <label className="relative flex items-center p-4 lg:p-5 border border-gray-200 rounded-xl cursor-not-allowed bg-gray-50 opacity-60">
+                                        <input type="radio" name="paymentMethod" value="bacs" className="w-5 h-5 text-blue-600 border-gray-300" disabled />
+                                        <div className="ml-3 sm:ml-4 flex-1">
+                                            <span className="block font-bold text-gray-700">Chuyển khoản / Thẻ tín dụng</span>
+                                            <span className="block text-sm text-gray-500 mt-0.5">Tính năng đang được nâng cấp chờ ra mắt</span>
+                                        </div>
+                                        <CreditCard className="w-6 h-6 text-gray-400 absolute right-5 top-1/2 -translate-y-1/2 hidden sm:block" />
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Order Summary (Sidebar) */}
+                    <div className="w-full lg:w-[40%] xl:w-[35%] order-1 lg:order-2">
+                        <div className="bg-white rounded-2xl border border-blue-100 shadow-xl shadow-blue-900/5 sticky top-24 overflow-hidden flex flex-col">
+                            {/* Summary Header */}
+                            <div className="bg-gradient-to-r from-[#004b91] to-blue-600 text-white p-6">
+                                <h2 className="text-xl font-bold flex items-center gap-2 mb-1">
+                                    <Package className="w-6 h-6 text-yellow-400" />
+                                    Tổng quan đơn hàng
+                                </h2>
+                                <p className="text-blue-100 text-sm font-medium">{items.length} sản phẩm trong giỏ</p>
+                            </div>
+
+                            {/* Selected Products List */}
+                            <div className="p-6 max-h-[35vh] overflow-y-auto border-b border-gray-100 custom-scrollbar space-y-4 bg-gray-50/30">
+                                {items.map((item) => (
+                                    <div key={item.id} className="flex gap-4">
+                                        <div className="relative w-16 h-16 rounded-lg bg-white border border-gray-100 overflow-hidden shrink-0 shadow-sm flex items-center justify-center">
+                                            {item.imageUrl ? (
+                                                <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <Package className="w-6 h-6 text-gray-300" />
+                                            )}
+                                            <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white">
+                                                {item.quantity}
+                                            </span>
+                                        </div>
+                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                            <p className="text-sm font-semibold text-gray-900 line-clamp-2 leading-tight mb-1" title={item.name}>{item.name}</p>
+                                            <p className="text-sm font-bold text-rose-600">{formatPrice(item.price)}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Calculations & Total */}
+                            <div className="p-6 flex-1 flex flex-col justify-between">
+                                <div className="space-y-3 mb-6">
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-gray-500 font-medium">Tạm tính</span>
+                                        <span className="font-bold text-gray-900">{formatPrice(total)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-gray-500 font-medium">Chiết khấu</span>
+                                        <span className="font-bold text-gray-900">0đ</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-gray-500 font-medium flex items-center gap-1">
+                                            Phí vận chuyển <Info className="w-3.5 h-3.5" />
+                                        </span>
+                                        <span className="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded text-xs">Miễn phí</span>
+                                    </div>
+                                </div>
+
+                                <div className="border-t border-gray-100 pt-4 mb-6">
+                                    <div className="flex justify-between items-end">
+                                        <div>
+                                            <span className="block text-sm text-gray-500 font-medium mb-1">Tổng tiền thanh toán</span>
+                                            <span className="block text-[10px] text-gray-400 italic">Đã bao gồm VAT (nếu có)</span>
+                                        </div>
+                                        <span className="text-2xl lg:text-3xl font-black text-rose-600 leading-none">{formatPrice(total)}</span>
+                                    </div>
+                                </div>
+
+                                <Button
+                                    type="submit"
+                                    form="checkout-form"
+                                    size="lg"
+                                    className="w-full h-14 rounded-xl text-base font-black uppercase text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-0.5"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <span className="flex items-center gap-2">
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                            Đang xử lý...
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center gap-2">
+                                            Đặt hàng ngay <CheckCircle2 className="w-5 h-5 -mt-0.5" />
+                                        </span>
+                                    )}
+                                </Button>
+
+                                <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1.5">
+                                    <ShieldCheck className="w-3.5 h-3.5 text-gray-400" /> Nhấn "Đặt hàng ngay" đồng nghĩa với việc bạn đồng ý tuân theo <Link href="#" className="text-blue-500 hover:underline">Điều khoản</Link> của chúng tôi
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     );
 }
