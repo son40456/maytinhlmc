@@ -34,9 +34,14 @@ export default function CheckoutPage() {
         setIsSubmitting(true);
 
         const formData = new FormData(e.currentTarget);
+        const fullName = (formData.get('fullName') as string || '').trim();
+        const lastSpaceIndex = fullName.lastIndexOf(' ');
+        const firstName = lastSpaceIndex !== -1 ? fullName.substring(lastSpaceIndex + 1).trim() : fullName;
+        const lastName = lastSpaceIndex !== -1 ? fullName.substring(0, lastSpaceIndex).trim() : '';
+
         const billingInfo = {
-            firstName: formData.get('firstName') as string,
-            lastName: formData.get('lastName') as string,
+            firstName,
+            lastName,
             phone: formData.get('phone') as string,
             email: formData.get('email') as string,
             address1: formData.get('address') as string,
@@ -193,11 +198,8 @@ export default function CheckoutPage() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700">Tên của bạn <span className="text-red-500">*</span></label>
-                                        <div className="flex gap-3">
-                                            <Input name="lastName" required placeholder="Họ" className="w-1/3 rounded-xl bg-gray-50/50 border-gray-200 focus:bg-white" defaultValue={user?.lastName || ''} />
-                                            <Input name="firstName" required placeholder="Tên" className="w-2/3 rounded-xl bg-gray-50/50 border-gray-200 focus:bg-white" defaultValue={user?.firstName || ''} />
-                                        </div>
+                                        <label className="text-sm font-bold text-gray-700">Họ và tên <span className="text-red-500">*</span></label>
+                                        <Input name="fullName" required placeholder="Nhập đầy đủ họ và tên" className="w-full rounded-xl bg-gray-50/50 border-gray-200 focus:bg-white" defaultValue={user ? `${user.lastName || ''} ${user.firstName || ''}`.trim() : ''} />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-gray-700">Số điện thoại <span className="text-red-500">*</span></label>
@@ -360,8 +362,9 @@ export default function CheckoutPage() {
                                     )}
                                 </Button>
 
-                                <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1.5">
-                                    <ShieldCheck className="w-3.5 h-3.5 text-gray-400" /> Nhấn "Đặt hàng ngay" đồng nghĩa với việc bạn đồng ý tuân theo <Link href="#" className="text-blue-500 hover:underline">Điều khoản</Link> của chúng tôi
+                                <p className="text-center text-xs text-gray-400 mt-4">
+                                    <ShieldCheck className="w-3.5 h-3.5 inline-block mr-1 text-gray-400 align-text-bottom" />
+                                    Nhấn &quot;Đặt hàng ngay&quot; đồng nghĩa với việc bạn đồng ý tuân theo <Link href="#" className="text-blue-500 hover:underline flex-inline">Điều khoản</Link> của chúng tôi
                                 </p>
                             </div>
                         </div>
