@@ -113,9 +113,10 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
         let lastScrollY = 0;
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-            if (currentScrollY > 80) {
+            // Use hysteresis to prevent flickering when scrolling near the threshold
+            if (currentScrollY > 120) {
                 setScrolled(true);
-            } else {
+            } else if (currentScrollY < 40) {
                 setScrolled(false);
                 setMenuOpen(false);
             }
