@@ -54,7 +54,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                     </div>
 
                     {/* CHI NHÁNH LIÊN KẾT */}
-                    <div className="lg:col-span-3 flex flex-col gap-6 lg:pt-[104px]">
+                    <div className="lg:col-span-2 flex flex-col gap-6 lg:pt-[104px]">
                         <div className="space-y-4">
                             <div className="flex items-center gap-2 text-yellow-500 font-bold text-sm uppercase tracking-widest drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]">
                                 <Building className="w-6 h-6" />
@@ -76,7 +76,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                     </div>
 
                     {/* SẢN PHẨM */}
-                    <div className="lg:col-span-2 flex flex-col gap-8 lg:pt-[104px] lg:pl-4">
+                    <div className="lg:col-span-2 flex flex-col gap-8 lg:pt-[104px]">
                         <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-3">
                             <span className="w-8 h-[2px] bg-yellow-500"></span>
                             Sản phẩm
@@ -110,7 +110,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                     </div>
 
                     {/* DỊCH VỤ & GIẢI PHÁP */}
-                    <div className="lg:col-span-3 flex flex-col gap-8 lg:pt-[104px] lg:pl-4">
+                    <div className="lg:col-span-2 flex flex-col gap-8 lg:pt-[104px]">
                         <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-3">
                             <span className="w-8 h-[2px] bg-yellow-500"></span>
                             Dịch vụ & Giải pháp
@@ -138,6 +138,52 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 <Link href="#" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
                                     <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
                                     <span className="group-hover:translate-x-1 transition-transform font-medium">Hỗ trợ xuất hóa đơn VAT</span>
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* CHÍNH SÁCH HỖ TRỢ */}
+                    <div className="lg:col-span-2 flex flex-col gap-8 lg:pt-[104px]">
+                        <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-3 whitespace-nowrap">
+                            <span className="w-8 h-[2px] bg-yellow-500"></span>
+                            Chính sách hỗ trợ
+                        </h3>
+                        <ul className="flex flex-col gap-5 text-[#B5B5B5] text-sm">
+                            <li>
+                                <Link href="https://maytinhlmc.vn/huong-dan-mua-hang" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
+                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
+                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Hướng dẫn mua hàng</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="https://maytinhlmc.vn/huong-dan-thanh-toan" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
+                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
+                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Hướng dẫn thanh toán</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="https://maytinhlmc.vn/chinh-sach-bao-hanh" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
+                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
+                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Chính sách bảo hành</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="https://maytinhlmc.vn/chinh-sach-doi-tra" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
+                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
+                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Chính sách đổi trả hàng</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="https://maytinhlmc.vn/chinh-sach-van-chuyen" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
+                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
+                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Chính sách vận chuyển</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="https://maytinhlmc.vn/chinh-sach-bao-mat" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
+                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
+                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Chính sách bảo mật</span>
                                 </Link>
                             </li>
                         </ul>
