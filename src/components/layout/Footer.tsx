@@ -54,7 +54,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                     </div>
 
                     {/* CHI NHÁNH LIÊN KẾT */}
-                    <div className="lg:col-span-2 flex flex-col gap-6 lg:pt-[104px]">
+                    <div className="lg:col-span-2 flex flex-col gap-6 lg:pt-[72px]">
                         <div className="space-y-4">
                             <div className="flex items-center gap-2 text-yellow-500 font-bold text-sm uppercase tracking-widest drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]">
                                 <Building className="w-6 h-6" />
@@ -76,7 +76,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                     </div>
 
                     {/* CHÍNH SÁCH HỖ TRỢ */}
-                    <div className="lg:col-span-2 flex flex-col gap-8 lg:pt-[104px]">
+                    <div className="lg:col-span-2 flex flex-col gap-8 lg:pt-[72px]">
                         <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-3 whitespace-nowrap">
                             <span className="w-8 h-[2px] bg-yellow-500"></span>
                             Chính sách hỗ trợ
@@ -122,7 +122,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                     </div>
 
                     {/* SẢN PHẨM & DỊCH VỤ & KHUYẾN MÃI */}
-                    <div className="lg:col-span-4 flex flex-col gap-10 lg:pt-[104px]">
+                    <div className="lg:col-span-4 flex flex-col gap-10 lg:pt-[72px]">
                         <div className="grid grid-cols-2 gap-8">
                             {/* SẢN PHẨM */}
                             <div className="flex flex-col gap-6">
