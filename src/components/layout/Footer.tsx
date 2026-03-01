@@ -75,74 +75,6 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                         </div>
                     </div>
 
-                    {/* SẢN PHẨM */}
-                    <div className="lg:col-span-2 flex flex-col gap-8 lg:pt-[104px]">
-                        <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-3">
-                            <span className="w-8 h-[2px] bg-yellow-500"></span>
-                            Sản phẩm
-                        </h3>
-                        <ul className="flex flex-col gap-5 text-[#B5B5B5] text-sm">
-                            <li>
-                                <Link href="/category/workstation" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
-                                    <ChevronRight className="w-3 h-3 text-yellow-500 opacity-60 group-hover:opacity-100" />
-                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Workstation</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/category/pc-gaming" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
-                                    <ChevronRight className="w-3 h-3 text-yellow-500 opacity-60 group-hover:opacity-100" />
-                                    <span className="group-hover:translate-x-1 transition-transform font-medium">PC Đồ họa - Gaming</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/category/ai-deep-learning" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
-                                    <ChevronRight className="w-3 h-3 text-yellow-500 opacity-60 group-hover:opacity-100" />
-                                    <span className="group-hover:translate-x-1 transition-transform font-medium">AI - Deep Learning</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/category/laptop" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
-                                    <ChevronRight className="w-3 h-3 text-yellow-500 opacity-60 group-hover:opacity-100" />
-                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Laptop Doanh nghiệp</span>
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {/* DỊCH VỤ & GIẢI PHÁP */}
-                    <div className="lg:col-span-2 flex flex-col gap-8 lg:pt-[104px]">
-                        <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-3">
-                            <span className="w-8 h-[2px] bg-yellow-500"></span>
-                            Dịch vụ & Giải pháp
-                        </h3>
-                        <ul className="flex flex-col gap-5 text-[#B5B5B5] text-sm">
-                            <li>
-                                <Link href="#" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
-                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
-                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Tư vấn dự án CNTT</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/pc-builder" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
-                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
-                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Build PC theo yêu cầu</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
-                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
-                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Báo giá doanh nghiệp</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-yellow-500 transition-all flex items-center gap-3 group">
-                                    <ChevronRight className="w-5 h-5 text-yellow-500 group-hover:translate-x-1 transition-transform" />
-                                    <span className="group-hover:translate-x-1 transition-transform font-medium">Hỗ trợ xuất hóa đơn VAT</span>
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-
                     {/* CHÍNH SÁCH HỖ TRỢ */}
                     <div className="lg:col-span-2 flex flex-col gap-8 lg:pt-[104px]">
                         <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-3 whitespace-nowrap">
@@ -187,6 +119,86 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 </Link>
                             </li>
                         </ul>
+                    </div>
+
+                    {/* SẢN PHẨM & DỊCH VỤ & KHUYẾN MÃI */}
+                    <div className="lg:col-span-4 flex flex-col gap-10 lg:pt-[104px]">
+                        <div className="grid grid-cols-2 gap-8">
+                            {/* SẢN PHẨM */}
+                            <div className="flex flex-col gap-6">
+                                <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-3">
+                                    <span className="w-8 h-[2px] bg-yellow-500"></span>
+                                    Sản phẩm
+                                </h3>
+                                <ul className="flex flex-col gap-4 text-[#B5B5B5] text-sm">
+                                    <li>
+                                        <Link href="/category/workstation" className="hover:text-yellow-500 transition-all flex items-center gap-3 group text-xs sm:text-sm">
+                                            <ChevronRight className="w-3 h-3 text-yellow-500 opacity-60 group-hover:opacity-100" />
+                                            <span className="group-hover:translate-x-1 transition-transform font-medium">Workstation</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="/category/pc-gaming" className="hover:text-yellow-500 transition-all flex items-center gap-3 group text-xs sm:text-sm">
+                                            <ChevronRight className="w-3 h-3 text-yellow-500 opacity-60 group-hover:opacity-100" />
+                                            <span className="group-hover:translate-x-1 transition-transform font-medium">Gaming PC</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="/category/ai-deep-learning" className="hover:text-yellow-500 transition-all flex items-center gap-3 group text-xs sm:text-sm">
+                                            <ChevronRight className="w-3 h-3 text-yellow-500 opacity-60 group-hover:opacity-100" />
+                                            <span className="group-hover:translate-x-1 transition-transform font-medium">AI Learning</span>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            {/* DỊCH VỤ */}
+                            <div className="flex flex-col gap-6">
+                                <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-3">
+                                    <span className="w-8 h-[2px] bg-yellow-500"></span>
+                                    Dịch vụ
+                                </h3>
+                                <ul className="flex flex-col gap-4 text-[#B5B5B5] text-sm">
+                                    <li>
+                                        <Link href="/pc-builder" className="hover:text-yellow-500 transition-all flex items-center gap-3 group text-xs sm:text-sm">
+                                            <ChevronRight className="w-3 h-3 text-yellow-500 opacity-60 group-hover:opacity-100" />
+                                            <span className="group-hover:translate-x-1 transition-transform font-medium">Build PC</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="#" className="hover:text-yellow-500 transition-all flex items-center gap-3 group text-xs sm:text-sm">
+                                            <ChevronRight className="w-3 h-3 text-yellow-500 opacity-60 group-hover:opacity-100" />
+                                            <span className="group-hover:translate-x-1 transition-transform font-medium">Báo giá DN</span>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* NHẬN TIN KHUYẾN MÃI */}
+                        <div className="flex flex-col gap-5 pt-8 border-t border-white/5">
+                            <div className="space-y-2">
+                                <h3 className="text-white font-black text-base uppercase tracking-widest flex items-center gap-3">
+                                    <span className="w-8 h-[2px] bg-yellow-500"></span>
+                                    Nhận tin khuyến mãi
+                                </h3>
+                                <p className="text-slate-400 text-xs font-medium">Đăng ký để không bỏ lỡ những ưu đãi đặc quyền từ LMC</p>
+                            </div>
+                            <form className="flex w-full group/newsletter shadow-2xl shadow-black/40 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-yellow-500/50 transition-all duration-300">
+                                <input
+                                    type="email"
+                                    placeholder="Nhập email của bạn..."
+                                    className="flex-1 bg-white/5 border-0 text-white text-sm px-5 py-4 outline-none placeholder:text-slate-500 focus:bg-white/10 transition-colors"
+                                    required
+                                />
+                                <button
+                                    type="submit"
+                                    className="bg-yellow-500 hover:bg-yellow-400 text-[#101828] font-black uppercase text-xs sm:text-sm px-6 lg:px-8 py-4 transition-all duration-300 active:scale-95 group-hover/newsletter:shadow-[0_0_25px_rgba(234,179,8,0.4)]"
+                                >
+                                    Đăng ký
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
