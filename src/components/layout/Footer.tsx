@@ -170,11 +170,18 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 <ShieldCheck className="w-5 h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
                                 <span className="text-[10px] sm:text-[11px] text-yellow-500 font-black uppercase tracking-[0.15em] whitespace-nowrap">Doanh Nghiệp Uy Tín</span>
                             </div>
-                            <img
-                                src="https://theme.hstatic.net/1000026716/1000440777/14/logo-bct.png?v=2102"
-                                alt="Đã thông báo Bộ Công Thương"
-                                className="h-10 w-auto object-contain drop-shadow-md"
-                            />
+                            <a
+                                href="http://online.gov.vn/Home/WebDetails/108841"
+                                rel="nofollow noopener"
+                                target="_blank"
+                                className="transition-opacity hover:opacity-90"
+                            >
+                                <img
+                                    src="https://maytinhlmc.vn/wp-content/uploads/dadangkybocongthuong.png"
+                                    alt="Đã thông báo Bộ Công Thương"
+                                    className="h-[52px] w-auto object-contain drop-shadow-md -ml-2"
+                                />
+                            </a>
                         </div>
                     </div>
 
