@@ -13,8 +13,6 @@ import { ProductCard } from "@/components/ui/ProductCard";
 import { DetailedSpecsTable } from "@/components/product/DetailedSpecsTable";
 import { RelatedNews } from "@/components/product/RelatedNews";
 import { ExpandableDescription } from "@/components/product/ExpandableDescription";
-
-export const dynamic = "force-static";
 export const revalidate = 3600;
 
 export async function generateMetadata({ params, searchParams }: {
