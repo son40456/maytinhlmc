@@ -1,8 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Cpu, Building2, Mail, Phone, Building, Smartphone, ChevronRight, ShieldCheck, Facebook, Youtube, MessageCircle } from 'lucide-react';
 
-export const Footer = () => {
+export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
     return (
         <footer className="w-full bg-[#101828] pt-16 lg:pt-20 pb-10 border-t border-yellow-500/20 text-slate-100 font-sans">
             <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
@@ -10,10 +11,23 @@ export const Footer = () => {
 
                     {/* TRỤ SỞ CHÍNH */}
                     <div className="lg:col-span-4 flex flex-col gap-6 bg-white/5 p-6 lg:p-8 rounded-2xl border border-white/5">
-                        <div className="flex items-center gap-4 mb-2">
-                            <Cpu className="w-12 h-12 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" strokeWidth={1.5} />
-                            <h2 className="text-4xl font-black tracking-tighter text-white">LMC</h2>
-                        </div>
+                        <Link href="/" className="flex items-center gap-4 mb-2">
+                            {logoUrl ? (
+                                <Image
+                                    src={logoUrl}
+                                    alt="LMC"
+                                    width={200}
+                                    height={60}
+                                    className="h-12 w-auto object-contain"
+                                    priority
+                                />
+                            ) : (
+                                <>
+                                    <Cpu className="w-12 h-12 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" strokeWidth={1.5} />
+                                    <h2 className="text-4xl font-black tracking-tighter text-white">LMC</h2>
+                                </>
+                            )}
+                        </Link>
                         <div className="space-y-5">
                             <div className="flex items-center gap-3 text-yellow-500 font-bold text-base uppercase tracking-[0.2em] drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]">
                                 <Building2 className="w-6 h-6" />
@@ -150,10 +164,17 @@ export const Footer = () => {
 
                         <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
 
-                        {/* Trust Badge */}
-                        <div className="flex items-center gap-2 px-4 py-2 border border-yellow-500/40 rounded-full bg-yellow-500/10 shadow-[0_0_20px_rgba(234,179,8,0.15)] group cursor-default">
-                            <ShieldCheck className="w-5 h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
-                            <span className="text-[10px] sm:text-[11px] text-yellow-500 font-black uppercase tracking-[0.15em]">Doanh Nghiệp Uy Tín</span>
+                        {/* Trust Badge & BCT */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 px-4 py-2 border border-yellow-500/40 rounded-full bg-yellow-500/10 shadow-[0_0_20px_rgba(234,179,8,0.15)] group cursor-default h-10">
+                                <ShieldCheck className="w-5 h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
+                                <span className="text-[10px] sm:text-[11px] text-yellow-500 font-black uppercase tracking-[0.15em] whitespace-nowrap">Doanh Nghiệp Uy Tín</span>
+                            </div>
+                            <img
+                                src="https://theme.hstatic.net/1000026716/1000440777/14/logo-bct.png?v=2102"
+                                alt="Đã thông báo Bộ Công Thương"
+                                className="h-10 w-auto object-contain drop-shadow-md"
+                            />
                         </div>
                     </div>
 

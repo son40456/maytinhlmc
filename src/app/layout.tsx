@@ -43,7 +43,7 @@ export default async function RootLayout({
               {children}
             </GlobalModalProvider>
           </main>
-          <Footer />
+          <Footer logoUrl={logoUrl} />
           <CompareBar />
           <ToastContainer />
         </div>
