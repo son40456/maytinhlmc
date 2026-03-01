@@ -5,12 +5,12 @@ import { Cpu, Building2, Mail, Phone, Building, Smartphone, ChevronRight, Shield
 
 export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
     return (
-        <footer className="w-full bg-[#101828] pt-16 lg:pt-20 pb-10 border-t border-yellow-500/20 text-slate-100 font-sans">
-            <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 mb-16 items-start">
+        <footer className="w-full bg-[#101828] pt-10 md:pt-16 lg:pt-20 pb-8 md:pb-10 border-t border-yellow-500/20 text-slate-100 font-sans">
+            <div className="max-w-[1600px] mx-auto px-4 lg:px-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-10 md:mb-16 items-start">
 
                     {/* TRỤ SỞ CHÍNH */}
-                    <div className="lg:col-span-4 flex flex-col gap-6 bg-white/5 p-6 lg:p-8 rounded-2xl border border-white/5">
+                    <div className="lg:col-span-4 flex flex-col gap-5 md:gap-6 bg-white/5 p-5 md:p-6 lg:p-8 rounded-2xl border border-white/5">
                         <Link href="/" className="flex items-center gap-4 mb-2">
                             {logoUrl ? (
                                 <Image
@@ -188,12 +188,12 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 <input
                                     type="email"
                                     placeholder="Nhập email của bạn..."
-                                    className="flex-1 bg-white/5 border-0 text-white text-sm px-5 py-4 outline-none placeholder:text-slate-500 focus:bg-white/10 transition-colors"
+                                    className="flex-1 bg-white/5 border-0 text-white text-sm px-4 md:px-5 py-3 md:py-4 outline-none placeholder:text-slate-500 focus:bg-white/10 transition-colors min-w-0"
                                     required
                                 />
                                 <button
                                     type="submit"
-                                    className="bg-yellow-500 hover:bg-yellow-400 text-[#101828] font-black uppercase text-xs sm:text-sm px-6 lg:px-8 py-4 transition-all duration-300 active:scale-95 group-hover/newsletter:shadow-[0_0_25px_rgba(234,179,8,0.4)]"
+                                    className="bg-yellow-500 hover:bg-yellow-400 text-[#101828] font-black uppercase text-xs sm:text-sm px-5 md:px-6 lg:px-8 py-3 md:py-4 transition-all duration-300 active:scale-95 group-hover/newsletter:shadow-[0_0_25px_rgba(234,179,8,0.4)] shrink-0"
                                 >
                                     Đăng ký
                                 </button>
@@ -206,27 +206,27 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                 <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mb-8"></div>
 
                 {/* Footer Bottom */}
-                <div className="flex flex-col lg:flex-row justify-between items-center gap-10">
-                    <div className="text-slate-400 text-xs text-center lg:text-left space-y-2">
-                        <p className="font-medium">© {new Date().getFullYear()} CÔNG TY CỔ PHẦN THIẾT BỊ CÔNG NGHỆ LMC. All rights reserved.</p>
-                        <p className="uppercase tracking-[0.3em] text-[9px] opacity-50 font-bold">Thiết kế & Vận hành bởi LMC Digital Solution</p>
+                <div className="flex flex-col lg:flex-row justify-between items-center gap-8 lg:gap-10">
+                    <div className="text-slate-400 text-xs text-center lg:text-left space-y-2 order-3 lg:order-1 mt-4 lg:mt-0">
+                        <p className="font-medium text-[11px] sm:text-xs leading-relaxed">© {new Date().getFullYear()} CÔNG TY CỔ PHẦN THIẾT BỊ CÔNG NGHỆ LMC. All rights reserved.</p>
+                        <p className="uppercase tracking-[0.2em] sm:tracking-[0.3em] text-[8px] sm:text-[9px] opacity-50 font-bold">Thiết kế & Vận hành bởi LMC Digital Solution</p>
                     </div>
 
-                    <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-10">
+                    <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-5 sm:gap-6 lg:gap-10 order-1 lg:order-2 w-full lg:w-auto">
                         {/* Payment Methods */}
-                        <div className="flex items-center gap-6 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                        <div className="flex items-center justify-center gap-5 sm:gap-6 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="Visa" className="h-4 w-auto object-contain" />
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard" className="h-6 w-auto object-contain" />
-                            <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="Momo" className="h-6 w-auto object-contain bg-white/20 p-1 rounded" />
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard" className="h-[22px] sm:h-6 w-auto object-contain" />
+                            <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="Momo" className="h-[22px] sm:h-6 w-auto object-contain bg-white/20 p-1 rounded" />
                         </div>
 
-                        <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
+                        <div className="h-px w-2/3 sm:h-8 sm:w-px bg-white/10 sm:block mx-auto sm:mx-0"></div>
 
                         {/* Trust Badge & BCT */}
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 px-4 py-2 border border-yellow-500/40 rounded-full bg-yellow-500/10 shadow-[0_0_20px_rgba(234,179,8,0.15)] group cursor-default h-10">
-                                <ShieldCheck className="w-5 h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
-                                <span className="text-[10px] sm:text-[11px] text-yellow-500 font-black uppercase tracking-[0.15em] whitespace-nowrap">Doanh Nghiệp Uy Tín</span>
+                        <div className="flex flex-wrap justify-center items-center gap-4">
+                            <div className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-yellow-500/40 rounded-full bg-yellow-500/10 shadow-[0_0_20px_rgba(234,179,8,0.15)] group cursor-default h-9 sm:h-10">
+                                <ShieldCheck className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
+                                <span className="text-[9px] sm:text-[11px] text-yellow-500 font-black uppercase tracking-[0.1em] sm:tracking-[0.15em] whitespace-nowrap">Doanh Nghiệp Uy Tín</span>
                             </div>
                             <a
                                 href="http://online.gov.vn/Home/WebDetails/108841"
@@ -237,14 +237,14 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 <img
                                     src="https://maytinhlmc.vn/wp-content/uploads/dadangkybocongthuong.png"
                                     alt="Đã thông báo Bộ Công Thương"
-                                    className="h-[52px] w-auto object-contain drop-shadow-md -ml-2"
+                                    className="h-[40px] sm:h-[52px] w-auto object-contain drop-shadow-md sm:-ml-2"
                                 />
                             </a>
                         </div>
                     </div>
 
                     {/* Social Icons */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-center gap-4 order-2 lg:order-3">
                         <a href="https://facebook.com" aria-label="Facebook" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-yellow-500 hover:text-[#101828] text-slate-400 border border-white/5 transition-all duration-300 transform hover:-translate-y-1">
                             <Facebook className="w-5 h-5 fill-current" />
                         </a>
