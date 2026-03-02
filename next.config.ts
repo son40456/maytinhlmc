@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     // 1. Chuyển sang dùng custom loader để fix lỗi 402
     loader: 'custom',
-    loaderFile: './utils/imagekit-loader.ts',
+    loaderFile: './src/utils/imagekit-loader.ts',
 
     // 2. Xóa 'unoptimized: true' để ImageKit có thể nén ảnh cho bạn
     // (Nếu để unoptimized: true thì loader sẽ không chạy)
