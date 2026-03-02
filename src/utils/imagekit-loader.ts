@@ -4,7 +4,7 @@ export default function imageKitLoader({ src, width, quality }: { src: string, w
     const wpDomain = 'https://next.maytinhlmc.vn';
 
     // 2. URL Endpoint bạn vừa lấy ở Bước 1
-    const ikEndpoint = 'https://ik.imagekit.io/maytinhlmc/';
+    const ikEndpoint = 'https://ik.imagekit.io/maytinhlmc';
 
     // Nếu ảnh không bắt đầu từ WP (ví dụ ảnh Google hoặc Vercel Blob)
     // thì trả về src gốc để Next.js xử lý bình thường hoặc bỏ qua

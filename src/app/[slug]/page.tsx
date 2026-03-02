@@ -13,8 +13,49 @@ import { ProductCard } from "@/components/ui/ProductCard";
 import { DetailedSpecsTable } from "@/components/product/DetailedSpecsTable";
 import { RelatedNews } from "@/components/product/RelatedNews";
 import { ExpandableDescription } from "@/components/product/ExpandableDescription";
+
+// Cấu hình ISR: Tự động cập nhật lại trang sau mỗi 1 tiếng nếu có thay đổi từ WP
 export const revalidate = 3600;
 
+/**
+ * 1. HÀM GENERATE STATIC PARAMS
+ * Giúp render HTML tĩnh tại thời điểm build (SSG).
+ * Next.js sẽ gọi hàm này để biết những slug nào cần được tạo file HTML sẵn.
+ */
+export async function generateStaticParams() {
+    const query = `
+        query GetAllSlugs {
+            products(first: 100) {
+                nodes { slug }
+            }
+            productCategories(first: 100) {
+                nodes { slug }
+            }
+        }
+    `;
+
+    try {
+        const { data } = await wpgraphqlFetch<any>(query);
+
+        const productSlugs = data?.products?.nodes?.map((p: any) => ({
+            slug: p.slug,
+        })) || [];
+
+        const categorySlugs = data?.productCategories?.nodes?.map((c: any) => ({
+            slug: c.slug,
+        })) || [];
+
+        // Kết hợp tất cả slug sản phẩm và danh mục
+        return [...productSlugs, ...categorySlugs];
+    } catch (error) {
+        console.error("Error generating static params:", error);
+        return []; // Trả về mảng rỗng nếu lỗi để tránh crash build
+    }
+}
+
+/**
+ * 2. HÀM GENERATE METADATA
+ */
 export async function generateMetadata({ params, searchParams }: {
     params: Promise<{ slug: string }>,
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -22,13 +63,11 @@ export async function generateMetadata({ params, searchParams }: {
     const { slug } = await params;
     const resolvedSearchParams = await searchParams;
 
-    // Thu thập các bộ lọc taxonomy từ URL (tự động)
     const systemParams = ['after', 'minPrice', 'maxPrice', 'sort'];
     const taxFilters = Object.entries(resolvedSearchParams)
         .filter(([key]) => !systemParams.includes(key))
         .map(([key, value]) => {
             if (!value || typeof value !== 'string') return null;
-            // Làm đẹp URL: Bỏ tiền tố pa_ nếu có, chuẩn hóa thành Enum (vd: chipset -> PA_CHIPSET)
             const cleanKey = key.startsWith('pa_') ? key.slice(3) : key;
             const taxonomy = `PA_${cleanKey.toUpperCase().replace(/-/g, '_')}`;
             return {
@@ -63,10 +102,14 @@ export async function generateMetadata({ params, searchParams }: {
     return { title: '404 - Không tìm thấy trang | LMC' };
 }
 
+/**
+ * 3. MAIN PAGE COMPONENT
+ */
 export default async function SlugPage({ params, searchParams }: {
     params: Promise<{ slug: string }>,
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
+    // Await params theo chuẩn Next.js 15
     const { slug } = await params;
     const resolvedSearchParams = await searchParams;
 
@@ -75,7 +118,6 @@ export default async function SlugPage({ params, searchParams }: {
     const maxPrice = resolvedSearchParams.maxPrice ? parseFloat(resolvedSearchParams.maxPrice) : null;
     const sort = resolvedSearchParams.sort || "date-desc";
 
-    // Xây dựng bộ lọc taxonomy động
     const systemParams = ['after', 'minPrice', 'maxPrice', 'sort'];
     const taxFilters = Object.entries(resolvedSearchParams)
         .filter(([key, value]) => !systemParams.includes(key) && value)
@@ -93,7 +135,6 @@ export default async function SlugPage({ params, searchParams }: {
     if (sort === "price-asc") orderBy = [{ field: "PRICE", order: "ASC" }];
     if (sort === "price-desc") orderBy = [{ field: "PRICE", order: "DESC" }];
 
-    // 1. Kiểm tra Slug & Lấy dữ liệu (Gộp chung để giảm round-trip)
     const { data: nodeData } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
         slugId: slug,
         slugStr: slug,
@@ -105,23 +146,13 @@ export default async function SlugPage({ params, searchParams }: {
         taxFilters: taxFilters.length > 0 ? taxFilters : null
     });
 
-    let filterData: any = null;
-    if (nodeData?.productCategory) {
-        // Fetch attribute filters in a separate cached query to prevent ?after and ?minPrice from breaking the cache
-        const { data } = await wpgraphqlFetch<any>(GET_CATEGORY_FILTERS, { slugId: slug, slugStr: slug });
-        filterData = data;
-    }
-
-
     // --- TRƯỜNG HỢP: SẢN PHẨM ---
     if (nodeData?.product) {
         const product = nodeData.product;
-        // Clean price: Bỏ &nbsp; và chuẩn hóa khoảng trắng
         const cleanPrice = (priceStr: string) => priceStr?.replace(/&nbsp;/g, " ").trim() || "Liên hệ";
         const displayPrice = cleanPrice(product.price || product.regularPrice);
         const imageUrl = product.image?.sourceUrl || "";
 
-        // Calculate savings
         const getSavingsInfo = () => {
             if (!product.regularPrice || !product.salePrice) return null;
             const regNum = parseInt(product.regularPrice.replace(/[^\d]/g, ''));
@@ -142,10 +173,7 @@ export default async function SlugPage({ params, searchParams }: {
                         <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                         {product.productCategories?.nodes?.[0] && (
                             <>
-                                <Link
-                                    href={`/${product.productCategories.nodes[0].slug}`}
-                                    className="hover:text-blue-600 transition-colors"
-                                >
+                                <Link href={`/${product.productCategories.nodes[0].slug}`} className="hover:text-blue-600 transition-colors">
                                     {product.productCategories.nodes[0].name}
                                 </Link>
                                 <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
@@ -154,11 +182,8 @@ export default async function SlugPage({ params, searchParams }: {
                         <span className="text-slate-900 font-medium truncate">{product.name}</span>
                     </nav>
 
-                    {/* ===== TOP CARD: Gallery + Product Info ===== */}
                     <div className="bg-white rounded-lg md:rounded-xl border border-slate-200 p-3 md:p-6 lg:p-8 mb-4 md:mb-8">
                         <div className="lg:grid gap-8 items-start" style={{ gridTemplateColumns: '62% 38%' }}>
-
-                            {/* LEFT: Gallery (sticky) */}
                             <div className="lg:sticky lg:top-[88px] space-y-3 md:space-y-4">
                                 <ProductGallery
                                     mainImage={product.image}
@@ -167,7 +192,6 @@ export default async function SlugPage({ params, searchParams }: {
                                     salePrice={product.salePrice}
                                     regularPrice={product.regularPrice}
                                 />
-
                                 {/* Action Bar */}
                                 <div className="hidden md:flex bg-slate-50 rounded-xl p-3 items-center justify-around">
                                     <button className="flex items-center gap-2 group px-4 py-2 hover:bg-white rounded-lg transition-all">
@@ -187,13 +211,9 @@ export default async function SlugPage({ params, searchParams }: {
                                 </div>
                             </div>
 
-                            {/* RIGHT: Product Info (scrolls naturally) */}
                             <div className="space-y-4 md:space-y-6 mt-4 lg:mt-0 lg:pr-2">
-                                {/* Title + Meta */}
                                 <div>
-                                    <h1 className="text-lg md:text-2xl font-bold text-slate-900 mb-2 md:mb-3 leading-tight">
-                                        {product.name}
-                                    </h1>
+                                    <h1 className="text-lg md:text-2xl font-bold text-slate-900 mb-2 md:mb-3 leading-tight">{product.name}</h1>
                                     <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm mb-3 md:mb-4 flex-wrap">
                                         <span className="text-slate-400">Mã SP: <span className="text-blue-600 font-medium">{product.sku || product.databaseId}</span></span>
                                         <div className="flex items-center gap-1">
@@ -212,15 +232,10 @@ export default async function SlugPage({ params, searchParams }: {
                                     </div>
                                 </div>
 
-                                {/* Specs Summary */}
                                 <div className="border-t border-b border-slate-100 py-4">
-                                    <ProductSpecs
-                                        shortDescription={product.shortDescription}
-                                        attributes={product.attributes}
-                                    />
+                                    <ProductSpecs shortDescription={product.shortDescription} attributes={product.attributes} />
                                 </div>
 
-                                {/* Price Block */}
                                 <div className="bg-slate-50 p-3 md:p-5 rounded-lg md:rounded-xl border border-slate-100">
                                     {savings && (
                                         <div className="flex items-center justify-between mb-3">
@@ -234,56 +249,26 @@ export default async function SlugPage({ params, searchParams }: {
                                     </div>
                                 </div>
 
-                                {/* Benefits */}
                                 <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm text-slate-600">
                                     <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Bảo hành chính hãng 24 tháng</li>
                                     <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Trả góp 0% qua thẻ tín dụng</li>
                                     <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Miễn phí giao hàng toàn quốc</li>
                                 </ul>
 
-                                {/* CTA Buttons */}
-                                <div className="flex flex-col gap-3 pt-2">
-                                    <AddToCartButton
-                                        id={product.id}
-                                        databaseId={product.databaseId}
-                                        name={product.name}
-                                        price={displayPrice}
-                                        imageUrl={imageUrl}
-                                        slug={product.slug}
-                                        stockStatus={product.stockStatus || "IN_STOCK"}
-                                    />
-                                </div>
-
-                                {/* Promotions Box */}
-                                <div className="rounded-xl border border-slate-200 overflow-hidden">
-                                    <div className="p-4 bg-gradient-to-r from-blue-50 to-white border-b border-slate-200">
-                                        <h3 className="font-bold text-xs uppercase tracking-widest flex items-center gap-2 text-blue-800">
-                                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" /></svg>
-                                            Khuyến mãi đặc biệt
-                                        </h3>
-                                    </div>
-                                    <div className="p-4 space-y-3">
-                                        <div className="flex items-start gap-3">
-                                            <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5"><span className="text-[10px] font-bold">1</span></div>
-                                            <p className="text-sm text-slate-700 leading-snug">Nhập mã <strong className="text-blue-600">LMC500</strong> giảm ngay 500.000đ khi thanh toán qua VNPay-QR.</p>
-                                        </div>
-                                        <div className="flex items-start gap-3">
-                                            <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5"><span className="text-[10px] font-bold">2</span></div>
-                                            <p className="text-sm text-slate-700 leading-snug">Miễn phí giao hàng toàn quốc.</p>
-                                        </div>
-                                        <div className="flex items-start gap-3">
-                                            <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5"><span className="text-[10px] font-bold">3</span></div>
-                                            <p className="text-sm text-slate-700 leading-snug">Tặng gói bảo dưỡng, vệ sinh PC miễn phí trọn đời.</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <AddToCartButton
+                                    id={product.id}
+                                    databaseId={product.databaseId}
+                                    name={product.name}
+                                    price={displayPrice}
+                                    imageUrl={imageUrl}
+                                    slug={product.slug}
+                                    stockStatus={product.stockStatus || "IN_STOCK"}
+                                />
                             </div>
                         </div>
                     </div>
 
-                    {/* ===== BOTTOM SECTION: Description + Specs + News ===== */}
                     <div className="lg:grid gap-4 md:gap-8 items-start mt-4 md:mt-0" style={{ gridTemplateColumns: '62% 1fr' }}>
-                        {/* Left: Description */}
                         <div className="lg:sticky lg:top-[88px]">
                             {product.description && (
                                 <section className="bg-white rounded-lg md:rounded-xl border border-slate-200 overflow-hidden">
@@ -296,8 +281,6 @@ export default async function SlugPage({ params, searchParams }: {
                                 </section>
                             )}
                         </div>
-
-                        {/* Right: Specs + News */}
                         <div className="space-y-4 md:space-y-6 mt-4 md:mt-6 lg:mt-0 lg:sticky lg:top-[88px]">
                             <DetailedSpecsTable
                                 shortDescription={product.shortDescription}
@@ -308,12 +291,9 @@ export default async function SlugPage({ params, searchParams }: {
                         </div>
                     </div>
 
-                    {/* Related Products Section */}
                     {product.related?.nodes && product.related.nodes.length > 0 && (
                         <section className="mt-8 md:mt-16">
-                            <div className="flex items-center justify-between mb-4 md:mb-8">
-                                <h3 className="text-lg md:text-2xl font-bold">Sản phẩm tương tự</h3>
-                            </div>
+                            <h3 className="text-lg md:text-2xl font-bold mb-8">Sản phẩm tương tự</h3>
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-6">
                                 {product.related.nodes.map((p: any) => (
                                     <ProductCard
@@ -348,14 +328,14 @@ export default async function SlugPage({ params, searchParams }: {
         );
     }
 
-
     // --- TRƯỜNG HỢP: DANH MỤC ---
     if (nodeData?.productCategory) {
         const category = nodeData.productCategory;
         const products = nodeData.categoryProducts?.nodes || [];
         const pageInfo = nodeData.categoryProducts?.pageInfo;
 
-        // Trích xuất các bộ lọc khả dụng từ filterDiscovery đã được tách rời cache
+        const { data: filterData } = await wpgraphqlFetch<any>(GET_CATEGORY_FILTERS, { slugId: slug, slugStr: slug });
+
         const availableFilters: any[] = [];
         const seenAttrs = new Set();
 
@@ -363,77 +343,45 @@ export default async function SlugPage({ params, searchParams }: {
             p.attributes?.nodes?.forEach((attr: any) => {
                 const key = attr.slug || attr.name;
                 const terms = attr.terms?.nodes || [];
-
                 if (!seenAttrs.has(key)) {
                     seenAttrs.add(key);
                     const displaySlug = key.startsWith('pa_') ? key.slice(3) : key;
-
-                    const optionsMap = new Map();
-                    terms.forEach((t: any) => {
-                        const logoUrl = t.logo?.logo?.node?.sourceUrl;
-                        optionsMap.set(t.slug, { name: t.name, logo: logoUrl });
-                    });
-
                     availableFilters.push({
                         name: attr.label || attr.name,
                         slug: displaySlug,
                         rawSlug: key,
-                        options: Array.from(optionsMap.entries()).map(([slug, data]) => ({ slug, name: data.name, logo: data.logo }))
+                        options: terms.map((t: any) => ({
+                            slug: t.slug,
+                            name: t.name,
+                            logo: t.logo?.logo?.node?.sourceUrl
+                        }))
                     });
-                } else {
-                    const existing = availableFilters.find(f => f.rawSlug === key);
-                    if (existing) {
-                        const existingSlugs = new Set(existing.options.map((o: any) => o.slug));
-                        terms.forEach((t: any) => {
-                            if (!existingSlugs.has(t.slug)) {
-                                const logoUrl = t.logo?.logo?.node?.sourceUrl;
-                                existing.options.push({ slug: t.slug, name: t.name, logo: logoUrl });
-                                existingSlugs.add(t.slug);
-                            }
-                        });
-                    }
                 }
             });
         });
 
-        // Hậu xử lý: Sắp xếp các lựa chọn khoảng giá theo thứ tự tự nhiên (tăng dần)
+        // Hậu xử lý sắp xếp khoảng giá
         availableFilters.forEach((filter: any) => {
             if (filter.slug.includes('khoang-gia')) {
                 filter.options.sort((a: any, b: any) => {
-                    const extractMin = (slug: string) => {
-                        let minStr = slug.replace('duoi-', '0-').replace('tren-', '999-').replace(/trieu/g, '');
-                        return parseInt(minStr.split('-')[0]) || 0;
-                    };
+                    const extractMin = (s: string) => parseInt(s.replace('duoi-', '0-').replace('tren-', '999-').split('-')[0]) || 0;
                     return extractMin(a.slug) - extractMin(b.slug);
                 });
             }
         });
 
-        // Tạo URL cho Load More bảo toàn tất cả searchParams
-        const getLoadMoreUrl = () => {
-            const params = new URLSearchParams();
-            Object.entries(resolvedSearchParams).forEach(([key, value]) => {
-                if (value) params.set(key, value);
-            });
-            params.set('after', pageInfo?.endCursor || "");
-            return `/${slug}?${params.toString()}`;
-        };
-
         return (
-            <div>
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    <CategoryProductView
-                        category={category}
-                        initialProducts={products}
-                        initialPageInfo={pageInfo}
-                        availableFilters={availableFilters}
-                        categorySlug={slug}
-                    />
-                </div>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <CategoryProductView
+                    category={category}
+                    initialProducts={products}
+                    initialPageInfo={pageInfo}
+                    availableFilters={availableFilters}
+                    categorySlug={slug}
+                />
             </div>
         );
     }
 
-    // --- TRƯỜNG HỢP: KHÔNG TÌM THẤY ---
     notFound();
 }
