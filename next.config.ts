@@ -2,7 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    unoptimized: true,
+    // 1. Chuyển sang dùng custom loader để fix lỗi 402
+    loader: 'custom',
+    loaderFile: './utils/imagekit-loader.ts',
+
+    // 2. Xóa 'unoptimized: true' để ImageKit có thể nén ảnh cho bạn
+    // (Nếu để unoptimized: true thì loader sẽ không chạy)
+
     remotePatterns: [
       {
         protocol: 'https',
@@ -37,7 +43,5 @@ const nextConfig: NextConfig = {
     ];
   },
 };
-
-
 
 export default nextConfig;
