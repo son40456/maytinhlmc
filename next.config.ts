@@ -38,9 +38,5 @@ const nextConfig: NextConfig = {
 };
 
 
-module.exports = {
-  images: {
-    unoptimized: true,
-  },
-}
+
 export default nextConfig;
