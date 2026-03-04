@@ -1,17 +1,16 @@
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
-import { GET_NODE_BY_SLUG, GET_CATEGORY_FILTERS } from "@/lib/graphql/queries";
+import { GET_NODE_BY_SLUG } from "@/lib/graphql/queries";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 // Components
 import { AddToCartButton } from "@/components/ui/AddToCartButton";
-import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductSpecs } from "@/components/product/ProductSpecs";
 import { StickyBuyBar } from "@/components/product/StickyBuyBar";
 import { CategoryProductView } from "@/components/category/CategoryProductView";
-import { ProductCard } from "@/components/ui/ProductCard";
 import { DetailedSpecsTable } from "@/components/product/DetailedSpecsTable";
 import { RelatedNews } from "@/components/product/RelatedNews";
 import { ExpandableDescription } from "@/components/product/ExpandableDescription";
@@ -200,38 +199,26 @@ export default async function SlugPage({ params }: {
         const products = nodeData.categoryProducts?.nodes || [];
         const pageInfo = nodeData.categoryProducts?.pageInfo;
 
-        const { data: filterData } = await wpgraphqlFetch<any>(GET_CATEGORY_FILTERS, { slugId: slug, slugStr: slug });
-
-        const availableFilters: any[] = [];
-        const seenAttrs = new Set();
-        filterData?.filterDiscovery?.nodes?.forEach((p: any) => {
-            p.attributes?.nodes?.forEach((attr: any) => {
-                const key = attr.slug || attr.name;
-                if (!seenAttrs.has(key)) {
-                    seenAttrs.add(key);
-                    availableFilters.push({
-                        name: attr.label || attr.name,
-                        slug: key.startsWith('pa_') ? key.slice(3) : key,
-                        rawSlug: key,
-                        options: attr.terms?.nodes?.map((t: any) => ({
-                            slug: t.slug,
-                            name: t.name,
-                            logo: t.logo?.logo?.node?.sourceUrl
-                        })) || []
-                    });
-                }
-            });
-        });
-
+        // Filter options hư được fetch client-side bởi CategoryProductView từ /api/category-filters
+        // để không block ISR của trang này và hỗ trợ danh mục có nhiều hơn 250 sản phẩm.
         return (
             <div className="container mx-auto px-4 py-12">
-                <CategoryProductView
-                    category={category}
-                    initialProducts={products}
-                    initialPageInfo={pageInfo}
-                    availableFilters={availableFilters}
-                    categorySlug={slug}
-                />
+                <Suspense fallback={
+                    <div className="space-y-6">
+                        <div className="h-8 w-64 bg-gray-200 animate-pulse rounded-xl" />
+                        <div className="h-12 bg-gray-100 animate-pulse rounded-xl" />
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                            {[...Array(10)].map((_, i) => <div key={i} className="aspect-[3/4] bg-gray-100 animate-pulse rounded-xl" />)}
+                        </div>
+                    </div>
+                }>
+                    <CategoryProductView
+                        category={category}
+                        initialProducts={products}
+                        initialPageInfo={pageInfo}
+                        categorySlug={slug}
+                    />
+                </Suspense>
             </div>
         );
     }
