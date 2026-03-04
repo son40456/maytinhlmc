@@ -26,11 +26,11 @@ async function wpgraphqlFetchRaw<T>(
     });
 
     const json = await res.json();
-    if (json.errors) {
-        console.error('WPGraphQL Errors:', json.errors);
-    }
+    // Không log lỗi GraphQL tự động - caller tự quyết định xử lý.
+    // Một số lỗi là bình thường (VD: lookup product/category cùng lúc, slug thuộc loại kia).
     return json;
 }
 
 // Use React cache to deduplicate requests in the same render pass (Shared between Metadata and Page)
 export const wpgraphqlFetch = cache(wpgraphqlFetchRaw);
+
