@@ -22,45 +22,50 @@ export const dynamicParams = true;
 
 /**
  * 1. HÀM GENERATE STATIC PARAMS
- *    - Trên server production: Pre-build 100 sản phẩm & danh mục mới nhất.
- *    - Trên máy dev (không kết nối được WP API): Trả về mảng rỗng, ISR xử lý toàn bộ.
- *    - Các trang còn lại luôn được render & cache on-demand (ISR).
+ *    - Paginate qua TẤT CẢ sản phẩm để pre-build HTML tĩnh (tốt nhất cho SEO & tốc độ)
+ *    - Máy dev không kết nối được WP API → trả về [] → ISR xử lý toàn bộ
  */
 export async function generateStaticParams() {
     try {
         const allParams: { slug: string }[] = [];
 
-        // Chỉ lấy 100 sản phẩm mới nhất để build trước (tránh timeout)
-        const productQuery = `
-            query GetTopProductSlugs {
-                products(first: 100) {
+        // --- Lấy TẤT CẢ sản phẩm (paginate 100/lần) ---
+        const PRODUCT_SLUG_QUERY = `
+            query GetProductSlugs($after: String) {
+                products(first: 100, after: $after) {
+                    pageInfo { hasNextPage endCursor }
                     nodes { slug }
                 }
             }
         `;
-        const rawProducts: any = await wpgraphqlFetch<any>(productQuery);
-        rawProducts?.data?.products?.nodes?.forEach((p: any) => {
-            if (p.slug) allParams.push({ slug: p.slug });
-        });
 
-        // Lấy toàn bộ danh mục (nhỏ gọn, không timeout)
-        const catQuery = `
-            query GetAllCategorySlugs {
-                productCategories(first: 200) {
-                    nodes { slug }
-                }
+        let hasNextPage = true;
+        let afterCursor: string | null = null;
+
+        while (hasNextPage) {
+            const res: any = await wpgraphqlFetch<any>(PRODUCT_SLUG_QUERY, { after: afterCursor });
+            const nodes = res?.data?.products?.nodes || [];
+            nodes.forEach((p: any) => { if (p.slug) allParams.push({ slug: p.slug }); });
+            hasNextPage = res?.data?.products?.pageInfo?.hasNextPage ?? false;
+            afterCursor = res?.data?.products?.pageInfo?.endCursor ?? null;
+            console.log(`📦 Đã thu thập: ${allParams.length} product slugs...`);
+        }
+
+        // --- Lấy tất cả danh mục ---
+        const catRes: any = await wpgraphqlFetch<any>(`
+            query GetCategorySlugs {
+                productCategories(first: 200) { nodes { slug } }
             }
-        `;
-        const rawCats: any = await wpgraphqlFetch<any>(catQuery);
-        rawCats?.data?.productCategories?.nodes?.forEach((c: any) => {
+        `);
+        catRes?.data?.productCategories?.nodes?.forEach((c: any) => {
             if (c.slug) allParams.push({ slug: c.slug });
         });
 
-        console.log(`✅ Pre-build: ${allParams.length} trang. Còn lại sẽ cache ISR khi người dùng truy cập.`);
+        console.log(`✅ Sẽ pre-build ${allParams.length} trang (${allParams.length - (catRes?.data?.productCategories?.nodes?.length || 0)} sản phẩm + danh mục).`);
         return allParams;
     } catch (error: any) {
-        // Nếu không kết nối được WordPress API (VD: build local), bỏ qua và để ISR xử lý tất cả.
-        console.warn("⚠️ Không thể kết nối WordPress API lúc build. ISR sẽ xử lý tất cả trang on-demand:", error?.message);
+        // Không kết nối được WP API (build local) → ISR xử lý tất cả khi có người truy cập
+        console.warn("⚠️ Không thể kết nối WP API lúc build (thường do build local). ISR sẽ xử lý on-demand:", error?.message);
         return [];
     }
 }
@@ -257,7 +262,12 @@ export default async function SlugPage({ params }: {
         let afterCursor: string | null = null;
         let pageNum = 0;
 
-        while (hasMorePages && pageNum < 15) { // tối đa 1500 sản phẩm
+        // Lúc build SSG: limit 1 trang → build nhanh (ISR sẽ tự revalidate với full filter sau)
+        // Lúc ISR revalidate: paginate đầy đủ 15 trang (1500 SP) → filter hoàn chỉnh
+        const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+        const maxFilterPages = isBuildPhase ? 1 : 15;
+
+        while (hasMorePages && pageNum < maxFilterPages) {
             const { data: fd }: any = await wpgraphqlFetch<any>(FILTER_QUERY, {
                 slugStr: slug,
                 after: afterCursor,
