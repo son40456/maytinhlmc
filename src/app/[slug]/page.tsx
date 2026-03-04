@@ -16,82 +16,52 @@ import { DetailedSpecsTable } from "@/components/product/DetailedSpecsTable";
 import { RelatedNews } from "@/components/product/RelatedNews";
 import { ExpandableDescription } from "@/components/product/ExpandableDescription";
 
+// ISR: Các trang đã build sẽ được phục vụ như HTML tĩnh, cache làm mới sau 1 tiếng.
 export const revalidate = 3600;
+// Cho phép các slug không có trong generateStaticParams vẫn được render on-demand và cache lại.
+export const dynamicParams = true;
 
 /**
- * Định nghĩa Interface cho Product Slugs
- */
-interface WpSlugResponse {
-    products: {
-        pageInfo: {
-            hasNextPage: boolean;
-            endCursor: string | null;
-        };
-        nodes: { slug: string }[];
-    };
-}
-
-/**
- * 1. HÀM GENERATE STATIC PARAMS (BUILD TOÀN BỘ SẢN PHẨM)
+ * 1. HÀM GENERATE STATIC PARAMS
+ *    - Trên server production: Pre-build 100 sản phẩm & danh mục mới nhất.
+ *    - Trên máy dev (không kết nối được WP API): Trả về mảng rỗng, ISR xử lý toàn bộ.
+ *    - Các trang còn lại luôn được render & cache on-demand (ISR).
  */
 export async function generateStaticParams() {
-    const allParams: { slug: string }[] = [];
-    let hasNextPage = true;
-    let afterCursor: string | null = null;
-
-    console.log("🚀 Bắt đầu quét toàn bộ slugs từ WordPress...");
-
     try {
-        while (hasNextPage) {
-            const query = `
-                query GetAllProductSlugs($after: String) {
-                    products(first: 100, after: $after) {
-                        pageInfo {
-                            hasNextPage
-                            endCursor
-                        }
-                        nodes {
-                            slug
-                        }
-                    }
-                }
-            `;
+        const allParams: { slug: string }[] = [];
 
-            // Bypass TypeScript inference error in loops
-            const rawResult: any = await wpgraphqlFetch<any>(query, { after: afterCursor });
-            const data = rawResult?.data as WpSlugResponse | undefined;
-
-            if (data?.products?.nodes) {
-                data.products.nodes.forEach((p) => {
-                    if (p.slug) allParams.push({ slug: p.slug });
-                });
-            }
-
-            hasNextPage = data?.products?.pageInfo?.hasNextPage || false;
-            afterCursor = data?.products?.pageInfo?.endCursor || null;
-
-            console.log(`📦 Đã lấy được ${allParams.length} slugs sản phẩm...`);
-        }
-
-        // Lấy thêm danh mục
-        const catQuery = `
-            query GetAllCategorySlugs {
-                productCategories(first: 100) {
+        // Chỉ lấy 100 sản phẩm mới nhất để build trước (tránh timeout)
+        const productQuery = `
+            query GetTopProductSlugs {
+                products(first: 100) {
                     nodes { slug }
                 }
             }
         `;
-        const rawCatRes: any = await wpgraphqlFetch<any>(catQuery);
-        const categories = rawCatRes?.data?.productCategories?.nodes || [];
+        const rawProducts: any = await wpgraphqlFetch<any>(productQuery);
+        rawProducts?.data?.products?.nodes?.forEach((p: any) => {
+            if (p.slug) allParams.push({ slug: p.slug });
+        });
 
-        categories.forEach((c: any) => {
+        // Lấy toàn bộ danh mục (nhỏ gọn, không timeout)
+        const catQuery = `
+            query GetAllCategorySlugs {
+                productCategories(first: 200) {
+                    nodes { slug }
+                }
+            }
+        `;
+        const rawCats: any = await wpgraphqlFetch<any>(catQuery);
+        rawCats?.data?.productCategories?.nodes?.forEach((c: any) => {
             if (c.slug) allParams.push({ slug: c.slug });
         });
 
-        console.log(`✅ Hoàn tất! Tổng cộng có ${allParams.length} trang.`);
+        console.log(`✅ Pre-build: ${allParams.length} trang. Còn lại sẽ cache ISR khi người dùng truy cập.`);
         return allParams;
-    } catch (error) {
-        console.error("❌ Lỗi build Static Params:", error);
+    } catch (error: any) {
+        // Nếu không kết nối được WordPress API (VD: build local), bỏ qua và để ISR xử lý tất cả.
+        console.warn("⚠️ Không thể kết nối WordPress API lúc build. ISR sẽ xử lý tất cả trang on-demand:", error?.message);
         return [];
     }
 }
@@ -99,28 +69,15 @@ export async function generateStaticParams() {
 /**
  * 2. GENERATE METADATA
  */
-export async function generateMetadata({ params, searchParams }: {
-    params: Promise<{ slug: string }>,
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+export async function generateMetadata({ params }: {
+    params: Promise<{ slug: string }>
 }) {
     const { slug } = await params;
-    const resolvedSearchParams = await searchParams;
-
-    const systemParams = ['after', 'minPrice', 'maxPrice', 'sort'];
-    const taxFilters = Object.entries(resolvedSearchParams)
-        .filter(([key]) => !systemParams.includes(key))
-        .map(([key, value]) => {
-            if (!value || typeof value !== 'string') return null;
-            const cleanKey = key.startsWith('pa_') ? key.slice(3) : key;
-            const taxonomy = `PA_${cleanKey.toUpperCase().replace(/-/g, '_')}`;
-            return { taxonomy, terms: [value], operator: 'IN' };
-        })
-        .filter(f => f !== null);
 
     const { data } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
         slugId: slug,
         slugStr: slug,
-        taxFilters: taxFilters.length > 0 ? taxFilters : null
+        taxFilters: null
     });
 
     if (data?.product) {
@@ -144,40 +101,22 @@ export async function generateMetadata({ params, searchParams }: {
 /**
  * 3. MAIN PAGE
  */
-export default async function SlugPage({ params, searchParams }: {
-    params: Promise<{ slug: string }>,
-    searchParams: Promise<{ [key: string]: string | undefined }>
+export default async function SlugPage({ params }: {
+    params: Promise<{ slug: string }>
 }) {
     const { slug } = await params;
-    const resolvedSearchParams = await searchParams;
 
-    const after = resolvedSearchParams.after || "";
-    const minPrice = resolvedSearchParams.minPrice ? parseFloat(resolvedSearchParams.minPrice) : null;
-    const maxPrice = resolvedSearchParams.maxPrice ? parseFloat(resolvedSearchParams.maxPrice) : null;
-    const sort = resolvedSearchParams.sort || "date-desc";
-
-    const systemParams = ['after', 'minPrice', 'maxPrice', 'sort'];
-    const taxFilters = Object.entries(resolvedSearchParams)
-        .filter(([key, value]) => !systemParams.includes(key) && value)
-        .map(([key, value]) => {
-            const cleanKey = key.startsWith('pa_') ? key.slice(3) : key;
-            const taxonomy = `PA_${cleanKey.toUpperCase().replace(/-/g, '_')}`;
-            return { taxonomy, terms: [value as string], operator: 'IN' };
-        });
-
-    let orderBy = [{ field: "DATE", order: "DESC" }];
-    if (sort === "price-asc") orderBy = [{ field: "PRICE", order: "ASC" }];
-    if (sort === "price-desc") orderBy = [{ field: "PRICE", order: "DESC" }];
-
+    // Xóa bỏ searchParams ở Server Component để cho phép Build Tĩnh (SSG) hoàn toàn.
+    // Việc lọc (filter) và sắp xếp (sort) sẽ được Client Component (CategoryProductView) xử lý sau khi load.
     const { data: nodeData } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
         slugId: slug,
         slugStr: slug,
         first: 24,
-        after,
-        minPrice,
-        maxPrice,
-        orderBy,
-        taxFilters: taxFilters.length > 0 ? taxFilters : null
+        after: "",
+        minPrice: null,
+        maxPrice: null,
+        orderBy: [{ field: "DATE", order: "DESC" }],
+        taxFilters: null
     });
 
     if (nodeData?.product) {
