@@ -46,11 +46,9 @@ export default function AdminHomepage() {
     const [sections, setSections] = useState<SectionConfig[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [hardwareGrid, setHardwareGrid] = useState<HardwareGridConfig | null>(null);
-    const [siteSettings, setSiteSettings] = useState({ logoUrl: '' });
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [savingSettings, setSavingSettings] = useState(false);
     const [autoDetecting, setAutoDetecting] = useState<Record<number, boolean>>({});
     const [uploadingImage, setUploadingImage] = useState<Record<number, boolean>>({});
     const [error, setError] = useState("");
@@ -59,13 +57,11 @@ export default function AdminHomepage() {
     useEffect(() => {
         Promise.all([
             fetch("/api/admin/homepage").then((res) => res.json()),
-            fetch("/api/admin/settings").then((res) => res.json()),
             fetchAdminCategories(),
             getHardwareGridConfig()
         ])
-            .then(([homepageData, settingsData, categoriesData, hardwareData]) => {
+            .then(([homepageData, categoriesData, hardwareData]) => {
                 setSections(homepageData);
-                setSiteSettings(settingsData || { logoUrl: '' });
                 setCategories(categoriesData.map((c: any) => ({ name: c.name, slug: c.slug })));
                 setHardwareGrid(hardwareData);
                 setLoading(false);
@@ -106,27 +102,6 @@ export default function AdminHomepage() {
             setError("Có lỗi xảy ra khi lưu.");
         } finally {
             setSaving(false);
-        }
-    };
-
-    const handleSaveSettings = async () => {
-        setSavingSettings(true);
-        try {
-            const res = await fetch('/api/admin/settings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(siteSettings),
-            });
-            if (res.ok) {
-                setSuccess('Lưu cài đặt trang thành công!');
-                setTimeout(() => setSuccess(''), 3000);
-            } else {
-                setError('Lỗi khi lưu cài đặt.');
-            }
-        } catch {
-            setError('Lỗi kết nối.');
-        } finally {
-            setSavingSettings(false);
         }
     };
 
@@ -306,53 +281,6 @@ export default function AdminHomepage() {
 
             {error && <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg font-medium">{error}</div>}
             {success && <div className="p-4 mb-4 text-green-700 bg-green-100 rounded-lg font-medium">{success}</div>}
-
-            {/* SITE SETTINGS: Logo */}
-            <div className="mb-10 animate-in slide-in-from-bottom-2 fade-in duration-300">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-blue-200 transition-colors">
-                    <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-                        <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-amber-50 text-amber-600 border border-amber-100 shadow-sm">
-                                <Sparkles className="w-5 h-5" />
-                            </div>
-                            Cài Đặt Trang Web
-                        </h2>
-                        <button
-                            onClick={handleSaveSettings}
-                            disabled={savingSettings}
-                            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl font-semibold text-sm transition-all shadow-sm disabled:opacity-50"
-                        >
-                            <Save className="w-4 h-4" />
-                            {savingSettings ? 'Đang lưu...' : 'Lưu Cài Đặt'}
-                        </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                        <div className="space-y-2">
-                            <label className="block text-sm font-semibold text-slate-700">URL Logo trang web</label>
-                            <p className="text-xs text-slate-400">Nhập URL ảnh logo từ WordPress Media Library (next.maytinhlmc.vn/...)</p>
-                            <input
-                                type="url"
-                                value={siteSettings.logoUrl}
-                                onChange={(e) => setSiteSettings({ ...siteSettings, logoUrl: e.target.value })}
-                                placeholder="https://next.maytinhlmc.vn/wp-content/uploads/logo-lmc.png"
-                                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 bg-slate-50 focus:bg-white transition-all"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="block text-sm font-semibold text-slate-700">Xem trước Logo</label>
-                            <div className="h-20 bg-slate-900 rounded-xl flex items-center justify-center px-6 border border-slate-200">
-                                {siteSettings.logoUrl ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={siteSettings.logoUrl} alt="Logo Preview" className="h-12 w-auto object-contain" />
-                                ) : (
-                                    <span className="text-slate-500 text-sm italic">Chưa có logo</span>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             {/* TAB CONTENT: HARDWARE GRID */}
             {hardwareGrid && (
