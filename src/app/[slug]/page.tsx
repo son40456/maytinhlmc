@@ -22,17 +22,14 @@ export const dynamicParams = true;
 
 /**
  * 1. HÀM GENERATE STATIC PARAMS
- *    - Pre-build 2000 sản phẩm mới nhất + tất cả danh mục (~2200 trang, ≈ 28 phút build)
- *    - Giới hạn 2000 để không vượt quá 45 phút của Vercel free plan
- *    - Sản phẩm cũ hơn → ISR render on-demand + cache khi có người truy cập
+ *    - Paginate qua TẤT CẢ sản phẩm để pre-build HTML tĩnh (tốt nhất cho SEO & tốc độ)
+ *    - Máy dev không kết nối được WP API → trả về [] → ISR xử lý toàn bộ
  */
 export async function generateStaticParams() {
-    const MAX_PRODUCTS = 2500; // ~79 trang/phút × 33 phút ≈ 2600 trang — an toàn trong 45 phút Vercel
-
     try {
         const allParams: { slug: string }[] = [];
 
-        // --- Lấy tối đa MAX_PRODUCTS sản phẩm mới nhất (paginate 100/lần) ---
+        // --- Lấy TẤT CẢ sản phẩm (paginate 100/lần) ---
         const PRODUCT_SLUG_QUERY = `
             query GetProductSlugs($after: String) {
                 products(first: 100, after: $after) {
@@ -45,16 +42,14 @@ export async function generateStaticParams() {
         let hasNextPage = true;
         let afterCursor: string | null = null;
 
-        while (hasNextPage && allParams.length < MAX_PRODUCTS) {
+        while (hasNextPage) {
             const res: any = await wpgraphqlFetch<any>(PRODUCT_SLUG_QUERY, { after: afterCursor });
             const nodes = res?.data?.products?.nodes || [];
-            nodes.forEach((p: any) => { if (p.slug && allParams.length < MAX_PRODUCTS) allParams.push({ slug: p.slug }); });
+            nodes.forEach((p: any) => { if (p.slug) allParams.push({ slug: p.slug }); });
             hasNextPage = res?.data?.products?.pageInfo?.hasNextPage ?? false;
             afterCursor = res?.data?.products?.pageInfo?.endCursor ?? null;
-            console.log(`📦 Product slugs: ${allParams.length}/${MAX_PRODUCTS}...`);
+            console.log(`📦 Đã thu thập: ${allParams.length} product slugs...`);
         }
-
-        const productCount = allParams.length;
 
         // --- Lấy tất cả danh mục ---
         const catRes: any = await wpgraphqlFetch<any>(`
@@ -66,10 +61,10 @@ export async function generateStaticParams() {
             if (c.slug) allParams.push({ slug: c.slug });
         });
 
-        const catCount = allParams.length - productCount;
-        console.log(`✅ Pre-build: ${productCount} sản phẩm + ${catCount} danh mục = ${allParams.length} trang (~${Math.ceil(allParams.length / 79)} phút build).`);
+        console.log(`✅ Sẽ pre-build ${allParams.length} trang (${allParams.length - (catRes?.data?.productCategories?.nodes?.length || 0)} sản phẩm + danh mục).`);
         return allParams;
     } catch (error: any) {
+        // Không kết nối được WP API (build local) → ISR xử lý tất cả khi có người truy cập
         console.warn("⚠️ Không thể kết nối WP API lúc build (thường do build local). ISR sẽ xử lý on-demand:", error?.message);
         return [];
     }
