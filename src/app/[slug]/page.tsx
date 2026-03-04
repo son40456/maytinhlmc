@@ -250,13 +250,14 @@ export default async function SlugPage({ params }: {
             }
         `;
 
-        const seenAttrs = new Set<string>();
+        // attrMap: key = rawSlug, value = { filterEntry, seenTermSlugs }
+        const attrMap = new Map<string, { entry: any; seenTerms: Set<string> }>();
         const availableFilters: any[] = [];
         let hasMorePages = true;
         let afterCursor: string | null = null;
         let pageNum = 0;
 
-        while (hasMorePages && pageNum < 15) { // tạm thời limit cả 1500 SP
+        while (hasMorePages && pageNum < 15) { // tối đa 1500 sản phẩm
             const { data: fd }: any = await wpgraphqlFetch<any>(FILTER_QUERY, {
                 slugStr: slug,
                 after: afterCursor,
@@ -268,24 +269,47 @@ export default async function SlugPage({ params }: {
 
             nodes.forEach((p: any) => {
                 p.attributes?.nodes?.forEach((attr: any) => {
-                    const key = attr.slug || attr.name;
-                    if (!key || !attr.slug || seenAttrs.has(key)) return;
-                    seenAttrs.add(key);
-                    availableFilters.push({
-                        name: attr.label || attr.name,
-                        slug: key.startsWith('pa_') ? key.slice(3) : key,
-                        rawSlug: key,
-                        options: attr.terms?.nodes?.map((t: any) => ({
-                            slug: t.slug,
-                            name: t.name,
-                            logo: t.logo?.logo?.node?.sourceUrl ?? null,
-                        })) || [],
-                    });
+                    // Chỉ xử lý GlobalProductAttribute (có slug)
+                    if (!attr.slug) return;
+                    const key: string = attr.slug;
+
+                    const newTerms = (attr.terms?.nodes || []).map((t: any) => ({
+                        slug: t.slug,
+                        name: t.name,
+                        logo: t.logo?.logo?.node?.sourceUrl ?? null,
+                    }));
+
+                    if (!attrMap.has(key)) {
+                        // Lần đầu gặp attribute này — tạo mới
+                        const entry = {
+                            name: attr.label || attr.name,
+                            slug: key.startsWith('pa_') ? key.slice(3) : key,
+                            rawSlug: key,
+                            options: [] as any[],
+                        };
+                        const seenTerms = new Set<string>();
+
+                        newTerms.forEach((term: any) => {
+                            if (term.slug && !seenTerms.has(term.slug)) {
+                                seenTerms.add(term.slug);
+                                entry.options.push(term);
+                            }
+                        });
+
+                        attrMap.set(key, { entry, seenTerms });
+                        availableFilters.push(entry);
+                    } else {
+                        // Đã gặp attribute này — MERGE thêm terms mới (logic chính!)
+                        const { entry, seenTerms } = attrMap.get(key)!;
+                        newTerms.forEach((term: any) => {
+                            if (term.slug && !seenTerms.has(term.slug)) {
+                                seenTerms.add(term.slug);
+                                entry.options.push(term);
+                            }
+                        });
+                    }
                 });
             });
-
-            // Optimisation: dừng sớm nếu tất cả attribute đã gặp ở trang 1
-            if (pageNum === 1 && availableFilters.length > 0 && !hasMorePages) break;
         }
 
         return (
