@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
+import { revalidateTag } from 'next/cache';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -23,7 +24,6 @@ export async function GET() {
         const data = await fs.readFile(dataFilePath, 'utf-8');
         return NextResponse.json(JSON.parse(data));
     } catch {
-        // File not exist yet → trả về defaults
         return NextResponse.json({ logoUrl: '' });
     }
 }
@@ -37,9 +37,12 @@ export async function POST(request: Request) {
             await fs.mkdir(path.dirname(dataFilePath), { recursive: true });
             await fs.writeFile(dataFilePath, JSON.stringify(body, null, 2), 'utf-8');
         }
+        // Xóa cache logo ngay khi admin cập nhật → trang sẽ dùng logo mới
+        revalidateTag('site-logo');
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('Error saving site settings:', error);
         return NextResponse.json({ success: false }, { status: 500 });
     }
 }
+
