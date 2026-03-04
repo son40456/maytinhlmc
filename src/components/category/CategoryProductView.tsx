@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
@@ -14,92 +13,44 @@ interface CategoryProductViewProps {
     category: any;
     initialProducts: any[];
     initialPageInfo: any;
+    availableFilters: any[];
     categorySlug: string;
-    // availableFilters không còn được truyền từ server nữa
 }
 
 export function CategoryProductView({
     category,
     initialProducts,
     initialPageInfo,
+    availableFilters,
     categorySlug,
 }: CategoryProductViewProps) {
-    const searchParams = useSearchParams();
-
     const [products, setProducts] = useState(initialProducts);
     const [pageInfo, setPageInfo] = useState(initialPageInfo);
     const [loading, setLoading] = useState(false);
-    const [availableFilters, setAvailableFilters] = useState<any[]>([]);
-    const [filtersLoading, setFiltersLoading] = useState(true);
 
-    // Đọc filter state ban đầu từ URL (phục vụ back/forward navigation và direct links)
-    const parseUrlFilters = useCallback(() => {
-        const systemParams = ['after', 'sort'];
-        const attrs: Record<string, string[]> = {};
-        searchParams.forEach((value, key) => {
-            if (!systemParams.includes(key)) {
-                const cleanKey = key.startsWith('pa_') ? key.slice(3) : key;
-                attrs[cleanKey] = [value];
-            }
-        });
-        return attrs;
-    }, [searchParams]);
-
-    const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string[]>>(parseUrlFilters);
+    // State filters
+    const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string[]>>({});
     const [priceRange, setPriceRange] = useState<{ min: number | null; max: number | null }>({ min: null, max: null });
-    const [sortOrder, setSortOrder] = useState(searchParams.get('sort') || "DATE_DESC");
-
-    // Fetch danh sách filter options từ API route (client-side, không block ISR)
-    useEffect(() => {
-        const fetchFilters = async () => {
-            setFiltersLoading(true);
-            try {
-                const res = await fetch(`/api/category-filters?slug=${categorySlug}`);
-                const json = await res.json();
-                setAvailableFilters(json.filters || []);
-            } catch {
-                setAvailableFilters([]);
-            } finally {
-                setFiltersLoading(false);
-            }
-        };
-        fetchFilters();
-    }, [categorySlug]);
-
-    // Nếu có filter trong URL khi mới load, fetch ngay sản phẩm được lọc
-    const [initialFilterApplied, setInitialFilterApplied] = useState(false);
-    useEffect(() => {
-        if (initialFilterApplied) return;
-        const urlFilters = parseUrlFilters();
-        const hasUrlFilters = Object.keys(urlFilters).length > 0 || searchParams.get('sort');
-        if (hasUrlFilters) {
-            // Trigger a fetch with the URL's filter state
-            fetchProducts(false, urlFilters, searchParams.get('sort') || "DATE_DESC");
-        }
-        setInitialFilterApplied(true);
-    }, []); // Chỉ chạy 1 lần khi mount
+    const [sortOrder, setSortOrder] = useState("DATE_DESC");
 
     // AJAX Fetch products
-    const fetchProducts = useCallback(async (
-        isLoadMore = false,
-        attrs?: Record<string, string[]>,
-        sort?: string
-    ) => {
+    const fetchProducts = useCallback(async (isLoadMore = false) => {
         setLoading(true);
 
-        const effectiveAttrs = attrs ?? selectedAttributes;
-        const effectiveSort = sort ?? sortOrder;
-
-        const taxFilters = Object.entries(effectiveAttrs)
+        const taxFilters = Object.entries(selectedAttributes)
             .filter(([_, values]) => values.length > 0)
             .map(([key, values]) => {
                 const taxonomy = `PA_${key.toUpperCase().replace(/-/g, '_')}`;
-                return { taxonomy, terms: values, operator: 'IN' };
+                return {
+                    taxonomy,
+                    terms: values,
+                    operator: 'IN'
+                };
             });
 
         let orderBy = [{ field: "DATE", order: "DESC" }];
-        if (effectiveSort === "PRICE_ASC") orderBy = [{ field: "PRICE", order: "ASC" }];
-        if (effectiveSort === "PRICE_DESC") orderBy = [{ field: "PRICE", order: "DESC" }];
+        if (sortOrder === "PRICE_ASC") orderBy = [{ field: "PRICE", order: "ASC" }];
+        if (sortOrder === "PRICE_DESC") orderBy = [{ field: "PRICE", order: "DESC" }];
 
         try {
             const { data } = await wpgraphqlFetch<any>(GET_PRODUCTS_BY_CATEGORY, {
@@ -110,7 +61,7 @@ export function CategoryProductView({
                 minPrice: priceRange.min,
                 maxPrice: priceRange.max,
                 orderBy,
-                taxFilters: taxFilters.length > 0 ? taxFilters : null,
+                taxFilters: taxFilters.length > 0 ? taxFilters : null
             });
 
             const newProducts = data?.products?.nodes || [];
@@ -129,7 +80,7 @@ export function CategoryProductView({
         }
     }, [categorySlug, selectedAttributes, priceRange, sortOrder, pageInfo?.endCursor]);
 
-    // Re-fetch when filters change (không chạy lần đầu - dùng initialFilterApplied)
+    // Re-fetch when filters change (not on mount)
     const [isFirstRender, setIsFirstRender] = useState(true);
     useEffect(() => {
         if (isFirstRender) {
@@ -248,21 +199,17 @@ export function CategoryProductView({
                 );
             })()}
 
-            {/* Filter Component - hiển thị skeleton khi đang load filters */}
-            {filtersLoading ? (
-                <div className="h-12 bg-gray-100 animate-pulse rounded-xl" />
-            ) : (
-                <CategoryFilterSort
-                    filters={availableFilters}
-                    selectedAttributes={selectedAttributes}
-                    onFilterChange={handleFilterChange}
-                    priceRange={priceRange}
-                    onPriceChange={handlePriceChange}
-                    sortOrder={sortOrder}
-                    onSortChange={setSortOrder}
-                    onClearAll={clearAllFilters}
-                />
-            )}
+            {/* Horizontal Filter Component */}
+            <CategoryFilterSort
+                filters={availableFilters}
+                selectedAttributes={selectedAttributes}
+                onFilterChange={handleFilterChange}
+                priceRange={priceRange}
+                onPriceChange={handlePriceChange}
+                sortOrder={sortOrder}
+                onSortChange={setSortOrder}
+                onClearAll={clearAllFilters}
+            />
 
             {/* Product List */}
             <div className="relative min-h-[400px]">

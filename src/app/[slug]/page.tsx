@@ -199,26 +199,104 @@ export default async function SlugPage({ params }: {
         const products = nodeData.categoryProducts?.nodes || [];
         const pageInfo = nodeData.categoryProducts?.pageInfo;
 
-        // Filter options hư được fetch client-side bởi CategoryProductView từ /api/category-filters
-        // để không block ISR của trang này và hỗ trợ danh mục có nhiều hơn 250 sản phẩm.
+        // Fetch filter attributes server-side with pagination (thἀm tất cả SP, không bị giới hạn 100 items)
+        const FILTER_QUERY = `
+            query GetCategoryFiltersPage($slugStr: String!, $after: String) {
+                filterDiscovery: products(
+                    first: 100,
+                    after: $after,
+                    where: { categoryIn: [$slugStr] }
+                ) {
+                    pageInfo { hasNextPage endCursor }
+                    nodes {
+                        ... on SimpleProduct {
+                            attributes {
+                                nodes {
+                                    name label
+                                    ... on GlobalProductAttribute {
+                                        slug
+                                        terms {
+                                            nodes {
+                                                name slug
+                                                ... on PaThuongHieu {
+                                                    logo { logo { node { sourceUrl } } }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        ... on VariableProduct {
+                            attributes {
+                                nodes {
+                                    name label
+                                    ... on GlobalProductAttribute {
+                                        slug
+                                        terms {
+                                            nodes {
+                                                name slug
+                                                ... on PaThuongHieu {
+                                                    logo { logo { node { sourceUrl } } }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const seenAttrs = new Set<string>();
+        const availableFilters: any[] = [];
+        let hasMorePages = true;
+        let afterCursor: string | null = null;
+        let pageNum = 0;
+
+        while (hasMorePages && pageNum < 15) { // tạm thời limit cả 1500 SP
+            const { data: fd }: any = await wpgraphqlFetch<any>(FILTER_QUERY, {
+                slugStr: slug,
+                after: afterCursor,
+            });
+            const nodes = fd?.filterDiscovery?.nodes || [];
+            hasMorePages = fd?.filterDiscovery?.pageInfo?.hasNextPage ?? false;
+            afterCursor = fd?.filterDiscovery?.pageInfo?.endCursor ?? null;
+            pageNum++;
+
+            nodes.forEach((p: any) => {
+                p.attributes?.nodes?.forEach((attr: any) => {
+                    const key = attr.slug || attr.name;
+                    if (!key || !attr.slug || seenAttrs.has(key)) return;
+                    seenAttrs.add(key);
+                    availableFilters.push({
+                        name: attr.label || attr.name,
+                        slug: key.startsWith('pa_') ? key.slice(3) : key,
+                        rawSlug: key,
+                        options: attr.terms?.nodes?.map((t: any) => ({
+                            slug: t.slug,
+                            name: t.name,
+                            logo: t.logo?.logo?.node?.sourceUrl ?? null,
+                        })) || [],
+                    });
+                });
+            });
+
+            // Optimisation: dừng sớm nếu tất cả attribute đã gặp ở trang 1
+            if (pageNum === 1 && availableFilters.length > 0 && !hasMorePages) break;
+        }
+
         return (
             <div className="container mx-auto px-4 py-12">
-                <Suspense fallback={
-                    <div className="space-y-6">
-                        <div className="h-8 w-64 bg-gray-200 animate-pulse rounded-xl" />
-                        <div className="h-12 bg-gray-100 animate-pulse rounded-xl" />
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                            {[...Array(10)].map((_, i) => <div key={i} className="aspect-[3/4] bg-gray-100 animate-pulse rounded-xl" />)}
-                        </div>
-                    </div>
-                }>
-                    <CategoryProductView
-                        category={category}
-                        initialProducts={products}
-                        initialPageInfo={pageInfo}
-                        categorySlug={slug}
-                    />
-                </Suspense>
+                <CategoryProductView
+                    category={category}
+                    initialProducts={products}
+                    initialPageInfo={pageInfo}
+                    availableFilters={availableFilters}
+                    categorySlug={slug}
+                />
             </div>
         );
     }
