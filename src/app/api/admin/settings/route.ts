@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
-import { revalidateTag } from 'next/cache';
+
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -37,8 +37,7 @@ export async function POST(request: Request) {
             await fs.mkdir(path.dirname(dataFilePath), { recursive: true });
             await fs.writeFile(dataFilePath, JSON.stringify(body, null, 2), 'utf-8');
         }
-        // Xóa cache logo ngay khi admin cập nhật → trang sẽ dùng logo mới
-        revalidateTag('site-logo');
+        // Cache logo (unstable_cache 24h) sẽ tự expire sau 24 tiếng
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('Error saving site settings:', error);
