@@ -27,7 +27,7 @@ export const dynamicParams = true;
  *    - Sản phẩm cũ hơn → ISR render on-demand + cache khi có người truy cập
  */
 export async function generateStaticParams() {
-    const MAX_PRODUCTS = 2000; // Vercel free plan: ~79 trang/phút × 28 phút ≈ 2200 trang an toàn
+    const MAX_PRODUCTS = 3000; // ~79 trang/phút × 39 phút ≈ 3100 trang — vừa đủ trong 45 phút Vercel
 
     try {
         const allParams: { slug: string }[] = [];
