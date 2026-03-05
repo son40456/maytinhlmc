@@ -111,8 +111,8 @@ export default async function SlugPage({ params }: {
 
                     <div className="bg-white rounded-xl border border-slate-200 p-3 md:p-6 lg:p-8 mb-4 md:mb-8">
                         <div className="lg:grid gap-6 lg:gap-8" style={{ gridTemplateColumns: '62% 38%', alignItems: 'start' }}>
-                            {/* Gallery sticky: dính trong khi scroll qua nội dung bên phải */}
-                            <div className="sticky" style={{ top: '104px' }}>
+                            {/* Gallery: sticky chỉ trên lg+ (desktop), không sticky trên mobile để tránh che nội dung */}
+                            <div className="lg:sticky" style={{ top: '104px' }}>
                                 <ProductGallery
                                     mainImage={product.image}
                                     galleryNodes={product.galleryImages?.nodes || []}
@@ -209,8 +209,8 @@ export default async function SlugPage({ params }: {
                                 <ProductReviews productId={product.databaseId} productName={product.name} />
                             </div>
                         </div>
-                        {/* Specs + Bài viết sticky: dính trong khi scroll qua mô tả bên trái */}
-                        <div className="sticky space-y-6" style={{ top: '104px' }}>
+                        {/* Specs + Bài viết sticky chỉ trên lg+ */}
+                        <div className="lg:sticky space-y-6" style={{ top: '104px' }}>
                             <DetailedSpecsTable
                                 attributes={product.attributes}
                                 acfDetailedSpecs={product.thongsokythuatsonbn?.thongsochitiet || ''}
