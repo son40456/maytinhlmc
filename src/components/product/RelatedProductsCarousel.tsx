@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Tag } from "lucide-react";
@@ -33,7 +33,8 @@ export function RelatedProductsCarousel({ products }: RelatedProductsCarouselPro
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
 
-    const CARD_WIDTH = 240; // px including gap
+    const CARD_WIDTH = 240;
+    const isHoveringCarousel = useRef(false);
 
     const updateScrollState = useCallback(() => {
         const el = trackRef.current;
@@ -45,10 +46,28 @@ export function RelatedProductsCarousel({ products }: RelatedProductsCarouselPro
     const scroll = (dir: "left" | "right") => {
         const el = trackRef.current;
         if (!el) return;
-        const amount = CARD_WIDTH * 3; // scroll 3 cards at a time
+        const amount = CARD_WIDTH * 3;
         el.scrollBy({ left: dir === "right" ? amount : -amount, behavior: "smooth" });
         setTimeout(updateScrollState, 350);
     };
+
+    // Auto-scroll every 3.5s, wraps back to start
+    useEffect(() => {
+        if (products.length <= 3) return;
+        const iv = setInterval(() => {
+            if (isHoveringCarousel.current) return;
+            const el = trackRef.current;
+            if (!el) return;
+            const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 4;
+            if (atEnd) {
+                el.scrollTo({ left: 0, behavior: "smooth" });
+            } else {
+                el.scrollBy({ left: CARD_WIDTH, behavior: "smooth" });
+            }
+            setTimeout(updateScrollState, 400);
+        }, 3500);
+        return () => clearInterval(iv);
+    }, [products.length, updateScrollState]);
 
     if (!products.length) return null;
 
@@ -95,11 +114,10 @@ export function RelatedProductsCarousel({ products }: RelatedProductsCarouselPro
                 <div
                     ref={trackRef}
                     onScroll={updateScrollState}
+                    onMouseEnter={() => { isHoveringCarousel.current = true; }}
+                    onMouseLeave={() => { isHoveringCarousel.current = false; }}
                     className="flex gap-4 overflow-x-auto scroll-smooth pb-2"
-                    style={{
-                        scrollbarWidth: "none",
-                        msOverflowStyle: "none",
-                    }}
+                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                     {products.map((rp) => {
                         const rpSale = cleanPrice(rp.salePrice || "");
