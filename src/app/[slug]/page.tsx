@@ -107,14 +107,17 @@ export default async function SlugPage({ params }: {
                     </nav>
 
                     <div className="bg-white rounded-xl border border-slate-200 p-6 md:p-8 mb-8">
-                        <div className="lg:grid gap-8 items-start" style={{ gridTemplateColumns: '62% 38%' }}>
-                            <ProductGallery
-                                mainImage={product.image}
-                                galleryNodes={product.galleryImages?.nodes || []}
-                                name={product.name}
-                                salePrice={product.salePrice}
-                                regularPrice={product.regularPrice}
-                            />
+                        <div className="lg:grid gap-8" style={{ gridTemplateColumns: '62% 38%', alignItems: 'start' }}>
+                            {/* Gallery sticky: dính trong khi scroll qua nội dung bên phải */}
+                            <div className="sticky" style={{ top: '104px' }}>
+                                <ProductGallery
+                                    mainImage={product.image}
+                                    galleryNodes={product.galleryImages?.nodes || []}
+                                    name={product.name}
+                                    salePrice={product.salePrice}
+                                    regularPrice={product.regularPrice}
+                                />
+                            </div>
                             <div className="space-y-5">
                                 <h1 className="text-xl md:text-2xl font-bold text-slate-900 leading-snug">{product.name}</h1>
                                 <ProductSpecs shortDescription={product.shortDescription} attributes={product.attributes} />
