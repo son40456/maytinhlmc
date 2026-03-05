@@ -83,9 +83,18 @@ export default async function SlugPage({ params }: {
 
     if (nodeData?.product) {
         const product = nodeData.product;
-        const cleanPrice = (priceStr: string) => priceStr?.replace(/&nbsp;/g, " ").trim() || "Liên hệ";
-        const displayPrice = cleanPrice(product.price || product.regularPrice);
+        const cleanPrice = (priceStr: string) => priceStr?.replace(/&nbsp;/g, " ").trim() || "";
+        const displayPrice = cleanPrice(product.salePrice || product.price || product.regularPrice) || "Liên hệ";
+        const regularPrice = cleanPrice(product.regularPrice);
+        const salePrice = cleanPrice(product.salePrice);
         const imageUrl = product.image?.sourceUrl || "";
+        const parseVND = (s: string) => parseInt(s?.replace(/[^\d]/g, "") || "0") || 0;
+        const regularNum = parseVND(regularPrice);
+        const saleNum = parseVND(salePrice);
+        const hasDiscount = saleNum > 0 && regularNum > 0 && saleNum < regularNum;
+        const discountPct = hasDiscount ? Math.round((1 - saleNum / regularNum) * 100) : 0;
+        const savingsAmount = hasDiscount ? (regularNum - saleNum).toLocaleString("vi-VN") + "₫" : "";
+        const relatedProducts = product.related?.nodes || [];
 
         return (
             <div className="bg-[#f8fafc] min-h-screen pb-16">
@@ -106,14 +115,42 @@ export default async function SlugPage({ params }: {
                                 salePrice={product.salePrice}
                                 regularPrice={product.regularPrice}
                             />
-                            <div className="space-y-6">
-                                <h1 className="text-2xl font-bold text-slate-900">{product.name}</h1>
+                            <div className="space-y-5">
+                                <h1 className="text-xl md:text-2xl font-bold text-slate-900 leading-snug">{product.name}</h1>
                                 <ProductSpecs shortDescription={product.shortDescription} attributes={product.attributes} />
-                                <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                                    <div className="bg-gradient-to-r from-red-600 to-purple-600 p-4 rounded-xl text-center">
-                                        <span className="text-white text-3xl font-black">{displayPrice}</span>
+
+                                {/* === GIÁ SẢN PHẨM === */}
+                                <div className="bg-gradient-to-br from-red-50 to-orange-50 border border-red-100 rounded-2xl p-4 space-y-3">
+                                    <div className="flex items-end gap-3 flex-wrap">
+                                        <span className="text-3xl md:text-4xl font-black text-red-600 leading-none">{displayPrice}</span>
+                                        {hasDiscount && (
+                                            <span className="text-base text-slate-400 line-through leading-none pb-1">{regularPrice}</span>
+                                        )}
+                                        {hasDiscount && (
+                                            <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-{discountPct}%</span>
+                                        )}
+                                    </div>
+                                    {hasDiscount && (
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="text-slate-500">Tiết kiệm:</span>
+                                            <span className="font-bold text-green-600">{savingsAmount}</span>
+                                        </div>
+                                    )}
+                                    {/* Khung khuyến mại */}
+                                    <div className="border border-red-200 rounded-xl overflow-hidden">
+                                        <div className="bg-red-600 px-3 py-1.5 flex items-center gap-2">
+                                            <span className="text-yellow-300 text-sm">🎁</span>
+                                            <span className="text-white text-xs font-bold tracking-wide uppercase">Khuyến mại áp dụng</span>
+                                        </div>
+                                        <ul className="bg-white px-4 py-3 space-y-2 text-[13px] text-slate-700">
+                                            <li className="flex items-start gap-2"><span className="text-green-500 mt-0.5 flex-shrink-0">✔</span><span>Bảo hành chính hãng tại trung tâm hỗ trợ kỹ thuật LMC</span></li>
+                                            <li className="flex items-start gap-2"><span className="text-green-500 mt-0.5 flex-shrink-0">✔</span><span>Đổi trả trong <strong>7 ngày</strong> nếu lỗi do nhà sản xuất</span></li>
+                                            <li className="flex items-start gap-2"><span className="text-green-500 mt-0.5 flex-shrink-0">✔</span><span>Giao hàng toàn quốc — Nhận hàng kiểm tra trước khi thanh toán</span></li>
+                                            <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5 flex-shrink-0">✔</span><span>Hỗ trợ trả góp <strong>0%</strong> qua thẻ tín dụng</span></li>
+                                        </ul>
                                     </div>
                                 </div>
+
                                 <AddToCartButton
                                     id={product.id}
                                     databaseId={product.databaseId}
@@ -127,13 +164,12 @@ export default async function SlugPage({ params }: {
                         </div>
                     </div>
 
-                    <div className="lg:grid gap-8" style={{ gridTemplateColumns: '62% 1fr' }}>
+                    <div className="lg:grid gap-8 mb-8" style={{ gridTemplateColumns: '62% 1fr' }}>
                         <div className="bg-white rounded-xl border border-slate-200 p-6">
                             <h3 className="text-xl font-bold mb-4">Mô tả sản phẩm</h3>
                             <ExpandableDescription content={product.description} />
                         </div>
                         <div className="space-y-6">
-                            {/* ĐÃ FIX LỖI THIẾU PROPS Ở ĐÂY */}
                             <DetailedSpecsTable
                                 attributes={product.attributes}
                                 acfDetailedSpecs={product.thongsokythuatsonbn?.thongsochitiet || ''}
@@ -142,6 +178,51 @@ export default async function SlugPage({ params }: {
                             <RelatedNews />
                         </div>
                     </div>
+
+                    {/* === SẢN PHẨM LIÊN QUAN === */}
+                    {relatedProducts.length > 0 && (
+                        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-8">
+                            <h2 className="text-lg md:text-xl font-bold text-slate-900 mb-5 flex items-center gap-2">
+                                <span className="w-1 h-6 bg-red-500 rounded-full inline-block" />
+                                Sản phẩm liên quan
+                            </h2>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                                {relatedProducts.map((rp: any) => {
+                                    const rpClean = (s: string) => s?.replace(/&nbsp;/g, " ").trim() || "";
+                                    const rpSale = rpClean(rp.salePrice);
+                                    const rpRegular = rpClean(rp.regularPrice);
+                                    const rpDisplay = rpSale || rpClean(rp.price) || "Liên hệ";
+                                    const rpSaleNum = parseVND(rpSale);
+                                    const rpRegularNum = parseVND(rpRegular);
+                                    const rpHasDiscount = rpSaleNum > 0 && rpRegularNum > 0 && rpSaleNum < rpRegularNum;
+                                    return (
+                                        <Link key={rp.id} href={`/${rp.slug}`}
+                                            className="group flex flex-col rounded-xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-200 hover:shadow-md transition-all overflow-hidden">
+                                            <div className="relative aspect-square overflow-hidden bg-white">
+                                                {rp.image?.sourceUrl ? (
+                                                    <Image src={rp.image.sourceUrl} alt={rp.name} fill
+                                                        className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                                                        sizes="(max-width: 640px) 50vw, 16vw" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-slate-300 text-4xl">📦</div>
+                                                )}
+                                                {rpHasDiscount && (
+                                                    <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                                                        -{Math.round((1 - rpSaleNum / rpRegularNum) * 100)}%
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="p-2.5 flex flex-col gap-1">
+                                                <p className="text-[12px] text-slate-700 line-clamp-2 font-medium leading-snug group-hover:text-blue-700">{rp.name}</p>
+                                                <p className="text-sm font-black text-red-600">{rpDisplay}</p>
+                                                {rpHasDiscount && <p className="text-[11px] text-slate-400 line-through">{rpRegular}</p>}
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
 
                     <StickyBuyBar
                         id={product.id}
