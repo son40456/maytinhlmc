@@ -4,30 +4,37 @@ const WP_BASE = process.env.NEXT_PUBLIC_WORDPRESS_API_URL?.replace('/graphql', '
 const WC_KEY = process.env.WC_CONSUMER_KEY || '';
 const WC_SECRET = process.env.WC_CONSUMER_SECRET || '';
 
+// Kiểm tra credentials đã được cấu hình chưa
+const isConfigured = () =>
+    WC_KEY && WC_SECRET &&
+    !WC_KEY.startsWith('ck_your') &&
+    !WC_SECRET.startsWith('cs_your');
+
 const wcAuth = () => 'Basic ' + Buffer.from(`${WC_KEY}:${WC_SECRET}`).toString('base64');
 
 /** GET /api/reviews?productId=123 */
 export async function GET(req: NextRequest) {
     const productId = req.nextUrl.searchParams.get('productId');
-    if (!productId) return NextResponse.json({ reviews: [] });
+    if (!productId || !isConfigured()) return NextResponse.json({ reviews: [] });
 
     try {
         const url = `${WP_BASE}/wp-json/wc/v3/products/${productId}/reviews?per_page=50&status=approved`;
         const res = await fetch(url, {
             headers: { Authorization: wcAuth() },
-            next: { revalidate: 60 }, // cache 60s
+            next: { revalidate: 60 },
         });
         if (!res.ok) return NextResponse.json({ reviews: [] });
-        const data = await res.json();
 
-        const reviews = (data || []).map((r: any) => ({
+        const data = await res.json();
+        if (!Array.isArray(data)) return NextResponse.json({ reviews: [] });
+
+        const reviews = data.map((r: any) => ({
             id: r.id,
             reviewer: r.reviewer,
-            reviewerEmail: r.reviewer_email,
-            review: r.review?.replace(/<[^>]*>/g, '').trim(),
-            rating: r.rating,
+            review: r.review?.replace(/<[^>]*>/g, '').trim() || '',
+            rating: Number(r.rating) || 5,
             date: r.date_created,
-            verified: r.verified,
+            verified: r.verified ?? false,
         }));
 
         return NextResponse.json({ reviews });
