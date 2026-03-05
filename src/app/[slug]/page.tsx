@@ -123,7 +123,7 @@ export default async function SlugPage({ params }: {
                             </div>
 
                             {/* Phần thông tin sản phẩm (phải) */}
-                            <div className="space-y-3 mt-3 lg:mt-0">
+                            <div className="space-y-3 mt-3 lg:mt-0 lg:pr-4">
                                 {/* Tên sản phẩm */}
                                 <h1 className="text-base md:text-xl lg:text-2xl font-bold text-slate-900 leading-snug">
                                     {product.name}
