@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductGalleryProps {
     mainImage: { sourceUrl: string; altText?: string };
@@ -12,13 +12,11 @@ interface ProductGalleryProps {
     regularPrice?: string;
 }
 
-const AUTO_SLIDE_INTERVAL = 4000; // 4 giây
+const AUTO_SLIDE_MS = 4000;
 
 export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regularPrice }: ProductGalleryProps) {
     const allImages = [mainImage, ...galleryNodes].filter(img => img?.sourceUrl);
     const [activeIndex, setActiveIndex] = useState(0);
-    const [imageOpacity, setImageOpacity] = useState(1);
-    const [isPlaying, setIsPlaying] = useState(true);
     const thumbContainerRef = useRef<HTMLDivElement>(null);
     const mobileThumbRef = useRef<HTMLDivElement>(null);
     const isHovering = useRef(false);
@@ -29,153 +27,69 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
     const discountPercent = numericRegular > numericSale && numericSale > 0
         ? Math.round(((numericRegular - numericSale) / numericRegular) * 100) : 0;
 
-    // Crossfade to a specific index
-    const switchTo = useCallback((newIndex: number) => {
-        if (newIndex === setActiveIndex(val => val) as unknown as number) return;
-        setImageOpacity(0);
-        setTimeout(() => {
-            setActiveIndex(newIndex);
-            setImageOpacity(1);
-        }, 350);
-    }, []);
-
-    // Simple helper using functional update to get current index
-    const goToIndexFn = useCallback((fn: (prev: number) => number) => {
-        setImageOpacity(0);
-        setTimeout(() => {
-            setActiveIndex(fn);
-            setImageOpacity(1);
-        }, 350);
-    }, []);
-
-    const goToNext = useCallback(() => goToIndexFn(prev => (prev + 1) % allImages.length), [goToIndexFn, allImages.length]);
-    const goToPrev = useCallback(() => goToIndexFn(prev => (prev === 0 ? allImages.length - 1 : prev - 1)), [goToIndexFn, allImages.length]);
+    const goTo = useCallback((idx: number) => setActiveIndex(idx), []);
+    const goToNext = useCallback(() => setActiveIndex(p => (p + 1) % allImages.length), [allImages.length]);
+    const goToPrev = useCallback(() => setActiveIndex(p => (p === 0 ? allImages.length - 1 : p - 1)), [allImages.length]);
 
     // Auto-slide
-    const startInterval = useCallback(() => {
+    useEffect(() => {
         if (allImages.length <= 1) return;
         intervalRef.current = setInterval(() => {
             if (!isHovering.current) {
-                setImageOpacity(0);
-                setTimeout(() => { setActiveIndex(p => (p + 1) % allImages.length); setImageOpacity(1); }, 350);
+                setActiveIndex(p => (p + 1) % allImages.length);
             }
-        }, AUTO_SLIDE_INTERVAL);
+        }, AUTO_SLIDE_MS);
+        return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
     }, [allImages.length]);
 
-    const stopInterval = useCallback(() => {
-        if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
-    }, []);
-
+    // Scroll desktop thumbnail strip – use scrollTop directly to avoid page scroll
     useEffect(() => {
-        if (isPlaying) startInterval();
-        else stopInterval();
-        return stopInterval;
-    }, [isPlaying, startInterval, stopInterval]);
-
-    // Scroll active thumbnail into view
-    useEffect(() => {
-        if (thumbContainerRef.current) {
-            const el = thumbContainerRef.current.children[activeIndex] as HTMLElement;
-            el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        if (mobileThumbRef.current) {
-            const el = mobileThumbRef.current.children[activeIndex] as HTMLElement;
-            el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        }
+        const container = thumbContainerRef.current;
+        if (!container) return;
+        // Each thumb is 96px + 10px gap (gap-2.5 = 10px)
+        const THUMB_SIZE = 106;
+        const targetTop = activeIndex * THUMB_SIZE - container.clientHeight / 2 + THUMB_SIZE / 2;
+        container.scrollTop = Math.max(0, Math.min(targetTop, container.scrollHeight - container.clientHeight));
     }, [activeIndex]);
 
-    const scrollThumbs = (direction: 'up' | 'down') => {
-        thumbContainerRef.current?.scrollBy({ top: direction === 'up' ? -104 : 104, behavior: 'smooth' });
+    // Scroll horizontal mobile thumbs – use scrollLeft directly
+    useEffect(() => {
+        const container = mobileThumbRef.current;
+        if (!container) return;
+        const THUMB_SIZE = 64; // w-14 h-14 = 56px + gap-2 = 8px = 64
+        const targetLeft = activeIndex * THUMB_SIZE - container.clientWidth / 2 + THUMB_SIZE / 2;
+        container.scrollLeft = Math.max(0, Math.min(targetLeft, container.scrollWidth - container.clientWidth));
+    }, [activeIndex]);
+
+    const scrollThumbs = (dir: 'up' | 'down') => {
+        if (thumbContainerRef.current) {
+            thumbContainerRef.current.scrollTop += dir === 'up' ? -106 : 106;
+        }
     };
 
-    const handleThumbClick = (idx: number) => {
-        setImageOpacity(0);
-        setTimeout(() => { setActiveIndex(idx); setImageOpacity(1); }, 350);
-    };
+    if (!allImages[0]?.sourceUrl) return (
+        <div className="aspect-square bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">Không có hình ảnh</div>
+    );
 
-    if (!allImages[0]?.sourceUrl) {
-        return <div className="aspect-square bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">Không có hình ảnh</div>;
-    }
-
-    const activeImage = allImages[activeIndex];
-
-    // Shared main image area
-    const MainImageArea = ({ mobile = false }: { mobile?: boolean }) => (
-        <div
-            className={`relative ${mobile ? "rounded-lg" : "flex-1 rounded-xl"} bg-white flex items-start justify-center overflow-hidden border border-slate-100 group`}
-            onMouseEnter={() => { isHovering.current = true; }}
-            onMouseLeave={() => { isHovering.current = false; }}
-        >
-            {/* Discount badge */}
-            {discountPercent > 0 && (
-                <div className="absolute top-3 left-3 z-10 pointer-events-none">
-                    <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm shadow">-{discountPercent}%</span>
-                </div>
-            )}
-
-            {/* Prev/Next arrows */}
-            {allImages.length > 1 && (
-                <>
-                    <button
-                        onClick={() => { goToPrev(); }}
-                        className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 ${mobile ? "w-8 h-8" : "w-10 h-10 opacity-0 group-hover:opacity-100"} rounded-full bg-white/90 shadow-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-300 transition-all`}
-                    >
-                        <ChevronLeft className={mobile ? "w-4 h-4" : "w-5 h-5"} />
-                    </button>
-                    <button
-                        onClick={() => { goToNext(); }}
-                        className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 ${mobile ? "w-8 h-8" : "w-10 h-10 opacity-0 group-hover:opacity-100"} rounded-full bg-white/90 shadow-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-300 transition-all`}
-                    >
-                        <ChevronRight className={mobile ? "w-4 h-4" : "w-5 h-5"} />
-                    </button>
-                </>
-            )}
-
-            {/* Main image with crossfade */}
-            <div className={`relative w-full ${mobile ? "aspect-square" : "aspect-square"}`}>
-                <Image
-                    key={activeImage.sourceUrl}
-                    src={activeImage.sourceUrl}
-                    alt={activeImage.altText || name}
-                    fill
-                    className={`object-contain ${mobile ? "p-4" : "p-6"} transition-opacity duration-500 hover:scale-[1.02] transition-transform`}
-                    style={{ opacity: imageOpacity, transition: 'opacity 350ms ease' }}
-                    sizes={mobile ? "100vw" : "50vw"}
-                    priority
-                />
-            </div>
-
-            {/* Counter + Play/Pause */}
-            {allImages.length > 1 && (
-                <div className="absolute bottom-3 right-3 flex items-center gap-1.5">
-                    {/* Dot indicators */}
-                    <div className="flex gap-1">
-                        {allImages.slice(0, 8).map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => handleThumbClick(i)}
-                                className={`rounded-full transition-all duration-300 ${i === activeIndex ? "w-4 h-1.5 bg-blue-600" : "w-1.5 h-1.5 bg-black/30"}`}
-                            />
-                        ))}
-                        {allImages.length > 8 && <span className="text-[9px] text-black/50 self-center">+{allImages.length - 8}</span>}
-                    </div>
-                    {/* Play/Pause */}
-                    <button
-                        onClick={() => setIsPlaying(p => !p)}
-                        className="w-5 h-5 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition-colors"
-                        title={isPlaying ? "Dừng tự động" : "Tự động chuyển"}
-                    >
-                        {isPlaying ? <Pause className="w-2.5 h-2.5" /> : <Play className="w-2.5 h-2.5" />}
-                    </button>
-                </div>
-            )}
-        </div>
+    // Shared prev/next arrows
+    const Arrows = ({ mobile = false }: { mobile?: boolean }) => allImages.length <= 1 ? null : (
+        <>
+            <button
+                onClick={goToPrev}
+                className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 ${mobile ? "w-8 h-8" : "w-10 h-10 opacity-0 group-hover:opacity-100"} rounded-full bg-white/90 shadow-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-300 transition-all`}
+            ><ChevronLeft className={mobile ? "w-4 h-4" : "w-5 h-5"} /></button>
+            <button
+                onClick={goToNext}
+                className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 ${mobile ? "w-8 h-8" : "w-10 h-10 opacity-0 group-hover:opacity-100"} rounded-full bg-white/90 shadow-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-300 transition-all`}
+            ><ChevronRight className={mobile ? "w-4 h-4" : "w-5 h-5"} /></button>
+        </>
     );
 
     return (
         <div>
-            {/* Desktop Layout */}
+            {/* ===== DESKTOP ===== */}
             <div className="hidden md:flex gap-4 lg:gap-5">
+                {/* Vertical thumbnail strip */}
                 {allImages.length > 1 && (
                     <div className="flex flex-col items-center gap-1.5 shrink-0">
                         {allImages.length > 5 && (
@@ -187,7 +101,7 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                             {allImages.map((img, idx) => (
                                 <button
                                     key={idx}
-                                    onClick={() => handleThumbClick(idx)}
+                                    onClick={() => goTo(idx)}
                                     className={`relative w-[96px] h-[96px] rounded-lg overflow-hidden border-2 transition-all duration-200 bg-white shrink-0 ${activeIndex === idx ? "border-blue-600 shadow-md" : "border-slate-200 opacity-60 hover:opacity-100 hover:border-slate-300"}`}
                                 >
                                     <Image src={img.sourceUrl} alt={img.altText || `${name} ${idx}`} fill className="object-cover p-1.5" sizes="96px" />
@@ -201,18 +115,98 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                         )}
                     </div>
                 )}
-                <MainImageArea />
+
+                {/* Main image — horizontal slide via translateX */}
+                <div
+                    className="relative flex-1 rounded-xl bg-white overflow-hidden border border-slate-100 group"
+                    onMouseEnter={() => { isHovering.current = true; }}
+                    onMouseLeave={() => { isHovering.current = false; }}
+                >
+                    {discountPercent > 0 && (
+                        <div className="absolute top-4 left-4 z-10 pointer-events-none">
+                            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm shadow">-{discountPercent}%</span>
+                        </div>
+                    )}
+                    <Arrows />
+
+                    {/* Slide track */}
+                    <div className="aspect-square overflow-hidden">
+                        <div
+                            className="flex h-full transition-transform duration-500 ease-in-out"
+                            style={{ transform: `translateX(-${activeIndex * 100}%)`, width: `${allImages.length * 100}%` }}
+                        >
+                            {allImages.map((img, idx) => (
+                                <div key={idx} className="relative flex-shrink-0 h-full" style={{ width: `${100 / allImages.length}%` }}>
+                                    <Image
+                                        src={img.sourceUrl}
+                                        alt={img.altText || name}
+                                        fill
+                                        className="object-contain p-6 hover:scale-[1.02] transition-transform duration-300"
+                                        sizes="45vw"
+                                        priority={idx === 0}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Counter */}
+                    {allImages.length > 1 && (
+                        <div className="absolute bottom-3 right-3 bg-black/40 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                            {activeIndex + 1} / {allImages.length}
+                        </div>
+                    )}
+                </div>
             </div>
 
-            {/* Mobile Layout */}
+            {/* ===== MOBILE ===== */}
             <div className="md:hidden">
-                <MainImageArea mobile />
+                <div
+                    className="relative rounded-lg bg-white overflow-hidden border border-slate-100"
+                    onTouchStart={() => { isHovering.current = true; setTimeout(() => { isHovering.current = false; }, 3000); }}
+                >
+                    {discountPercent > 0 && (
+                        <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm shadow">-{discountPercent}%</span>
+                        </div>
+                    )}
+                    <Arrows mobile />
+
+                    {/* Slide track mobile */}
+                    <div className="aspect-square overflow-hidden">
+                        <div
+                            className="flex h-full transition-transform duration-500 ease-in-out"
+                            style={{ transform: `translateX(-${activeIndex * 100}%)`, width: `${allImages.length * 100}%` }}
+                        >
+                            {allImages.map((img, idx) => (
+                                <div key={idx} className="relative flex-shrink-0 h-full" style={{ width: `${100 / allImages.length}%` }}>
+                                    <Image
+                                        src={img.sourceUrl}
+                                        alt={img.altText || name}
+                                        fill
+                                        className="object-contain p-4"
+                                        sizes="100vw"
+                                        priority={idx === 0}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {allImages.length > 1 && (
+                        <div className="absolute bottom-2 right-2 bg-black/40 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                            {activeIndex + 1} / {allImages.length}
+                        </div>
+                    )}
+                </div>
+
+                {/* Mobile horizontal thumbnails */}
                 {allImages.length > 1 && (
                     <div ref={mobileThumbRef} className="flex gap-2 mt-3 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
                         {allImages.map((img, idx) => (
                             <button
                                 key={idx}
-                                onClick={() => handleThumbClick(idx)}
+                                onClick={() => goTo(idx)}
                                 className={`relative w-14 h-14 rounded-md overflow-hidden border-2 transition-all duration-200 bg-white shrink-0 ${activeIndex === idx ? "border-blue-600 shadow-sm" : "border-slate-200 opacity-50"}`}
                             >
                                 <Image src={img.sourceUrl} alt={img.altText || `${name} ${idx}`} fill className="object-cover p-1" sizes="56px" />
