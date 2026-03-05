@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
@@ -24,14 +25,62 @@ export function CategoryProductView({
     availableFilters,
     categorySlug,
 }: CategoryProductViewProps) {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+
     const [products, setProducts] = useState(initialProducts);
     const [pageInfo, setPageInfo] = useState(initialPageInfo);
     const [loading, setLoading] = useState(false);
 
-    // State filters
-    const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string[]>>({});
-    const [priceRange, setPriceRange] = useState<{ min: number | null; max: number | null }>({ min: null, max: null });
-    const [sortOrder, setSortOrder] = useState("DATE_DESC");
+    // Initialize State filters from URL
+    const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string[]>>(() => {
+        const initialAttrs: Record<string, string[]> = {};
+        if (searchParams) {
+            searchParams.forEach((value, key) => {
+                if (key.startsWith('pa_')) {
+                    const attrSlug = key.slice(3);
+                    const values = searchParams.getAll(key).flatMap(v => v.split(',')).filter(Boolean);
+                    if (values.length > 0) {
+                        initialAttrs[attrSlug] = values;
+                    }
+                }
+            });
+        }
+        return initialAttrs;
+    });
+
+    const [priceRange, setPriceRange] = useState<{ min: number | null; max: number | null }>(() => {
+        const minStr = searchParams?.get('min_price');
+        const maxStr = searchParams?.get('max_price');
+        return {
+            min: minStr ? Number(minStr) : null,
+            max: maxStr ? Number(maxStr) : null,
+        };
+    });
+
+    const [sortOrder, setSortOrder] = useState(() => searchParams?.get('sort') || "DATE_DESC");
+
+    // Sync state to URL whenever it changes
+    const updateUrlParams = useCallback(() => {
+        const params = new URLSearchParams();
+
+        // Add attributes preserving multiple values via comma-separation or multiple keys
+        Object.entries(selectedAttributes).forEach(([key, values]) => {
+            if (values && values.length > 0) {
+                // To keep it standard Woo style: ?pa_thuong-hieu=gigabyte,asus
+                params.set(`pa_${key}`, values.join(','));
+            }
+        });
+
+        if (priceRange.min !== null) params.set('min_price', priceRange.min.toString());
+        if (priceRange.max !== null) params.set('max_price', priceRange.max.toString());
+        if (sortOrder !== "DATE_DESC") params.set('sort', sortOrder);
+
+        const newQuery = params.toString();
+        const newUrl = newQuery ? `${pathname}?${newQuery}` : pathname;
+        router.replace(newUrl, { scroll: false });
+    }, [selectedAttributes, priceRange, sortOrder, pathname, router]);
 
     // AJAX Fetch products
     const fetchProducts = useCallback(async (isLoadMore = false) => {
@@ -81,14 +130,16 @@ export function CategoryProductView({
     }, [categorySlug, selectedAttributes, priceRange, sortOrder, pageInfo?.endCursor]);
 
     // Re-fetch when filters change (not on mount)
+    // Re-fetch when filters change (not on mount)
     const [isFirstRender, setIsFirstRender] = useState(true);
     useEffect(() => {
         if (isFirstRender) {
             setIsFirstRender(false);
             return;
         }
+        updateUrlParams();
         fetchProducts();
-    }, [selectedAttributes, priceRange, sortOrder]);
+    }, [selectedAttributes, priceRange, sortOrder, fetchProducts, updateUrlParams]);
 
     const handleFilterChange = (attrSlug: string, value: string) => {
         setSelectedAttributes(prev => {

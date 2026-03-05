@@ -366,13 +366,15 @@ export default async function SlugPage({ params }: {
 
         return (
             <div className="container mx-auto px-4 py-12">
-                <CategoryProductView
-                    category={category}
-                    initialProducts={products}
-                    initialPageInfo={pageInfo}
-                    availableFilters={availableFilters}
-                    categorySlug={slug}
-                />
+                <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Đang tải cấu trúc danh mục...</div>}>
+                    <CategoryProductView
+                        category={category}
+                        initialProducts={products}
+                        initialPageInfo={pageInfo}
+                        availableFilters={availableFilters}
+                        categorySlug={slug}
+                    />
+                </Suspense>
             </div>
         );
     }
