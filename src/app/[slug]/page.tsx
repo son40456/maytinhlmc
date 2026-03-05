@@ -204,52 +204,45 @@ export default async function SlugPage({ params }: {
         const products = nodeData.categoryProducts?.nodes || [];
         const pageInfo = nodeData.categoryProducts?.pageInfo;
 
-        // === Filter Discovery ===
-        // Lúc BUILD (SSG): SKIP hoàn toàn → tiết kiệm hàng trăm API calls → build nhanh hơn ~10 phút
-        // Lúc ISR (runtime): Paginate đầy đủ → filter hoàn chỉnh sau revalidate đầu tiên (1h)
-        const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
-        let availableFilters: any[] = [];
-
-        if (!isBuildPhase) {
-            const FILTER_QUERY = `
-                query GetCategoryFiltersPage($slugStr: String!, $after: String) {
-                    filterDiscovery: products(
-                        first: 100,
-                        after: $after,
-                        where: { categoryIn: [$slugStr] }
-                    ) {
-                        pageInfo { hasNextPage endCursor }
-                        nodes {
-                            ... on SimpleProduct {
-                                attributes {
-                                    nodes {
-                                        name label
-                                        ... on GlobalProductAttribute {
-                                            slug
-                                            terms {
-                                                nodes {
-                                                    name slug
-                                                    ... on PaThuongHieu {
-                                                        logo { logo { node { sourceUrl } } }
-                                                    }
+        // Fetch filter attributes server-side with pagination (thἀm tất cả SP, không bị giới hạn 100 items)
+        const FILTER_QUERY = `
+            query GetCategoryFiltersPage($slugStr: String!, $after: String) {
+                filterDiscovery: products(
+                    first: 100,
+                    after: $after,
+                    where: { categoryIn: [$slugStr] }
+                ) {
+                    pageInfo { hasNextPage endCursor }
+                    nodes {
+                        ... on SimpleProduct {
+                            attributes {
+                                nodes {
+                                    name label
+                                    ... on GlobalProductAttribute {
+                                        slug
+                                        terms {
+                                            nodes {
+                                                name slug
+                                                ... on PaThuongHieu {
+                                                    logo { logo { node { sourceUrl } } }
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                            ... on VariableProduct {
-                                attributes {
-                                    nodes {
-                                        name label
-                                        ... on GlobalProductAttribute {
-                                            slug
-                                            terms {
-                                                nodes {
-                                                    name slug
-                                                    ... on PaThuongHieu {
-                                                        logo { logo { node { sourceUrl } } }
-                                                    }
+                        }
+                        ... on VariableProduct {
+                            attributes {
+                                nodes {
+                                    name label
+                                    ... on GlobalProductAttribute {
+                                        slug
+                                        terms {
+                                            nodes {
+                                                name slug
+                                                ... on PaThuongHieu {
+                                                    logo { logo { node { sourceUrl } } }
                                                 }
                                             }
                                         }
@@ -259,61 +252,74 @@ export default async function SlugPage({ params }: {
                         }
                     }
                 }
-            `;
-
-            const attrMap = new Map<string, { entry: any; seenTerms: Set<string> }>();
-            let hasMorePages = true;
-            let afterCursor: string | null = null;
-            let pageNum = 0;
-
-            while (hasMorePages && pageNum < 15) {
-                const { data: fd }: any = await wpgraphqlFetch<any>(FILTER_QUERY, {
-                    slugStr: slug,
-                    after: afterCursor,
-                });
-                const nodes = fd?.filterDiscovery?.nodes || [];
-                hasMorePages = fd?.filterDiscovery?.pageInfo?.hasNextPage ?? false;
-                afterCursor = fd?.filterDiscovery?.pageInfo?.endCursor ?? null;
-                pageNum++;
-
-                nodes.forEach((p: any) => {
-                    p.attributes?.nodes?.forEach((attr: any) => {
-                        if (!attr.slug) return;
-                        const key: string = attr.slug;
-                        const newTerms = (attr.terms?.nodes || []).map((t: any) => ({
-                            slug: t.slug,
-                            name: t.name,
-                            logo: t.logo?.logo?.node?.sourceUrl ?? null,
-                        }));
-
-                        if (!attrMap.has(key)) {
-                            const entry = {
-                                name: attr.label || attr.name,
-                                slug: key.startsWith('pa_') ? key.slice(3) : key,
-                                rawSlug: key,
-                                options: [] as any[],
-                            };
-                            const seenTerms = new Set<string>();
-                            newTerms.forEach((term: any) => {
-                                if (term.slug && !seenTerms.has(term.slug)) {
-                                    seenTerms.add(term.slug);
-                                    entry.options.push(term);
-                                }
-                            });
-                            attrMap.set(key, { entry, seenTerms });
-                            availableFilters.push(entry);
-                        } else {
-                            const { entry, seenTerms } = attrMap.get(key)!;
-                            newTerms.forEach((term: any) => {
-                                if (term.slug && !seenTerms.has(term.slug)) {
-                                    seenTerms.add(term.slug);
-                                    entry.options.push(term);
-                                }
-                            });
-                        }
-                    });
-                });
             }
+        `;
+
+        // attrMap: key = rawSlug, value = { filterEntry, seenTermSlugs }
+        const attrMap = new Map<string, { entry: any; seenTerms: Set<string> }>();
+        const availableFilters: any[] = [];
+        let hasMorePages = true;
+        let afterCursor: string | null = null;
+        let pageNum = 0;
+
+        // Lúc build SSG: limit 1 trang → build nhanh (ISR sẽ tự revalidate với full filter sau)
+        // Lúc ISR revalidate: paginate đầy đủ 15 trang (1500 SP) → filter hoàn chỉnh
+        const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+        const maxFilterPages = isBuildPhase ? 1 : 15;
+
+        while (hasMorePages && pageNum < maxFilterPages) {
+            const { data: fd }: any = await wpgraphqlFetch<any>(FILTER_QUERY, {
+                slugStr: slug,
+                after: afterCursor,
+            });
+            const nodes = fd?.filterDiscovery?.nodes || [];
+            hasMorePages = fd?.filterDiscovery?.pageInfo?.hasNextPage ?? false;
+            afterCursor = fd?.filterDiscovery?.pageInfo?.endCursor ?? null;
+            pageNum++;
+
+            nodes.forEach((p: any) => {
+                p.attributes?.nodes?.forEach((attr: any) => {
+                    // Chỉ xử lý GlobalProductAttribute (có slug)
+                    if (!attr.slug) return;
+                    const key: string = attr.slug;
+
+                    const newTerms = (attr.terms?.nodes || []).map((t: any) => ({
+                        slug: t.slug,
+                        name: t.name,
+                        logo: t.logo?.logo?.node?.sourceUrl ?? null,
+                    }));
+
+                    if (!attrMap.has(key)) {
+                        // Lần đầu gặp attribute này — tạo mới
+                        const entry = {
+                            name: attr.label || attr.name,
+                            slug: key.startsWith('pa_') ? key.slice(3) : key,
+                            rawSlug: key,
+                            options: [] as any[],
+                        };
+                        const seenTerms = new Set<string>();
+
+                        newTerms.forEach((term: any) => {
+                            if (term.slug && !seenTerms.has(term.slug)) {
+                                seenTerms.add(term.slug);
+                                entry.options.push(term);
+                            }
+                        });
+
+                        attrMap.set(key, { entry, seenTerms });
+                        availableFilters.push(entry);
+                    } else {
+                        // Đã gặp attribute này — MERGE thêm terms mới (logic chính!)
+                        const { entry, seenTerms } = attrMap.get(key)!;
+                        newTerms.forEach((term: any) => {
+                            if (term.slug && !seenTerms.has(term.slug)) {
+                                seenTerms.add(term.slug);
+                                entry.options.push(term);
+                            }
+                        });
+                    }
+                });
+            });
         }
 
         return (
