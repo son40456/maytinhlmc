@@ -129,25 +129,24 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                     )}
                     <Arrows />
 
-                    {/* Slide track */}
-                    <div className="aspect-square overflow-hidden">
-                        <div
-                            className="flex h-full transition-transform duration-500 ease-in-out"
-                            style={{ transform: `translateX(-${activeIndex * 100}%)`, width: `${allImages.length * 100}%` }}
-                        >
-                            {allImages.map((img, idx) => (
-                                <div key={idx} className="relative flex-shrink-0 h-full" style={{ width: `${100 / allImages.length}%` }}>
-                                    <Image
-                                        src={img.sourceUrl}
-                                        alt={img.altText || name}
-                                        fill
-                                        className="object-contain p-6 hover:scale-[1.02] transition-transform duration-300"
-                                        sizes="45vw"
-                                        priority={idx === 0}
-                                    />
-                                </div>
-                            ))}
-                        </div>
+                    {/* Slide track: mỗi ảnh absolute, dịch theo (idx - activeIndex) * 100% */}
+                    <div className="aspect-square overflow-hidden relative">
+                        {allImages.map((img, idx) => (
+                            <div
+                                key={idx}
+                                className="absolute inset-0 transition-transform duration-500 ease-in-out"
+                                style={{ transform: `translateX(${(idx - activeIndex) * 100}%)` }}
+                            >
+                                <Image
+                                    src={img.sourceUrl}
+                                    alt={img.altText || name}
+                                    fill
+                                    className="object-contain p-6"
+                                    sizes="45vw"
+                                    priority={idx === 0}
+                                />
+                            </div>
+                        ))}
                     </div>
 
                     {/* Counter */}
@@ -173,24 +172,23 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                     <Arrows mobile />
 
                     {/* Slide track mobile */}
-                    <div className="aspect-square overflow-hidden">
-                        <div
-                            className="flex h-full transition-transform duration-500 ease-in-out"
-                            style={{ transform: `translateX(-${activeIndex * 100}%)`, width: `${allImages.length * 100}%` }}
-                        >
-                            {allImages.map((img, idx) => (
-                                <div key={idx} className="relative flex-shrink-0 h-full" style={{ width: `${100 / allImages.length}%` }}>
-                                    <Image
-                                        src={img.sourceUrl}
-                                        alt={img.altText || name}
-                                        fill
-                                        className="object-contain p-4"
-                                        sizes="100vw"
-                                        priority={idx === 0}
-                                    />
-                                </div>
-                            ))}
-                        </div>
+                    <div className="aspect-square overflow-hidden relative">
+                        {allImages.map((img, idx) => (
+                            <div
+                                key={idx}
+                                className="absolute inset-0 transition-transform duration-500 ease-in-out"
+                                style={{ transform: `translateX(${(idx - activeIndex) * 100}%)` }}
+                            >
+                                <Image
+                                    src={img.sourceUrl}
+                                    alt={img.altText || name}
+                                    fill
+                                    className="object-contain p-4"
+                                    sizes="100vw"
+                                    priority={idx === 0}
+                                />
+                            </div>
+                        ))}
                     </div>
 
                     {allImages.length > 1 && (
