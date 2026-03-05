@@ -17,58 +17,16 @@ import { ExpandableDescription } from "@/components/product/ExpandableDescriptio
 
 // ISR: Các trang đã build sẽ được phục vụ như HTML tĩnh, cache làm mới sau 1 tiếng.
 export const revalidate = 3600;
-// Cho phép các slug không có trong generateStaticParams vẫn được render on-demand và cache lại.
 export const dynamicParams = true;
 
 /**
- * 1. HÀM GENERATE STATIC PARAMS
- *    - Paginate qua TẤT CẢ sản phẩm để pre-build HTML tĩnh (tốt nhất cho SEO & tốc độ)
- *    - Máy dev không kết nối được WP API → trả về [] → ISR xử lý toàn bộ
+ * Warm-up approach: generateStaticParams trả về [] → build cực nhanh (~2-3 phút).
+ * Sau khi deploy, chạy script `node scripts/warmup.js` để tự động cache toàn bộ trang qua ISR.
  */
 export async function generateStaticParams() {
-    try {
-        const allParams: { slug: string }[] = [];
-
-        // --- Lấy TẤT CẢ sản phẩm (paginate 100/lần) ---
-        const PRODUCT_SLUG_QUERY = `
-            query GetProductSlugs($after: String) {
-                products(first: 100, after: $after) {
-                    pageInfo { hasNextPage endCursor }
-                    nodes { slug }
-                }
-            }
-        `;
-
-        let hasNextPage = true;
-        let afterCursor: string | null = null;
-
-        while (hasNextPage) {
-            const res: any = await wpgraphqlFetch<any>(PRODUCT_SLUG_QUERY, { after: afterCursor });
-            const nodes = res?.data?.products?.nodes || [];
-            nodes.forEach((p: any) => { if (p.slug) allParams.push({ slug: p.slug }); });
-            hasNextPage = res?.data?.products?.pageInfo?.hasNextPage ?? false;
-            afterCursor = res?.data?.products?.pageInfo?.endCursor ?? null;
-            console.log(`📦 Đã thu thập: ${allParams.length} product slugs...`);
-        }
-
-        // --- Lấy tất cả danh mục ---
-        const catRes: any = await wpgraphqlFetch<any>(`
-            query GetCategorySlugs {
-                productCategories(first: 200) { nodes { slug } }
-            }
-        `);
-        catRes?.data?.productCategories?.nodes?.forEach((c: any) => {
-            if (c.slug) allParams.push({ slug: c.slug });
-        });
-
-        console.log(`✅ Sẽ pre-build ${allParams.length} trang (${allParams.length - (catRes?.data?.productCategories?.nodes?.length || 0)} sản phẩm + danh mục).`);
-        return allParams;
-    } catch (error: any) {
-        // Không kết nối được WP API (build local) → ISR xử lý tất cả khi có người truy cập
-        console.warn("⚠️ Không thể kết nối WP API lúc build (thường do build local). ISR sẽ xử lý on-demand:", error?.message);
-        return [];
-    }
+    return [];
 }
+
 
 /**
  * 2. GENERATE METADATA
