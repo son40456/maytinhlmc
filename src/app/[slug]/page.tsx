@@ -15,6 +15,7 @@ import { DetailedSpecsTable } from "@/components/product/DetailedSpecsTable";
 import { RelatedNews } from "@/components/product/RelatedNews";
 import { ExpandableDescription } from "@/components/product/ExpandableDescription";
 import { ProductReviews } from "@/components/product/ProductReviews";
+import { ProductRatingBadge } from "@/components/product/ProductRatingBadge";
 import { RelatedProductsCarousel } from "@/components/product/RelatedProductsCarousel";
 
 // ISR: Các trang đã build sẽ được phục vụ như HTML tĩnh, cache làm mới sau 1 tiếng.
@@ -108,8 +109,8 @@ export default async function SlugPage({ params }: {
                         <span className="text-slate-900 font-medium truncate">{product.name}</span>
                     </nav>
 
-                    <div className="bg-white rounded-xl border border-slate-200 p-6 md:p-8 mb-8">
-                        <div className="lg:grid gap-8" style={{ gridTemplateColumns: '62% 38%', alignItems: 'start' }}>
+                    <div className="bg-white rounded-xl border border-slate-200 p-3 md:p-6 lg:p-8 mb-4 md:mb-8">
+                        <div className="lg:grid gap-6 lg:gap-8" style={{ gridTemplateColumns: '62% 38%', alignItems: 'start' }}>
                             {/* Gallery sticky: dính trong khi scroll qua nội dung bên phải */}
                             <div className="sticky" style={{ top: '104px' }}>
                                 <ProductGallery
@@ -120,40 +121,69 @@ export default async function SlugPage({ params }: {
                                     regularPrice={product.regularPrice}
                                 />
                             </div>
-                            <div className="space-y-5">
-                                <h1 className="text-xl md:text-2xl font-bold text-slate-900 leading-snug">{product.name}</h1>
+
+                            {/* Phần thông tin sản phẩm (phải) */}
+                            <div className="space-y-3 mt-3 lg:mt-0">
+                                {/* Tên sản phẩm */}
+                                <h1 className="text-base md:text-xl lg:text-2xl font-bold text-slate-900 leading-snug">
+                                    {product.name}
+                                </h1>
+
+                                {/* SKU + Đánh giá */}
+                                <ProductRatingBadge productId={product.databaseId} sku={product.sku} />
+
+                                {/* Thông số ngắn */}
                                 <ProductSpecs shortDescription={product.shortDescription} attributes={product.attributes} />
 
-                                {/* === GIÁ SẢN PHẨM === */}
-                                <div className="bg-gradient-to-br from-red-50 to-orange-50 border border-red-100 rounded-2xl p-4 space-y-3">
-                                    <div className="flex items-end gap-3 flex-wrap">
-                                        <span className="text-3xl md:text-4xl font-black text-red-600 leading-none">{displayPrice}</span>
+                                {/* === KHỐI GIÁ (tách riêng) === */}
+                                <div className="bg-gradient-to-br from-red-50 to-orange-50 border border-red-100 rounded-xl p-3 md:p-4">
+                                    <div className="flex items-end gap-2 md:gap-3 flex-wrap">
+                                        <span className="text-2xl md:text-3xl lg:text-4xl font-black text-red-600 leading-none">
+                                            {displayPrice}
+                                        </span>
                                         {hasDiscount && (
-                                            <span className="text-base text-slate-400 line-through leading-none pb-1">{regularPrice}</span>
+                                            <span className="text-sm md:text-base text-slate-400 line-through leading-none pb-0.5">
+                                                {regularPrice}
+                                            </span>
                                         )}
                                         {hasDiscount && (
-                                            <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-{discountPct}%</span>
+                                            <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                                -{discountPct}%
+                                            </span>
                                         )}
                                     </div>
                                     {hasDiscount && (
-                                        <div className="flex items-center gap-2 text-sm">
+                                        <div className="flex items-center gap-2 text-sm mt-2">
                                             <span className="text-slate-500">Tiết kiệm:</span>
                                             <span className="font-bold text-green-600">{savingsAmount}</span>
                                         </div>
                                     )}
-                                    {/* Khung khuyến mại */}
-                                    <div className="border border-red-200 rounded-xl overflow-hidden">
-                                        <div className="bg-red-600 px-3 py-1.5 flex items-center gap-2">
-                                            <span className="text-yellow-300 text-sm">🎁</span>
-                                            <span className="text-white text-xs font-bold tracking-wide uppercase">Khuyến mại áp dụng</span>
-                                        </div>
-                                        <ul className="bg-white px-4 py-3 space-y-2 text-[13px] text-slate-700">
-                                            <li className="flex items-start gap-2"><span className="text-green-500 mt-0.5 flex-shrink-0">✔</span><span>Bảo hành chính hãng tại trung tâm hỗ trợ kỹ thuật LMC</span></li>
-                                            <li className="flex items-start gap-2"><span className="text-green-500 mt-0.5 flex-shrink-0">✔</span><span>Đổi trả trong <strong>7 ngày</strong> nếu lỗi do nhà sản xuất</span></li>
-                                            <li className="flex items-start gap-2"><span className="text-green-500 mt-0.5 flex-shrink-0">✔</span><span>Giao hàng toàn quốc — Nhận hàng kiểm tra trước khi thanh toán</span></li>
-                                            <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5 flex-shrink-0">✔</span><span>Hỗ trợ trả góp <strong>0%</strong> qua thẻ tín dụng</span></li>
-                                        </ul>
+                                </div>
+
+                                {/* === KHUNG KHUYẾN MẠI (tách riêng) === */}
+                                <div className="border border-red-200 rounded-xl overflow-hidden">
+                                    <div className="bg-red-600 px-3 py-1.5 flex items-center gap-2">
+                                        <span className="text-yellow-300 text-sm">🎁</span>
+                                        <span className="text-white text-xs font-bold tracking-wide uppercase">Khuyến mại áp dụng</span>
                                     </div>
+                                    <ul className="bg-white px-3 md:px-4 py-2.5 space-y-2 text-[12px] md:text-[13px] text-slate-700">
+                                        <li className="flex items-start gap-2">
+                                            <span className="text-green-500 mt-0.5 flex-shrink-0">✔</span>
+                                            <span>Bảo hành chính hãng tại trung tâm hỗ trợ kỹ thuật LMC</span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <span className="text-green-500 mt-0.5 flex-shrink-0">✔</span>
+                                            <span>Đổi trả trong <strong>7 ngày</strong> nếu lỗi do nhà sản xuất</span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <span className="text-green-500 mt-0.5 flex-shrink-0">✔</span>
+                                            <span>Giao hàng toàn quốc — Nhận hàng kiểm tra trước khi thanh toán</span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <span className="text-blue-500 mt-0.5 flex-shrink-0">✔</span>
+                                            <span>Hỗ trợ trả góp <strong>0%</strong> qua thẻ tín dụng</span>
+                                        </li>
+                                    </ul>
                                 </div>
 
                                 <AddToCartButton
@@ -175,7 +205,9 @@ export default async function SlugPage({ params }: {
                                 <h3 className="text-xl font-bold mb-4">Mô tả sản phẩm</h3>
                                 <ExpandableDescription content={product.description} />
                             </div>
-                            <ProductReviews productId={product.databaseId} productName={product.name} />
+                            <div id="reviews">
+                                <ProductReviews productId={product.databaseId} productName={product.name} />
+                            </div>
                         </div>
                         {/* Specs + Bài viết sticky: dính trong khi scroll qua mô tả bên trái */}
                         <div className="sticky space-y-6" style={{ top: '104px' }}>
