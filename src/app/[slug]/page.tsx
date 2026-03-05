@@ -15,6 +15,7 @@ import { DetailedSpecsTable } from "@/components/product/DetailedSpecsTable";
 import { RelatedNews } from "@/components/product/RelatedNews";
 import { ExpandableDescription } from "@/components/product/ExpandableDescription";
 import { ProductReviews } from "@/components/product/ProductReviews";
+import { RelatedProductsCarousel } from "@/components/product/RelatedProductsCarousel";
 
 // ISR: Các trang đã build sẽ được phục vụ như HTML tĩnh, cache làm mới sau 1 tiếng.
 export const revalidate = 3600;
@@ -189,46 +190,8 @@ export default async function SlugPage({ params }: {
 
                     {/* === SẢN PHẨM LIÊN QUAN === */}
                     {relatedProducts.length > 0 && (
-                        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-8">
-                            <h2 className="text-lg md:text-xl font-bold text-slate-900 mb-5 flex items-center gap-2">
-                                <span className="w-1 h-6 bg-red-500 rounded-full inline-block" />
-                                Sản phẩm liên quan
-                            </h2>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                                {relatedProducts.map((rp: any) => {
-                                    const rpClean = (s: string) => s?.replace(/&nbsp;/g, " ").trim() || "";
-                                    const rpSale = rpClean(rp.salePrice);
-                                    const rpRegular = rpClean(rp.regularPrice);
-                                    const rpDisplay = rpSale || rpClean(rp.price) || "Liên hệ";
-                                    const rpSaleNum = parseVND(rpSale);
-                                    const rpRegularNum = parseVND(rpRegular);
-                                    const rpHasDiscount = rpSaleNum > 0 && rpRegularNum > 0 && rpSaleNum < rpRegularNum;
-                                    return (
-                                        <Link key={rp.id} href={`/${rp.slug}`}
-                                            className="group flex flex-col rounded-xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-200 hover:shadow-md transition-all overflow-hidden">
-                                            <div className="relative aspect-square overflow-hidden bg-white">
-                                                {rp.image?.sourceUrl ? (
-                                                    <Image src={rp.image.sourceUrl} alt={rp.name} fill
-                                                        className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-                                                        sizes="(max-width: 640px) 50vw, 16vw" />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-slate-300 text-4xl">📦</div>
-                                                )}
-                                                {rpHasDiscount && (
-                                                    <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                                                        -{Math.round((1 - rpSaleNum / rpRegularNum) * 100)}%
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="p-2.5 flex flex-col gap-1">
-                                                <p className="text-[12px] text-slate-700 line-clamp-2 font-medium leading-snug group-hover:text-blue-700">{rp.name}</p>
-                                                <p className="text-sm font-black text-red-600">{rpDisplay}</p>
-                                                {rpHasDiscount && <p className="text-[11px] text-slate-400 line-through">{rpRegular}</p>}
-                                            </div>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
+                        <div className="mb-8">
+                            <RelatedProductsCarousel products={relatedProducts} />
                         </div>
                     )}
 
