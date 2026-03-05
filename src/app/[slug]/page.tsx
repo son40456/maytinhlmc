@@ -14,6 +14,7 @@ import { CategoryProductView } from "@/components/category/CategoryProductView";
 import { DetailedSpecsTable } from "@/components/product/DetailedSpecsTable";
 import { RelatedNews } from "@/components/product/RelatedNews";
 import { ExpandableDescription } from "@/components/product/ExpandableDescription";
+import { ProductReviews } from "@/components/product/ProductReviews";
 
 // ISR: Các trang đã build sẽ được phục vụ như HTML tĩnh, cache làm mới sau 1 tiếng.
 export const revalidate = 3600;
@@ -168,9 +169,12 @@ export default async function SlugPage({ params }: {
                     </div>
 
                     <div className="lg:grid gap-8 mb-8" style={{ gridTemplateColumns: '62% 1fr', alignItems: 'start' }}>
-                        <div className="bg-white rounded-xl border border-slate-200 p-6">
-                            <h3 className="text-xl font-bold mb-4">Mô tả sản phẩm</h3>
-                            <ExpandableDescription content={product.description} />
+                        <div className="space-y-6">
+                            <div className="bg-white rounded-xl border border-slate-200 p-6">
+                                <h3 className="text-xl font-bold mb-4">Mô tả sản phẩm</h3>
+                                <ExpandableDescription content={product.description} />
+                            </div>
+                            <ProductReviews productId={product.databaseId} productName={product.name} />
                         </div>
                         {/* Specs + Bài viết sticky: dính trong khi scroll qua mô tả bên trái */}
                         <div className="sticky space-y-6" style={{ top: '104px' }}>
