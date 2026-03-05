@@ -167,12 +167,13 @@ export default async function SlugPage({ params }: {
                         </div>
                     </div>
 
-                    <div className="lg:grid gap-8 mb-8" style={{ gridTemplateColumns: '62% 1fr' }}>
+                    <div className="lg:grid gap-8 mb-8" style={{ gridTemplateColumns: '62% 1fr', alignItems: 'start' }}>
                         <div className="bg-white rounded-xl border border-slate-200 p-6">
                             <h3 className="text-xl font-bold mb-4">Mô tả sản phẩm</h3>
                             <ExpandableDescription content={product.description} />
                         </div>
-                        <div className="space-y-6">
+                        {/* Specs + Bài viết sticky: dính trong khi scroll qua mô tả bên trái */}
+                        <div className="sticky space-y-6" style={{ top: '104px' }}>
                             <DetailedSpecsTable
                                 attributes={product.attributes}
                                 acfDetailedSpecs={product.thongsokythuatsonbn?.thongsochitiet || ''}
