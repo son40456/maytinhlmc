@@ -22,7 +22,7 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
         const selectedComponents = components.filter(c => c.product);
 
         return (
-            <div className="fixed overflow-hidden pointer-events-none opacity-0" style={{ top: '-10000px', left: '-10000px', width: '900px' }}>
+            <div className="fixed" style={{ top: '-10000px', left: '-10000px', width: '900px', zIndex: -1000 }}>
                 <div ref={ref} className="bg-[#f8f9fa] w-[900px] text-gray-900 font-sans mx-auto p-0">
                     {/* Header Section */}
                     <div className="flex flex-col items-center justify-center pt-10 pb-6 bg-[#f0f2f5]">
@@ -46,11 +46,11 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                                     <div key={comp.id} className="flex items-center gap-6 py-6 border-b border-gray-100 last:border-0">
                                         <div className="w-24 h-24 rounded-lg bg-white p-1 flex-shrink-0 relative border border-gray-100 flex items-center justify-center">
                                             {comp.product?.image?.sourceUrl ? (
-                                                <Image
+                                                <img
                                                     src={comp.product.image.sourceUrl}
                                                     alt={comp.product.name}
-                                                    fill
-                                                    className="object-contain"
+                                                    className="object-contain w-full h-full"
+                                                    crossOrigin="anonymous"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-gray-50 flex items-center justify-center text-xs text-center text-gray-400">No Image</div>

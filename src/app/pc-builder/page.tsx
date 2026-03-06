@@ -110,7 +110,7 @@ export default function BuildPcPage() {
     const handleDownloadImage = async () => {
         if (!exportRef.current) return;
         try {
-            const dataUrl = await toPng(exportRef.current, { backgroundColor: '#ffffff', pixelRatio: 2, cacheBust: true });
+            const dataUrl = await toPng(exportRef.current, { backgroundColor: '#ffffff', pixelRatio: 2 });
             download(dataUrl, 'cau_hinh_pc_lmc.png');
         } catch (error) {
             console.error('Lỗi khi tải ảnh:', error);
