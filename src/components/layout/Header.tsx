@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, Loader2, X, Home } from 'lucide-react';
 import Image from 'next/image';
@@ -75,6 +75,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
+    const [isMenuForceHidden, setIsMenuForceHidden] = useState(false);
 
     const searchRef = React.useRef<HTMLFormElement>(null);
     const itemCount = useCartStore((state) => state.getItemCount());
@@ -97,6 +98,12 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     // Close mobile drawer on route change
     useEffect(() => {
         setMobileDrawerOpen(false);
+    }, []);
+
+    // Force hide menu temporarily when clicking a link inside it
+    const handleMenuClick = useCallback(() => {
+        setIsMenuForceHidden(true);
+        setTimeout(() => setIsMenuForceHidden(false), 150);
     }, []);
 
     // Prevent body scroll when drawer is open
@@ -356,10 +363,11 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 const hasChildren = (item.children && item.children.length > 0) || (item.columns && item.columns.length > 0);
 
                                 return (
-                                    <div key={item.id} className="group/menu static lg:static">
+                                    <div key={item.id} className={`group/menu static lg:static ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
                                         <Link
                                             href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
                                             className="flex flex-col items-center justify-center py-3 px-4 hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-yellow-400"
+                                            onClick={handleMenuClick}
                                         >
                                             <span className="mb-1.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
                                                 {getMenuIcon(cleanLabel, item.cssClasses)}
@@ -371,7 +379,10 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                         </Link>
 
                                         {hasChildren && (
-                                            <div className="absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-2xl border border-gray-100 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200">
+                                            <div
+                                                className="absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-2xl border border-gray-100 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200"
+                                                onClick={handleMenuClick}
+                                            >
                                                 <div className="flex justify-between items-start">
                                                     {item.columns ? (
                                                         <div className="flex gap-8 min-w-max">
