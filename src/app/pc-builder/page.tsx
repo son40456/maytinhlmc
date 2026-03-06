@@ -101,8 +101,8 @@ export default function BuildPcPage() {
 
             // Chèn Logo nếu là Base64
             if (companyInfo.logo && companyInfo.logo.startsWith('data:image')) {
-                let logoWidth = 160;
-                let logoHeight = 60;
+                let logoWidth = 320;
+                let logoHeight = 120;
 
                 try {
                     const img = new window.Image();
@@ -186,7 +186,8 @@ export default function BuildPcPage() {
                     cell.alignment = {
                         vertical: 'middle',
                         horizontal: (c === 2 || c === 3 || c === 4) ? 'left' : (c >= 7 ? 'right' : 'center'),
-                        wrapText: true
+                        wrapText: true,
+                        indent: 0
                     };
                 }
 
