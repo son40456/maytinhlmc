@@ -398,12 +398,12 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
 
                                         {hasChildren && (
                                             <div
-                                                className={`absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-2xl border border-gray-100 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200 ${isMenuForceHidden ? '!hidden' : ''}`}
+                                                className={`absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-[0_10px_40px_rgba(0,0,0,0.08)] border-t-2 border-yellow-400 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200 rounded-b-xl ${isMenuForceHidden ? '!hidden' : ''}`}
                                                 onClick={handleMenuClick}
                                             >
-                                                <div className="flex justify-between items-start">
+                                                <div className="flex justify-between items-start max-w-7xl mx-auto gap-8">
                                                     {item.columns ? (
-                                                        <div className="flex gap-8 min-w-max">
+                                                        <div className="flex gap-12 flex-wrap">
                                                             {item.columns.map((col: any, idx: number) => {
                                                                 // Support both old (MenuItem[]) and new ({heading, items}) format
                                                                 const heading: string = col.heading || '';
@@ -411,16 +411,16 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                                 return (
                                                                     <div key={idx} className="flex flex-col min-w-[150px]">
                                                                         {heading && (
-                                                                            <span className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-2 pb-1 border-b border-orange-100">
+                                                                            <span className="text-[12px] font-black text-orange-600 uppercase tracking-wider mb-3 pb-1.5 border-b-2 border-orange-100 block">
                                                                                 {heading}
                                                                             </span>
                                                                         )}
-                                                                        <div className="flex flex-col space-y-1.5">
+                                                                        <div className="flex flex-col space-y-2.5">
                                                                             {colItems.map((child: any) => (
                                                                                 <Link
                                                                                     key={child.id}
                                                                                     href={child.path.replace('/category/', '/').replace('/product/', '/')}
-                                                                                    className="block py-0.5 hover:text-blue-600 text-[11px] font-semibold transition-colors text-gray-600"
+                                                                                    className="block text-[13px] font-semibold text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all"
                                                                                 >
                                                                                     {child.label.replace(/<\/?[^>]+(\>|$)/g, "")}
                                                                                 </Link>
@@ -436,7 +436,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                                 <Link
                                                                     key={child.id}
                                                                     href={child.path.replace('/category/', '/').replace('/product/', '/')}
-                                                                    className="block py-1 hover:text-blue-600 text-[11px] font-bold transition-colors"
+                                                                    className="block py-1 hover:text-blue-600 hover:translate-x-1 text-[13px] font-bold transition-all text-gray-600"
                                                                 >
                                                                     {child.label.replace(/<\/?[^>]+(>|$)/g, "").toUpperCase()}
                                                                 </Link>
@@ -445,11 +445,11 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                     )}
 
                                                     {item.image && (
-                                                        <div className="flex-shrink-0 w-48 h-48 relative hidden xl:block">
+                                                        <div className="flex-shrink-0 w-[390px] h-[390px] relative hidden lg:block rounded-xl overflow-hidden ml-8">
                                                             <img
                                                                 src={item.image}
                                                                 alt={cleanLabel}
-                                                                className="w-full h-full object-contain opacity-90"
+                                                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                                                             />
                                                         </div>
                                                     )}
