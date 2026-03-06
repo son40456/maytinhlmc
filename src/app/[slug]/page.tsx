@@ -7,6 +7,7 @@ import Link from "next/link";
 
 // Components
 import { AddToCartButton } from "@/components/ui/AddToCartButton";
+import { BuildPcButton } from "@/components/ui/BuildPcButton";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductSpecs } from "@/components/product/ProductSpecs";
 import { StickyBuyBar } from "@/components/product/StickyBuyBar";
@@ -194,6 +195,18 @@ export default async function SlugPage({ params }: {
                                     imageUrl={imageUrl}
                                     slug={product.slug}
                                     stockStatus={product.stockStatus || "IN_STOCK"}
+                                />
+
+                                <BuildPcButton
+                                    product={{
+                                        id: product.id,
+                                        databaseId: product.databaseId,
+                                        name: product.name,
+                                        price: displayPrice,
+                                        imageUrl: imageUrl,
+                                        slug: product.slug,
+                                        categorySlugs: product.productCategories?.nodes?.map((c: any) => c.slug) || []
+                                    }}
                                 />
                             </div>
                         </div>
