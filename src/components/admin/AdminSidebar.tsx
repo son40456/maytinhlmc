@@ -7,7 +7,8 @@ import {
     Settings,
     MonitorPlay,
     LogOut,
-    Box
+    Box,
+    Menu
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -38,6 +39,13 @@ export default function AdminSidebar() {
                     >
                         <MonitorPlay className="w-5 h-5" />
                         Danh mục Build PC
+                    </Link>
+                    <Link
+                        href="/admin/menu"
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${pathname === '/admin/menu' ? 'bg-blue-600/10 text-blue-400' : 'hover:bg-slate-800 hover:text-white'}`}
+                    >
+                        <Menu className="w-5 h-5" />
+                        Quản lý Mega Menu
                     </Link>
                     <a href="#" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white font-medium transition-colors opacity-50 cursor-not-allowed" title="Sắp ra mắt">
                         <Settings className="w-5 h-5" />

@@ -82,7 +82,15 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
 
-    const menuTree = STATIC_MENU_ITEMS;
+    const [menuTree, setMenuTree] = useState<MenuItemType[]>(STATIC_MENU_ITEMS);
+
+    useEffect(() => {
+        // Load menu dynamically from Admin config (falls back to static if API fails)
+        fetch('/api/admin/menu')
+            .then(r => r.ok ? r.json() : null)
+            .then(data => { if (Array.isArray(data) && data.length > 0) setMenuTree(data); })
+            .catch(() => { }); // Giữ nguyên STATIC_MENU_ITEMS nếu có lỗi
+    }, []);
 
     useEffect(() => {
         setMounted(true);
