@@ -105,7 +105,7 @@ export default function BuildPcPage() {
             // Chèn Logo nếu là Base64
             if (companyInfo.logo && companyInfo.logo.startsWith('data:image')) {
                 let logoWidth = 320;
-                let logoHeight = 120;
+                let logoHeight = 140;
 
                 try {
                     const img = new window.Image();
@@ -115,8 +115,8 @@ export default function BuildPcPage() {
                         img.onerror = resolve;
                     });
                     if (img.width && img.height) {
-                        logoHeight = 70;
-                        logoWidth = img.width * (70 / img.height);
+                        logoHeight = 140;
+                        logoWidth = img.width * (140 / img.height);
                     }
                 } catch (e) { }
 
@@ -137,7 +137,16 @@ export default function BuildPcPage() {
             // 3. Cập nhật ngày tháng (Dòng 8, Cột G/H)
             const now = new Date();
             const dateStr = `Đã tạo: ${now.toLocaleDateString('vi-VN')} ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
-            worksheet.getCell('G8').value = dateStr;
+            const dateCell = worksheet.getCell('G8');
+            dateCell.value = dateStr;
+            dateCell.font = { name: 'Arial', size: 10, bold: true, italic: true, strike: false, underline: false, color: { argb: 'FF000000' } };
+
+            // Cập nhật lại Headers (Dòng 9) để xóa các format lỗi từ template
+            const headerRow = worksheet.getRow(9);
+            for (let c = 1; c <= 8; c++) {
+                const hCell = headerRow.getCell(c);
+                hCell.font = { name: 'Arial', size: 10, bold: true, italic: true, strike: false, underline: false, color: { argb: 'FFFFFFFF' } }; // Chữ trắng cho Header
+            }
 
             // 4. Xoá dữ liệu rác cũ trong template (từ dòng 10 đến 50)
             for (let i = 10; i <= 50; i++) {
