@@ -212,9 +212,13 @@ export default function BuildPcPage() {
                 row.getCell(8).numFmt = '#,##0';
 
                 row.commit();
-                // Re-apply left alignment after commit to prevent row-style override
-                worksheet.getCell(`B${currentRow}`).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
-                worksheet.getCell(`C${currentRow}`).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+                // Re-apply alignment for ALL columns after commit to prevent template row-style from overriding cell styles
+                for (let c = 1; c <= 8; c++) {
+                    let horzAlignment: 'left' | 'center' | 'right' = 'center';
+                    if (c === 2 || c === 3 || c === 4) horzAlignment = 'left';
+                    else if (c >= 7) horzAlignment = 'right';
+                    worksheet.getCell(currentRow, c).alignment = { vertical: 'middle', horizontal: horzAlignment, wrapText: true };
+                }
                 currentRow++;
             });
 
