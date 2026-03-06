@@ -44,6 +44,17 @@ const renderMenuIcon = (iconField: string | undefined, label: string, cssClasses
     // 1. Use icon field if present
     if (iconField) {
         if (map[iconField]) return map[iconField];
+        // If it looks like an image URL, render an img tag
+        if (iconField.startsWith('http') || iconField.startsWith('/')) {
+            return (
+                <img
+                    src={iconField}
+                    alt={label}
+                    className="object-contain"
+                    style={{ width: small ? '18px' : '22px', height: small ? '18px' : '22px' }}
+                />
+            );
+        }
         // It's an emoji or custom string — render as text
         return <span style={{ fontSize: small ? '18px' : '22px', lineHeight: 1 }}>{iconField}</span>;
     }

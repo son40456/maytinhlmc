@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
     Save, Plus, Trash2, MoveUp, MoveDown, ChevronDown, ChevronRight,
-    GripVertical, X, Loader2, Menu, ExternalLink, LayoutGrid, List,
+    GripVertical, X, Loader2, Menu, ExternalLink, LayoutGrid, List, Upload,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -156,18 +156,50 @@ const ICON_PRESETS = [
 
 function IconInput({ value, onChange }: { value: string; onChange: (v: string) => void; }) {
     const [showPicker, setShowPicker] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const COMMON_EMOJIS = ["🖥️", "💻", "💾", "🖥", "🌀", "🖱️", "🎧", "📦", "⚡", "🔧", "🔌", "📺", "🎮", "🔴", "⚙️", "🖨️", "📡", "🧠", "💿", "🔋"];
+
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploading(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (res.ok && data.url) {
+                onChange(data.url);
+            } else {
+                alert("Lỗi upload: " + (data.error || "Unknown"));
+            }
+        } catch (err) {
+            alert("Có lỗi xảy ra khi upload icon.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
     return (
-        <div className="relative shrink-0">
-            <div className="flex items-center border border-slate-200 rounded-lg bg-slate-50 focus-within:border-blue-400 overflow-hidden">
+        <div className="relative shrink-0 flex items-center gap-2">
+            {/* Show image preview if URL */}
+            {(value.startsWith('http') || value.startsWith('/')) && (
+                <img src={value} alt="Icon preview" className="w-8 h-8 object-contain bg-slate-100 rounded border border-slate-200 p-1 shrink-0" />
+            )}
+
+            <div className="flex items-center border border-slate-200 rounded-lg bg-slate-50 focus-within:border-blue-400 overflow-hidden w-40">
                 <input
                     value={value}
                     onChange={e => onChange(e.target.value)}
-                    placeholder="Icon / Emoji"
-                    className="w-28 text-sm outline-none bg-transparent px-2.5 py-1.5 font-medium text-slate-700 placeholder-slate-400"
+                    placeholder="Icon / URL"
+                    className="w-full text-xs outline-none bg-transparent px-2.5 py-1.5 font-medium text-slate-700 placeholder-slate-400"
                 />
+                <label className="px-2 py-1.5 text-slate-400 hover:text-blue-500 border-l border-slate-200 bg-white transition-colors cursor-pointer flex flex-col items-center justify-center shrink-0" title="Upload ảnh Icon (PNG/SVG)">
+                    {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                    <input type="file" accept="image/*" className="hidden" onChange={handleUpload} disabled={uploading} />
+                </label>
                 <button type="button" onClick={() => setShowPicker(o => !o)}
-                    className="px-2 py-1.5 text-slate-400 hover:text-blue-500 border-l border-slate-200 bg-white transition-colors text-xs font-bold">
+                    className="px-2 py-1.5 text-slate-400 hover:text-blue-500 border-l border-slate-200 bg-white transition-colors text-xs font-bold shrink-0">
                     {showPicker ? '▲' : '▼'}
                 </button>
             </div>
