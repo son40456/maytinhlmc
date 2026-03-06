@@ -119,13 +119,16 @@ export default function BuildPcPage() {
                     c.border = {};
                     c.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false };
                 });
-                // Remove existing merges safely to prevent "Cannot merge already merged cells"
-                try {
-                    const rowNum = i;
-                    // If C and D were merged in template, unmerge them before iterating products
-                    worksheet.unMergeCells(`C${rowNum}:D${rowNum}`);
-                } catch (e) { }
             }
+
+            // Unmerge all template merges from row 10 downwards to prevent overlapping bugs
+            const templateMerges = (worksheet.model as any).merges || [];
+            templateMerges.forEach((m: string) => {
+                const match = m.match(/\d+/);
+                if (match && parseInt(match[0]) >= 10) {
+                    try { worksheet.unMergeCells(m); } catch (e) { }
+                }
+            });
 
             // 5. Điền dữ liệu linh kiện bắt đầu từ dòng 10
             let currentRow = 10;
@@ -134,7 +137,9 @@ export default function BuildPcPage() {
                 row.getCell(1).value = index + 1; // STT (A)
                 row.getCell(2).value = item.id;    // Mã SP (B)
                 row.getCell(3).value = item.name;  // Tên SP (C)
-                // Cột D merge với C trong template
+                // Cột D merge với C để hiển thị tên SP
+                try { worksheet.mergeCells(`C${currentRow}:D${currentRow}`); } catch (e) { }
+
                 row.getCell(5).value = "Bảo hành: 36 Tháng"; // Bảo hành (E)
                 row.getCell(6).value = 1;          // Số lượng (F)
 
@@ -168,6 +173,7 @@ export default function BuildPcPage() {
 
             // 6. Tổng chi phí (Dòng kế tiếp)
             const totalRow = worksheet.getRow(currentRow);
+            try { worksheet.mergeCells(`F${currentRow}:G${currentRow}`); } catch (e) { }
             totalRow.getCell(6).value = "Tổng chi phí";
             totalRow.getCell(8).value = totalPrice;
             for (let c = 1; c <= 8; c++) {
