@@ -212,6 +212,9 @@ export default function BuildPcPage() {
                 row.getCell(8).numFmt = '#,##0';
 
                 row.commit();
+                // Re-apply left alignment after commit to prevent row-style override
+                worksheet.getCell(`B${currentRow}`).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+                worksheet.getCell(`C${currentRow}`).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
                 currentRow++;
             });
 
