@@ -76,38 +76,54 @@ export default function BuildPcPage() {
             // Assuming A1:B4 for logo, F1:H4 for company info
             worksheet.getRow(1).height = 40;
             if (companyInfo.name) {
-                const titleCell = worksheet.getCell('F1');
+                const titleCell = worksheet.getCell('D1');
                 titleCell.value = companyInfo.name.toUpperCase();
                 titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FF0E5296' }, underline: false, strike: false };
+                titleCell.alignment = { vertical: 'middle', horizontal: 'right' };
             }
 
             if (companyInfo.contacts && companyInfo.contacts.length > 0) {
-                // Dùng các dòng F2, F3, F4 để ghi thông tin liên hệ
-                companyInfo.contacts.slice(0, 3).forEach((c, i) => {
-                    // Thay F thành G hoặc cột tương ứng tuỳ template, dùng F2->F4
-                    const cCell = worksheet.getCell(`F${i + 2}`);
-                    cCell.value = `${c.icon} ${c.text}`;
-                    cCell.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
-                });
+                const cCell = worksheet.getCell('D2');
+                const contactText = companyInfo.contacts.slice(0, 3).map(c => `${c.icon} ${c.text}`).join('\n');
+                cCell.value = contactText;
+                cCell.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
+                cCell.alignment = { vertical: 'middle', horizontal: 'right', wrapText: true };
             } else if (companyInfo.contact) {
-                const c1 = worksheet.getCell('F2');
-                c1.value = companyInfo.contact;
-                c1.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
-
-                const c2 = worksheet.getCell('F3');
-                c2.value = companyInfo.description || '';
-                c2.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
+                const cCell = worksheet.getCell('D2');
+                const desc = companyInfo.description ? `\n${companyInfo.description}` : '';
+                cCell.value = `${companyInfo.contact}${desc}`;
+                cCell.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
+                cCell.alignment = { vertical: 'middle', horizontal: 'right', wrapText: true };
             }
+
+            // Đổi tên Bảng giá
+            worksheet.getCell('A5').value = 'BẢNG BÁO GIÁ THIẾT BỊ';
 
             // Chèn Logo nếu là Base64
             if (companyInfo.logo && companyInfo.logo.startsWith('data:image')) {
+                let logoWidth = 160;
+                let logoHeight = 60;
+
+                try {
+                    const img = new window.Image();
+                    img.src = companyInfo.logo;
+                    await new Promise((resolve) => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                    if (img.width && img.height) {
+                        logoHeight = 70;
+                        logoWidth = img.width * (70 / img.height);
+                    }
+                } catch (e) { }
+
                 const logoId = workbook.addImage({
                     base64: companyInfo.logo,
                     extension: companyInfo.logo.includes('png') ? 'png' : 'jpeg',
                 });
                 worksheet.addImage(logoId, {
-                    tl: { col: 0, row: 0 },
-                    br: { col: 2, row: 4 },
+                    tl: { col: 0.1, row: 0.1 },
+                    ext: { width: logoWidth, height: logoHeight },
                     editAs: 'oneCell'
                 } as any);
             } else if (companyInfo.name) {
@@ -169,7 +185,7 @@ export default function BuildPcPage() {
                     };
                     cell.alignment = {
                         vertical: 'middle',
-                        horizontal: (c === 2 || c === 3 || c === 4) ? 'right' : (c >= 7 ? 'right' : 'center'),
+                        horizontal: (c === 2 || c === 3 || c === 4) ? 'left' : (c >= 7 ? 'right' : 'center'),
                         wrapText: true
                     };
                 }
