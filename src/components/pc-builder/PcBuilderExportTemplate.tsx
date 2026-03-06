@@ -6,10 +6,16 @@ import { ComponentCategory } from '@/store/usePcBuilderStore';
 interface PcBuilderExportTemplateProps {
     components: ComponentCategory[];
     totalPrice: number;
+    companyInfo?: {
+        logo?: string;
+        name?: string;
+        contact?: string;
+        description?: string;
+    };
 }
 
 export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExportTemplateProps>(
-    ({ components, totalPrice }, ref) => {
+    ({ components, totalPrice, companyInfo }, ref) => {
         const formatCurrency = (amount: number) => {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
         };
@@ -25,10 +31,13 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                 <div ref={ref} className="bg-[#f8f9fa] w-[900px] text-gray-900 mx-auto p-0" style={{ fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
                     {/* Header Section */}
                     <div className="flex flex-col items-center justify-center pt-10 pb-6 bg-[#f0f2f5]">
-                        {/* Fake LMC Logo similar to original design */}
-                        <div className="bg-[#1e5eb5] text-white flex items-center justify-center font-black text-5xl tracking-tighter px-6 py-2 pb-3 mb-6">
-                            LMC
-                        </div>
+                        {companyInfo?.logo ? (
+                            <img src={companyInfo.logo} alt={companyInfo.name || 'Company Logo'} className="h-16 object-contain mb-4" crossOrigin="anonymous" />
+                        ) : (
+                            <div className="bg-[#1e5eb5] text-white flex items-center justify-center font-black text-5xl tracking-tighter px-6 py-2 pb-3 mb-6">
+                                {companyInfo?.name ? companyInfo.name.substring(0, 3).toUpperCase() : 'LMC'}
+                            </div>
+                        )}
                         <h1 className="text-3xl font-black text-gray-800 uppercase tracking-widest">
                             Xây Dựng Cấu Hình
                         </h1>
@@ -90,32 +99,20 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                     </div>
 
                     {/* Footer Address Info */}
-                    <div className="bg-[#f8f9fa] border-t border-gray-200 mt-6 pt-8 pb-6 px-10 grid grid-cols-2 gap-8 text-[13px] text-gray-700 leading-relaxed">
-                        {/* Trụ sở chính */}
+                    <div className="bg-[#f8f9fa] border-t border-gray-200 mt-6 pt-8 pb-6 px-10 text-[13px] text-gray-700 leading-relaxed">
                         <div className="border border-gray-200 bg-white p-5 rounded-md shadow-sm">
                             <h3 className="text-blue-600 font-bold mb-3 flex items-center gap-2 uppercase text-[14px]">
                                 <span className="bg-blue-100 p-1.5 rounded-sm"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" /></svg></span>
-                                Trụ Sở Chính
+                                Thông Tin Liên Hệ
                             </h3>
                             <div className="space-y-2">
-                                <p className="flex items-start gap-2"><strong className="text-green-600">🏢</strong> <span className="font-bold">CÔNG TY CỔ PHẦN THIẾT BỊ CÔNG NGHỆ LMC</span></p>
-                                <p className="flex items-start gap-2"><strong className="text-red-500">📍</strong> Số 472 Đại Lộ Lê Thanh Nghị, P. Lê Thanh Nghị, TP. Hải Dương</p>
-                                <p className="flex items-start gap-2"><strong className="text-blue-500">✉️</strong> Email: maytinhlmc@gmail.com</p>
-                                <p className="flex items-start gap-2"><strong className="text-green-500">📞</strong> Hotline: 0220.660.6666 | 0907.655.777</p>
-                            </div>
-                        </div>
-
-                        {/* Chi nhánh liên kết */}
-                        <div className="border border-gray-200 bg-white p-5 rounded-md shadow-sm">
-                            <h3 className="text-blue-600 font-bold mb-3 flex items-center gap-2 uppercase text-[14px]">
-                                <span className="bg-blue-100 p-1.5 rounded-sm"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" /></svg></span>
-                                Chi Nhánh Liên Kết
-                            </h3>
-                            <div className="space-y-2">
-                                <p className="flex items-start gap-2"><strong className="text-green-600">🏢</strong> <span className="font-bold">CÔNG TY CỔ PHẦN THIẾT BỊ MÁY TÍNH VDC</span></p>
-                                <p className="flex items-start gap-2"><strong className="text-red-500">📍</strong> SN 333 đường Hùng Vương, Phường Vĩnh Yên, Tỉnh Phú Thọ</p>
-                                <p className="flex items-start gap-2"><strong className="text-blue-500">✉️</strong> Email: maytinhvdc@gmail.com</p>
-                                <p className="flex items-start gap-2"><strong className="text-green-500">📞</strong> SĐT: 0799.08.6666 - 0828.06.3333</p>
+                                <p className="flex items-start gap-2"><strong className="text-green-600">🏢</strong> <span className="font-bold">{companyInfo?.name || "CÔNG TY CỔ PHẦN THIẾT BỊ CÔNG NGHỆ LMC"}</span></p>
+                                {companyInfo?.contact && (
+                                    <p className="flex items-start gap-2 whitespace-pre-wrap"><strong className="text-blue-500">📞</strong> {companyInfo.contact}</p>
+                                )}
+                                {companyInfo?.description && (
+                                    <p className="flex items-start gap-2 whitespace-pre-wrap mt-2 pt-2 border-t border-gray-100"><strong className="text-red-500">📌</strong> {companyInfo.description}</p>
+                                )}
                             </div>
                         </div>
                     </div>

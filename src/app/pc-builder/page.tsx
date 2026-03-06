@@ -20,6 +20,7 @@ export default function BuildPcPage() {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState<{ id: string; name: string; slug: string } | null>(null);
+    const [companyInfo, setCompanyInfo] = useState<{ logo?: string, name?: string, contact?: string, description?: string }>({});
 
     const activeCategoryRef = useRef<{ id: string; name: string; slug: string } | null>(null);
 
@@ -28,9 +29,14 @@ export default function BuildPcPage() {
 
     useEffect(() => {
         // Fetch dynamic configuration from Redis/File
-        getPcBuilderConfig().then((config) => {
-            if (config && Object.keys(config).length > 0) {
-                initComponents(config);
+        getPcBuilderConfig().then((config: any) => {
+            if (config) {
+                if (Array.isArray(config)) {
+                    initComponents(config);
+                } else if (config.components) {
+                    initComponents(config.components);
+                    if (config.companyInfo) setCompanyInfo(config.companyInfo);
+                }
             }
         });
     }, [initComponents]);
@@ -65,6 +71,11 @@ export default function BuildPcPage() {
             await workbook.xlsx.load(arrayBuffer);
             const worksheet = workbook.getWorksheet(1);
             if (!worksheet) return;
+
+            // Optional: Inject Company Info into Excel template
+            // Assuming A1/B1/A2 areas are safe for header info based on typical templates
+            if (companyInfo.name) worksheet.getCell('B2').value = companyInfo.name;
+            if (companyInfo.contact) worksheet.getCell('B3').value = companyInfo.contact;
 
             // 3. Cập nhật ngày tháng (Dòng 8, Cột G)
             const now = new Date();
@@ -379,7 +390,7 @@ export default function BuildPcPage() {
                 />
             )}
             {/* Export Layout */}
-            <PcBuilderExportTemplate ref={exportRef} components={components} totalPrice={totalPrice} />
+            <PcBuilderExportTemplate ref={exportRef} components={components} totalPrice={totalPrice} companyInfo={companyInfo} />
         </div>
     );
 }

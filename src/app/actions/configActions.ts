@@ -130,11 +130,27 @@ export async function getPcBuilderConfig() {
     const redis = useKV ? new Redis({ url: kvUrl, token: kvToken }) : null;
 
     try {
+        const processData = (parsed: any) => {
+            if (Array.isArray(parsed)) return { components: parsed, companyInfo: {} };
+            // Legacy Object format (before object was used for companyInfo)
+            if (parsed && typeof parsed === 'object' && !('components' in parsed)) {
+                // check if it looks like the old dictionary
+                const isOldDict = Object.values(parsed).some(v => typeof v === 'object' && v !== null && 'id' in v);
+                if (isOldDict) {
+                    return { components: Object.values(parsed), companyInfo: {} };
+                }
+            }
+            return {
+                components: parsed?.components || [],
+                companyInfo: parsed?.companyInfo || {}
+            };
+        };
+
         if (useKV && redis) {
             const data = await redis.get('pcBuilderConfig');
             if (data) {
                 const parsed = typeof data === 'string' ? JSON.parse(data) : data;
-                return Array.isArray(parsed) ? parsed : Object.values(parsed);
+                return processData(parsed);
             }
         }
 
@@ -146,26 +162,29 @@ export async function getPcBuilderConfig() {
             await fs.access(dataFilePath);
             const data = await fs.readFile(dataFilePath, 'utf-8');
             const parsed = JSON.parse(data);
-            return Array.isArray(parsed) ? parsed : Object.values(parsed);
+            return processData(parsed);
         } catch {
-            return [
-                { id: 'cpu', name: 'CPU - Bộ Vi Xử Lý', slug: 'cpu-bo-vi-xu-ly' },
-                { id: 'mainboard', name: 'Mainboard - Bo Mạch Chủ', slug: 'mainboard-bo-mach-chu' },
-                { id: 'ram', name: 'RAM - Bộ Nhớ Trong', slug: 'ram-bo-nho-trong' },
-                { id: 'vga', name: 'VGA - Card Màn Hình', slug: 'vga-card-man-hinh' },
-                { id: 'ssd', name: 'Ổ Cứng SSD', slug: 'o-cung-ssd' },
-                { id: 'hdd', name: 'Ổ Cứng HDD', slug: 'o-cung-hdd' },
-                { id: 'psu', name: 'Nguồn - PSU', slug: 'psu-nguon-may-tinh' },
-                { id: 'case', name: 'Vỏ Case', slug: 'case-vo-may-tinh' },
-                { id: 'cooler', name: 'Tản Nhiệt', slug: 'fan-led-tan-nhiet-may-tinh' },
-                { id: 'monitor', name: 'Màn Hình', slug: 'man-hinh-may-tinh' },
-                { id: 'keyboard_mouse', name: 'Phím Chuột', slug: 'phim-chuot-ban-ghe-gear' },
-                { id: 'headphone', name: 'Tai Nghe', slug: 'loa-tai-nghe-mic-webcam' },
-            ];
+            return {
+                components: [
+                    { id: 'cpu', name: 'CPU - Bộ Vi Xử Lý', slug: 'cpu-bo-vi-xu-ly' },
+                    { id: 'mainboard', name: 'Mainboard - Bo Mạch Chủ', slug: 'mainboard-bo-mach-chu' },
+                    { id: 'ram', name: 'RAM - Bộ Nhớ Trong', slug: 'ram-bo-nho-trong' },
+                    { id: 'vga', name: 'VGA - Card Màn Hình', slug: 'vga-card-man-hinh' },
+                    { id: 'ssd', name: 'Ổ Cứng SSD', slug: 'o-cung-ssd' },
+                    { id: 'hdd', name: 'Ổ Cứng HDD', slug: 'o-cung-hdd' },
+                    { id: 'psu', name: 'Nguồn - PSU', slug: 'psu-nguon-may-tinh' },
+                    { id: 'case', name: 'Vỏ Case', slug: 'case-vo-may-tinh' },
+                    { id: 'cooler', name: 'Tản Nhiệt', slug: 'fan-led-tan-nhiet-may-tinh' },
+                    { id: 'monitor', name: 'Màn Hình', slug: 'man-hinh-may-tinh' },
+                    { id: 'keyboard_mouse', name: 'Phím Chuột', slug: 'phim-chuot-ban-ghe-gear' },
+                    { id: 'headphone', name: 'Tai Nghe', slug: 'loa-tai-nghe-mic-webcam' },
+                ],
+                companyInfo: {}
+            };
         }
     } catch (error) {
         console.error('Error reading pc builder config:', error);
-        return [];
+        return { components: [], companyInfo: {} };
     }
 }
 

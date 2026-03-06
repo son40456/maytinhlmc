@@ -29,6 +29,12 @@ interface Category {
 
 export default function AdminPcBuilder() {
     const [pcComponents, setPcComponents] = useState<ComponentCategory[]>([]);
+    const [companyInfo, setCompanyInfo] = useState({
+        logo: "",
+        name: "",
+        contact: "",
+        description: ""
+    });
     const [categories, setCategories] = useState<Category[]>([]);
 
     const [loading, setLoading] = useState(true);
@@ -42,12 +48,17 @@ export default function AdminPcBuilder() {
             fetchAdminCategories()
         ])
             .then(([pcBuilderData, categoriesData]) => {
-                // Convert Map/Object to Array for UI
-                const pcConfigArray = Array.isArray(pcBuilderData) ? pcBuilderData : Object.keys(pcBuilderData).map(key => ({
-                    ...pcBuilderData[key],
+                // Use the new object structure { components, companyInfo }
+                const comps = pcBuilderData?.components || [];
+                const pcConfigArray = Array.isArray(comps) ? comps : Object.keys(comps).map(key => ({
+                    ...comps[key],
                     id: key // ensure ID is the key
                 }));
                 setPcComponents(pcConfigArray);
+
+                if (pcBuilderData?.companyInfo) {
+                    setCompanyInfo({ ...companyInfo, ...pcBuilderData.companyInfo });
+                }
 
                 setCategories(categoriesData.map((c: any) => ({ name: c.name, slug: c.slug })));
                 setLoading(false);
@@ -64,11 +75,14 @@ export default function AdminPcBuilder() {
         setError("");
         setSuccess("");
         try {
-            // Save PC Builder directly as array to preserve order
+            // Save PC Builder as a full object
             const resPc = await fetch("/api/admin/pcbuilder", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(pcComponents)
+                body: JSON.stringify({
+                    components: pcComponents,
+                    companyInfo: companyInfo
+                })
             });
 
             if (resPc.ok) {
@@ -139,6 +153,62 @@ export default function AdminPcBuilder() {
 
             {error && <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg font-medium">{error}</div>}
             {success && <div className="p-4 mb-4 text-green-700 bg-green-100 rounded-lg font-medium">{success}</div>}
+
+            {/* CONTENT: COMPANY INFO */}
+            <div className="space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300 mb-8">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div className="mb-6">
+                        <h2 className="text-xl font-bold text-slate-800 mb-2">Thông Tin Công Ty (Báo Giá)</h2>
+                        <p className="text-sm text-slate-500">Các thông tin này sẽ được chèn vào góc đầu hoặc cuối của file ảnh / excel xuất ra cho khách hàng.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">Tên Công Ty</label>
+                            <input
+                                type="text"
+                                value={companyInfo.name}
+                                onChange={(e) => setCompanyInfo({ ...companyInfo, name: e.target.value })}
+                                placeholder="VD: LMC Computer"
+                                className="w-full bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-sm focus:bg-white focus:border-blue-500 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium text-slate-800"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">Logo (Đường dẫn ảnh/URL)</label>
+                            <input
+                                type="text"
+                                value={companyInfo.logo}
+                                onChange={(e) => setCompanyInfo({ ...companyInfo, logo: e.target.value })}
+                                placeholder="https://..."
+                                className="w-full bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-sm focus:bg-white focus:border-blue-500 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium text-slate-800"
+                            />
+                        </div>
+
+                        <div className="space-y-2 md:col-span-2">
+                            <label className="text-sm font-semibold text-slate-700">Thông Tin Liên Hệ (SĐT, Email, Website)</label>
+                            <input
+                                type="text"
+                                value={companyInfo.contact}
+                                onChange={(e) => setCompanyInfo({ ...companyInfo, contact: e.target.value })}
+                                placeholder="VD: Hotline: 0123... | Email: contact@..."
+                                className="w-full bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-sm focus:bg-white focus:border-blue-500 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium text-slate-800"
+                            />
+                        </div>
+
+                        <div className="space-y-2 md:col-span-2">
+                            <label className="text-sm font-semibold text-slate-700">Địa Chỉ / Lời Cảm Ơn / Mô Tả Thêm</label>
+                            <textarea
+                                value={companyInfo.description}
+                                onChange={(e) => setCompanyInfo({ ...companyInfo, description: e.target.value })}
+                                placeholder="Nhập địa chỉ hoặc lời nhắn cuối báo giá..."
+                                rows={3}
+                                className="w-full bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-sm focus:bg-white focus:border-blue-500 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium text-slate-800 resize-y"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* CONTENT: PC BUILDER */}
             <div className="space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300">
