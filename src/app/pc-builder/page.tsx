@@ -111,7 +111,17 @@ export default function BuildPcPage() {
             const dateStr = `Đã tạo: ${now.toLocaleDateString('vi-VN')} ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
             worksheet.getCell('G8').value = dateStr;
 
-            // 4. Điền dữ liệu linh kiện bắt đầu từ dòng 10
+            // 4. Xoá dữ liệu rác cũ trong template (từ dòng 10 đến 50)
+            for (let i = 10; i <= 50; i++) {
+                const r = worksheet.getRow(i);
+                r.eachCell({ includeEmpty: true }, c => {
+                    c.value = null;
+                    c.border = {};
+                    c.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false };
+                });
+            }
+
+            // 5. Điền dữ liệu linh kiện bắt đầu từ dòng 10
             let currentRow = 10;
             list.forEach((item, index) => {
                 const row = worksheet.getRow(currentRow);
@@ -128,22 +138,53 @@ export default function BuildPcPage() {
                 row.getCell(7).value = numPrice; // Giá (G)
                 row.getCell(8).value = numPrice; // Thành tiền (H)
 
+                // Định dạng lại giao diện cho dòng
+                for (let c = 1; c <= 8; c++) {
+                    const cell = row.getCell(c);
+                    cell.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false };
+                    cell.border = {
+                        top: { style: 'thin' }, left: { style: 'thin' },
+                        bottom: { style: 'thin' }, right: { style: 'thin' }
+                    };
+                    cell.alignment = {
+                        vertical: 'middle',
+                        horizontal: c === 3 || c === 4 ? 'left' : (c >= 7 ? 'right' : 'center'),
+                        wrapText: true
+                    };
+                }
+
+                row.getCell(7).numFmt = '#,##0';
+                row.getCell(8).numFmt = '#,##0';
+
                 row.commit();
                 currentRow++;
             });
 
-            // 5. Tổng chi phí (Dòng kế tiếp)
+            // 6. Tổng chi phí (Dòng kế tiếp)
             const totalRow = worksheet.getRow(currentRow);
             totalRow.getCell(6).value = "Tổng chi phí";
             totalRow.getCell(8).value = totalPrice;
+            for (let c = 1; c <= 8; c++) {
+                const cell = totalRow.getCell(c);
+                cell.font = { name: 'Arial', size: 11, bold: true, color: { argb: 'FF000000' } };
+                if (c >= 6) cell.border = {
+                    top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+                };
+            }
+            totalRow.getCell(8).numFmt = '#,##0';
+            totalRow.getCell(6).alignment = { horizontal: 'right' };
+            totalRow.getCell(8).alignment = { horizontal: 'right' };
             totalRow.commit();
 
-            // 6. Ghi chú chân trang
+            // 7. Ghi chú chân trang
             const noteRow = worksheet.getRow(currentRow + 1);
             noteRow.getCell(1).value = `Quý khách lưu ý: Giá bán, khuyến mại của sản phẩm và tình trạng còn hàng có thể bị thay đổi bất cứ lúc nào mà không kịp báo trước. Mọi thông tin chi tiết xin vui lòng liên hệ ${companyInfo.contacts?.[0]?.text || companyInfo.contact || 'Tổng đài'}`;
+            noteRow.getCell(1).font = { name: 'Arial', size: 10, italic: true };
+            // Merge từ A đến H cho ghi chú
+            worksheet.mergeCells(`A${currentRow + 1}:H${currentRow + 1}`);
             noteRow.commit();
 
-            // 6. Xuất file
+            // 8. Xuất file
             const buffer = await workbook.xlsx.writeBuffer();
             saveAs(new Blob([buffer]), `cau_hinh_pc_lmc_${Date.now()}.xlsx`);
 
