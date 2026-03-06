@@ -246,11 +246,13 @@ export default function BuildPcPage() {
             totalRow.getCell(8).alignment = { horizontal: 'right' };
             totalRow.commit();
 
-            // 7. Ghi chú chân trang
+            // 7. Ghi chú chân trang - lấy từ Ghi chú trong Admin
             const noteRow = worksheet.getRow(currentRow + 1);
-            const extraDescription = companyInfo.description ? ` - ${companyInfo.description}` : '';
-            noteRow.getCell(1).value = `Quý khách lưu ý: Giá bán, khuyến mại của sản phẩm và tình trạng còn hàng có thể bị thay đổi bất cứ lúc nào mà không kịp báo trước. Mọi thông tin chi tiết xin vui lòng liên hệ ${companyInfo.contacts?.[0]?.text || companyInfo.contact || 'Tổng đài'}${extraDescription}`;
+            const noteText = companyInfo.description || 'Quý khách lưu ý: Giá bán, khuyến mại của sản phẩm và tình trạng còn hàng có thể bị thay đổi bất cứ lúc nào mà không kịp báo trước.';
+            noteRow.getCell(1).value = noteText;
             noteRow.getCell(1).font = { name: 'Arial', size: 10, italic: true, underline: false, strike: false };
+            noteRow.getCell(1).alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
+            noteRow.height = Math.max(30, Math.ceil(noteText.length / 80) * 15); // auto height based on text length
 
             // Try to merge cells for the note, but catch if it overlaps existing merges in the template
             try {
