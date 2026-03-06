@@ -50,7 +50,7 @@ export default function BuildPcPage() {
             category: comp.name,
             name: comp.product?.name || '',
             price: comp.product?.price || comp.product?.regularPrice || '0',
-            id: comp.product?.databaseId || '',
+            id: comp.product?.sku || comp.product?.databaseId || '',
         }));
     };
 
@@ -74,6 +74,7 @@ export default function BuildPcPage() {
 
             // Optional: Inject Company Info into Excel template
             // Assuming A1:B4 for logo, F1:H4 for company info
+            worksheet.getRow(1).height = 40;
             if (companyInfo.name) {
                 const titleCell = worksheet.getCell('F1');
                 titleCell.value = companyInfo.name.toUpperCase();
@@ -148,7 +149,7 @@ export default function BuildPcPage() {
                 // Cột D merge với C để hiển thị tên SP
                 try { worksheet.mergeCells(`C${currentRow}:D${currentRow}`); } catch (e) { }
 
-                row.getCell(5).value = "Bảo hành: 36 Tháng"; // Bảo hành (E)
+                row.getCell(5).value = "36 Tháng"; // Bảo hành (E)
                 row.getCell(6).value = 1;          // Số lượng (F)
 
                 const cleanPrice = item.price.replace(/&nbsp;/g, ' ').replace(/[^\d]/g, '');
@@ -157,6 +158,7 @@ export default function BuildPcPage() {
                 row.getCell(7).value = numPrice; // Giá (G)
                 row.getCell(8).value = numPrice; // Thành tiền (H)
 
+                row.height = 25;
                 // Định dạng lại giao diện cho dòng
                 for (let c = 1; c <= 8; c++) {
                     const cell = row.getCell(c);
@@ -167,7 +169,7 @@ export default function BuildPcPage() {
                     };
                     cell.alignment = {
                         vertical: 'middle',
-                        horizontal: c === 3 || c === 4 ? 'left' : (c >= 7 ? 'right' : 'center'),
+                        horizontal: (c === 2 || c === 3 || c === 4) ? 'right' : (c >= 7 ? 'right' : 'center'),
                         wrapText: true
                     };
                 }
