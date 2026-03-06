@@ -73,15 +73,40 @@ export default function BuildPcPage() {
             if (!worksheet) return;
 
             // Optional: Inject Company Info into Excel template
-            // Assuming A1/B1/A2 areas are safe for header info based on typical templates
-            if (companyInfo.name) worksheet.getCell('B2').value = companyInfo.name;
-            if (companyInfo.contacts && companyInfo.contacts.length > 0) {
-                worksheet.getCell('B3').value = companyInfo.contacts.map(c => `${c.icon} ${c.text}`).join(' | ');
-            } else if (companyInfo.contact) {
-                worksheet.getCell('B3').value = companyInfo.contact;
+            // Assuming A1:B4 for logo, F1:H4 for company info
+            if (companyInfo.name) {
+                worksheet.getCell('F1').value = companyInfo.name;
+                // Áp dụng font bold chữ đỏ/xanh tuỳ mẫu, có thể để mặc định
             }
 
-            // 3. Cập nhật ngày tháng (Dòng 8, Cột G)
+            if (companyInfo.contacts && companyInfo.contacts.length > 0) {
+                // Dùng các dòng F2, F3, F4 để ghi thông tin liên hệ
+                companyInfo.contacts.slice(0, 3).forEach((c, i) => {
+                    // Thay F thành G hoặc cột tương ứng tuỳ template, dùng F2->F4
+                    worksheet.getCell(`F${i + 2}`).value = `${c.icon} ${c.text}`;
+                });
+            } else if (companyInfo.contact) {
+                worksheet.getCell('F2').value = companyInfo.contact;
+                worksheet.getCell('F3').value = companyInfo.description || '';
+            }
+
+            // Chèn Logo nếu là Base64
+            if (companyInfo.logo && companyInfo.logo.startsWith('data:image')) {
+                const logoId = workbook.addImage({
+                    base64: companyInfo.logo,
+                    extension: companyInfo.logo.includes('png') ? 'png' : 'jpeg',
+                });
+                worksheet.addImage(logoId, {
+                    tl: { col: 0, row: 0 },
+                    br: { col: 2, row: 4 },
+                    editAs: 'oneCell'
+                } as any);
+            } else if (companyInfo.name) {
+                // Fallback thành tên viết tắt nếu không có logo
+                worksheet.getCell('A2').value = companyInfo.name.substring(0, 3).toUpperCase();
+            }
+
+            // 3. Cập nhật ngày tháng (Dòng 8, Cột G/H)
             const now = new Date();
             const dateStr = `Đã tạo: ${now.toLocaleDateString('vi-VN')} ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
             worksheet.getCell('G8').value = dateStr;
@@ -90,27 +115,33 @@ export default function BuildPcPage() {
             let currentRow = 10;
             list.forEach((item, index) => {
                 const row = worksheet.getRow(currentRow);
-                row.getCell(2).value = index + 1; // STT
-                row.getCell(3).value = item.id;    // Mã SP
-                row.getCell(4).value = item.name;  // Tên SP (Cột D)
-                row.getCell(6).value = "";         // Bảo hành (Để trống nếu chưa có data)
-                row.getCell(7).value = 1;          // Số lượng
+                row.getCell(1).value = index + 1; // STT (A)
+                row.getCell(2).value = item.id;    // Mã SP (B)
+                row.getCell(3).value = item.name;  // Tên SP (C)
+                // Cột D merge với C trong template
+                row.getCell(5).value = "Bảo hành: 36 Tháng"; // Bảo hành (E)
+                row.getCell(6).value = 1;          // Số lượng (F)
 
-                // Clean price string for Excel (bỏ đ, VNĐ, dấu chấm phân cách nếu cần, hoặc để nguyên string)
                 const cleanPrice = item.price.replace(/&nbsp;/g, ' ').replace(/[^\d]/g, '');
-                row.getCell(8).value = parseInt(cleanPrice) || 0;
-                row.getCell(9).value = parseInt(cleanPrice) || 0;
+                const numPrice = parseInt(cleanPrice) || 0;
 
-                // Apply style nếu cần (optional, template thường có sẵn)
+                row.getCell(7).value = numPrice; // Giá (G)
+                row.getCell(8).value = numPrice; // Thành tiền (H)
+
                 row.commit();
                 currentRow++;
             });
 
-            // 5. Tổng chi phí
+            // 5. Tổng chi phí (Dòng kế tiếp)
             const totalRow = worksheet.getRow(currentRow);
-            totalRow.getCell(7).value = "Tổng chi phí";
-            totalRow.getCell(9).value = totalPrice;
+            totalRow.getCell(6).value = "Tổng chi phí";
+            totalRow.getCell(8).value = totalPrice;
             totalRow.commit();
+
+            // 6. Ghi chú chân trang
+            const noteRow = worksheet.getRow(currentRow + 1);
+            noteRow.getCell(1).value = `Quý khách lưu ý: Giá bán, khuyến mại của sản phẩm và tình trạng còn hàng có thể bị thay đổi bất cứ lúc nào mà không kịp báo trước. Mọi thông tin chi tiết xin vui lòng liên hệ ${companyInfo.contacts?.[0]?.text || companyInfo.contact || 'Tổng đài'}`;
+            noteRow.commit();
 
             // 6. Xuất file
             const buffer = await workbook.xlsx.writeBuffer();
