@@ -20,7 +20,7 @@ export default function BuildPcPage() {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState<{ id: string; name: string; slug: string } | null>(null);
-    const [companyInfo, setCompanyInfo] = useState<{ logo?: string, name?: string, contact?: string, description?: string }>({});
+    const [companyInfo, setCompanyInfo] = useState<{ logo?: string, name?: string, contact?: string, contacts?: { icon: string, text: string }[], description?: string }>({});
 
     const activeCategoryRef = useRef<{ id: string; name: string; slug: string } | null>(null);
 
@@ -75,7 +75,11 @@ export default function BuildPcPage() {
             // Optional: Inject Company Info into Excel template
             // Assuming A1/B1/A2 areas are safe for header info based on typical templates
             if (companyInfo.name) worksheet.getCell('B2').value = companyInfo.name;
-            if (companyInfo.contact) worksheet.getCell('B3').value = companyInfo.contact;
+            if (companyInfo.contacts && companyInfo.contacts.length > 0) {
+                worksheet.getCell('B3').value = companyInfo.contacts.map(c => `${c.icon} ${c.text}`).join(' | ');
+            } else if (companyInfo.contact) {
+                worksheet.getCell('B3').value = companyInfo.contact;
+            }
 
             // 3. Cập nhật ngày tháng (Dòng 8, Cột G)
             const now = new Date();

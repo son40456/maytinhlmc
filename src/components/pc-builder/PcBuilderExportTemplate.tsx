@@ -10,6 +10,7 @@ interface PcBuilderExportTemplateProps {
         logo?: string;
         name?: string;
         contact?: string;
+        contacts?: { icon: string; text: string }[];
         description?: string;
     };
 }
@@ -32,7 +33,7 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                     {/* Header Section */}
                     <div className="flex flex-col items-center justify-center pt-10 pb-6 bg-[#f0f2f5]">
                         {companyInfo?.logo ? (
-                            <img src={companyInfo.logo} alt={companyInfo.name || 'Company Logo'} className="h-16 object-contain mb-4" crossOrigin="anonymous" />
+                            <img src={companyInfo.logo.startsWith('data:') || companyInfo.logo.startsWith('/') ? companyInfo.logo : `/api/proxy-image?url=${encodeURIComponent(companyInfo.logo)}`} alt={companyInfo.name || 'Company Logo'} className="h-16 object-contain mb-4" crossOrigin="anonymous" />
                         ) : (
                             <div className="bg-[#1e5eb5] text-white flex items-center justify-center font-black text-5xl tracking-tighter px-6 py-2 pb-3 mb-6">
                                 {companyInfo?.name ? companyInfo.name.substring(0, 3).toUpperCase() : 'LMC'}
@@ -107,9 +108,17 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                             </h3>
                             <div className="space-y-2">
                                 <p className="flex items-start gap-2"><strong className="text-green-600">🏢</strong> <span className="font-bold">{companyInfo?.name || "CÔNG TY CỔ PHẦN THIẾT BỊ CÔNG NGHỆ LMC"}</span></p>
-                                {companyInfo?.contact && (
-                                    <p className="flex items-start gap-2 whitespace-pre-wrap"><strong className="text-blue-500">📞</strong> {companyInfo.contact}</p>
+
+                                {companyInfo?.contacts && companyInfo.contacts.length > 0 ? (
+                                    companyInfo.contacts.map((c, i) => (
+                                        <p key={i} className="flex items-start gap-2 whitespace-pre-wrap"><strong className="text-blue-500">{c.icon}</strong> {c.text}</p>
+                                    ))
+                                ) : (
+                                    companyInfo?.contact && (
+                                        <p className="flex items-start gap-2 whitespace-pre-wrap"><strong className="text-blue-500">📞</strong> {companyInfo.contact}</p>
+                                    )
                                 )}
+
                                 {companyInfo?.description && (
                                     <p className="flex items-start gap-2 whitespace-pre-wrap mt-2 pt-2 border-t border-gray-100"><strong className="text-red-500">📌</strong> {companyInfo.description}</p>
                                 )}
