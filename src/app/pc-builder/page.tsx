@@ -148,14 +148,21 @@ export default function BuildPcPage() {
                 hCell.font = { name: 'Arial', size: 10, bold: true, italic: true, strike: false, underline: false, color: { argb: 'FFFFFFFF' } }; // Chữ trắng cho Header
             }
 
-            // 4. Xoá dữ liệu rác cũ trong template (từ dòng 10 đến 50)
+            // 4. Xoá TOÀN BỘ style cũ trong template (từ dòng 10 đến 50)
             for (let i = 10; i <= 50; i++) {
                 const r = worksheet.getRow(i);
-                r.eachCell({ includeEmpty: true }, c => {
+                r.height = 15; // reset row height
+                for (let ci = 1; ci <= 8; ci++) {
+                    const c = r.getCell(ci);
                     c.value = null;
                     c.border = {};
-                    c.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false };
-                });
+                    c.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false, underline: false };
+                    c.alignment = { horizontal: 'center', vertical: 'middle' };
+                    c.fill = { type: 'pattern', pattern: 'none' } as any;
+                    c.numFmt = '';
+                    c.style = {} as any; // full style wipe
+                }
+                r.commit();
             }
 
             // Unmerge all template merges from row 10 downwards to prevent overlapping bugs
