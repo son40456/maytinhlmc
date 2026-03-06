@@ -56,348 +56,202 @@ export default function BuildPcPage() {
 
     const handleExportExcel = async () => {
         const list = getSelectedComponentsList();
-
-        if (!list.length) {
-            alert("Chưa có linh kiện nào để xuất!");
+        if (list.length === 0) {
+            alert('Chưa có linh kiện nào để xuất!');
             return;
         }
 
         try {
-
-            const response = await fetch("/templates/buildpc.xlsx");
+            // 1. Tải file mẫu
+            const response = await fetch('/templates/buildpc.xlsx');
             const arrayBuffer = await response.arrayBuffer();
 
+            // 2. Load workbook
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(arrayBuffer);
-
             const worksheet = workbook.getWorksheet(1);
             if (!worksheet) return;
 
-            // Column width chuẩn
-            worksheet.columns = [
-                { width: 6 },
-                { width: 20 },
-                { width: 45 },
-                { width: 5 },
-                { width: 16 },
-                { width: 10 },
-                { width: 18 },
-                { width: 18 }
-            ];
-
-            // =========================
-            // COMPANY INFO
-            // =========================
-
+            // Optional: Inject Company Info into Excel template
+            // Assuming A1:B4 for logo, F1:H4 for company info
+            worksheet.getRow(1).height = 40;
             if (companyInfo.name) {
-                const titleCell = worksheet.getCell("D1");
-
+                const titleCell = worksheet.getCell('D1');
                 titleCell.value = companyInfo.name.toUpperCase();
-
-                titleCell.font = {
-                    name: "Arial",
-                    size: 14,
-                    bold: true,
-                    color: { argb: "FF0E5296" }
-                };
-
-                titleCell.alignment = {
-                    vertical: "middle",
-                    horizontal: "right"
-                };
+                titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FF0E5296' }, underline: false, strike: false };
+                titleCell.alignment = { vertical: 'middle', horizontal: 'right' };
             }
 
-            if (companyInfo.contacts?.length) {
-
-                const contactText = companyInfo.contacts
-                    .slice(0, 3)
-                    .map((c: any) => `${c.icon} ${c.text}`)
-                    .join("\n");
-
-                const cCell = worksheet.getCell("D2");
-
+            if (companyInfo.contacts && companyInfo.contacts.length > 0) {
+                const cCell = worksheet.getCell('D2');
+                const contactText = companyInfo.contacts.slice(0, 3).map(c => `${c.icon} ${c.text}`).join('\n');
                 cCell.value = contactText;
-
-                cCell.font = {
-                    name: "Arial",
-                    size: 10
-                };
-
-                cCell.alignment = {
-                    vertical: "middle",
-                    horizontal: "right",
-                    wrapText: true
-                };
+                cCell.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
+                cCell.alignment = { vertical: 'middle', horizontal: 'right', wrapText: true };
+            } else if (companyInfo.contact) {
+                const cCell = worksheet.getCell('D2');
+                const desc = companyInfo.description ? `\n${companyInfo.description}` : '';
+                cCell.value = `${companyInfo.contact}${desc}`;
+                cCell.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
+                cCell.alignment = { vertical: 'middle', horizontal: 'right', wrapText: true };
             }
 
-            // =========================
-            // TITLE
-            // =========================
+            // Đổi tên Bảng giá
+            const tbTitleCell = worksheet.getCell('A5');
+            tbTitleCell.value = 'BẢNG BÁO GIÁ THIẾT BỊ';
+            tbTitleCell.font = { name: 'Arial', size: 16, bold: true, italic: false, strike: false, underline: false, color: { argb: 'FF000000' } };
+            tbTitleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-            const tbTitleCell = worksheet.getCell("A5");
-
-            tbTitleCell.value = "BẢNG BÁO GIÁ THIẾT BỊ";
-
-            tbTitleCell.font = {
-                name: "Arial",
-                size: 16,
-                bold: true
-            };
-
-            tbTitleCell.alignment = {
-                vertical: "middle",
-                horizontal: "center"
-            };
-
-            worksheet.mergeCells("A5:H5");
-
-            // =========================
-            // LOGO
-            // =========================
-
-            if (typeof window !== "undefined" && companyInfo.logo?.startsWith("data:image")) {
-
-                let logoWidth = 300;
+            // Chèn Logo nếu là Base64
+            if (companyInfo.logo && companyInfo.logo.startsWith('data:image')) {
+                let logoWidth = 320;
                 let logoHeight = 120;
 
                 try {
-
-                    const img = new Image();
+                    const img = new window.Image();
                     img.src = companyInfo.logo;
-
                     await new Promise((resolve) => {
                         img.onload = resolve;
                         img.onerror = resolve;
                     });
-
                     if (img.width && img.height) {
                         logoHeight = 120;
-                        logoWidth = img.width * (logoHeight / img.height);
+                        logoWidth = img.width * (120 / img.height);
                     }
-
-                } catch { }
+                } catch (e) { }
 
                 const logoId = workbook.addImage({
                     base64: companyInfo.logo,
-                    extension: companyInfo.logo.includes("png") ? "png" : "jpeg"
+                    extension: companyInfo.logo.includes('png') ? 'png' : 'jpeg',
                 });
-
                 worksheet.addImage(logoId, {
-                    tl: { col: 0.2, row: 0.2 },
-                    ext: { width: logoWidth, height: logoHeight }
+                    tl: { col: 0.1, row: 0.1 },
+                    ext: { width: logoWidth, height: logoHeight },
+                    editAs: 'oneCell'
+                } as any);
+            } else if (companyInfo.name) {
+                // Fallback thành tên viết tắt nếu không có logo
+                worksheet.getCell('A2').value = companyInfo.name.substring(0, 3).toUpperCase();
+            }
+
+            // 3. Cập nhật ngày tháng (Dòng 8, Cột G/H)
+            const now = new Date();
+            const dateStr = `Đã tạo: ${now.toLocaleDateString('vi-VN')} ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
+            const dateCell = worksheet.getCell('G8');
+            dateCell.value = dateStr;
+            dateCell.font = { name: 'Arial', size: 10, bold: true, italic: true, strike: false, underline: false, color: { argb: 'FF000000' } };
+
+            // Cập nhật lại Headers (Dòng 9) để xóa các format lỗi từ template
+            const headerRow = worksheet.getRow(9);
+            for (let c = 1; c <= 8; c++) {
+                const hCell = headerRow.getCell(c);
+                hCell.font = { name: 'Arial', size: 10, bold: true, italic: true, strike: false, underline: false, color: { argb: 'FFFFFFFF' } }; // Chữ trắng cho Header
+            }
+
+            // 4. Xoá dữ liệu rác cũ trong template (từ dòng 10 đến 50)
+            for (let i = 10; i <= 50; i++) {
+                const r = worksheet.getRow(i);
+                r.eachCell({ includeEmpty: true }, c => {
+                    c.value = null;
+                    c.border = {};
+                    c.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false };
                 });
             }
 
-            // =========================
-            // DATE
-            // =========================
+            // Unmerge all template merges from row 10 downwards to prevent overlapping bugs
+            const templateMerges = (worksheet.model as any).merges || [];
+            templateMerges.forEach((m: string) => {
+                const match = m.match(/\d+/);
+                if (match && parseInt(match[0]) >= 10) {
+                    try { worksheet.unMergeCells(m); } catch (e) { }
+                }
+            });
 
-            const now = new Date();
-
-            const dateStr =
-                "Đã tạo: " +
-                now.toLocaleDateString("vi-VN") +
-                " " +
-                now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-
-            const dateCell = worksheet.getCell("G8");
-
-            dateCell.value = dateStr;
-
-            dateCell.font = {
-                name: "Arial",
-                size: 10,
-                italic: true,
-                bold: true
-            };
-
-            // =========================
-            // HEADER STYLE
-            // =========================
-
-            const headerRow = worksheet.getRow(9);
-
-            headerRow.height = 25;
-
-            for (let c = 1; c <= 8; c++) {
-
-                const cell = headerRow.getCell(c);
-
-                cell.font = {
-                    name: "Arial",
-                    size: 10,
-                    bold: true,
-                    color: { argb: "FFFFFFFF" }
-                };
-
-                cell.alignment = {
-                    horizontal: "center",
-                    vertical: "middle"
-                };
-
-                cell.fill = {
-                    type: "pattern",
-                    pattern: "solid",
-                    fgColor: { argb: "FF0E5296" }
-                };
-
-                cell.border = {
-                    top: { style: "thin" },
-                    left: { style: "thin" },
-                    bottom: { style: "thin" },
-                    right: { style: "thin" }
-                };
-            }
-
-            // =========================
-            // CLEAR TEMPLATE ROWS
-            // =========================
-
-            worksheet.spliceRows(10, 100);
-
-            // =========================
-            // DATA
-            // =========================
-
+            // 5. Điền dữ liệu linh kiện bắt đầu từ dòng 10
             let currentRow = 10;
-
-            list.forEach((item: any, index: number) => {
-
+            list.forEach((item, index) => {
                 const row = worksheet.getRow(currentRow);
+                row.getCell(1).value = index + 1; // STT (A)
+                row.getCell(2).value = item.id;    // Mã SP (B)
+                row.getCell(3).value = item.name;  // Tên SP (C)
 
-                row.height = 24;
+                row.getCell(5).value = "36 Tháng"; // Bảo hành (E)
+                row.getCell(6).value = 1;          // Số lượng (F)
 
-                row.getCell(1).value = index + 1;
-                row.getCell(2).value = item.id;
-                row.getCell(3).value = item.name;
+                const cleanPrice = item.price.replace(/&nbsp;/g, ' ').replace(/[^\d]/g, '');
+                const numPrice = parseInt(cleanPrice) || 0;
 
-                worksheet.mergeCells(`C${currentRow}:D${currentRow}`);
+                row.getCell(7).value = numPrice; // Giá (G)
+                row.getCell(8).value = numPrice; // Thành tiền (H)
 
-                row.getCell(5).value = "36 Tháng";
-                row.getCell(6).value = 1;
-
-                const cleanPrice = String(item.price || "")
-                    .replace(/&nbsp;/g, "")
-                    .replace(/[^\d]/g, "");
-
-                const price = Number(cleanPrice) || 0;
-
-                row.getCell(7).value = price;
-                row.getCell(8).value = price;
-
+                row.height = 25;
+                // Định dạng lại giao diện cho dòng
                 for (let c = 1; c <= 8; c++) {
-
                     const cell = row.getCell(c);
-
-                    cell.font = {
-                        name: "Arial",
-                        size: 10
-                    };
-
+                    cell.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false, underline: false };
                     cell.border = {
-                        top: { style: "thin" },
-                        left: { style: "thin" },
-                        bottom: { style: "thin" },
-                        right: { style: "thin" }
+                        top: { style: 'thin' }, left: { style: 'thin' },
+                        bottom: { style: 'thin' }, right: { style: 'thin' }
                     };
 
-                    let align: "left" | "center" | "right" = "center";
-
-                    if (c === 2 || c === 3 || c === 4) align = "left";
-                    if (c >= 7) align = "right";
+                    let horzAlignment: 'left' | 'center' | 'right' = 'center';
+                    if (c === 2 || c === 3 || c === 4) horzAlignment = 'left';
+                    else if (c >= 7) horzAlignment = 'right';
 
                     cell.alignment = {
-                        vertical: "middle",
-                        horizontal: align,
+                        vertical: 'middle',
+                        horizontal: horzAlignment,
                         wrapText: true
                     };
                 }
 
-                row.getCell(7).numFmt = '#,##0 [$₫-vi-VN]';
-                row.getCell(8).numFmt = '#,##0 [$₫-vi-VN]';
+                // Thực hiện merge cột D vào C sau khi đã định dạng xong từng cell
+                try { worksheet.mergeCells(`C${currentRow}:D${currentRow}`); } catch (e) { }
 
+                row.getCell(7).numFmt = '#,##0';
+                row.getCell(8).numFmt = '#,##0';
+
+                row.commit();
                 currentRow++;
             });
 
-            // =========================
-            // TOTAL
-            // =========================
-
+            // 6. Tổng chi phí (Dòng kế tiếp)
             const totalRow = worksheet.getRow(currentRow);
-
-            worksheet.mergeCells(`F${currentRow}:G${currentRow}`);
-
+            try { worksheet.mergeCells(`F${currentRow}:G${currentRow}`); } catch (e) { }
             totalRow.getCell(6).value = "Tổng chi phí";
-
-            totalRow.getCell(8).value = {
-                formula: `SUM(H10:H${currentRow - 1})`
-            };
-
-            for (let c = 6; c <= 8; c++) {
-
+            totalRow.getCell(8).value = totalPrice;
+            for (let c = 1; c <= 8; c++) {
                 const cell = totalRow.getCell(c);
-
-                cell.font = {
-                    name: "Arial",
-                    size: 11,
-                    bold: true
-                };
-
-                cell.border = {
-                    top: { style: "thin" },
-                    left: { style: "thin" },
-                    bottom: { style: "thin" },
-                    right: { style: "thin" }
-                };
-
-                cell.alignment = {
-                    horizontal: "right",
-                    vertical: "middle"
+                cell.font = { name: 'Arial', size: 11, bold: true, color: { argb: 'FF000000' } };
+                if (c >= 6) cell.border = {
+                    top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
                 };
             }
+            totalRow.getCell(8).numFmt = '#,##0';
+            totalRow.getCell(6).alignment = { horizontal: 'right' };
+            totalRow.getCell(8).alignment = { horizontal: 'right' };
+            totalRow.commit();
 
-            totalRow.getCell(8).numFmt = '#,##0 [$₫-vi-VN]';
+            // 7. Ghi chú chân trang
+            const noteRow = worksheet.getRow(currentRow + 1);
+            const extraDescription = companyInfo.description ? ` - ${companyInfo.description}` : '';
+            noteRow.getCell(1).value = `Quý khách lưu ý: Giá bán, khuyến mại của sản phẩm và tình trạng còn hàng có thể bị thay đổi bất cứ lúc nào mà không kịp báo trước. Mọi thông tin chi tiết xin vui lòng liên hệ ${companyInfo.contacts?.[0]?.text || companyInfo.contact || 'Tổng đài'}${extraDescription}`;
+            noteRow.getCell(1).font = { name: 'Arial', size: 10, italic: true, underline: false, strike: false };
 
-            // =========================
-            // NOTE
-            // =========================
+            // Try to merge cells for the note, but catch if it overlaps existing merges in the template
+            try {
+                worksheet.mergeCells(`A${currentRow + 1}:H${currentRow + 1}`);
+            } catch (e) { }
 
-            const noteRow = worksheet.getRow(currentRow + 2);
+            noteRow.commit();
 
-            const contact =
-                companyInfo.contacts?.[0]?.text ||
-                companyInfo.contact ||
-                "Tổng đài";
-
-            noteRow.getCell(1).value =
-                `Quý khách lưu ý: Giá bán và khuyến mại có thể thay đổi bất cứ lúc nào. ` +
-                `Mọi thông tin chi tiết xin vui lòng liên hệ ${contact}.`;
-
-            noteRow.getCell(1).font = {
-                name: "Arial",
-                size: 10,
-                italic: true
-            };
-
-            worksheet.mergeCells(`A${currentRow + 2}:H${currentRow + 2}`);
-
-            // =========================
-            // EXPORT FILE
-            // =========================
-
+            // 8. Xuất file
             const buffer = await workbook.xlsx.writeBuffer();
+            saveAs(new Blob([buffer]), `cau_hinh_pc_lmc_${Date.now()}.xlsx`);
 
-            const blob = new Blob([buffer], {
-                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            });
-
-            saveAs(blob, `cau_hinh_pc_lmc_${Date.now()}.xlsx`);
-
-        } catch (err) {
-
-            console.error(err);
-
-            alert("Có lỗi khi tạo file Excel.");
+        } catch (error) {
+            console.error('Lỗi khi xuất Excel:', error);
+            alert('Có lỗi xảy ra khi tạo file Excel. Vui lòng thử lại.');
         }
     };
 
