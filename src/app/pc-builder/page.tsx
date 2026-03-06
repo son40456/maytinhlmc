@@ -97,7 +97,10 @@ export default function BuildPcPage() {
             }
 
             // Đổi tên Bảng giá
-            worksheet.getCell('A5').value = 'BẢNG BÁO GIÁ THIẾT BỊ';
+            const tbTitleCell = worksheet.getCell('A5');
+            tbTitleCell.value = 'BẢNG BÁO GIÁ THIẾT BỊ';
+            tbTitleCell.font = { name: 'Arial', size: 16, bold: true, italic: false, strike: false, underline: false, color: { argb: 'FF000000' } };
+            tbTitleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
             // Chèn Logo nếu là Base64
             if (companyInfo.logo && companyInfo.logo.startsWith('data:image')) {
@@ -183,11 +186,15 @@ export default function BuildPcPage() {
                         top: { style: 'thin' }, left: { style: 'thin' },
                         bottom: { style: 'thin' }, right: { style: 'thin' }
                     };
+
+                    let horzAlignment: 'left' | 'center' | 'right' = 'center';
+                    if (c === 2 || c === 3 || c === 4) horzAlignment = 'left';
+                    else if (c >= 7) horzAlignment = 'right';
+
                     cell.alignment = {
                         vertical: 'middle',
-                        horizontal: (c === 2 || c === 3 || c === 4) ? 'left' : (c >= 7 ? 'right' : 'center'),
-                        wrapText: true,
-                        indent: 0
+                        horizontal: horzAlignment,
+                        wrapText: true
                     };
                 }
 
