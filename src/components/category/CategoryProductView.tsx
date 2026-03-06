@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
@@ -61,8 +61,44 @@ export function CategoryProductView({
 
     const [sortOrder, setSortOrder] = useState(() => searchParams?.get('sort') || "DATE_DESC");
 
+    // Lắng nghe sự thay đổi của searchParams (khi User click link từ Mega Menu)
+    const isUpdatingFromUrl = useRef(false);
+    useEffect(() => {
+        if (isUpdatingFromUrl.current) return; // Bỏ qua nếu là bộ lọc tự push URL
+
+        if (!searchParams) return;
+
+        // Parse lại từ đầu:
+        const parsedAttrs: Record<string, string[]> = {};
+        searchParams.forEach((value, key) => {
+            if (key.startsWith('pa_')) {
+                const attrSlug = key.slice(3);
+                const values = searchParams.getAll(key).flatMap(v => v.split(',')).filter(Boolean);
+                if (values.length > 0) {
+                    parsedAttrs[attrSlug] = values;
+                }
+            }
+        });
+
+        const minStr = searchParams.get('min_price');
+        const maxStr = searchParams.get('max_price');
+        const parsedPrice = {
+            min: minStr ? Number(minStr) : null,
+            max: maxStr ? Number(maxStr) : null,
+        };
+
+        const parsedSort = searchParams.get('sort') || "DATE_DESC";
+
+        // Cập nhật trạng thái (State)
+        setSelectedAttributes(parsedAttrs);
+        setPriceRange(parsedPrice);
+        setSortOrder(parsedSort);
+        // Note: khi state đổi, useEffect fetchProducts sẽ tự động chạy!
+    }, [searchParams]);
+
     // Sync state to URL whenever it changes
     const updateUrlParams = useCallback(() => {
+        isUpdatingFromUrl.current = true; // Mark as our own update
         const params = new URLSearchParams();
 
         // Add attributes preserving multiple values via comma-separation or multiple keys
@@ -80,6 +116,9 @@ export function CategoryProductView({
         const newQuery = params.toString();
         const newUrl = newQuery ? `${pathname}?${newQuery}` : pathname;
         router.replace(newUrl, { scroll: false });
+
+        // Reset cờ sau khi update URL xong
+        setTimeout(() => { isUpdatingFromUrl.current = false; }, 50);
     }, [selectedAttributes, priceRange, sortOrder, pathname, router]);
 
     // AJAX Fetch products
