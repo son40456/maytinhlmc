@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { usePcBuilderStore } from "@/store/usePcBuilderStore";
 import { ProductSelectModal } from "@/components/pc-builder/ProductSelectModal";
+import { PcBuilderExportTemplate } from "@/components/pc-builder/PcBuilderExportTemplate";
 import { useCartStore } from "@/store/useCartStore";
 import { getAutoFilterForCategory } from "@/lib/pc-builder/compatibilityEngine";
 import { FileSpreadsheet, DownloadCloud, Share2, Printer, AlertTriangle, Lightbulb, CheckCircle2 } from "lucide-react";
@@ -20,7 +21,10 @@ export default function BuildPcPage() {
     const [modalOpen, setModalOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState<{ id: string; name: string; slug: string } | null>(null);
 
+    const activeCategoryRef = useRef<{ id: string; name: string; slug: string } | null>(null);
+
     const summaryRef = useRef<HTMLDivElement>(null);
+    const exportRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // Fetch dynamic configuration from Redis/File
@@ -104,9 +108,9 @@ export default function BuildPcPage() {
     };
 
     const handleDownloadImage = async () => {
-        if (!summaryRef.current) return;
+        if (!exportRef.current) return;
         try {
-            const dataUrl = await toPng(summaryRef.current, { backgroundColor: '#ffffff', pixelRatio: 2 });
+            const dataUrl = await toPng(exportRef.current, { backgroundColor: '#ffffff', pixelRatio: 2, cacheBust: true });
             download(dataUrl, 'cau_hinh_pc_lmc.png');
         } catch (error) {
             console.error('Lỗi khi tải ảnh:', error);
@@ -374,6 +378,8 @@ export default function BuildPcPage() {
                     }}
                 />
             )}
+            {/* Export Layout */}
+            <PcBuilderExportTemplate ref={exportRef} components={components} totalPrice={totalPrice} />
         </div>
     );
 }
