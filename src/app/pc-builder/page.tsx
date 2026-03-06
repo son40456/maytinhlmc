@@ -119,6 +119,12 @@ export default function BuildPcPage() {
                     c.border = {};
                     c.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false };
                 });
+                // Remove existing merges safely to prevent "Cannot merge already merged cells"
+                try {
+                    const rowNum = i;
+                    // If C and D were merged in template, unmerge them before iterating products
+                    worksheet.unMergeCells(`C${rowNum}:D${rowNum}`);
+                } catch (e) { }
             }
 
             // 5. Điền dữ liệu linh kiện bắt đầu từ dòng 10
@@ -180,8 +186,12 @@ export default function BuildPcPage() {
             const noteRow = worksheet.getRow(currentRow + 1);
             noteRow.getCell(1).value = `Quý khách lưu ý: Giá bán, khuyến mại của sản phẩm và tình trạng còn hàng có thể bị thay đổi bất cứ lúc nào mà không kịp báo trước. Mọi thông tin chi tiết xin vui lòng liên hệ ${companyInfo.contacts?.[0]?.text || companyInfo.contact || 'Tổng đài'}`;
             noteRow.getCell(1).font = { name: 'Arial', size: 10, italic: true };
-            // Merge từ A đến H cho ghi chú
-            worksheet.mergeCells(`A${currentRow + 1}:H${currentRow + 1}`);
+
+            // Try to merge cells for the note, but catch if it overlaps existing merges in the template
+            try {
+                worksheet.mergeCells(`A${currentRow + 1}:H${currentRow + 1}`);
+            } catch (e) { }
+
             noteRow.commit();
 
             // 8. Xuất file
