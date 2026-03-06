@@ -75,19 +75,27 @@ export default function BuildPcPage() {
             // Optional: Inject Company Info into Excel template
             // Assuming A1:B4 for logo, F1:H4 for company info
             if (companyInfo.name) {
-                worksheet.getCell('F1').value = companyInfo.name;
-                // Áp dụng font bold chữ đỏ/xanh tuỳ mẫu, có thể để mặc định
+                const titleCell = worksheet.getCell('F1');
+                titleCell.value = companyInfo.name.toUpperCase();
+                titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FF0E5296' }, underline: false, strike: false };
             }
 
             if (companyInfo.contacts && companyInfo.contacts.length > 0) {
                 // Dùng các dòng F2, F3, F4 để ghi thông tin liên hệ
                 companyInfo.contacts.slice(0, 3).forEach((c, i) => {
                     // Thay F thành G hoặc cột tương ứng tuỳ template, dùng F2->F4
-                    worksheet.getCell(`F${i + 2}`).value = `${c.icon} ${c.text}`;
+                    const cCell = worksheet.getCell(`F${i + 2}`);
+                    cCell.value = `${c.icon} ${c.text}`;
+                    cCell.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
                 });
             } else if (companyInfo.contact) {
-                worksheet.getCell('F2').value = companyInfo.contact;
-                worksheet.getCell('F3').value = companyInfo.description || '';
+                const c1 = worksheet.getCell('F2');
+                c1.value = companyInfo.contact;
+                c1.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
+
+                const c2 = worksheet.getCell('F3');
+                c2.value = companyInfo.description || '';
+                c2.font = { name: 'Arial', size: 10, bold: false, italic: false, underline: false, strike: false };
             }
 
             // Chèn Logo nếu là Base64
@@ -152,7 +160,7 @@ export default function BuildPcPage() {
                 // Định dạng lại giao diện cho dòng
                 for (let c = 1; c <= 8; c++) {
                     const cell = row.getCell(c);
-                    cell.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false };
+                    cell.font = { name: 'Arial', size: 10, bold: false, italic: false, strike: false, underline: false };
                     cell.border = {
                         top: { style: 'thin' }, left: { style: 'thin' },
                         bottom: { style: 'thin' }, right: { style: 'thin' }
@@ -190,8 +198,9 @@ export default function BuildPcPage() {
 
             // 7. Ghi chú chân trang
             const noteRow = worksheet.getRow(currentRow + 1);
-            noteRow.getCell(1).value = `Quý khách lưu ý: Giá bán, khuyến mại của sản phẩm và tình trạng còn hàng có thể bị thay đổi bất cứ lúc nào mà không kịp báo trước. Mọi thông tin chi tiết xin vui lòng liên hệ ${companyInfo.contacts?.[0]?.text || companyInfo.contact || 'Tổng đài'}`;
-            noteRow.getCell(1).font = { name: 'Arial', size: 10, italic: true };
+            const extraDescription = companyInfo.description ? ` - ${companyInfo.description}` : '';
+            noteRow.getCell(1).value = `Quý khách lưu ý: Giá bán, khuyến mại của sản phẩm và tình trạng còn hàng có thể bị thay đổi bất cứ lúc nào mà không kịp báo trước. Mọi thông tin chi tiết xin vui lòng liên hệ ${companyInfo.contacts?.[0]?.text || companyInfo.contact || 'Tổng đài'}${extraDescription}`;
+            noteRow.getCell(1).font = { name: 'Arial', size: 10, italic: true, underline: false, strike: false };
 
             // Try to merge cells for the note, but catch if it overlaps existing merges in the template
             try {
