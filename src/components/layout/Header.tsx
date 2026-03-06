@@ -394,19 +394,31 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                 <div className="flex justify-between items-start">
                                                     {item.columns ? (
                                                         <div className="flex gap-8 min-w-max">
-                                                            {item.columns.map((col, idx) => (
-                                                                <div key={idx} className="flex flex-col space-y-2 min-w-[150px]">
-                                                                    {col.map(child => (
-                                                                        <Link
-                                                                            key={child.id}
-                                                                            href={child.path.replace('/category/', '/').replace('/product/', '/')}
-                                                                            className="block py-1 hover:text-blue-600 text-[11px] font-bold transition-colors"
-                                                                        >
-                                                                            {child.label.replace(/<\/?[^>]+(>|$)/g, "").toUpperCase()}
-                                                                        </Link>
-                                                                    ))}
-                                                                </div>
-                                                            ))}
+                                                            {item.columns.map((col: any, idx: number) => {
+                                                                // Support both old (MenuItem[]) and new ({heading, items}) format
+                                                                const heading: string = col.heading || '';
+                                                                const colItems: any[] = col.items ?? col;
+                                                                return (
+                                                                    <div key={idx} className="flex flex-col min-w-[150px]">
+                                                                        {heading && (
+                                                                            <span className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-2 pb-1 border-b border-orange-100">
+                                                                                {heading}
+                                                                            </span>
+                                                                        )}
+                                                                        <div className="flex flex-col space-y-1.5">
+                                                                            {colItems.map((child: any) => (
+                                                                                <Link
+                                                                                    key={child.id}
+                                                                                    href={child.path.replace('/category/', '/').replace('/product/', '/')}
+                                                                                    className="block py-0.5 hover:text-blue-600 text-[11px] font-semibold transition-colors text-gray-600"
+                                                                                >
+                                                                                    {child.label.replace(/<\/?[^>]+(\>|$)/g, "")}
+                                                                                </Link>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                );
+                                                            })}
                                                         </div>
                                                     ) : (
                                                         <div className="flex flex-col space-y-2 min-w-[150px]">
