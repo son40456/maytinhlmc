@@ -52,8 +52,8 @@ const renderMenuIcon = (iconField: string | undefined, label: string, cssClasses
                     alt={label}
                     className="object-contain"
                     style={{
-                        width: small ? '22px' : '28px',
-                        height: small ? '22px' : '28px',
+                        width: small ? '24px' : '32px',
+                        height: small ? '24px' : '32px',
                         filter: 'brightness(0) invert(1)'
                     }}
                 />
