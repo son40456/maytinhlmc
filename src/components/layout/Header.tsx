@@ -17,53 +17,48 @@ const LayoutIcon = ({ size }: { size: number }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" /></svg>
 );
 
-const menuIconsMap: { [key: string]: React.ReactNode } = {
-    'BỘ PC': <MonitorPlay size={22} />,
-    'MAINBOARD': <LayoutIcon size={22} />,
-    'CPU': <Cpu size={22} />,
-    'RAM': <HardDrive size={22} />,
-    'VGA': <Monitor size={22} />,
-    'Ổ CỨNG HDD': <HardDrive size={22} />,
-    'Ổ CỨNG SSD': <HardDrive size={22} />,
-    'PSU': <Fan size={22} />,
-    'CASE': <CaseIcon size={22} />,
-    'MÀN HÌNH': <Monitor size={22} />,
-    'TẢN NHIỆT': <Fan size={22} />,
-    'PHÍM CHUỘT': <MousePointer2 size={22} />,
-    'TAI NGHE': <Headphones size={22} />,
+const lucideIconMap: Record<string, React.ReactNode> = {
+    'MonitorPlay': <MonitorPlay size={22} />,
+    'Layout': <LayoutIcon size={22} />,
+    'Cpu': <Cpu size={22} />,
+    'HardDrive': <HardDrive size={22} />,
+    'Monitor': <Monitor size={22} />,
+    'Fan': <Fan size={22} />,
+    'MousePointer2': <MousePointer2 size={22} />,
+    'Headphones': <Headphones size={22} />,
+};
+const lucideIconMapSmall: Record<string, React.ReactNode> = {
+    'MonitorPlay': <MonitorPlay size={18} />,
+    'Layout': <LayoutIcon size={18} />,
+    'Cpu': <Cpu size={18} />,
+    'HardDrive': <HardDrive size={18} />,
+    'Monitor': <Monitor size={18} />,
+    'Fan': <Fan size={18} />,
+    'MousePointer2': <MousePointer2 size={18} />,
+    'Headphones': <Headphones size={18} />,
 };
 
-const menuIconsMapSmall: { [key: string]: React.ReactNode } = {
-    'BỘ PC': <MonitorPlay size={18} />,
-    'MAINBOARD': <LayoutIcon size={18} />,
-    'CPU': <Cpu size={18} />,
-    'RAM': <HardDrive size={18} />,
-    'VGA': <Monitor size={18} />,
-    'Ổ CỨNG HDD': <HardDrive size={18} />,
-    'Ổ CỨNG SSD': <HardDrive size={18} />,
-    'PSU': <Fan size={18} />,
-    'CASE': <CaseIcon size={18} />,
-    'MÀN HÌNH': <Monitor size={18} />,
-    'TẢN NHIỆT': <Fan size={18} />,
-    'PHÍM CHUỘT': <MousePointer2 size={18} />,
-    'TAI NGHE': <Headphones size={18} />,
-};
-
-const getMenuIcon = (label: string, cssClasses: string[] = []) => {
-    const cleanLabel = label.replace(/<\/?[^>]+(>|$)/g, "").toUpperCase();
-    if (menuIconsMap[cleanLabel]) return menuIconsMap[cleanLabel];
-    const iconClass = cssClasses.find(c => c.startsWith('icon-') || c.startsWith('fa-'));
-    if (iconClass) {
-        return <i className={`${iconClass}`} style={{ fontSize: '22px' }}></i>;
+// Render icon from item.icon field (emoji, lucide name) or fall back to label lookup
+const renderMenuIcon = (iconField: string | undefined, label: string, cssClasses: string[] = [], small = false) => {
+    const map = small ? lucideIconMapSmall : lucideIconMap;
+    // 1. Use icon field if present
+    if (iconField) {
+        if (map[iconField]) return map[iconField];
+        // It's an emoji or custom string — render as text
+        return <span style={{ fontSize: small ? '18px' : '22px', lineHeight: 1 }}>{iconField}</span>;
     }
-    return <Monitor size={22} />;
+    // 2. Fallback: label-based lookup (backward compat)
+    const cleanLabel = label.replace(/<\/?[^>]+(>|$)/g, "").toUpperCase();
+    return map[{
+        'BỘ PC': 'MonitorPlay', 'MAINBOARD': 'Layout', 'CPU': 'Cpu',
+        'RAM': 'HardDrive', 'VGA': 'Monitor', 'Ổ CỨNG HDD': 'HardDrive',
+        'Ổ CỨNG SSD': 'HardDrive', 'PSU': 'Fan', 'CASE': 'Layout',
+        'MÀN HÌNH': 'Monitor', 'TẢN NHIỆT': 'Fan', 'PHÍM CHUỘT': 'MousePointer2', 'TAI NGHE': 'Headphones',
+    }[cleanLabel] ?? ''] ?? (small ? <Monitor size={18} /> : <Monitor size={22} />);
 };
 
-const getMenuIconSmall = (label: string) => {
-    const cleanLabel = label.replace(/<\/?[^>]+(>|$)/g, "").toUpperCase();
-    if (menuIconsMapSmall[cleanLabel]) return menuIconsMapSmall[cleanLabel];
-    return <Monitor size={18} />;
-};
+const getMenuIcon = (label: string, cssClasses: string[] = []) => renderMenuIcon(undefined, label, cssClasses, false);
+const getMenuIconSmall = (label: string) => renderMenuIcon(undefined, label, [], true);
 
 export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const [mounted, setMounted] = useState(false);
@@ -378,7 +373,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                             onClick={handleMenuClick}
                                         >
                                             <span className="mb-1.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
-                                                {getMenuIcon(cleanLabel, item.cssClasses)}
+                                                {renderMenuIcon((item as any).icon, cleanLabel, item.cssClasses, false)}
                                             </span>
                                             <span className="text-[11px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-1 uppercase whitespace-nowrap">
                                                 {cleanLabel}

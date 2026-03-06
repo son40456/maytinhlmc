@@ -4,30 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
     Save, Plus, Trash2, MoveUp, MoveDown, ChevronDown, ChevronRight,
     GripVertical, X, Loader2, Menu, ExternalLink, LayoutGrid, List,
-    Monitor, Cpu, HardDrive, Fan, MousePointer2, Headphones, Package,
-    MonitorPlay, Layout as LayoutIcon, Tag, Star, Zap, Globe, Settings, Box
 } from "lucide-react";
-
-// ── Icon map ───────────────────────────────────────────────────────────────────
-const ICON_MAP: Record<string, React.ReactNode> = {
-    "MonitorPlay": <MonitorPlay size={18} />,
-    "Layout": <LayoutIcon size={18} />,
-    "Cpu": <Cpu size={18} />,
-    "HardDrive": <HardDrive size={18} />,
-    "Monitor": <Monitor size={18} />,
-    "Fan": <Fan size={18} />,
-    "MousePointer2": <MousePointer2 size={18} />,
-    "Headphones": <Headphones size={18} />,
-    "Package": <Package size={18} />,
-    "Tag": <Tag size={18} />,
-    "Star": <Star size={18} />,
-    "Zap": <Zap size={18} />,
-    "Globe": <Globe size={18} />,
-    "Settings": <Settings size={18} />,
-    "Box": <Box size={18} />,
-};
-
-const ICON_KEYS = Object.keys(ICON_MAP);
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface MenuItem { id: string; label: string; path: string; }
@@ -40,6 +17,40 @@ interface MenuTopItem {
 }
 
 const uid = () => `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+// ── Migrate old format (MenuItem[][]) → new ({heading, items}[]) ──────────────
+function migrateColumns(raw: any): MenuColumn[] | null {
+    if (!raw) return null;
+    if (!Array.isArray(raw)) return null;
+    if (raw.length === 0) return [];
+    const first = raw[0];
+    // New format: first element has .heading or .items
+    if (first && (typeof first.heading !== 'undefined' || typeof first.items !== 'undefined')) {
+        return raw.map((c: any) => ({
+            heading: c.heading ?? '',
+            items: Array.isArray(c.items) ? c.items : [],
+        }));
+    }
+    // Old format: first element is a MenuItem (has .label, .path)
+    if (first && typeof first.label === 'string') {
+        // old flat children format – wrap into single column
+        return [{ heading: '', items: raw }];
+    }
+    // Old format: array of arrays
+    return raw.map((col: any[]) => ({
+        heading: '',
+        items: Array.isArray(col) ? col : [],
+    }));
+}
+
+function migrateItem(raw: any): MenuTopItem {
+    return {
+        ...raw,
+        icon: raw.icon || 'Package',
+        children: Array.isArray(raw.children) ? raw.children : null,
+        columns: migrateColumns(raw.columns),
+    };
+}
 
 // ── Sub-item row ───────────────────────────────────────────────────────────────
 function SubItemRow({ item, onChange, onDelete }: {
@@ -70,18 +81,21 @@ function SubItemRow({ item, onChange, onDelete }: {
 function ColumnEditor({ columns, onChange }: { columns: MenuColumn[]; onChange: (c: MenuColumn[]) => void; }) {
     const addCol = () => onChange([...columns, { heading: "", items: [] }]);
     const removeCol = (ci: number) => onChange(columns.filter((_, i) => i !== ci));
-    const updateHeading = (ci: number, val: string) => onChange(columns.map((c, i) => i === ci ? { ...c, heading: val } : c));
-
-    const addItem = (ci: number) => onChange(columns.map((c, i) => i === ci ? { ...c, items: [...c.items, { id: uid(), label: "", path: "" }] } : c));
-    const updateItem = (ci: number, ii: number, f: keyof MenuItem, v: string) => onChange(columns.map((c, i) => i === ci ? { ...c, items: c.items.map((it, j) => j === ii ? { ...it, [f]: v } : it) } : c));
-    const deleteItem = (ci: number, ii: number) => onChange(columns.map((c, i) => i === ci ? { ...c, items: c.items.filter((_, j) => j !== ii) } : c));
+    const updateHeading = (ci: number, val: string) =>
+        onChange(columns.map((c, i) => i === ci ? { ...c, heading: val } : c));
+    const addItem = (ci: number) =>
+        onChange(columns.map((c, i) => i === ci ? { ...c, items: [...(c.items || []), { id: uid(), label: "", path: "" }] } : c));
+    const updateItem = (ci: number, ii: number, f: keyof MenuItem, v: string) =>
+        onChange(columns.map((c, i) => i === ci ? { ...c, items: (c.items || []).map((it, j) => j === ii ? { ...it, [f]: v } : it) } : c));
+    const deleteItem = (ci: number, ii: number) =>
+        onChange(columns.map((c, i) => i === ci ? { ...c, items: (c.items || []).filter((_, j) => j !== ii) } : c));
 
     return (
         <div className="flex gap-3 overflow-x-auto pb-2">
             {columns.map((col, ci) => (
                 <div key={ci} className="min-w-[220px] w-52 flex-shrink-0 border border-slate-200 rounded-xl bg-slate-50 p-3">
                     <div className="flex gap-2 items-center mb-2">
-                        <input value={col.heading} onChange={e => updateHeading(ci, e.target.value)}
+                        <input value={col.heading || ''} onChange={e => updateHeading(ci, e.target.value)}
                             placeholder="Tiêu đề cột (VD: THƯƠNG HIỆU)"
                             className="flex-1 text-xs font-bold uppercase tracking-wide outline-none bg-white border border-orange-200 rounded px-2 py-1 focus:border-orange-400 text-orange-700 placeholder-slate-400 min-w-0" />
                         <button onClick={() => removeCol(ci)} className="text-slate-300 hover:text-red-500 transition-colors shrink-0">
@@ -89,7 +103,7 @@ function ColumnEditor({ columns, onChange }: { columns: MenuColumn[]; onChange: 
                         </button>
                     </div>
                     <div className="space-y-1">
-                        {col.items.map((item, ii) => (
+                        {(col.items || []).map((item, ii) => (
                             <SubItemRow key={item.id || ii} item={item}
                                 onChange={(f, v) => updateItem(ci, ii, f, v)}
                                 onDelete={() => deleteItem(ci, ii)} />
@@ -112,11 +126,14 @@ function ColumnEditor({ columns, onChange }: { columns: MenuColumn[]; onChange: 
 // ── Children editor ────────────────────────────────────────────────────────────
 function ChildrenEditor({ children, onChange }: { children: MenuItem[]; onChange: (i: MenuItem[]) => void; }) {
     const add = () => onChange([...children, { id: uid(), label: "", path: "" }]);
-    const update = (i: number, f: keyof MenuItem, v: string) => onChange(children.map((it, idx) => idx === i ? { ...it, [f]: v } : it));
+    const update = (i: number, f: keyof MenuItem, v: string) =>
+        onChange(children.map((it, idx) => idx === i ? { ...it, [f]: v } : it));
     const remove = (i: number) => onChange(children.filter((_, idx) => idx !== i));
     return (
         <div className="space-y-1.5">
-            {children.map((item, i) => (<SubItemRow key={item.id || i} item={item} onChange={(f, v) => update(i, f, v)} onDelete={() => remove(i)} />))}
+            {children.map((item, i) => (
+                <SubItemRow key={item.id || i} item={item} onChange={(f, v) => update(i, f, v)} onDelete={() => remove(i)} />
+            ))}
             <button onClick={add} className="w-full text-xs text-blue-600 py-2 border border-dashed border-blue-200 rounded-lg hover:bg-blue-50 transition-colors flex items-center justify-center gap-1 font-semibold">
                 <Plus className="w-3 h-3" /> Thêm mục con
             </button>
@@ -124,28 +141,58 @@ function ChildrenEditor({ children, onChange }: { children: MenuItem[]; onChange
     );
 }
 
-// ── Icon Picker ────────────────────────────────────────────────────────────────
-function IconPicker({ value, onChange }: { value: string; onChange: (v: string) => void; }) {
-    const [open, setOpen] = useState(false);
+// ── Icon Input (custom text/emoji or preset) ───────────────────────────────────
+const ICON_PRESETS = [
+    { key: "MonitorPlay", emoji: "🖥️" },
+    { key: "Cpu", emoji: "💻" },
+    { key: "HardDrive", emoji: "💾" },
+    { key: "Monitor", emoji: "🖥" },
+    { key: "Fan", emoji: "🌀" },
+    { key: "MousePointer2", emoji: "🖱️" },
+    { key: "Headphones", emoji: "🎧" },
+    { key: "Layout", emoji: "⬛" },
+    { key: "Package", emoji: "📦" },
+];
+
+function IconInput({ value, onChange }: { value: string; onChange: (v: string) => void; }) {
+    const [showPicker, setShowPicker] = useState(false);
+    const COMMON_EMOJIS = ["🖥️", "💻", "💾", "🖥", "🌀", "🖱️", "🎧", "📦", "⚡", "🔧", "🔌", "📺", "🎮", "🔴", "⚙️", "🖨️", "📡", "🧠", "💿", "🔋"];
     return (
         <div className="relative shrink-0">
-            <button type="button"
-                onClick={() => setOpen(o => !o)}
-                className="flex items-center gap-1.5 bg-slate-100 border border-slate-200 hover:border-blue-400 text-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all min-w-[110px]">
-                <span className="text-blue-600">{ICON_MAP[value] ?? <Package size={16} />}</span>
-                <span className="truncate">{value || "Chọn Icon"}</span>
-                <ChevronDown className="w-3 h-3 ml-auto opacity-50" />
-            </button>
-            {open && (
-                <div className="absolute top-full left-0 mt-1 z-50 bg-white border border-slate-200 rounded-xl shadow-xl p-2 grid grid-cols-3 gap-1 w-[220px]">
-                    {ICON_KEYS.map(key => (
-                        <button key={key} type="button"
-                            onClick={() => { onChange(key); setOpen(false); }}
-                            className={`flex flex-col items-center gap-1 p-2 rounded-lg text-center transition-all text-xs font-medium ${value === key ? "bg-blue-600 text-white" : "hover:bg-slate-100 text-slate-600"}`}>
-                            <span className={value === key ? "text-white" : "text-blue-600"}>{ICON_MAP[key]}</span>
-                            <span className="truncate w-full">{key}</span>
-                        </button>
-                    ))}
+            <div className="flex items-center border border-slate-200 rounded-lg bg-slate-50 focus-within:border-blue-400 overflow-hidden">
+                <input
+                    value={value}
+                    onChange={e => onChange(e.target.value)}
+                    placeholder="Icon / Emoji"
+                    className="w-28 text-sm outline-none bg-transparent px-2.5 py-1.5 font-medium text-slate-700 placeholder-slate-400"
+                />
+                <button type="button" onClick={() => setShowPicker(o => !o)}
+                    className="px-2 py-1.5 text-slate-400 hover:text-blue-500 border-l border-slate-200 bg-white transition-colors text-xs font-bold">
+                    {showPicker ? '▲' : '▼'}
+                </button>
+            </div>
+            {showPicker && (
+                <div className="absolute top-full left-0 mt-1 z-50 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-[280px]">
+                    <p className="text-xs text-slate-400 mb-2 font-medium">Chọn nhanh hoặc gõ emoji/text bất kỳ vào ô trên</p>
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                        {COMMON_EMOJIS.map(em => (
+                            <button key={em} type="button"
+                                onClick={() => { onChange(em); setShowPicker(false); }}
+                                className={`w-9 h-9 flex items-center justify-center text-xl rounded-lg border transition-all ${value === em ? "border-blue-400 bg-blue-50" : "border-slate-200 hover:border-blue-300 hover:bg-slate-50"}`}>
+                                {em}
+                            </button>
+                        ))}
+                    </div>
+                    <p className="text-xs text-slate-400 font-medium mb-1">Icon tên (để dùng với icon Lucide):</p>
+                    <div className="flex flex-wrap gap-1.5">
+                        {ICON_PRESETS.map(({ key, emoji }) => (
+                            <button key={key} type="button"
+                                onClick={() => { onChange(key); setShowPicker(false); }}
+                                className={`flex items-center gap-1 px-2 py-1 text-xs rounded-lg border font-mono transition-all ${value === key ? "border-blue-400 bg-blue-50 text-blue-600" : "border-slate-200 hover:border-slate-300 text-slate-600"}`}>
+                                {emoji} {key}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>
@@ -163,7 +210,7 @@ function MenuItemCard({ item, index, total, onChange, onMove, onDelete }: {
     const setMode = (m: "columns" | "children" | "none") => onChange({
         ...item,
         columns: m === "columns" ? (item.columns ?? []) : null,
-        children: m === "children" ? (item.children ?? []) : (m === "none" ? null : item.children),
+        children: m === "children" ? (item.children ?? []) : null,
     });
 
     return (
@@ -171,8 +218,8 @@ function MenuItemCard({ item, index, total, onChange, onMove, onDelete }: {
             <div className="flex items-center gap-2.5 px-4 py-3 flex-wrap sm:flex-nowrap">
                 <GripVertical className="w-4 h-4 text-slate-300 shrink-0" />
 
-                {/* Icon picker */}
-                <IconPicker value={item.icon} onChange={v => onChange({ ...item, icon: v })} />
+                {/* Icon input – custom text or emoji */}
+                <IconInput value={item.icon} onChange={v => onChange({ ...item, icon: v })} />
 
                 {/* Label */}
                 <input value={item.label} onChange={e => onChange({ ...item, label: e.target.value })}
@@ -186,11 +233,11 @@ function MenuItemCard({ item, index, total, onChange, onMove, onDelete }: {
 
                 {/* Actions */}
                 <div className="flex gap-1 shrink-0">
-                    <button onClick={() => onMove("up")} disabled={index === 0} title="Lên"
+                    <button onClick={() => onMove("up")} disabled={index === 0}
                         className="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-blue-600 hover:border-blue-300 disabled:opacity-30 flex items-center justify-center transition-all">
                         <MoveUp className="w-3.5 h-3.5" />
                     </button>
-                    <button onClick={() => onMove("down")} disabled={index === total - 1} title="Xuống"
+                    <button onClick={() => onMove("down")} disabled={index === total - 1}
                         className="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-blue-600 hover:border-blue-300 disabled:opacity-30 flex items-center justify-center transition-all">
                         <MoveDown className="w-3.5 h-3.5" />
                     </button>
@@ -250,28 +297,49 @@ export default function MenuAdminPage() {
     const [status, setStatus] = useState<{ type: "success" | "error"; msg: string } | null>(null);
 
     useEffect(() => {
-        fetch("/api/admin/menu").then(r => r.json()).then(data => { setItems(data); setLoading(false); }).catch(() => setLoading(false));
+        fetch("/api/admin/menu")
+            .then(r => r.json())
+            .then(data => {
+                // Migrate old format to new on load
+                setItems(Array.isArray(data) ? data.map(migrateItem) : []);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
     }, []);
 
-    const flash = (type: "success" | "error", msg: string) => { setStatus({ type, msg }); setTimeout(() => setStatus(null), 3000); };
+    const flash = (type: "success" | "error", msg: string) => {
+        setStatus({ type, msg });
+        setTimeout(() => setStatus(null), 3000);
+    };
 
     const handleSave = async () => {
         setSaving(true);
         try {
-            const res = await fetch("/api/admin/menu", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(items) });
+            const res = await fetch("/api/admin/menu", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(items),
+            });
             if (res.ok) flash("success", "Lưu cấu hình Mega Menu thành công! ✅");
             else flash("error", "Lỗi khi lưu dữ liệu.");
         } catch { flash("error", "Có lỗi xảy ra khi lưu."); }
         finally { setSaving(false); }
     };
 
-    const updateItem = useCallback((i: number, u: MenuTopItem) => setItems(p => p.map((it, idx) => idx === i ? u : it)), []);
-    const moveItem = useCallback((i: number, dir: "up" | "down") => setItems(p => { const a = [...p]; const t = dir === "up" ? i - 1 : i + 1;[a[i], a[t]] = [a[t], a[i]]; return a; }), []);
-    const deleteItem = useCallback((i: number) => setItems(p => p.filter((_, idx) => idx !== i)), []);
+    const updateItem = useCallback((i: number, u: MenuTopItem) =>
+        setItems(p => p.map((it, idx) => idx === i ? u : it)), []);
+    const moveItem = useCallback((i: number, dir: "up" | "down") =>
+        setItems(p => { const a = [...p]; const t = dir === "up" ? i - 1 : i + 1;[a[i], a[t]] = [a[t], a[i]]; return a; }), []);
+    const deleteItem = useCallback((i: number) =>
+        setItems(p => p.filter((_, idx) => idx !== i)), []);
+    const addItem = () =>
+        setItems(p => [...p, { id: uid(), label: "Mục mới", path: "/", icon: "📦", cssClasses: [], image: "", children: [], columns: null }]);
 
-    const addItem = () => setItems(p => [...p, { id: uid(), label: "Mục mới", path: "/", icon: "Package", cssClasses: [], image: "", children: [], columns: null }]);
-
-    if (loading) return (<div className="flex items-center justify-center py-20 text-slate-500"><Loader2 className="w-6 h-6 animate-spin mr-2" /> Đang tải cấu hình menu...</div>);
+    if (loading) return (
+        <div className="flex items-center justify-center py-20 text-slate-500">
+            <Loader2 className="w-6 h-6 animate-spin mr-2" /> Đang tải cấu hình menu...
+        </div>
+    );
 
     return (
         <div className="max-w-5xl mx-auto pb-20">
@@ -296,7 +364,8 @@ export default function MenuAdminPage() {
             )}
 
             <div className="mb-4 p-4 bg-blue-50 border border-blue-100 rounded-xl text-sm text-blue-700">
-                <strong>Hướng dẫn:</strong> Click ▶ để mở rộng và chỉnh sửa menu con. Phần <strong className="text-orange-600">tiêu đề cột màu cam</strong> là heading hiển thị trên trang. Sau khi sửa xong nhấn <strong>Lưu Thay Đổi</strong>.
+                <strong>Icon:</strong> Nhập emoji (VD: 🖥️, 💻) hoặc tên icon Lucide (VD: Monitor, Cpu). Bấm ▼ để chọn nhanh. <br />
+                <strong>Tiêu đề cột</strong> màu cam sẽ hiển thị to trên Mega Menu. Click ▶ để chỉnh sửa sub-menu.
             </div>
 
             <div className="space-y-3">
