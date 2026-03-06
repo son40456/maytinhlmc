@@ -21,8 +21,8 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
         const selectedComponents = components.filter(c => c.product);
 
         return (
-            <div className="fixed" style={{ top: '-10000px', left: '-10000px', width: '900px', zIndex: -1000 }}>
-                <div ref={ref} className="bg-[#f8f9fa] w-[900px] text-gray-900 font-sans mx-auto p-0">
+            <div className="fixed" style={{ top: '-10000px', left: '-10000px', width: '900px', zIndex: -1000, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
+                <div ref={ref} className="bg-[#f8f9fa] w-[900px] text-gray-900 mx-auto p-0" style={{ fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
                     {/* Header Section */}
                     <div className="flex flex-col items-center justify-center pt-10 pb-6 bg-[#f0f2f5]">
                         {/* Fake LMC Logo similar to original design */}
@@ -55,17 +55,17 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                                             )}
                                         </div>
                                         <div className="flex-1 flex flex-col justify-center">
-                                            <h3 className="text-[17px] font-bold text-gray-800 leading-tight mb-1">
+                                            <h3 className="text-[17px] font-bold text-gray-900 leading-tight mb-1" style={{ fontWeight: 700 }}>
                                                 {comp.name} {comp.product?.name?.replace(comp.name, '').trim() || comp.product?.name}
                                             </h3>
-                                            <p className="text-[14px] text-gray-600 font-medium">
+                                            <p className="text-[14px] text-gray-700 mb-1" style={{ fontWeight: 400 }}>
                                                 Mã sản phẩm: {comp.product?.sku || comp.product?.databaseId}
                                             </p>
-                                            <p className="text-[14px] font-bold text-gray-800">
+                                            <p className="text-[14px] font-bold text-gray-900" style={{ fontWeight: 700 }}>
                                                 {formatNumber(numPrice)} x 1
                                             </p>
                                         </div>
-                                        <div className="flex-shrink-0 w-[180px] text-right">
+                                        <div className="flex-shrink-0 w-[180px] text-right" style={{ fontWeight: 800 }}>
                                             <span className="text-[20px] font-black text-[#e53935]">
                                                 = {formatCurrency(numPrice)}
                                             </span>

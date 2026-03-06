@@ -18,6 +18,7 @@ const GET_ALL_CATEGORY_PRODUCTS = `
         name
         slug
         ... on SimpleProduct {
+          sku
           price
           regularPrice
           salePrice
@@ -36,6 +37,7 @@ const GET_ALL_CATEGORY_PRODUCTS = `
           }
         }
         ... on VariableProduct {
+          sku
           price
           regularPrice
           salePrice
