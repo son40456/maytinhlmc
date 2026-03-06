@@ -529,9 +529,14 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     const isExpanded = expandedMobileMenu === item.id;
 
                                     // Collect all children from columns or direct children
-                                    const allChildren: MenuItemType[] = [];
+                                    const allChildren: any[] = [];
                                     if (item.columns) {
-                                        item.columns.forEach(col => allChildren.push(...col));
+                                        item.columns.forEach((col: any) => {
+                                            const colItems = col.items ?? col;
+                                            if (Array.isArray(colItems)) {
+                                                allChildren.push(...colItems);
+                                            }
+                                        });
                                     } else if (item.children) {
                                         allChildren.push(...item.children);
                                     }
