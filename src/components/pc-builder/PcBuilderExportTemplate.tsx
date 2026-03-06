@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef } from 'react';
 import { ComponentCategory } from '@/store/usePcBuilderStore';
 
 interface PcBuilderExportTemplateProps {
@@ -10,30 +10,6 @@ interface PcBuilderExportTemplateProps {
 
 export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExportTemplateProps>(
     ({ components, totalPrice }, ref) => {
-        const [imageStore, setImageStore] = useState<Record<string, string>>({});
-
-        useEffect(() => {
-            const fetchImages = async () => {
-                const newImageStore: Record<string, string> = {};
-                for (const comp of components) {
-                    if (comp.product?.image?.sourceUrl) {
-                        try {
-                            const res = await fetch(`/api/proxy-image?url=${encodeURIComponent(comp.product.image.sourceUrl)}`);
-                            if (res.ok) {
-                                const data = await res.json();
-                                newImageStore[comp.id] = data.dataUrl;
-                            }
-                        } catch (e) {
-                            console.error('Failed to proxy image for', comp.id);
-                        }
-                    }
-                }
-                setImageStore(newImageStore);
-            };
-
-            fetchImages();
-        }, [components]);
-
         const formatCurrency = (amount: number) => {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
         };
@@ -64,23 +40,15 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                             {selectedComponents.map((comp, idx) => {
                                 const priceStr = (comp.product?.price || comp.product?.regularPrice || '0').replace(/&nbsp;/g, "").replace(/\D/g, '');
                                 const numPrice = parseInt(priceStr) || 0;
-                                const base64Src = imageStore[comp.id];
 
                                 return (
                                     <div key={comp.id} className="flex items-center gap-6 py-6 border-b border-gray-100 last:border-0">
                                         <div className="w-24 h-24 rounded-lg bg-white p-1 flex-shrink-0 relative border border-gray-100 flex items-center justify-center">
-                                            {base64Src ? (
+                                            {comp.product?.image?.sourceUrl ? (
                                                 <img
-                                                    src={base64Src}
+                                                    src={`/api/proxy-image?url=${encodeURIComponent(comp.product.image.sourceUrl)}`}
                                                     alt={comp.product?.name}
                                                     className="object-contain w-full h-full"
-                                                />
-                                            ) : comp.product?.image?.sourceUrl ? (
-                                                <img
-                                                    src={comp.product.image.sourceUrl}
-                                                    alt={comp.product?.name}
-                                                    className="object-contain w-full h-full"
-                                                    crossOrigin="anonymous"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-gray-50 flex items-center justify-center text-xs text-center text-gray-400">No Image</div>
