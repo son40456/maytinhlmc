@@ -129,14 +129,21 @@ export function CategoryProductView({
         }
     }, [categorySlug, selectedAttributes, priceRange, sortOrder, pageInfo?.endCursor]);
 
-    // Re-fetch when filters change (not on mount)
-    // Re-fetch when filters change (not on mount)
+    // Re-fetch when filters change
     const [isFirstRender, setIsFirstRender] = useState(true);
+
     useEffect(() => {
         if (isFirstRender) {
             setIsFirstRender(false);
-            return;
+
+            // Nếu MỚI LOAD trang mà đã có filter (do URL truyền vào) -> cần fetch luôn
+            // vì initialProducts từ Server truyền xuống lúc nào cũng là list mặc định (không filter)
+            const hasFilters = Object.keys(selectedAttributes).length > 0 || priceRange.min !== null || priceRange.max !== null;
+            if (!hasFilters) {
+                return;
+            }
         }
+
         updateUrlParams();
         fetchProducts();
     }, [selectedAttributes, priceRange, sortOrder, fetchProducts, updateUrlParams]);
