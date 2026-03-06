@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { getCompatibilityHints, CompatibilityHint } from '@/lib/pc-builder/compatibilityEngine';
 
 export interface ComponentCategory {
@@ -45,63 +46,75 @@ function calculateTotal(components: ComponentCategory[]): number {
     return total;
 }
 
-export const usePcBuilderStore = create<PcBuilderState>((set) => ({
-    components: initialComponents,
-    totalPrice: 0,
-    compatibilityHints: [],
-    selectProduct: (categoryId, product) => {
-        set((state) => {
-            const newComponents = [...state.components];
-            const idx = newComponents.findIndex(c => c.id === categoryId);
-            if (idx > -1) {
-                newComponents[idx] = { ...newComponents[idx], product };
-            }
-            return {
-                components: newComponents,
-                totalPrice: calculateTotal(newComponents),
-                compatibilityHints: getCompatibilityHints(newComponents),
-            };
-        });
-    },
-    removeProduct: (categoryId) => {
-        set((state) => {
-            const newComponents = [...state.components];
-            const idx = newComponents.findIndex(c => c.id === categoryId);
-            if (idx > -1) {
-                newComponents[idx] = { ...newComponents[idx], product: null };
-            }
-            return {
-                components: newComponents,
-                totalPrice: calculateTotal(newComponents),
-                compatibilityHints: getCompatibilityHints(newComponents),
-            };
-        });
-    },
-    clearAll: () => {
-        set((state) => {
-            const clearedComponents = state.components.map(c => ({ ...c, product: null }));
-            return { components: clearedComponents, totalPrice: 0, compatibilityHints: [] };
-        });
-    },
-    initComponents: (config) => {
-        set((state) => {
-            // Normalize config to array
-            let configArray: ComponentCategory[] = [];
-            if (Array.isArray(config)) {
-                configArray = config;
-            } else if (typeof config === 'object' && config !== null) {
-                configArray = Object.keys(config).map(key => ({ ...config[key], id: key }));
-            }
+export const usePcBuilderStore = create<PcBuilderState>()(
+    persist(
+        (set) => ({
+            components: initialComponents,
+            totalPrice: 0,
+            compatibilityHints: [],
+            selectProduct: (categoryId, product) => {
+                set((state) => {
+                    const newComponents = [...state.components];
+                    const idx = newComponents.findIndex(c => c.id === categoryId);
+                    if (idx > -1) {
+                        newComponents[idx] = { ...newComponents[idx], product };
+                    }
+                    return {
+                        components: newComponents,
+                        totalPrice: calculateTotal(newComponents),
+                        compatibilityHints: getCompatibilityHints(newComponents),
+                    };
+                });
+            },
+            removeProduct: (categoryId) => {
+                set((state) => {
+                    const newComponents = [...state.components];
+                    const idx = newComponents.findIndex(c => c.id === categoryId);
+                    if (idx > -1) {
+                        newComponents[idx] = { ...newComponents[idx], product: null };
+                    }
+                    return {
+                        components: newComponents,
+                        totalPrice: calculateTotal(newComponents),
+                        compatibilityHints: getCompatibilityHints(newComponents),
+                    };
+                });
+            },
+            clearAll: () => {
+                set((state) => {
+                    const clearedComponents = state.components.map(c => ({ ...c, product: null }));
+                    return { components: clearedComponents, totalPrice: 0, compatibilityHints: [] };
+                });
+            },
+            initComponents: (config) => {
+                set((state) => {
+                    // Normalize config to array
+                    let configArray: ComponentCategory[] = [];
+                    if (Array.isArray(config)) {
+                        configArray = config;
+                    } else if (typeof config === 'object' && config !== null) {
+                        configArray = Object.keys(config).map(key => ({ ...config[key], id: key }));
+                    }
 
-            // Merge existing config with new config to preserve selected products if any
-            const newComponents = configArray.map(c => {
-                const existing = state.components.find(ex => ex.id === c.id);
-                return {
-                    ...c,
-                    product: existing ? existing.product : null
-                };
-            });
-            return { components: newComponents };
-        });
-    }
-}));
+                    // Merge existing config with new config to preserve selected products if any
+                    const newComponents = configArray.map(c => {
+                        const existing = state.components.find(ex => ex.id === c.id);
+                        return {
+                            ...c,
+                            product: existing ? existing.product : null
+                        };
+                    });
+
+                    return {
+                        components: newComponents,
+                        totalPrice: calculateTotal(newComponents),
+                        compatibilityHints: getCompatibilityHints(newComponents)
+                    };
+                });
+            }
+        }),
+        {
+            name: 'pc-builder-storage', // key in localStorage
+        }
+    )
+);
