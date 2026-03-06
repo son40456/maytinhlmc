@@ -401,7 +401,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                 className={`absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-[0_10px_40px_rgba(0,0,0,0.08)] border-t-2 border-yellow-400 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200 rounded-b-xl ${isMenuForceHidden ? '!hidden' : ''}`}
                                                 onClick={handleMenuClick}
                                             >
-                                                <div className="flex justify-between items-start max-w-7xl mx-auto gap-8">
+                                                <div className="flex justify-between items-start gap-8">
                                                     {item.columns ? (
                                                         <div className="flex gap-12 flex-wrap">
                                                             {item.columns.map((col: any, idx: number) => {
