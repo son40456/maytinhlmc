@@ -47,9 +47,20 @@ export default function BuildPcPage() {
 
     const getSelectedComponentsList = () => {
         return components.filter(c => c.product).map(comp => {
-            const rawWarranty: string = comp.product?.thongtinsanpham?.chinhSachBaoHanh || '';
-            // Strip prefix "Bảo hành:" or "Bảo hành" (with optional colon/dash and spaces)
-            const warranty = rawWarranty.replace(/^[Bb]ảo\s*[Hh]\u00e0nh\s*[:-]?\s*/u, '').trim() || '36 Tháng';
+            const p = comp.product;
+            // Fallbacks for various ACF naming variations
+            const rawWarranty: string =
+                p?.thongtinsanpham?.chinhSachBaoHanh ||
+                p?.thontinsanpham?.chinhSachBaoHanh ||
+                p?.thongtinsanpham?.chinh_sach_bao_hanh ||
+                p?.thontinsanpham?.chinh_sach_bao_hanh ||
+                '';
+
+            // Aggressive strip to get only duration (e.g. "Bảo hành chính hãng 36 tháng" -> "36 tháng")
+            const warranty = rawWarranty
+                .replace(/^[Bb]ảo\s*[Hh]ành.*?(?=\d)/u, '') // Strip "Bảo hành..." until the first digit
+                .replace(/^[Bb]ảo\s*[Hh]ành\s*[:-]?\s*/u, '') // Fallback strip
+                .trim() || '36 Tháng';
             return {
                 category: comp.name,
                 name: comp.product?.name || '',
@@ -393,7 +404,10 @@ export default function BuildPcPage() {
                                                             </div>
                                                             <div>
                                                                 <p className="text-xs font-bold text-gray-900 line-clamp-2 leading-snug">{comp.product.name}</p>
-                                                                <p className="text-[10px] md:text-xs text-gray-500 mt-0.5 md:mt-1">Mã: {comp.product.databaseId}</p>
+                                                                <div className="flex flex-col gap-0.5 mt-0.5 md:mt-1">
+                                                                    <p className="text-[10px] md:text-xs text-gray-500">Mã: {comp.product.databaseId}</p>
+                                                                    <p className="text-[10px] md:text-xs text-blue-600 font-medium">Bảo hành: {getSelectedComponentsList().find(item => item.id === (comp.product.sku || comp.product.databaseId))?.warranty || 'Đang tải...'}</p>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div className="md:col-span-4 flex items-center justify-between md:justify-end gap-3 md:gap-6">
