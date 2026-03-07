@@ -593,3 +593,34 @@ export const GET_RECENT_POSTS = `
     }
   }
 `;
+
+export const GET_PRODUCTS_BY_IDS = `
+  query GetProductsByIds($in: [Int]!) {
+    products(first: 100, where: { in: $in }) {
+      nodes {
+        id
+        databaseId
+        name
+        slug
+        ... on SimpleProduct {
+          price
+          sku
+          regularPrice
+          salePrice
+          image { sourceUrl altText }
+          thongtinsanpham { chinhSachBaoHanh chinh_sach_bao_hanh }
+          thontinsanpham { chinhSachBaoHanh chinh_sach_bao_hanh }
+        }
+        ... on VariableProduct {
+          price
+          sku
+          regularPrice
+          salePrice
+          image { sourceUrl altText }
+          thongtinsanpham { chinhSachBaoHanh chinh_sach_bao_hanh }
+          thontinsanpham { chinhSachBaoHanh chinh_sach_bao_hanh }
+        }
+      }
+    }
+  }
+`;

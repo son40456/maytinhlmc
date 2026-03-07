@@ -13,6 +13,8 @@ import download from 'downloadjs';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { getPcBuilderConfig } from '@/app/actions/configActions';
+import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
+import { GET_PRODUCTS_BY_IDS } from "@/lib/graphql/queries";
 
 export default function BuildPcPage() {
     const { components, totalPrice, removeProduct, clearAll, initComponents, compatibilityHints } = usePcBuilderStore();
@@ -21,6 +23,15 @@ export default function BuildPcPage() {
     const [modalOpen, setModalOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState<{ id: string; name: string; slug: string } | null>(null);
     const [companyInfo, setCompanyInfo] = useState<{ logo?: string, name?: string, contact?: string, contacts?: { icon: string, text: string }[], description?: string }>({});
+
+    const [wantsAssembly, setWantsAssembly] = useState(true);
+    const [wantsSoftware, setWantsSoftware] = useState(false);
+
+    const PREBUILT_TEMPLATES = [
+        { name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") },
+        { name: "PC Gaming", priceHint: "Quốc dân", icon: "🎮", description: "Chiến mượt LOL, FO4, CSGO", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") },
+        { name: "PC Đồ Họa", priceHint: "Render", icon: "🎨", description: "Photoshop, Premiere, 3D", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") }
+    ];
 
     const activeCategoryRef = useRef<{ id: string; name: string; slug: string } | null>(null);
 
@@ -40,6 +51,37 @@ export default function BuildPcPage() {
             }
         });
     }, [initComponents]);
+
+    const [isParsingUrl, setIsParsingUrl] = useState(false);
+
+    useEffect(() => {
+        if (components.length === 0 || isParsingUrl) return;
+
+        const queryParams = new URLSearchParams(window.location.search);
+        const idsToFetch: { categoryId: string; dbId: number }[] = [];
+        components.forEach(c => {
+            const val = queryParams.get(c.id);
+            if (val) idsToFetch.push({ categoryId: c.id, dbId: parseInt(val) });
+        });
+
+        if (idsToFetch.length > 0) {
+            setIsParsingUrl(true);
+            const ids = idsToFetch.map(i => i.dbId);
+            wpgraphqlFetch<any>(GET_PRODUCTS_BY_IDS, { in: ids }).then(res => {
+                if (res.data?.products?.nodes) {
+                    const products = res.data.products.nodes;
+                    const templateItems = idsToFetch.map(item => {
+                        const product = products.find((p: any) => p.databaseId === item.dbId);
+                        return { categoryId: item.categoryId, product };
+                    }).filter(i => i.product);
+                    usePcBuilderStore.getState().applyTemplate(templateItems);
+                }
+            }).catch(console.error).finally(() => {
+                // Remove query params from URL without reloading
+                window.history.replaceState({}, document.title, window.location.pathname);
+            });
+        }
+    }, [components.length, isParsingUrl]);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
@@ -307,8 +349,16 @@ export default function BuildPcPage() {
             return;
         }
 
+        const queryParams = new URLSearchParams();
+        components.filter(c => c.product).forEach(c => {
+            queryParams.set(c.id, c.product.databaseId.toString());
+        });
+        const shareUrl = `${window.location.origin}${window.location.pathname}?${queryParams.toString()}`;
+
         const text = list.map(item => `${item.category}: ${item.name} - ${item.price.replace(/&nbsp;/g, ' ')}`).join('\n');
-        const shareText = `Cấu hình PC của tôi:\n\n${text}\n\nTổng tiền: ${formatCurrency(totalPrice)}`;
+        const services = [wantsAssembly ? 'Lắp ráp PC & Đi dây giấu kín' : '', wantsSoftware ? 'Cài đặt Windows & Phần mềm cơ bản' : ''].filter(Boolean);
+        const serviceText = services.length > 0 ? `\n\nDịch vụ:\n- ${services.join('\n- ')}` : '';
+        const shareText = `Cấu hình PC của tôi:\n\n${text}${serviceText}\n\nTổng tiền: ${formatCurrency(totalPrice)}\n\nXem chi tiết tại: ${shareUrl}`;
 
         if (navigator.share) {
             try {
@@ -372,6 +422,20 @@ export default function BuildPcPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8">
                     {/* Left Column: Component List */}
                     <div className="lg:col-span-8 space-y-3 md:space-y-4">
+                        {/* Pre-built Templates */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-2">
+                            {PREBUILT_TEMPLATES.map((tpl, idx) => (
+                                <button key={idx} onClick={tpl.onClick} className="bg-white border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all rounded-xl p-3 md:p-4 text-left group">
+                                    <div className="flex items-start justify-between mb-2">
+                                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-lg md:text-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">{tpl.icon}</div>
+                                        <span className="bg-gray-100 text-gray-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded-full">{tpl.priceHint}</span>
+                                    </div>
+                                    <h3 className="font-bold text-gray-900 text-xs md:text-sm mb-0.5 md:mb-1">{tpl.name}</h3>
+                                    <p className="text-[10px] md:text-xs text-gray-500">{tpl.description}</p>
+                                </button>
+                            ))}
+                        </div>
+
                         <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                             {/* Header row */}
                             <div className="hidden md:grid grid-cols-12 gap-4 bg-gray-50 p-4 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
@@ -524,6 +588,29 @@ export default function BuildPcPage() {
                             </div>
 
                             <div className="pt-4 md:pt-6 border-t border-gray-100 space-y-3 md:space-y-4">
+                                {/* Services */}
+                                <div className="space-y-3 mb-4 bg-gray-50 p-3 md:p-4 rounded-xl border border-gray-100">
+                                    <h3 className="text-sm font-bold text-gray-900">Dịch vụ & Tiện ích</h3>
+                                    <label className="flex items-start gap-3 cursor-pointer group">
+                                        <div className="relative flex items-center mt-0.5">
+                                            <input type="checkbox" checked={wantsAssembly} onChange={(e) => setWantsAssembly(e.target.checked)} className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs md:text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">Yêu cầu LMC lắp ráp & Đi dây giấu kín</p>
+                                            <p className="text-[10px] md:text-xs text-green-600 font-bold mt-0.5">Miễn phí</p>
+                                        </div>
+                                    </label>
+                                    <label className="flex items-start gap-3 cursor-pointer group">
+                                        <div className="relative flex items-center mt-0.5">
+                                            <input type="checkbox" checked={wantsSoftware} onChange={(e) => setWantsSoftware(e.target.checked)} className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs md:text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">Cài đặt Windows & Phần mềm cơ bản</p>
+                                            <p className="text-[10px] md:text-xs text-green-600 font-bold mt-0.5">Miễn phí</p>
+                                        </div>
+                                    </label>
+                                </div>
+
                                 <div className="flex justify-between items-end">
                                     <span className="text-sm md:text-base text-gray-500 font-bold">Tổng tiền:</span>
                                     <span className="text-xl md:text-3xl font-black text-red-600 tracking-tight">

@@ -17,6 +17,7 @@ interface PcBuilderState {
     removeProduct: (categoryId: string) => void;
     clearAll: () => void;
     initComponents: (config: any) => void;
+    applyTemplate: (items: { categoryId: string, product: any }[]) => void;
 }
 
 const initialComponents: ComponentCategory[] = [
@@ -84,6 +85,24 @@ export const usePcBuilderStore = create<PcBuilderState>()(
                 set((state) => {
                     const clearedComponents = state.components.map(c => ({ ...c, product: null }));
                     return { components: clearedComponents, totalPrice: 0, compatibilityHints: [] };
+                });
+            },
+            applyTemplate: (items) => {
+                set((state) => {
+                    const newComponents = [...state.components].map(c => ({ ...c, product: null }));
+
+                    items.forEach(item => {
+                        const idx = newComponents.findIndex(c => c.id === item.categoryId);
+                        if (idx > -1) {
+                            newComponents[idx] = { ...newComponents[idx], product: item.product };
+                        }
+                    });
+
+                    return {
+                        components: newComponents,
+                        totalPrice: calculateTotal(newComponents),
+                        compatibilityHints: getCompatibilityHints(newComponents),
+                    };
                 });
             },
             initComponents: (config) => {
