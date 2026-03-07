@@ -121,6 +121,11 @@ export function CategoryProductView({
         setTimeout(() => { isUpdatingFromUrl.current = false; }, 50);
     }, [selectedAttributes, priceRange, sortOrder, pathname, router]);
 
+    const endCursorRef = useRef(initialPageInfo?.endCursor);
+    useEffect(() => {
+        endCursorRef.current = pageInfo?.endCursor;
+    }, [pageInfo?.endCursor]);
+
     // AJAX Fetch products
     const fetchProducts = useCallback(async (isLoadMore = false) => {
         setLoading(true);
@@ -145,7 +150,7 @@ export function CategoryProductView({
                 slugId: categorySlug,
                 slugStr: categorySlug,
                 first: 24,
-                after: isLoadMore ? pageInfo?.endCursor : null,
+                after: isLoadMore ? endCursorRef.current : null,
                 minPrice: priceRange.min,
                 maxPrice: priceRange.max,
                 orderBy,
@@ -156,7 +161,11 @@ export function CategoryProductView({
             const newPageInfo = data?.products?.pageInfo;
 
             if (isLoadMore) {
-                setProducts(prev => [...prev, ...newProducts]);
+                setProducts(prev => {
+                    const existingIds = new Set(prev.map((p: any) => p.id));
+                    const uniqueNewProducts = newProducts.filter((p: any) => !existingIds.has(p.id));
+                    return [...prev, ...uniqueNewProducts];
+                });
             } else {
                 setProducts(newProducts);
             }
@@ -166,7 +175,7 @@ export function CategoryProductView({
         } finally {
             setLoading(false);
         }
-    }, [categorySlug, selectedAttributes, priceRange, sortOrder, pageInfo?.endCursor]);
+    }, [categorySlug, selectedAttributes, priceRange, sortOrder]);
 
     // Re-fetch when filters change
     const [isFirstRender, setIsFirstRender] = useState(true);
