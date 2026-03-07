@@ -89,10 +89,18 @@ export function CategoryProductView({
 
         const parsedSort = searchParams.get('sort') || "DATE_DESC";
 
-        // Cập nhật trạng thái (State)
-        setSelectedAttributes(parsedAttrs);
-        setPriceRange(parsedPrice);
-        setSortOrder(parsedSort);
+        // Cập nhật trạng thái (State) chỉ khi thực sự có thay đổi
+        setSelectedAttributes(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(parsedAttrs)) return prev;
+            return parsedAttrs;
+        });
+
+        setPriceRange(prev => {
+            if (prev.min === parsedPrice.min && prev.max === parsedPrice.max) return prev;
+            return parsedPrice;
+        });
+
+        setSortOrder(prev => prev === parsedSort ? prev : parsedSort);
         // Note: khi state đổi, useEffect fetchProducts sẽ tự động chạy!
     }, [searchParams]);
 
@@ -178,15 +186,15 @@ export function CategoryProductView({
     }, [categorySlug, selectedAttributes, priceRange, sortOrder]);
 
     // Re-fetch when filters change
-    const [isFirstRender, setIsFirstRender] = useState(true);
+    const isFirstRender = useRef(true);
 
     useEffect(() => {
-        if (isFirstRender) {
-            setIsFirstRender(false);
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
 
             // Nếu MỚI LOAD trang mà đã có filter (do URL truyền vào) -> cần fetch luôn
             // vì initialProducts từ Server truyền xuống lúc nào cũng là list mặc định (không filter)
-            const hasFilters = Object.keys(selectedAttributes).length > 0 || priceRange.min !== null || priceRange.max !== null;
+            const hasFilters = Object.keys(selectedAttributes).length > 0 || priceRange.min !== null || priceRange.max !== null || sortOrder !== "DATE_DESC";
             if (!hasFilters) {
                 return;
             }
