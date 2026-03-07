@@ -61,11 +61,22 @@ export default function BuildPcPage() {
                 .replace(/^[Bb]ảo\s*[Hh]ành.*?(?=\d)/u, '') // Strip "Bảo hành..." until the first digit
                 .replace(/^[Bb]ảo\s*[Hh]ành\s*[:-]?\s*/u, '') // Fallback strip
                 .trim() || 'Chưa có thông tin';
+
+            if (p?.name && p.name.includes("Mới")) {
+                console.log(`DEBUG Product: ${p.name}`, {
+                    raw: rawWarranty,
+                    processed: warranty,
+                    acf: p?.thongtinsanpham,
+                    all: p
+                });
+            }
+
             return {
                 category: comp.name,
                 name: comp.product?.name || '',
                 price: comp.product?.price || comp.product?.regularPrice || '0',
                 id: comp.product?.sku || comp.product?.databaseId || '',
+                rawWarranty: rawWarranty || 'NULL',
                 warranty,
             };
         });
@@ -406,7 +417,10 @@ export default function BuildPcPage() {
                                                                 <p className="text-xs font-bold text-gray-900 line-clamp-2 leading-snug">{comp.product.name}</p>
                                                                 <div className="flex flex-col gap-0.5 mt-0.5 md:mt-1">
                                                                     <p className="text-[10px] md:text-xs text-gray-500">Mã: {comp.product.databaseId}</p>
-                                                                    <p className="text-[10px] md:text-xs text-blue-600 font-medium">Bảo hành: {getSelectedComponentsList().find(item => item.id === (comp.product.sku || comp.product.databaseId))?.warranty || 'Đang tải...'}</p>
+                                                                    <p className="text-[10px] md:text-xs text-blue-600 font-medium">
+                                                                        Bảo hành: {getSelectedComponentsList().find(item => item.id === (comp.product.sku || comp.product.databaseId))?.warranty || 'Đang tải...'}
+                                                                        <span className="text-gray-400 font-normal ml-1">(Raw: {getSelectedComponentsList().find(item => (item.id === comp.product.sku || item.id === comp.product.databaseId))?.rawWarranty || 'NULL'})</span>
+                                                                    </p>
                                                                 </div>
                                                             </div>
                                                         </div>
