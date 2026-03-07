@@ -60,7 +60,7 @@ export default function BuildPcPage() {
             const warranty = rawWarranty
                 .replace(/^[Bb]ảo\s*[Hh]ành.*?(?=\d)/u, '') // Strip "Bảo hành..." until the first digit
                 .replace(/^[Bb]ảo\s*[Hh]ành\s*[:-]?\s*/u, '') // Fallback strip
-                .trim() || '36 Tháng';
+                .trim() || 'Chưa có thông tin';
             return {
                 category: comp.name,
                 name: comp.product?.name || '',
