@@ -35,8 +35,8 @@ const GET_ALL_CATEGORY_PRODUCTS = `
           thongsokythuatsonbn {
             thongsochitiet
           }
-          thontinsanpham {
-            chinh_sach_bao_hanh
+          thongtinsanpham {
+            chinhSachBaoHanh
           }
         }
         ... on VariableProduct {
@@ -57,8 +57,8 @@ const GET_ALL_CATEGORY_PRODUCTS = `
           thongsokythuatsonbn {
             thongsochitiet
           }
-          thontinsanpham {
-            chinh_sach_bao_hanh
+          thongtinsanpham {
+            chinhSachBaoHanh
           }
         }
       }

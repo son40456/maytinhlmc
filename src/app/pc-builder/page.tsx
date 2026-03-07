@@ -47,9 +47,9 @@ export default function BuildPcPage() {
 
     const getSelectedComponentsList = () => {
         return components.filter(c => c.product).map(comp => {
-            const rawWarranty: string = comp.product?.thontinsanpham?.chinh_sach_bao_hanh || '';
-            // Strip prefix "Bảo hành:" or "Bảo hành" and trim
-            const warranty = rawWarranty.replace(/^[Bb]ảo\s*[Hh]\u00e0nh\s*:\s*/u, '').trim() || '36 Tháng';
+            const rawWarranty: string = comp.product?.thongtinsanpham?.chinhSachBaoHanh || '';
+            // Strip prefix "Bảo hành:" or "Bảo hành" (with optional colon/dash and spaces)
+            const warranty = rawWarranty.replace(/^[Bb]ảo\s*[Hh]\u00e0nh\s*[:-]?\s*/u, '').trim() || '36 Tháng';
             return {
                 category: comp.name,
                 name: comp.product?.name || '',
