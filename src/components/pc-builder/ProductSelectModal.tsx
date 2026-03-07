@@ -35,6 +35,9 @@ const GET_ALL_CATEGORY_PRODUCTS = `
           thongsokythuatsonbn {
             thongsochitiet
           }
+          thontinsanpham {
+            chinh_sach_bao_hanh
+          }
         }
         ... on VariableProduct {
           sku
@@ -53,6 +56,9 @@ const GET_ALL_CATEGORY_PRODUCTS = `
           }
           thongsokythuatsonbn {
             thongsochitiet
+          }
+          thontinsanpham {
+            chinh_sach_bao_hanh
           }
         }
       }

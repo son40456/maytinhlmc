@@ -46,12 +46,18 @@ export default function BuildPcPage() {
     };
 
     const getSelectedComponentsList = () => {
-        return components.filter(c => c.product).map(comp => ({
-            category: comp.name,
-            name: comp.product?.name || '',
-            price: comp.product?.price || comp.product?.regularPrice || '0',
-            id: comp.product?.sku || comp.product?.databaseId || '',
-        }));
+        return components.filter(c => c.product).map(comp => {
+            const rawWarranty: string = comp.product?.thontinsanpham?.chinh_sach_bao_hanh || '';
+            // Strip prefix "Bảo hành:" or "Bảo hành" and trim
+            const warranty = rawWarranty.replace(/^[Bb]ảo\s*[Hh]\u00e0nh\s*:\s*/u, '').trim() || '36 Tháng';
+            return {
+                category: comp.name,
+                name: comp.product?.name || '',
+                price: comp.product?.price || comp.product?.regularPrice || '0',
+                id: comp.product?.sku || comp.product?.databaseId || '',
+                warranty,
+            };
+        });
     };
 
     const handleExportExcel = async () => {
@@ -182,7 +188,7 @@ export default function BuildPcPage() {
                 row.getCell(2).value = item.id;    // Mã SP (B)
                 row.getCell(3).value = item.name;  // Tên SP (C)
 
-                row.getCell(5).value = "36 Tháng"; // Bảo hành (E)
+                row.getCell(5).value = item.warranty; // Bảo hành (E) - từ ACF chinh_sach_bao_hanh
                 row.getCell(6).value = 1;          // Số lượng (F)
 
                 const cleanPrice = item.price.replace(/&nbsp;/g, ' ').replace(/[^\d]/g, '');
