@@ -91,9 +91,9 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                 <table className="w-full border-collapse border border-gray-300 text-[12px] mb-4">
                     <thead>
                         <tr className="bg-[#cc0000] text-white">
-                            <th className="border border-gray-300 p-2 text-center w-10">STT</th>
+                            <th className="border border-gray-300 p-2 text-center w-8">STT</th>
                             <th className="border border-gray-300 p-2 text-center w-20">Mã SP</th>
-                            <th className="border border-gray-300 p-2 text-center w-24">Hình ảnh</th>
+                            <th className="border border-gray-300 p-2 text-center w-16">Hình ảnh</th>
                             <th className="border border-gray-300 p-2 text-center">Tên sản phẩm</th>
                             <th className="border border-gray-300 p-2 text-center w-[60px]">Bảo hành</th>
                             <th className="border border-gray-300 p-2 text-center w-10">SL</th>
@@ -113,7 +113,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                                     <td className="border border-gray-300 p-2 text-center">{comp.product?.sku || comp.product?.databaseId}</td>
                                     <td className="border border-gray-300 p-2 text-center">
                                         {comp.product?.image?.sourceUrl ? (
-                                            <img src={comp.product.image.sourceUrl} alt="Product" className="w-16 h-16 object-contain mx-auto" />
+                                            <img src={comp.product.image.sourceUrl} alt="Product" className="w-10 h-10 object-contain mx-auto" />
                                         ) : null}
                                     </td>
                                     <td className="border border-gray-300 p-2">
