@@ -35,7 +35,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @media print {
-                        @page { size: A4 portrait; margin: 0; }
+                        @page { size: A4 portrait; margin-top: 0; margin-bottom: 0; }
                         body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                         body * { visibility: hidden; }
                         #pc-builder-print-template, #pc-builder-print-template * { visibility: visible; }
@@ -54,7 +54,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                         <tr><td><div className="h-[15mm] w-full" /></td></tr>
                     </thead>
                     <tbody>
-                        <tr><td className="px-[15mm]">
+                        <tr><td>
                             {/* Header: Logo and Company Info */}
                             <div className="flex justify-between items-start mb-6 border-b-2 border-red-600 pb-4">
                                 <div className="w-[30%]">
