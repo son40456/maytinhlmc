@@ -35,8 +35,8 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @media print {
-                        @page { size: A4 portrait; margin-top: 15mm; margin-bottom: 15mm; margin-left: 0; margin-right: 0; }
-                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding-left: 15mm; padding-right: 15mm; }
+                        @page { size: A4 portrait; margin: 0; }
+                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 15mm; }
                         body * { visibility: hidden; }
                         #pc-builder-print-template, #pc-builder-print-template * { visibility: visible; }
                         #pc-builder-print-template { position: absolute; left: 0; top: 0; width: 100%; }
