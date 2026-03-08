@@ -35,8 +35,8 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @media print {
-                        @page { size: A4 portrait; margin: 0; }
-                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 15mm; }
+                        @page { size: A4 portrait; margin-top: 15mm; margin-bottom: 15mm; margin-left: 0; margin-right: 0; }
+                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding-left: 15mm; padding-right: 15mm; }
                         body * { visibility: hidden; }
                         #pc-builder-print-template, #pc-builder-print-template * { visibility: visible; }
                         #pc-builder-print-template { position: absolute; left: 0; top: 0; width: 100%; }
@@ -92,13 +92,13 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                     <thead>
                         <tr className="bg-[#cc0000] text-white">
                             <th className="border border-gray-300 p-2 text-center w-10">STT</th>
-                            <th className="border border-gray-300 p-2 text-center w-24">Mã SP</th>
+                            <th className="border border-gray-300 p-2 text-center w-20">Mã SP</th>
                             <th className="border border-gray-300 p-2 text-center w-24">Hình ảnh</th>
                             <th className="border border-gray-300 p-2 text-center">Tên sản phẩm</th>
-                            <th className="border border-gray-300 p-2 text-center w-20">Bảo hành</th>
-                            <th className="border border-gray-300 p-2 text-center w-16">Số lượng</th>
-                            <th className="border border-gray-300 p-2 text-center w-32">Đơn giá</th>
-                            <th className="border border-gray-300 p-2 text-center w-32">Thành tiền</th>
+                            <th className="border border-gray-300 p-2 text-center w-16">Bảo hành</th>
+                            <th className="border border-gray-300 p-2 text-center w-12">SL</th>
+                            <th className="border border-gray-300 p-2 text-center w-24">Đơn giá</th>
+                            <th className="border border-gray-300 p-2 text-center w-24">Thành tiền</th>
                         </tr>
                     </thead>
                     <tbody>
