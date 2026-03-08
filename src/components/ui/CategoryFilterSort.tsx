@@ -59,8 +59,8 @@ export function CategoryFilterSort({
     const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
 
     const brandFilter = filters.find(f => f.slug === 'thuong-hieu');
-    const dynamicPriceFilter = filters.find(f => f.slug.startsWith('khoang-gia-'));
-    const otherFilters = filters.filter(f => f.slug !== 'thuong-hieu' && !f.slug.startsWith('khoang-gia-'));
+    const dynamicPriceFilter = filters.find(f => f.slug.includes('khoang-gia'));
+    const otherFilters = filters.filter(f => f.slug !== 'thuong-hieu' && !f.slug.includes('khoang-gia'));
 
     // Count active filters
     const activeCount = Object.values(selectedAttributes).reduce((sum, arr) => sum + arr.length, 0)
@@ -132,16 +132,16 @@ export function CategoryFilterSort({
                     <span className="text-sm font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Khoảng giá:</span>
                     <div className="flex flex-wrap gap-2">
                         {[...dynamicPriceFilter.options].sort((a, b) => {
-                            const getStartValue = (name: string) => {
-                                const lowerLabel = name.toLowerCase();
-                                if (lowerLabel.includes('dưới') || lowerLabel.includes('duoi') || lowerLabel.includes('<')) return -1;
-                                const match = name.match(/\\d+/);
+                            const getStartValue = (opt: { name: string, slug: string }) => {
+                                const text = (opt.name + " " + opt.slug).toLowerCase();
+                                if (text.includes('dưới') || text.includes('duoi') || text.includes('<')) return -1;
+                                const match = text.match(/\\d+/);
                                 if (!match) return 0;
                                 const val = parseInt(match[0], 10);
-                                if (lowerLabel.includes('trên') || lowerLabel.includes('tren') || lowerLabel.includes('>')) return val + 10000;
+                                if (text.includes('trên') || text.includes('tren') || text.includes('>')) return val + 10000;
                                 return val;
                             };
-                            return getStartValue(a.name) - getStartValue(b.name);
+                            return getStartValue(a) - getStartValue(b);
                         }).map((opt) => {
                             const isSelected = selectedAttributes[dynamicPriceFilter.slug]?.includes(opt.slug);
                             return (
