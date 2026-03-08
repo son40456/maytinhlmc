@@ -29,9 +29,21 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
 
         return (
             <div className="fixed" style={{ top: '-10000px', left: '-10000px', width: '900px', zIndex: -1000, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
-                <div ref={ref} className="bg-[#f8f9fa] w-[900px] text-gray-900 mx-auto p-0" style={{ fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+                <div ref={ref} className="bg-[#f8f9fa] w-[900px] text-gray-900 mx-auto p-0 relative overflow-hidden" style={{ fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+                    {/* Watermark Background */}
+                    {companyInfo?.logo && (
+                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.05] z-0">
+                            <img
+                                src={companyInfo.logo.startsWith('data:') || companyInfo.logo.startsWith('/') ? companyInfo.logo : `/api/proxy-image?url=${encodeURIComponent(companyInfo.logo)}`}
+                                alt="Watermark"
+                                className="w-[80%] max-w-[600px] object-contain"
+                                crossOrigin="anonymous"
+                            />
+                        </div>
+                    )}
+
                     {/* Header Section */}
-                    <div className="flex flex-col items-center justify-center pt-10 pb-6 bg-[#f0f2f5]">
+                    <div className="relative z-10 flex flex-col items-center justify-center pt-10 pb-6 bg-[#f0f2f5] bg-opacity-90">
                         {companyInfo?.logo ? (
                             <img src={companyInfo.logo.startsWith('data:') || companyInfo.logo.startsWith('/') ? companyInfo.logo : `/api/proxy-image?url=${encodeURIComponent(companyInfo.logo)}`} alt={companyInfo.name || 'Company Logo'} className="h-16 object-contain mb-4" crossOrigin="anonymous" />
                         ) : (
@@ -45,7 +57,7 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                     </div>
 
                     {/* Component List */}
-                    <div className="bg-white px-10 py-4">
+                    <div className="relative z-10 bg-white bg-opacity-80 px-10 py-4">
                         <div className="divide-y divide-gray-100">
                             {selectedComponents.map((comp, idx) => {
                                 const priceStr = (comp.product?.price || comp.product?.regularPrice || '0').replace(/&nbsp;/g, "").replace(/\D/g, '');
@@ -87,21 +99,21 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                     </div>
 
                     {/* Total Section */}
-                    <div className="bg-white px-10 py-6 border-t border-gray-200 text-center">
+                    <div className="relative z-10 bg-white bg-opacity-90 px-10 py-6 border-t border-gray-200 text-center">
                         <h2 className="text-[22px] font-bold text-[#e53935]">
                             Thành tiền: {formatCurrency(totalPrice)}
                         </h2>
                     </div>
 
                     {/* Thank You Section */}
-                    <div className="bg-white px-10 py-4 text-center">
+                    <div className="relative z-10 bg-white bg-opacity-90 px-10 py-4 text-center">
                         <h2 className="text-[24px] font-black text-gray-800 uppercase tracking-widest mb-1">Chân thành cảm ơn</h2>
                         <p className="text-[15px] text-gray-600">Mọi chi tiết xin vui lòng liên hệ</p>
                     </div>
 
                     {/* Footer Address Info */}
-                    <div className="bg-[#f8f9fa] border-t border-gray-200 mt-6 pt-8 pb-6 px-10 text-[13px] text-gray-700 leading-relaxed">
-                        <div className="border border-gray-200 bg-white p-5 rounded-md shadow-sm">
+                    <div className="relative z-10 bg-[#f8f9fa] border-t border-gray-200 mt-6 pt-8 pb-6 px-10 text-[13px] text-gray-700 leading-relaxed bg-opacity-90">
+                        <div className="border border-gray-200 bg-white bg-opacity-90 p-5 rounded-md shadow-sm">
                             <h3 className="text-blue-600 font-bold mb-3 flex items-center gap-2 uppercase text-[14px]">
                                 <span className="bg-blue-100 p-1.5 rounded-sm"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" /></svg></span>
                                 Thông Tin Liên Hệ
@@ -127,7 +139,7 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
                     </div>
 
                     {/* iOS Note */}
-                    <div className="bg-white py-4 text-center border-t border-gray-100">
+                    <div className="relative z-10 bg-white bg-opacity-90 py-4 text-center border-t border-gray-100">
                         <p className="text-[13px] text-[#e53935] font-medium">
                             Nếu bạn sử dụng trình duyệt Chrome trên hệ điều hành iOS, vui lòng bấm giữ vào hình, sau đó chọn &quot;Lưu ảnh&quot; vào máy
                         </p>
