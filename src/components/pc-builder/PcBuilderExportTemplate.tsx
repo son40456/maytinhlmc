@@ -30,9 +30,9 @@ export const PcBuilderExportTemplate = forwardRef<HTMLDivElement, PcBuilderExpor
         return (
             <div className="fixed" style={{ top: '-10000px', left: '-10000px', width: '900px', zIndex: -1000, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
                 <div ref={ref} className="bg-[#f8f9fa] w-[900px] text-gray-900 mx-auto p-0 relative overflow-hidden" style={{ fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
-                    {/* Watermark Background */}
+                    {/* Watermark Overlay (Trên cùng) */}
                     {companyInfo?.logo && (
-                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.05] z-0">
+                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10 z-50">
                             <img
                                 src={companyInfo.logo.startsWith('data:') || companyInfo.logo.startsWith('/') ? companyInfo.logo : `/api/proxy-image?url=${encodeURIComponent(companyInfo.logo)}`}
                                 alt="Watermark"
