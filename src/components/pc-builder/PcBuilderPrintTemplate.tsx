@@ -88,7 +88,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                 </div>
 
                 {/* Table */}
-                <table className="w-full border-collapse border border-gray-300 text-[12px] mb-4">
+                <table className="w-full border-collapse border border-gray-300 text-[10px] mb-4">
                     <thead>
                         <tr className="bg-[#cc0000] text-white">
                             <th className="border border-gray-300 p-2 text-center w-8">STT</th>
@@ -131,7 +131,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
 
                 {/* Summary Table */}
                 <div className="flex justify-end">
-                    <table className="w-[300px] border-collapse border border-gray-300 text-[12px] font-bold">
+                    <table className="w-[300px] border-collapse border border-gray-300 text-[10px] font-bold">
                         <tbody>
                             <tr>
                                 <td className="border border-gray-300 p-2">Phí vận chuyển</td>
@@ -143,7 +143,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                             </tr>
                             <tr>
                                 <td className="border border-gray-300 p-2 text-[14px]">Tổng tiền thanh toán</td>
-                                <td className="border border-gray-300 p-2 text-right text-red-600 text-[14px]">{formatCurrency(totalPrice)} VNĐ</td>
+                                <td className="border border-gray-300 p-2 text-right text-red-600 text-[12px]">{formatCurrency(totalPrice)} VNĐ</td>
                             </tr>
                         </tbody>
                     </table>
