@@ -31,7 +31,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
         const dateString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
 
         return (
-            <div id="pc-builder-print-template" ref={ref} className="bg-white text-black text-[13px] font-sans w-full max-w-[1000px] mx-auto hidden print:block" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
+            <div id="pc-builder-print-template" ref={ref} className="bg-white text-black text-[13px] font-sans w-full max-w-[1000px] mx-auto hidden print:block p-8" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @media print {
@@ -59,12 +59,20 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                         <div className="text-[16px] font-bold text-red-600 uppercase mb-2">
                             {companyInfo?.name || "CÔNG TY CỔ PHẦN THIẾT BỊ CÔNG NGHỆ LMC"}
                         </div>
-                        <div className="flex justify-end gap-4">
-                            {companyInfo?.contact && (
-                                <div><strong className="text-red-600">Tel:</strong> {companyInfo.contact}</div>
-                            )}
-                            <div><strong className="text-red-600">Website:</strong> maytinhlmc.vn</div>
-                        </div>
+                        {companyInfo?.contacts && companyInfo.contacts.length > 0 ? (
+                            <div className="flex flex-col items-end gap-1">
+                                {companyInfo.contacts.map((c, i) => (
+                                    <div key={i}><strong className="text-red-600">{c.icon}</strong> {c.text}</div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex justify-end gap-4">
+                                {companyInfo?.contact && (
+                                    <div><strong className="text-red-600">Tel:</strong> {companyInfo.contact}</div>
+                                )}
+                                <div><strong className="text-red-600">Website:</strong> maytinhlmc.vn</div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
