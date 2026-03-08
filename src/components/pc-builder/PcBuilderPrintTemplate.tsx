@@ -95,10 +95,10 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                             <th className="border border-gray-300 p-2 text-center w-20">Mã SP</th>
                             <th className="border border-gray-300 p-2 text-center w-24">Hình ảnh</th>
                             <th className="border border-gray-300 p-2 text-center">Tên sản phẩm</th>
-                            <th className="border border-gray-300 p-2 text-center w-[70px]">Bảo hành</th>
+                            <th className="border border-gray-300 p-2 text-center w-[60px]">Bảo hành</th>
                             <th className="border border-gray-300 p-2 text-center w-10">SL</th>
-                            <th className="border border-gray-300 p-2 text-center w-[85px]">Đơn giá</th>
-                            <th className="border border-gray-300 p-2 text-center w-[85px]">Thành tiền</th>
+                            <th className="border border-gray-300 p-2 text-center w-[65px]">Đơn giá</th>
+                            <th className="border border-gray-300 p-2 text-center w-[65px]">Thành tiền</th>
                         </tr>
                     </thead>
                     <tbody>
