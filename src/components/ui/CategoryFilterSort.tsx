@@ -131,7 +131,18 @@ export function CategoryFilterSort({
                 <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-center gap-3'}>
                     <span className="text-sm font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Khoảng giá:</span>
                     <div className="flex flex-wrap gap-2">
-                        {dynamicPriceFilter.options.map((opt) => {
+                        {[...dynamicPriceFilter.options].sort((a, b) => {
+                            const getStartValue = (name: string) => {
+                                const lowerLabel = name.toLowerCase();
+                                if (lowerLabel.includes('dưới') || lowerLabel.includes('duoi') || lowerLabel.includes('<')) return -1;
+                                const match = name.match(/\\d+/);
+                                if (!match) return 0;
+                                const val = parseInt(match[0], 10);
+                                if (lowerLabel.includes('trên') || lowerLabel.includes('tren') || lowerLabel.includes('>')) return val + 10000;
+                                return val;
+                            };
+                            return getStartValue(a.name) - getStartValue(b.name);
+                        }).map((opt) => {
                             const isSelected = selectedAttributes[dynamicPriceFilter.slug]?.includes(opt.slug);
                             return (
                                 <button
