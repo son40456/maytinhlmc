@@ -161,7 +161,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                                     </table>
                                 </div>
 
-                                <div className="mt-6 mb-6 text-[13px] text-gray-800 font-medium italic whitespace-pre-wrap">
+                                <div className="mt-6 mb-6 text-[12px] text-gray-800 font-medium italic whitespace-pre-wrap">
                                     {companyInfo?.description ? (
                                         companyInfo.description
                                     ) : (
@@ -170,8 +170,8 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                                 </div>
 
                                 <div className="flex items-start justify-between border-t border-gray-300 pt-4 pb-4">
-                                    <div className="text-[12px] space-y-1 leading-relaxed w-[65%] text-gray-800">
-                                        <div className="font-bold text-blue-800 mb-1 text-[13px]">Mọi chi tiết xin vui lòng liên hệ:</div>
+                                    <div className="text-[11px] space-y-1 leading-relaxed w-[65%] text-gray-800">
+                                        <div className="font-bold text-blue-800 mb-1 text-[11px]">Mọi chi tiết xin vui lòng liên hệ:</div>
                                         {companyInfo?.contacts && companyInfo.contacts.length > 0 ? (
                                             companyInfo.contacts.map((c, i) => (
                                                 <div key={i} className="whitespace-pre-wrap"><strong>{c.icon}</strong> {c.text}</div>
