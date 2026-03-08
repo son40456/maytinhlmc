@@ -51,7 +51,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
 
                 <table className="print-master-table w-full">
                     <thead>
-                        <tr><td><div className="h-[15mm] w-full" /></td></tr>
+                        <tr><td><div className="h-[10mm] w-full" /></td></tr>
                     </thead>
                     <tbody>
                         <tr><td>
@@ -186,7 +186,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                                         )}
                                     </div>
                                     <div className="text-red-600 font-bold uppercase text-[12px] text-right w-[45%] self-end">
-                                        {companyInfo?.name?.split(' ')[0] || 'LMC'} CHÂN THÀNH CẢM ƠN QUÝ KHÁCH
+                                        LMC CHÂN THÀNH CẢM ƠN QUÝ KHÁCH
                                     </div>
                                 </div>
                             </div>
