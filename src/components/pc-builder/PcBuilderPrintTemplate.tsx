@@ -31,12 +31,15 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
         const dateString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
 
         return (
-            <div ref={ref} className="bg-white text-black text-[13px] font-sans w-full max-w-[1000px] mx-auto hidden print:block" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
+            <div id="pc-builder-print-template" ref={ref} className="bg-white text-black text-[13px] font-sans w-full max-w-[1000px] mx-auto hidden print:block" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @media print {
                         @page { size: A4 portrait; margin: 15mm; }
                         body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        body * { visibility: hidden; }
+                        #pc-builder-print-template, #pc-builder-print-template * { visibility: visible; }
+                        #pc-builder-print-template { position: absolute; left: 0; top: 0; width: 100%; }
                         .print-hide { display: none !important; }
                     }
                 `}} />
