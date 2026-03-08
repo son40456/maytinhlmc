@@ -35,8 +35,8 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @media print {
-                        @page { size: A4 portrait; margin: 15mm; }
-                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        @page { size: A4 portrait; margin: 0; }
+                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 15mm; }
                         body * { visibility: hidden; }
                         #pc-builder-print-template, #pc-builder-print-template * { visibility: visible; }
                         #pc-builder-print-template { position: absolute; left: 0; top: 0; width: 100%; }
@@ -55,10 +55,16 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                             </div>
                         )}
                     </div>
-                    <div className="w-[70%] flex flex-col justify-center items-end text-right">
-                        <h2 className="text-[20px] font-bold text-red-600 uppercase">
+                    <div className="w-[70%] text-right text-[12px] space-y-1">
+                        <div className="text-[16px] font-bold text-red-600 uppercase mb-2">
                             {companyInfo?.name || "CÔNG TY CỔ PHẦN THIẾT BỊ CÔNG NGHỆ LMC"}
-                        </h2>
+                        </div>
+                        <div className="flex justify-end gap-4">
+                            {companyInfo?.contact && (
+                                <div><strong className="text-red-600">Tel:</strong> {companyInfo.contact}</div>
+                            )}
+                            <div><strong className="text-red-600">Website:</strong> maytinhlmc.vn</div>
+                        </div>
                     </div>
                 </div>
 
@@ -159,7 +165,7 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                             </>
                         )}
                     </div>
-                    <div className="text-red-600 font-bold uppercase text-[12px] text-right w-[35%] self-end">
+                    <div className="text-red-600 font-bold uppercase text-[12px] text-right w-[45%] self-end">
                         {companyInfo?.name?.split(' ')[0] || 'LMC'} CHÂN THÀNH CẢM ƠN QUÝ KHÁCH
                     </div>
                 </div>
