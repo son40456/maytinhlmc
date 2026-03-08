@@ -55,19 +55,10 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                             </div>
                         )}
                     </div>
-                    <div className="w-[70%] text-right text-[12px] space-y-1">
-                        <div className="text-[16px] font-bold text-red-600 uppercase mb-2">
+                    <div className="w-[70%] flex flex-col justify-center items-end text-right">
+                        <h2 className="text-[20px] font-bold text-red-600 uppercase">
                             {companyInfo?.name || "CÔNG TY CỔ PHẦN THIẾT BỊ CÔNG NGHỆ LMC"}
-                        </div>
-                        {companyInfo?.description && (
-                            <div><strong className="text-red-600">Trụ sở:</strong> {companyInfo.description}</div>
-                        )}
-                        <div className="flex justify-end gap-4">
-                            {companyInfo?.contact && (
-                                <div><strong className="text-red-600">Tel:</strong> {companyInfo.contact}</div>
-                            )}
-                            <div><strong className="text-red-600">Website:</strong> maytinhlmc.vn</div>
-                        </div>
+                        </h2>
                     </div>
                 </div>
 
@@ -144,16 +135,31 @@ export const PcBuilderPrintTemplate = forwardRef<HTMLDivElement, PcBuilderPrintT
                     </table>
                 </div>
 
-                <div className="mt-6 mb-10 text-[11px] italic text-red-600 border-b border-gray-300 pb-2">
-                    <strong>Quý khách lưu ý:</strong> Bảng giá có giá trị tại thời điểm in, giá có thể thay đổi tùy theo chương trình khuyến mãi thực tế.
+                <div className="mt-6 mb-6 text-[13px] text-gray-800 font-medium italic whitespace-pre-wrap">
+                    {companyInfo?.description ? (
+                        companyInfo.description
+                    ) : (
+                        "Quý khách lưu ý: Bảng giá có giá trị tại thời điểm in, giá có thể thay đổi tùy theo chương trình khuyến mãi thực tế."
+                    )}
                 </div>
 
-                <div className="flex justify-between items-end text-[12px]">
-                    <div>
-                        <p>Để biết thêm chi tiết, vui lòng liên hệ</p>
-                        <p>Hotline: {companyInfo?.contact || '1900 1903'} (8h00-21h30 hàng ngày)</p>
+                <div className="flex items-start justify-between border-t border-gray-300 pt-4 pb-4">
+                    <div className="text-[12px] space-y-1 leading-relaxed w-[65%] text-gray-800">
+                        <div className="font-bold text-blue-800 mb-1 text-[13px]">Mọi chi tiết xin vui lòng liên hệ:</div>
+                        {companyInfo?.contacts && companyInfo.contacts.length > 0 ? (
+                            companyInfo.contacts.map((c, i) => (
+                                <div key={i} className="whitespace-pre-wrap"><strong>{c.icon}</strong> {c.text}</div>
+                            ))
+                        ) : (
+                            <>
+                                {companyInfo?.contact && (
+                                    <div className="whitespace-pre-wrap"><strong>Hotline:</strong> {companyInfo.contact}</div>
+                                )}
+                                <div className="whitespace-pre-wrap"><strong>Website:</strong> maytinhlmc.vn</div>
+                            </>
+                        )}
                     </div>
-                    <div className="text-red-600 font-bold uppercase">
+                    <div className="text-red-600 font-bold uppercase text-[12px] text-right w-[35%] self-end">
                         {companyInfo?.name?.split(' ')[0] || 'LMC'} CHÂN THÀNH CẢM ƠN QUÝ KHÁCH
                     </div>
                 </div>
