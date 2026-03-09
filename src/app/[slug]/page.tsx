@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
+import { generateProductSEO, generateCategorySEO, generateBreadcrumbSchema, SITE_URL } from "@/utils/seo";
 // Components
 import { AddToCartButton } from "@/components/ui/AddToCartButton";
 import { BuildPcButton } from "@/components/ui/BuildPcButton";
@@ -47,18 +47,29 @@ export async function generateMetadata({ params }: {
     });
 
     if (data?.product) {
-        return {
-            title: `${data.product.name} | LMC`,
-            description: data.product.shortDescription?.replace(/<[^>]+>/g, '') || `Mua ngay ${data.product.name} tại LMC!`,
-            openGraph: { images: [data.product.image?.sourceUrl || ""] },
-        };
+        const product = data.product;
+        const cleanPrice = (priceStr: string) => priceStr?.replace(/&nbsp;/g, " ").trim() || "";
+        const displayPrice = cleanPrice(product.salePrice || product.price || product.regularPrice) || undefined;
+
+        const seoData = generateProductSEO(
+            product.name,
+            slug,
+            product.shortDescription || product.description,
+            product.image?.sourceUrl,
+            displayPrice
+        );
+        const { jsonLd, ...metadata } = seoData;
+        return metadata;
     }
 
     if (data?.productCategory) {
-        return {
-            title: `${data.productCategory.name} | LMC`,
-            description: `Khám phá các sản phẩm ${data.productCategory.name} tại LMC.`,
-        };
+        const seoData = generateCategorySEO(
+            data.productCategory.name,
+            slug,
+            data.productCategory.description
+        );
+        const { jsonLd, ...metadata } = seoData;
+        return metadata;
     }
 
     return { title: '404 - Không tìm thấy trang | LMC' };
@@ -100,8 +111,25 @@ export default async function SlugPage({ params }: {
         const savingsAmount = hasDiscount ? (regularNum - saleNum).toLocaleString("vi-VN") + "₫" : "";
         const relatedProducts = product.related?.nodes || [];
 
+        // Lấy lại Schema để nhúng vào trang
+        const seoData = generateProductSEO(
+            product.name,
+            slug,
+            product.shortDescription || product.description,
+            imageUrl,
+            displayPrice !== "Liên hệ" ? displayPrice : undefined
+        );
+
+        const breadcrumbData = generateBreadcrumbSchema([
+            { name: "Trang chủ", url: SITE_URL },
+            { name: "Sản phẩm", url: `${SITE_URL}/san-pham` },
+            { name: product.name, url: `${SITE_URL}/${slug}` }
+        ]);
+
         return (
             <div className="bg-[#f8fafc] min-h-screen pb-16">
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(seoData.jsonLd) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
                 <div className="max-w-[1600px] mx-auto px-3 md:px-4 py-2 md:py-4">
                     {/* Breadcrumbs */}
                     <nav className="flex items-center gap-1.5 md:gap-2 text-xs text-slate-500 mb-6">
@@ -377,8 +405,21 @@ export default async function SlugPage({ params }: {
             });
         }
 
+        // Tạo JSON-LD cho Danh mục
+        const seoData = generateCategorySEO(
+            category.name,
+            slug,
+            category.description
+        );
+        const breadcrumbData = generateBreadcrumbSchema([
+            { name: "Trang chủ", url: SITE_URL },
+            { name: category.name, url: `${SITE_URL}/${slug}` }
+        ]);
+
         return (
             <div className="container mx-auto px-4 py-12">
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(seoData.jsonLd) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Đang tải cấu trúc danh mục...</div>}>
                     <CategoryProductView
                         category={category}
