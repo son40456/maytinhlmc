@@ -48,7 +48,10 @@ export async function generateMetadata({ params }: {
 
     if (data?.product) {
         const product = data.product;
-        const cleanPrice = (priceStr: string) => priceStr?.replace(/&nbsp;/g, " ").trim() || "";
+        const cleanPrice = (priceStr?: string | null) => {
+            if (!priceStr) return "";
+            return priceStr.replace(/&nbsp;/g, " ").trim();
+        };
         const displayPrice = cleanPrice(product.salePrice || product.price || product.regularPrice) || undefined;
 
         const seoData = generateProductSEO(
@@ -98,7 +101,10 @@ export default async function SlugPage({ params }: {
 
     if (nodeData?.product) {
         const product = nodeData.product;
-        const cleanPrice = (priceStr: string) => priceStr?.replace(/&nbsp;/g, " ").trim() || "";
+        const cleanPrice = (priceStr?: string | null) => {
+            if (!priceStr) return "";
+            return priceStr.replace(/&nbsp;/g, " ").trim();
+        };
         const displayPrice = cleanPrice(product.salePrice || product.price || product.regularPrice) || "Liên hệ";
         const regularPrice = cleanPrice(product.regularPrice);
         const salePrice = cleanPrice(product.salePrice);

@@ -59,13 +59,13 @@ export function generateProductSEO(
                         height: 630,
                     },
                 ]
-                : undefined,
+                : [],
         },
         twitter: {
             card: "summary_large_image",
             title,
             description,
-            images: image ? [image] : undefined,
+            images: image ? [image] : [],
         },
         // Schema dữ liệu ngầm (JSON-LD) map vào riêng để render component Script
         jsonLd: {
@@ -177,13 +177,13 @@ export function generatePostSEO(
                         height: 630,
                     },
                 ]
-                : undefined,
+                : [],
         },
         twitter: {
             card: "summary_large_image",
             title,
             description: desc,
-            images: image ? [image] : undefined,
+            images: image ? [image] : [],
         },
         jsonLd: {
             "@context": "https://schema.org",
