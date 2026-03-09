@@ -356,7 +356,7 @@ export function CategoryProductView({
                     </div>
                 ) : (
                     <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4 transition-opacity ${loading ? 'opacity-50' : 'opacity-100'}`}>
-                        {products.map((p: any) => (
+                        {products.map((p: any, idx: number) => (
                             <ProductCard
                                 key={p.id}
                                 id={p.id}
@@ -369,6 +369,7 @@ export function CategoryProductView({
                                 regularPrice={p.regularPrice}
                                 salePrice={p.salePrice}
                                 category={categorySlug}
+                                priority={idx < 12}
                             />
                         ))}
                     </div>

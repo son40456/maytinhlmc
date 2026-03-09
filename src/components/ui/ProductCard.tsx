@@ -22,9 +22,10 @@ interface ProductCardProps {
     salePrice?: string;
     stockStatus?: string;
     category?: string;
+    priority?: boolean;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, price, imageUrl, slug, sku, regularPrice, salePrice, stockStatus = 'IN_STOCK', category }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, price, imageUrl, slug, sku, regularPrice, salePrice, stockStatus = 'IN_STOCK', category, priority = false }) => {
     const [isPending, startTransition] = React.useTransition();
     const addItem = useCartStore(state => state.addItem);
     const addCompare = useCompareStore(state => state.addItem);
@@ -71,6 +72,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                         fill
                         className="object-contain rounded-lg transition-transform duration-300 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        priority={priority}
                     />
                 ) : (
                     <div className="flex h-full w-full items-center justify-center bg-slate-100 rounded-lg text-slate-400">

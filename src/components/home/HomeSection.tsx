@@ -73,7 +73,7 @@ export async function HomeSection({ title, categorySlug, subFilters }: HomeSecti
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 md:gap-3 lg:gap-4">
-                {displayProducts.map((p: any) => (
+                {displayProducts.map((p: any, idx: number) => (
                     <ProductCard
                         key={p.id}
                         id={p.id}
@@ -83,6 +83,7 @@ export async function HomeSection({ title, categorySlug, subFilters }: HomeSecti
                         imageUrl={p.imageUrl}
                         slug={p.slug}
                         category={categorySlug}
+                        priority={idx < 6}
                     />
                 ))}
             </div>
