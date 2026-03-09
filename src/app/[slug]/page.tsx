@@ -15,21 +15,14 @@ import { CategoryProductView } from "@/components/category/CategoryProductView";
 import { DetailedSpecsTable } from "@/components/product/DetailedSpecsTable";
 import dynamic from 'next/dynamic';
 const RelatedNews = dynamic(() => import('@/components/product/RelatedNews').then(mod => mod.RelatedNews), {
-    ssr: false,
     loading: () => <div className="h-64 bg-white/50 animate-pulse rounded-2xl" />
 });
-const ExpandableDescription = dynamic(() => import('@/components/product/ExpandableDescription').then(mod => mod.ExpandableDescription), {
-    ssr: false
-});
+const ExpandableDescription = dynamic(() => import('@/components/product/ExpandableDescription').then(mod => mod.ExpandableDescription));
 const ProductReviews = dynamic(() => import('@/components/product/ProductReviews').then(mod => mod.ProductReviews), {
-    ssr: false,
     loading: () => <div className="h-64 bg-white/50 animate-pulse rounded-2xl" />
 });
-const ProductRatingBadge = dynamic(() => import('@/components/product/ProductRatingBadge').then(mod => mod.ProductRatingBadge), {
-    ssr: false
-});
+const ProductRatingBadge = dynamic(() => import('@/components/product/ProductRatingBadge').then(mod => mod.ProductRatingBadge));
 const RelatedProductsCarousel = dynamic(() => import('@/components/product/RelatedProductsCarousel').then(mod => mod.RelatedProductsCarousel), {
-    ssr: false,
     loading: () => <div className="h-96 bg-white/50 animate-pulse rounded-2xl" />
 });
 import { generateProductSEO, generateCategorySEO } from "@/utils/seo";
