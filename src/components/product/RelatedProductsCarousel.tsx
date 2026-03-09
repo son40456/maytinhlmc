@@ -39,8 +39,11 @@ export function RelatedProductsCarousel({ products }: RelatedProductsCarouselPro
     const updateScrollState = useCallback(() => {
         const el = trackRef.current;
         if (!el) return;
-        setCanScrollLeft(el.scrollLeft > 4);
-        setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+        requestAnimationFrame(() => {
+            if (!el) return;
+            setCanScrollLeft(el.scrollLeft > 4);
+            setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+        });
     }, []);
 
     const scroll = (dir: "left" | "right") => {

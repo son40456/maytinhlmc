@@ -46,19 +46,26 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
     useEffect(() => {
         const container = thumbContainerRef.current;
         if (!container) return;
-        // Each thumb is 96px + 10px gap (gap-2.5 = 10px)
-        const THUMB_SIZE = 106;
-        const targetTop = activeIndex * THUMB_SIZE - container.clientHeight / 2 + THUMB_SIZE / 2;
-        container.scrollTop = Math.max(0, Math.min(targetTop, container.scrollHeight - container.clientHeight));
+        // Run in rAF to avoid forced reflow during render/commit
+        requestAnimationFrame(() => {
+            if (!container) return;
+            // Each thumb is 96px + 10px gap (gap-2.5 = 10px)
+            const THUMB_SIZE = 106;
+            const targetTop = activeIndex * THUMB_SIZE - container.clientHeight / 2 + THUMB_SIZE / 2;
+            container.scrollTop = Math.max(0, Math.min(targetTop, container.scrollHeight - container.clientHeight));
+        });
     }, [activeIndex]);
 
     // Scroll horizontal mobile thumbs – use scrollLeft directly
     useEffect(() => {
         const container = mobileThumbRef.current;
         if (!container) return;
-        const THUMB_SIZE = 64; // w-14 h-14 = 56px + gap-2 = 8px = 64
-        const targetLeft = activeIndex * THUMB_SIZE - container.clientWidth / 2 + THUMB_SIZE / 2;
-        container.scrollLeft = Math.max(0, Math.min(targetLeft, container.scrollWidth - container.clientWidth));
+        requestAnimationFrame(() => {
+            if (!container) return;
+            const THUMB_SIZE = 64; // w-14 h-14 = 56px + gap-2 = 8px = 64
+            const targetLeft = activeIndex * THUMB_SIZE - container.clientWidth / 2 + THUMB_SIZE / 2;
+            container.scrollLeft = Math.max(0, Math.min(targetLeft, container.scrollWidth - container.clientWidth));
+        });
     }, [activeIndex]);
 
     const scrollThumbs = (dir: 'up' | 'down') => {

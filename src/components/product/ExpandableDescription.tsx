@@ -13,8 +13,12 @@ export function ExpandableDescription({ content }: ExpandableDescriptionProps) {
 
     // Check if the content is taller than the max collapsed height (e.g., 600px)
     useEffect(() => {
-        if (contentRef.current && contentRef.current.scrollHeight > 600) {
-            setNeedsExpansion(true);
+        if (contentRef.current) {
+            requestAnimationFrame(() => {
+                if (contentRef.current && contentRef.current.scrollHeight > 600) {
+                    setNeedsExpansion(true);
+                }
+            });
         }
     }, [content]);
 
