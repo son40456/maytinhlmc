@@ -40,11 +40,18 @@ export async function generateMetadata({ params }: {
 }) {
     const { slug } = await params;
 
-    const { data } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
-        slugId: slug,
-        slugStr: slug,
-        taxFilters: null
-    });
+    let data;
+    try {
+        const result = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
+            slugId: slug,
+            slugStr: slug,
+            taxFilters: null
+        });
+        data = result.data;
+    } catch (error) {
+        console.error("Gợi ý: Lỗi mạng hoặc máy chủ WP khi fetch Metadata:", error);
+        return { title: 'Lỗi kết nối máy chủ | LMC' };
+    }
 
     if (data?.product) {
         try {
@@ -93,16 +100,33 @@ export default async function SlugPage({ params }: {
 
     // Xóa bỏ searchParams ở Server Component để cho phép Build Tĩnh (SSG) hoàn toàn.
     // Việc lọc (filter) và sắp xếp (sort) sẽ được Client Component (CategoryProductView) xử lý sau khi load.
-    const { data: nodeData } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
-        slugId: slug,
-        slugStr: slug,
-        first: 24,
-        after: "",
-        minPrice: null,
-        maxPrice: null,
-        orderBy: [{ field: "DATE", order: "DESC" }],
-        taxFilters: null
-    });
+    let nodeData;
+    try {
+        const result = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
+            slugId: slug,
+            slugStr: slug,
+            first: 24,
+            after: "",
+            minPrice: null,
+            maxPrice: null,
+            orderBy: [{ field: "DATE", order: "DESC" }],
+            taxFilters: null
+        });
+        nodeData = result.data;
+    } catch (err: any) {
+        return (
+            <div className="min-h-screen flex items-center justify-center p-4">
+                <div className="bg-red-50 border border-red-200 p-6 rounded-lg max-w-3xl w-full shadow-lg">
+                    <h1 className="text-red-700 font-bold text-xl mb-4">⚠️ Lỗi kết nối máy chủ WordPress</h1>
+                    <p className="text-red-600 mb-2">Tiến trình Node.js Server của giao diện (Next.js) đã bắt được lỗi văng ứng dụng khi gọi API lấy dữ liệu từ Backend WordPress.</p>
+                    <p className="text-slate-600 text-sm mb-4">Rất có thể Vercel IP bị firewall của WP chặn, hoặc WP trả về mã lỗi 50x/40x (Timeout, Cloudflare error block, vv).</p>
+                    <pre className="text-xs text-slate-800 bg-white p-4 rounded overflow-auto border border-red-200 whitespace-pre-wrap font-mono">
+                        {err.message + "\n" + (err.stack ? err.stack : "")}
+                    </pre>
+                </div>
+            </div>
+        );
+    }
 
     if (nodeData?.product) {
         try {
