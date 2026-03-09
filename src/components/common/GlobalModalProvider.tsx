@@ -7,6 +7,14 @@ const RelatedProductsModal = dynamic(() => import('./RelatedProductsModal').then
     ssr: false
 });
 
+const CompareBar = dynamic(() => import('./CompareBar').then(mod => mod.CompareBar), {
+    ssr: false
+});
+
+const ToastContainer = dynamic(() => import('./ToastContainer').then(mod => mod.ToastContainer), {
+    ssr: false
+});
+
 export function GlobalModalProvider({ children }: { children: React.ReactNode }) {
     const { isOpen, closeModal, relatedProducts } = useRelatedProductsModalStore();
 
@@ -18,6 +26,8 @@ export function GlobalModalProvider({ children }: { children: React.ReactNode })
                 onClose={closeModal}
                 relatedProducts={relatedProducts}
             />
+            <CompareBar />
+            <ToastContainer />
         </>
     );
 }
