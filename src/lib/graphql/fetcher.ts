@@ -25,15 +25,10 @@ async function wpgraphqlFetchRaw<T>(
         ...options,
     });
 
-    const text = await res.text();
-    try {
-        const json = JSON.parse(text);
-        return json;
-    } catch (err) {
-        console.error("WpGraphQL Parse Error. URL:", url);
-        console.error("Raw response snippet:", text.slice(0, 500));
-        throw err;
-    }
+    const json = await res.json();
+    // Không log lỗi GraphQL tự động - caller tự quyết định xử lý.
+    // Một số lỗi là bình thường (VD: lookup product/category cùng lúc, slug thuộc loại kia).
+    return json;
 }
 
 // Use React cache to deduplicate requests in the same render pass (Shared between Metadata and Page)

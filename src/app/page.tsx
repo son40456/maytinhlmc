@@ -1,7 +1,5 @@
-import { Metadata } from "next";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { SITE_NAME, SITE_URL } from "@/utils/seo";
 import { HomeSection } from "@/components/home/HomeSection";
 import { HardwareCategoryGrid } from "@/components/home/HardwareCategoryGrid";
 import fs from "fs/promises";
@@ -46,21 +44,6 @@ const dummyProducts = [
 ];
 
 import { getHomepageConfig, getHardwareGridConfig } from '@/app/actions/configActions';
-
-export const metadata: Metadata = {
-  title: `Trang chủ | ${SITE_NAME}`,
-  description: `Săn deal công nghệ, linh kiện PC và phụ kiện chính hãng giá cực sốc tại ${SITE_NAME}. Giao hàng toàn quốc, bảo hành uy tín.`,
-  alternates: {
-    canonical: SITE_URL,
-  },
-  openGraph: {
-    title: `Trang chủ | ${SITE_NAME}`,
-    description: `Mua nhanh linh kiện màn hình, PC, Laptop gaming... giá sốc. Giao hàng toàn quốc.`,
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    type: "website",
-  },
-};
 
 export default async function Home() {
   // Read dynamic homepage config (via KV or fallback to fs)
