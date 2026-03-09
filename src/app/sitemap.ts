@@ -10,7 +10,6 @@ const GET_ALL_URLS = `
       }
       nodes {
         slug
-        date
       }
     }
     productCategories(first: $first) {
@@ -21,7 +20,6 @@ const GET_ALL_URLS = `
     posts(first: $first) {
       nodes {
         slug
-        date
       }
     }
   }
@@ -55,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (product.slug) {
           sitemapUrls.push({
             url: `${baseUrl}/${product.slug}`,
-            lastModified: product.date ? new Date(product.date) : new Date(),
+            lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.8,
           });
@@ -81,7 +79,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           if (post.slug) {
             sitemapUrls.push({
               url: `${baseUrl}/tin-tuc/${post.slug}`,
-              lastModified: post.date ? new Date(post.date) : new Date(),
+              lastModified: new Date(),
               changeFrequency: 'monthly',
               priority: 0.7,
             });
