@@ -18,6 +18,9 @@ import { ExpandableDescription } from "@/components/product/ExpandableDescriptio
 import { ProductReviews } from "@/components/product/ProductReviews";
 import { ProductRatingBadge } from "@/components/product/ProductRatingBadge";
 import { RelatedProductsCarousel } from "@/components/product/RelatedProductsCarousel";
+import { generateProductSEO, generateCategorySEO } from "@/utils/seo";
+import { ProductSchema } from "@/components/seo/ProductSchema";
+import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 
 // ISR: Các trang đã build sẽ được phục vụ như HTML tĩnh, cache làm mới sau 1 tiếng.
 export const revalidate = 3600;
@@ -47,17 +50,19 @@ export async function generateMetadata({ params }: {
     });
 
     if (data?.product) {
+        const seo = generateProductSEO(data.product.name, data.product.shortDescription);
         return {
-            title: `${data.product.name} | LMC`,
-            description: data.product.shortDescription?.replace(/<[^>]+>/g, '') || `Mua ngay ${data.product.name} tại LMC!`,
+            title: seo.title,
+            description: seo.description,
             openGraph: { images: [data.product.image?.sourceUrl || ""] },
         };
     }
 
     if (data?.productCategory) {
+        const seo = generateCategorySEO(data.productCategory.name);
         return {
-            title: `${data.productCategory.name} | LMC`,
-            description: `Khám phá các sản phẩm ${data.productCategory.name} tại LMC.`,
+            title: seo.title,
+            description: seo.description,
         };
     }
 
@@ -102,6 +107,21 @@ export default async function SlugPage({ params }: {
 
         return (
             <div className="bg-[#f8fafc] min-h-screen pb-16">
+                <ProductSchema
+                    name={product.name}
+                    description={product.shortDescription || product.description || ''}
+                    image={imageUrl}
+                    price={saleNum > 0 ? saleNum : regularNum}
+                    url={`https://lmc.vn/${product.slug}`}
+                    stockStatus={product.stockStatus || "IN_STOCK"}
+                    sku={product.sku}
+                />
+                <BreadcrumbSchema
+                    items={[
+                        { name: 'Trang chủ', item: 'https://lmc.vn/' },
+                        { name: product.name, item: `https://lmc.vn/${product.slug}` }
+                    ]}
+                />
                 <div className="max-w-[1600px] mx-auto px-3 md:px-4 py-2 md:py-4">
                     {/* Breadcrumbs */}
                     <nav className="flex items-center gap-1.5 md:gap-2 text-xs text-slate-500 mb-6">
