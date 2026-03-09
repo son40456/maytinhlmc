@@ -28,7 +28,7 @@ const GET_ALL_URLS = `
 `;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maytinhlmc.vn';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maytinhlmc.vercel.app';
   const sitemapUrls: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
