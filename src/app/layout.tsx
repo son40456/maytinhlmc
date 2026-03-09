@@ -4,8 +4,15 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { GlobalModalProvider } from "@/components/common/GlobalModalProvider";
-import { CompareBar } from "@/components/common/CompareBar";
-import { ToastContainer } from "@/components/common/ToastContainer";
+import dynamic from 'next/dynamic';
+
+const CompareBar = dynamic(() => import('@/components/common/CompareBar').then(mod => mod.CompareBar), {
+  ssr: false
+});
+
+const ToastContainer = dynamic(() => import('@/components/common/ToastContainer').then(mod => mod.ToastContainer), {
+  ssr: false
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

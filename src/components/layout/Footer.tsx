@@ -215,9 +215,33 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                     <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-5 sm:gap-6 lg:gap-10 order-1 lg:order-2 w-full lg:w-auto">
                         {/* Payment Methods */}
                         <div className="flex items-center justify-center gap-5 sm:gap-6 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="Visa" className="h-4 w-auto object-contain" />
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard" className="h-[22px] sm:h-6 w-auto object-contain" />
-                            <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="Momo" className="h-[22px] sm:h-6 w-auto object-contain bg-white/20 p-1 rounded" />
+                            <div className="h-4 w-12 relative">
+                                <Image
+                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png"
+                                    alt="Visa"
+                                    fill
+                                    className="object-contain"
+                                    sizes="48px"
+                                />
+                            </div>
+                            <div className="h-6 w-10 relative">
+                                <Image
+                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png"
+                                    alt="Mastercard"
+                                    fill
+                                    className="object-contain"
+                                    sizes="40px"
+                                />
+                            </div>
+                            <div className="h-6 w-6 relative bg-white/20 p-1 rounded">
+                                <Image
+                                    src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png"
+                                    alt="Momo"
+                                    fill
+                                    className="object-contain p-0.5"
+                                    sizes="24px"
+                                />
+                            </div>
                         </div>
 
                         <div className="h-px w-2/3 sm:h-8 sm:w-px bg-white/10 sm:block mx-auto sm:mx-0"></div>
@@ -234,11 +258,15 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 target="_blank"
                                 className="transition-opacity hover:opacity-90"
                             >
-                                <img
-                                    src="https://maytinhlmc.vn/wp-content/uploads/dadangkybocongthuong.png"
-                                    alt="Đã thông báo Bộ Công Thương"
-                                    className="h-[40px] sm:h-[52px] w-auto object-contain drop-shadow-md sm:-ml-2"
-                                />
+                                <div className="h-[40px] sm:h-[52px] w-[130px] sm:w-[170px] relative transition-opacity hover:opacity-90">
+                                    <Image
+                                        src="https://maytinhlmc.vn/wp-content/uploads/dadangkybocongthuong.png"
+                                        alt="Đã thông báo Bộ Công Thương"
+                                        fill
+                                        className="object-contain drop-shadow-md sm:-ml-2"
+                                        sizes="(max-width: 640px) 130px, 170px"
+                                    />
+                                </div>
                             </a>
                         </div>
                     </div>
