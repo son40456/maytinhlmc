@@ -1,7 +1,16 @@
 export const generateProductSEO = (productName: string, shortDescription?: string) => {
     const currentYear = new Date().getFullYear();
-    // Công thức Meta Title cho Sản phẩm: Tối ưu cảm xúc và giới hạn kí tự (~60 chars)
-    const title = `${productName} | Chính hãng, Giá Rẻ Nhất ${currentYear}`.substring(0, 60);
+    const brand = "LMC";
+
+    // Tối ưu Title: Không nên dùng substring cắt cứng vì Bot Google sẽ không đọc được đoạn bị cắt.
+    // Tốt nhất là nối chuỗi đầy đủ. Nếu quá dài, Google sẽ tự cắt thêm "..." khi hiển thị, 
+    // nhưng Bot vẫn đọc được toàn bộ keyword trong source code HTML.
+    let title = `${productName} | Chính hãng, Giá Rẻ Nhất ${currentYear} | ${brand}`;
+
+    // Nếu tên SP quá dài (>60 ký tự), ta ưu tiên hiển thị Tên SP + Brand (bỏ bớt chữ rườm rà)
+    if (productName.length > 55) {
+        title = `${productName} | ${brand}`;
+    }
 
     // Công thức Meta Description cho Sản phẩm: Dưới 160 kí tự, đẩy CTA, icon
     const defaultDesc = `Mua ngay ${productName} chính hãng tại LMC. Ưu đãi trả góp 0%, freeship toàn quốc.`;
@@ -10,6 +19,7 @@ export const generateProductSEO = (productName: string, shortDescription?: strin
         ? ' ' + shortDescription.replace(/<[^>]+>/g, '').substring(0, 60).trim() + '...'
         : '';
 
+    // Description cũng vậy, nối chuỗi và dùng substring để đảm bảo không bị quá dài gây loãng
     const description = `${defaultDesc}${cleanExcerpt} ✓ Click xem ngay!`.substring(0, 160);
 
     return { title, description };
@@ -20,7 +30,7 @@ export const generateCategorySEO = (categoryName: string) => {
     const currentYear = new Date().getFullYear();
 
     // Công thức Meta Title cho Danh mục
-    const title = `Trọn bộ ${categoryName} - Cấu Hình Mạnh, Giá Siêu Rẻ ${currentMonth}/${currentYear}`.substring(0, 60);
+    const title = `Trọn bộ ${categoryName} - Cấu Hình Mạnh, Giá Siêu Rẻ ${currentMonth}/${currentYear} | LMC`;
 
     // Công thức Meta Description cho Danh mục
     const description = `Khám phá các dòng ${categoryName} đa dạng, cấu hình tối ưu. Xem bảng giá cập nhật mới nhất tại LMC. ✓ Trả góp 0%. ✓ Freeship. ✓ Mua ngay!`.substring(0, 160);
