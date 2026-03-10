@@ -298,6 +298,7 @@ export function CategoryProductView({
                                                         alt={cat.name}
                                                         fill
                                                         className="object-contain"
+                                                        sizes="(max-width: 768px) 40px, 80px"
                                                     />
                                                 </div>
                                                 <span className="font-semibold text-[9px] md:text-sm text-blue-600 line-clamp-2 leading-tight">{cat.name}</span>

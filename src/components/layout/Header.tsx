@@ -273,7 +273,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                             >
                                                                 <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-md bg-slate-100 overflow-hidden flex-shrink-0 relative">
                                                                     {product.image?.sourceUrl ? (
-                                                                        <Image src={product.image.sourceUrl} alt={product.name} fill className="object-cover" />
+                                                                        <Image src={product.image.sourceUrl} alt={product.name} fill className="object-cover" sizes="64px" />
                                                                     ) : (
                                                                         <div className="w-full h-full flex items-center justify-center text-gray-300">
                                                                             <Search className="w-4 h-4" />
@@ -377,7 +377,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                 <div key={item.id} className="group/item flex items-center gap-3 bg-white px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 relative">
                                                     <div className="bg-white border border-slate-100 aspect-square rounded-lg w-16 h-16 shrink-0 shadow-sm relative overflow-hidden">
                                                         {item.imageUrl ? (
-                                                            <Image src={item.imageUrl} alt={item.name} fill className="object-contain p-1" />
+                                                            <Image src={item.imageUrl} alt={item.name} fill className="object-contain p-1" sizes="64px" />
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center bg-slate-50 text-slate-300"><ShoppingCart size={20} /></div>
                                                         )}
