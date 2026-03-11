@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, Loader2, X, Home } from 'lucide-react';
+import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, X, Home } from 'lucide-react';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
-import { wpgraphqlFetch } from '@/lib/graphql/fetcher';
-import { GET_MENU_ITEMS } from '@/lib/graphql/queries';
-import { searchProductsLive } from '@/app/actions/searchActions';
+import { SearchOverlay } from '@/components/search/SearchOverlay';
 
 import { STATIC_MENU_ITEMS, MenuItemType } from '@/constants/menuData';
 
@@ -77,17 +75,13 @@ const getMenuIconSmall = (label: string) => renderMenuIcon(undefined, label, [],
 
 export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const [mounted, setMounted] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [liveResults, setLiveResults] = useState<any[]>([]);
-    const [isSearching, setIsSearching] = useState(false);
-    const [showLiveResults, setShowLiveResults] = useState(false);
+    const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
     const [isMenuForceHidden, setIsMenuForceHidden] = useState(false);
 
-    const searchRef = React.useRef<HTMLFormElement>(null);
     const itemCount = useCartStore((state) => state.getItemCount());
     const cartItems = useCartStore((state) => state.items);
     const cartTotal = useCartStore((state) => state.getRawTotal());
@@ -107,13 +101,6 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
 
     useEffect(() => {
         setMounted(true);
-        const handleClickOutside = (event: MouseEvent) => {
-            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-                setShowLiveResults(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     // Close mobile drawer on route change
@@ -154,38 +141,21 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // '/' key to open search overlay
     useEffect(() => {
-        const fetchResults = async () => {
-            if (searchQuery.trim().length < 2) {
-                setLiveResults([]);
-                setIsSearching(false);
-                return;
-            }
-            setIsSearching(true);
-            try {
-                const results = await searchProductsLive(searchQuery);
-                setLiveResults(results);
-            } catch (error) {
-                console.error("Live search error:", error);
-            } finally {
-                setIsSearching(false);
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === '/' && e.target === document.body) {
+                e.preventDefault();
+                setSearchOverlayOpen(true);
             }
         };
-        // Reduce debounce from 400ms to 150ms for snappier feel
-        const delayDebounceFn = setTimeout(() => { fetchResults(); }, 150);
-        return () => clearTimeout(delayDebounceFn);
-    }, [searchQuery]);
-
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        setShowLiveResults(false);
-        if (searchQuery.trim()) {
-            router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-        }
-    };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     return (
         <>
+            <SearchOverlay isOpen={searchOverlayOpen} onClose={() => setSearchOverlayOpen(false)} />
             <header className="sticky top-0 z-50 w-full shadow-md font-sans">
                 {/* Tier 1: Blue Bar */}
                 <div className="bg-[#004b91] text-white h-14 lg:h-[72px]">
@@ -224,90 +194,17 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                             <span className="text-sm font-bold">Danh mục</span>
                         </button>
 
-                        {/* Search Bar */}
-                        <div className="flex-1 max-w-3xl lg:px-8 relative">
-                            <form ref={searchRef} onSubmit={handleSearch} className="relative group/search">
-                                <input
-                                    type="search"
-                                    placeholder="Tìm sản phẩm..."
-                                    className="w-full h-9 lg:h-12 pl-4 lg:pl-5 pr-10 lg:pr-14 rounded-full text-gray-800 bg-white/95 focus:bg-white focus:outline-none focus:ring-2 lg:focus:ring-4 focus:ring-yellow-400/50 shadow-inner transition-all text-sm lg:text-base relative z-10"
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value);
-                                        if (e.target.value.trim().length >= 2) {
-                                            setShowLiveResults(true);
-                                        } else {
-                                            setShowLiveResults(false);
-                                        }
-                                    }}
-                                    onFocus={() => {
-                                        if (searchQuery.trim().length >= 2) {
-                                            setShowLiveResults(true);
-                                        }
-                                    }}
-                                />
-                                <button
-                                    type="submit"
-                                    className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 lg:h-9 lg:w-9 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-yellow-400 hover:text-blue-900 transition-colors shadow-sm z-10"
-                                >
-                                    <Search className="h-3.5 w-3.5 lg:h-5 lg:w-5" />
-                                </button>
-
-                                {/* Dropdown Kết Quả */}
-                                {showLiveResults && (
-                                    <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-[60] text-gray-800 animate-in fade-in slide-in-from-top-2 duration-200">
-                                        {isSearching ? (
-                                            <div className="p-4 lg:p-6 text-center text-gray-500 flex items-center justify-center gap-3 text-sm">
-                                                <Loader2 className="w-5 h-5 animate-spin text-blue-500" /> Đang tìm kiếm...
-                                            </div>
-                                        ) : liveResults.length > 0 ? (
-                                            <div className="max-h-[60vh] lg:max-h-[70vh] overflow-y-auto custom-scrollbar">
-                                                <div className="p-3 lg:p-4 border-b border-slate-100">
-                                                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 lg:mb-3 px-2">Top Sản Phẩm</h4>
-                                                    <div className="grid grid-cols-1 gap-1 lg:gap-2">
-                                                        {liveResults.map((product) => (
-                                                            <Link
-                                                                key={product.id}
-                                                                href={`/product/${product.slug}`}
-                                                                className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors group"
-                                                                onClick={() => setShowLiveResults(false)}
-                                                            >
-                                                                <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-md bg-slate-100 overflow-hidden flex-shrink-0 relative">
-                                                                    {product.image?.sourceUrl ? (
-                                                                        <Image src={product.image.sourceUrl} alt={product.name} fill className="object-cover" sizes="64px" />
-                                                                    ) : (
-                                                                        <div className="w-full h-full flex items-center justify-center text-gray-300">
-                                                                            <Search className="w-4 h-4" />
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                                <div className="flex-1 min-w-0">
-                                                                    <h3 className="text-slate-900 font-semibold text-xs lg:text-sm truncate group-hover:text-blue-600 transition-colors">
-                                                                        {product.name}
-                                                                    </h3>
-                                                                    <p className="font-bold text-xs lg:text-sm mt-0.5 text-rose-600">
-                                                                        {product.price || product.regularPrice || 'Liên hệ'}
-                                                                    </p>
-                                                                </div>
-                                                            </Link>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                                <div
-                                                    className="p-2.5 lg:p-3 bg-blue-600 text-white text-center text-xs lg:text-sm font-bold cursor-pointer hover:bg-blue-700 transition-colors"
-                                                    onClick={(e) => { e.preventDefault(); handleSearch(e); }}
-                                                >
-                                                    Xem tất cả kết quả cho &quot;{searchQuery}&quot;
-                                                </div>
-                                            </div>
-                                        ) : searchQuery.trim().length >= 2 ? (
-                                            <div className="p-4 lg:p-6 text-center text-gray-500 text-sm">
-                                                Không tìm thấy sản phẩm nào cho <span className="font-bold">&quot;{searchQuery}&quot;</span>
-                                            </div>
-                                        ) : null}
-                                    </div>
-                                )}
-                            </form>
+                        {/* Search Bar - triggers SearchOverlay */}
+                        <div className="flex-1 max-w-3xl lg:px-8">
+                            <button
+                                type="button"
+                                onClick={() => setSearchOverlayOpen(true)}
+                                className="w-full h-9 lg:h-12 pl-4 lg:pl-5 pr-10 lg:pr-14 rounded-full text-gray-400 bg-white/95 hover:bg-white shadow-inner transition-all text-sm lg:text-base flex items-center gap-2 group"
+                            >
+                                <Search className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                                <span className="flex-1 text-left truncate">Tìm sản phẩm...</span>
+                                <kbd className="hidden lg:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] text-gray-300 border border-gray-200 rounded bg-gray-50 flex-shrink-0">/</kbd>
+                            </button>
                         </div>
 
                         {/* Mobile: Cart icon */}
