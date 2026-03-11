@@ -88,12 +88,15 @@ async function fetchProducts(after = null) {
 
 const extractPrice = (htmlText) => {
   if (!htmlText) return null;
-  const bdiMatch = htmlText.match(/<bdi>([^<]+)/);
-  if (bdiMatch && bdiMatch[1]) {
-    const priceStr = bdiMatch[1].replace(/&nbsp;/g, '').replace(/[\.₫\s]/g, '').trim();
-    return parseInt(priceStr) || null;
-  }
-  return null;
+  // Strip all HTML tags first
+  const stripped = htmlText.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim();
+  // Remove currency symbol and whitespace
+  const cleaned = stripped.replace(/₫/g, '').replace(/\s/g, '').trim();
+  // Vietnamese format: dots as thousands separator (e.g. "2.090.000")
+  // Remove all dots, then parse as integer
+  const noSeparators = cleaned.replace(/\./g, '').replace(/,/g, '');
+  const parsed = parseInt(noSeparators);
+  return isNaN(parsed) || parsed <= 0 ? null : parsed;
 };
 
 function formatProduct(node) {
@@ -151,7 +154,7 @@ async function main() {
     });
 
     console.log('📤 Uploading documents to Meilisearch...');
-    const task = await index.addDocuments(allProducts);
+    const task = await index.addDocuments(allProducts, { primaryKey: 'id' });
     console.log(`⏳ Task created. Task ID: ${task.taskUid}`);
     
     console.log('🏁 Indexing process initiated. It may take a moment to complete on the server.');
