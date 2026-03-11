@@ -146,7 +146,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                             type="text"
                             value={query}
                             onChange={e => setQuery(e.target.value)}
-                            placeholder="Search products, brands, or categories..."
+                            placeholder="Tìm sản phẩm, thương hiệu hoặc danh mục..."
                             className="flex-1 text-gray-800 text-sm placeholder-gray-400 bg-transparent outline-none"
                         />
                         {isSearching
@@ -165,8 +165,8 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                                 {results.length > 0 && (
                                     <>
                                         <div className="flex items-center justify-between px-5 pt-4 pb-2">
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Top Product Results</span>
-                                            <span className="text-[10px] text-gray-400">Powered by <span className="font-bold text-orange-500">Meilisearch</span></span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Kết quả nổi bật</span>
+                                            <span className="text-[10px] text-gray-400">Cung cấp bởi <span className="font-bold text-orange-500">Meilisearch</span></span>
                                         </div>
                                         <div className="divide-y divide-gray-50">
                                             {results.map(product => (
@@ -208,7 +208,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                             <div className="grid grid-cols-2 gap-0 divide-x divide-gray-100">
                                 {/* Suggestions column */}
                                 <div className="px-5 py-4">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Suggestions</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Gợi ý tìm kiếm</p>
                                     <div className="space-y-2.5">
                                         {POPULAR_SUGGESTIONS.map(s => (
                                             <button key={s} onClick={() => setQuery(s)} className="w-full flex items-center gap-2 text-[13px] text-left group">
@@ -221,9 +221,9 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                                 {/* Recent column */}
                                 <div className="px-5 py-4">
                                     <div className="flex items-center justify-between mb-3">
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Recent</p>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Tìm kiếm gần đây</p>
                                         {recentSearches.length > 0 && (
-                                            <button onClick={clearAllRecent} className="text-[10px] text-orange-500 hover:text-orange-700 font-semibold uppercase tracking-wide">Clear</button>
+                                            <button onClick={clearAllRecent} className="text-[10px] text-orange-500 hover:text-orange-700 font-semibold uppercase tracking-wide">Xoá tất cả</button>
                                         )}
                                     </div>
                                     {recentSearches.length > 0 ? (
@@ -237,7 +237,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-[12px] text-gray-300">No recent searches</p>
+                                        <p className="text-[12px] text-gray-300">Chưa có lịch sử tìm kiếm</p>
                                     )}
                                 </div>
                             </div>
@@ -295,8 +295,8 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                             {recentSearches.length > 0 && (
                                 <div className="px-4 pt-5">
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">Recent Searches</span>
-                                        <button onClick={clearAllRecent} className="text-[11px] font-semibold text-orange-500 uppercase">Clear All</button>
+                                        <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">Tìm kiếm gần đây</span>
+                                        <button onClick={clearAllRecent} className="text-[11px] font-semibold text-orange-500 uppercase">Xoá tất cả</button>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                         {recentSearches.map(r => (
@@ -313,7 +313,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
 
                             {/* Popular Suggestions */}
                             <div className="px-4 pt-6">
-                                <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 block mb-3">Popular Suggestions</span>
+                                    <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 block mb-3">Tìm kiếm phổ biến</span>
                                 <div className="space-y-1">
                                     {POPULAR_SUGGESTIONS.map(s => (
                                         <button
@@ -337,8 +337,8 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                             {results.length > 0 && (
                                 <>
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">Products</span>
-                                        <button onClick={() => handleSearch(query)} className="text-[11px] font-semibold text-orange-500">View All Results</button>
+                                        <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">Sản phẩm</span>
+                                        <button onClick={() => handleSearch(query)} className="text-[11px] font-semibold text-orange-500">Xem tất cả kết quả</button>
                                     </div>
                                     <div className="space-y-0 divide-y divide-gray-100">
                                         {results.map((product, i) => (
@@ -381,12 +381,12 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                 {/* Mobile Fixed Bottom Bar */}
                 {hasQuery && results.length > 0 && (
                     <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 flex items-center justify-between flex-shrink-0 safe-area-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
-                        <span className="text-xs text-gray-400 font-medium">{Math.max(results.length * 3, results.length)} Results Found</span>
+                        <span className="text-xs text-gray-400 font-medium">{Math.max(results.length * 3, results.length)} Kết quả</span>
                         <button
                             onClick={() => handleSearch(query)}
                             className="bg-orange-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-orange-600 transition-colors"
                         >
-                            Show Results
+                            Xem kết quả
                         </button>
                     </div>
                 )}

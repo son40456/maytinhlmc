@@ -11,6 +11,11 @@ const client = new MeiliSearch({
     apiKey: SEARCH_KEY,
 });
 
+function formatVND(amount: number | null | undefined): string {
+    if (!amount || amount <= 0) return 'Liên hệ';
+    return amount.toLocaleString('vi-VN') + ' ₫';
+}
+
 export async function searchProductsLive(query: string, hitsPerPage: number = 6) {
     if (!query || query.trim().length < 2) return [];
 
@@ -23,12 +28,14 @@ export async function searchProductsLive(query: string, hitsPerPage: number = 6)
         const hits = searchResponse.hits || [];
 
         return hits.map((hit: any) => {
+            // price, regularPrice, salePrice are integers (VND)
+            const displayPrice = hit.price || hit.regularPrice || hit.salePrice;
             return {
-                id: hit.objectID, // Maintain original GraphQL ID for React keys if possible
+                id: hit.objectID || hit.id,
                 databaseId: parseInt(hit.id),
                 name: hit.name,
                 slug: hit.slug,
-                price: hit.price ? `${hit.price.toLocaleString('vi-VN')} ₫` : 'Liên hệ',
+                price: formatVND(displayPrice),
                 image: {
                     sourceUrl: hit.image,
                     altText: hit.name || ''
