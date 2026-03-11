@@ -163,15 +163,46 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
             }
             setIsSearching(true);
             try {
-                const results = await searchProductsLive(searchQuery);
-                setLiveResults(results);
+                // Direct client-side fetch to Meilisearch avoids Server Action overhead
+                const host = process.env.NEXT_PUBLIC_MEILISEARCH_HOST;
+                const key = process.env.NEXT_PUBLIC_MEILISEARCH_SEARCH_KEY;
+                
+                if (host && key) {
+                    const res = await fetch(`${host}/indexes/products/search`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${key}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ q: searchQuery, limit: 6 })
+                    });
+                    const data = await res.json();
+                    
+                    const formattedHits = (data.hits || []).map((hit: any) => ({
+                        id: hit.objectID,
+                        databaseId: parseInt(hit.id),
+                        name: hit.name,
+                        slug: hit.slug,
+                        price: hit.price ? `${hit.price.toLocaleString('vi-VN')} ₫` : 'Liên hệ',
+                        image: {
+                            sourceUrl: hit.image,
+                            altText: hit.name || ''
+                        }
+                    }));
+                    setLiveResults(formattedHits);
+                } else {
+                    // Fallback to server action if env vars are missing
+                    const results = await searchProductsLive(searchQuery);
+                    setLiveResults(results);
+                }
             } catch (error) {
                 console.error("Live search error:", error);
             } finally {
                 setIsSearching(false);
             }
         };
-        const delayDebounceFn = setTimeout(() => { fetchResults(); }, 400);
+        // Reduce debounce from 400ms to 150ms for snappier feel
+        const delayDebounceFn = setTimeout(() => { fetchResults(); }, 150);
         return () => clearTimeout(delayDebounceFn);
     }, [searchQuery]);
 
