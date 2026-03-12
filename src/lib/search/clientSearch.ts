@@ -1,16 +1,16 @@
 /**
- * Client-side direct Meilisearch search.
- * Bypasses the Next.js Server Action to call Meilisearch directly from the browser.
- * This eliminates the server round-trip, making instant search truly instant.
+ * Client-side search utility wrapping the Server Action.
  *
- * ⚠️ Security: Only use with a search-only API key (not master key).
- * The key is exposed in the browser. Make sure NEXT_PUBLIC_MEILISEARCH_SEARCH_KEY
- * is a restricted search-only key from Meilisearch.
+ * NOTE: We cannot call Meilisearch directly from the browser because:
+ * - Meilisearch runs on HTTP (http://160.30.113.39:7700)
+ * - The production site runs on HTTPS
+ * - Browsers block mixed content (HTTPS page → HTTP request)
+ *
+ * The Server Action runs on the server where HTTP is fine.
+ * We use a request ID counter to discard stale results.
  */
 
-const HOST = process.env.NEXT_PUBLIC_MEILISEARCH_HOST || 'http://localhost:7700';
-const SEARCH_KEY = process.env.NEXT_PUBLIC_MEILISEARCH_SEARCH_KEY || '';
-const INDEX = 'products';
+import { searchProductsLive } from '@/app/actions/searchActions';
 
 export interface SearchHit {
     id: string;
@@ -20,59 +20,32 @@ export interface SearchHit {
     image?: { sourceUrl: string; altText: string };
 }
 
-function formatVND(amount: number | null | undefined): string {
-    if (!amount || amount <= 0) return 'Liên hệ';
-    return amount.toLocaleString('vi-VN') + ' ₫';
-}
-
-let abortController: AbortController | null = null;
+// Track the latest request ID to discard stale results
+let latestRequestId = 0;
 
 /**
- * Instant client-side search - calls Meilisearch REST API directly.
- * Cancels any in-flight request before making a new one.
+ * Search products via Server Action with stale-result discarding.
+ * Debounce should be applied by the caller.
  */
 export async function clientSearchProducts(query: string, limit = 6): Promise<SearchHit[]> {
     if (!query || query.trim().length < 2) return [];
 
-    // Cancel previous request
-    if (abortController) {
-        abortController.abort();
-    }
-    abortController = new AbortController();
+    const requestId = ++latestRequestId;
 
     try {
-        const res = await fetch(`${HOST}/indexes/${INDEX}/search`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${SEARCH_KEY}`,
-            },
-            body: JSON.stringify({
-                q: query,
-                limit,
-                attributesToRetrieve: ['id', 'objectID', 'name', 'slug', 'price', 'regularPrice', 'salePrice', 'image'],
-            }),
-            signal: abortController.signal,
-        });
+        const hits = await searchProductsLive(query, limit);
 
-        if (!res.ok) throw new Error(`Meilisearch error: ${res.status}`);
+        // If a newer request was made, discard this stale result
+        if (requestId !== latestRequestId) return [];
 
-        const data = await res.json();
-        const hits = data.hits || [];
-
-        return hits.map((hit: any) => {
-            const displayPrice = hit.price || hit.regularPrice || hit.salePrice;
-            return {
-                id: hit.objectID || hit.id,
-                name: hit.name,
-                slug: hit.slug,
-                price: formatVND(displayPrice),
-                image: hit.image ? { sourceUrl: hit.image, altText: hit.name || '' } : undefined,
-            };
-        });
-    } catch (err: any) {
-        if (err.name === 'AbortError') return []; // Cancelled - ignore
-        console.error('Search error:', err);
+        return (hits as any[]).map((h: any) => ({
+            id: h.id || h.objectID || '',
+            name: h.name,
+            slug: h.slug,
+            price: h.price,
+            image: h.image,
+        }));
+    } catch {
         return [];
     }
 }
