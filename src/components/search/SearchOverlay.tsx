@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Search, X, TrendingUp, Clock, ArrowRight, ChevronRight, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { searchProductsLive } from '@/app/actions/searchActions';
+import { clientSearchProducts, SearchHit } from '@/lib/search/clientSearch';
 import { useRouter } from 'next/navigation';
 
 interface SearchResult {
@@ -96,12 +96,20 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
         setIsSearching(true);
         const timer = setTimeout(async () => {
             try {
-                const hits = await searchProductsLive(query, 5) as SearchResult[];
-                setResults(hits);
-                setTotalCount(hits.length > 0 ? hits.length * 3 : 0); // estimate
+                const hits = await clientSearchProducts(query, 5);
+                const mapped: SearchResult[] = hits.map(h => ({
+                    id: h.id,
+                    databaseId: parseInt(h.id),
+                    name: h.name,
+                    slug: h.slug,
+                    price: h.price,
+                    image: h.image,
+                }));
+                setResults(mapped);
+                setTotalCount(mapped.length > 0 ? mapped.length * 3 : 0);
             } catch { setResults([]); setTotalCount(0); }
             finally { setIsSearching(false); }
-        }, 200);
+        }, 80); // 80ms debounce - direct to Meilisearch
         return () => clearTimeout(timer);
     }, [query]);
 
@@ -166,7 +174,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                                     <>
                                         <div className="flex items-center justify-between px-5 pt-4 pb-2">
                                             <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Kết quả nổi bật</span>
-                                            <span className="text-[10px] text-gray-400">Cung cấp bởi <span className="font-bold text-orange-500">Meilisearch</span></span>
+                                            <span className="text-[10px] text-gray-400">Cung cấp bởi <span className="font-bold text-orange-500">SONBN</span></span>
                                         </div>
                                         <div className="divide-y divide-gray-50">
                                             {results.map(product => (
@@ -313,7 +321,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
 
                             {/* Popular Suggestions */}
                             <div className="px-4 pt-6">
-                                    <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 block mb-3">Tìm kiếm phổ biến</span>
+                                <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 block mb-3">Tìm kiếm phổ biến</span>
                                 <div className="space-y-1">
                                     {POPULAR_SUGGESTIONS.map(s => (
                                         <button

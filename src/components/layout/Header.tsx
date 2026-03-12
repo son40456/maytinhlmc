@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
-import { searchProductsLive } from '@/app/actions/searchActions';
+import { clientSearchProducts } from '@/lib/search/clientSearch';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
 
 import { STATIC_MENU_ITEMS, MenuItemType } from '@/constants/menuData';
@@ -176,11 +176,11 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
         setDesktopSearching(true);
         const t = setTimeout(async () => {
             try {
-                const hits = await searchProductsLive(desktopQuery, 6);
+                const hits = await clientSearchProducts(desktopQuery, 6);
                 setDesktopResults(hits as any[]);
             } catch { setDesktopResults([]); }
             finally { setDesktopSearching(false); }
-        }, 200);
+        }, 80); // Direct to Meilisearch - no server round-trip
         return () => clearTimeout(t);
     }, [desktopQuery]);
 
