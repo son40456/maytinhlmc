@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
-import { clientSearchProducts } from '@/lib/search/clientSearch';
+import { searchProductsLive } from '@/app/actions/searchActions';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
 
 import { STATIC_MENU_ITEMS, MenuItemType } from '@/constants/menuData';
@@ -166,28 +166,22 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Desktop inline search: debounced search with cancelled flag
+    // Desktop inline search: debounced search
     useEffect(() => {
         if (desktopQuery.trim().length < 2) {
             setDesktopResults([]);
             setDesktopSearching(false);
             return;
         }
-        let cancelled = false;
+        setDesktopSearching(true);
         const t = setTimeout(async () => {
-            if (cancelled) return;
-            setDesktopSearching(true);
             try {
-                const hits = await clientSearchProducts(desktopQuery, 6);
-                if (cancelled) return; // Stale result - do NOT update state
+                const hits = await searchProductsLive(desktopQuery, 6);
                 setDesktopResults(hits as any[]);
-            } catch {
-                if (!cancelled) setDesktopResults([]);
-            } finally {
-                if (!cancelled) setDesktopSearching(false);
-            }
-        }, 150);
-        return () => { cancelled = true; clearTimeout(t); };
+            } catch { setDesktopResults([]); }
+            finally { setDesktopSearching(false); }
+        }, 200);
+        return () => clearTimeout(t);
     }, [desktopQuery]);
 
     // Close desktop dropdown when clicking outside
