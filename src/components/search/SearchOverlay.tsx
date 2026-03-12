@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Search, X, TrendingUp, Clock, ArrowRight, ChevronRight, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { clientSearchProducts, SearchHit } from '@/lib/search/clientSearch';
+import { searchProductsLive } from '@/app/actions/searchActions';
 import { useRouter } from 'next/navigation';
 
 interface SearchResult {
@@ -91,35 +91,56 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
         return () => document.removeEventListener('keydown', handler);
     }, [onClose]);
 
-    useEffect(() => {
-        if (query.trim().length < 2) { setResults([]); setTotalCount(0); setIsSearching(false); return; }
+    // Debounced search - optimized with useTransition for non-blocking UI
+    const [debouncedQuery, setDebouncedQuery] = useState('');
 
-        let cancelled = false;
-        const timer = setTimeout(async () => {
-            if (cancelled) return;
-            setIsSearching(true);
-            try {
-                const hits = await clientSearchProducts(query, 5);
-                if (cancelled) return; // Stale result - do NOT update state
-                const mapped: SearchResult[] = hits.map(h => ({
-                    id: h.id,
-                    databaseId: parseInt(h.id),
-                    name: h.name,
-                    slug: h.slug,
-                    price: h.price,
-                    image: h.image,
-                }));
-                setResults(mapped);
-                setTotalCount(mapped.length > 0 ? mapped.length * 3 : 0);
-            } catch {
-                if (!cancelled) { setResults([]); setTotalCount(0); }
-            } finally {
-                if (!cancelled) setIsSearching(false);
-            }
+    useEffect(() => {
+        if (query.trim().length < 2) {
+            setResults([]);
+            setTotalCount(0);
+            setIsSearching(false);
+            setDebouncedQuery('');
+            return;
+        }
+
+        // Update debounced query after user stops typing (150ms)
+        const timer = setTimeout(() => {
+            setDebouncedQuery(query.trim());
         }, 150);
 
-        return () => { cancelled = true; clearTimeout(timer); };
+        return () => clearTimeout(timer);
     }, [query]);
+
+    // Actual search effect - runs only when debounced query changes
+    useEffect(() => {
+        if (!debouncedQuery || debouncedQuery.length < 2) return;
+
+        setIsSearching(true);
+        const controller = new AbortController();
+
+        const doSearch = async () => {
+            try {
+                const hits = await searchProductsLive(debouncedQuery, 5) as SearchResult[];
+                // Check if component still mounted and query hasn't changed
+                if (!controller.signal.aborted) {
+                    setResults(hits);
+                    setTotalCount(hits.length > 0 ? hits.length * 3 : 0);
+                }
+            } catch {
+                if (!controller.signal.aborted) {
+                    setResults([]);
+                    setTotalCount(0);
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setIsSearching(false);
+                }
+            }
+        };
+
+        doSearch();
+        return () => { controller.abort(); };
+    }, [debouncedQuery]);
 
     const handleSearch = useCallback((searchQuery: string) => {
         if (!searchQuery.trim()) return;
