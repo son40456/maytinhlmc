@@ -395,6 +395,32 @@ export const GET_NODE_BY_SLUG = `
         }
       }
     }
+    post(id: $slugId, idType: SLUG) {
+      id
+      databaseId
+      title
+      slug
+      date
+      excerpt
+      content
+      featuredImage {
+        node {
+          sourceUrl
+          altText
+        }
+      }
+      author {
+        node {
+          name
+        }
+      }
+      categories {
+        nodes {
+          name
+          slug
+        }
+      }
+    }
     categoryProducts: products(
       first: $first, 
       after: $after, 

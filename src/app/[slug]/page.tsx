@@ -73,6 +73,16 @@ export async function generateMetadata({ params }: {
         };
     }
 
+    if (data?.post) {
+        const post = data.post;
+        const plainExcerpt = post.excerpt?.replace(/<[^>]+>/g, '').slice(0, 160) || '';
+        return {
+            title: `${post.title} | LMC`,
+            description: plainExcerpt,
+            openGraph: { images: [post.featuredImage?.node?.sourceUrl || ''] },
+        };
+    }
+
     return { title: '404 - Không tìm thấy trang | LMC' };
 }
 
@@ -415,6 +425,63 @@ export default async function SlugPage({ params }: {
                         categorySlug={slug}
                     />
                 </Suspense>
+            </div>
+        );
+    }
+
+    if (nodeData?.post) {
+        const post = nodeData.post;
+        const formatDate = (dateStr: string) => {
+            return new Date(dateStr).toLocaleDateString('vi-VN', { day: '2-digit', month: 'long', year: 'numeric' });
+        };
+
+        return (
+            <div className="bg-white min-h-screen">
+                <div className="container mx-auto px-4 py-8 max-w-4xl">
+                    {/* Breadcrumb */}
+                    <nav className="flex items-center gap-1.5 text-sm text-slate-500 mb-6">
+                        <Link href="/" className="hover:text-blue-600">Trang chủ</Link>
+                        <span>/</span>
+                        <Link href="/blog" className="hover:text-blue-600">Tin tức</Link>
+                        <span>/</span>
+                        <span className="text-slate-900 font-medium truncate">{post.title}</span>
+                    </nav>
+
+                    {/* Featured Image */}
+                    {post.featuredImage?.node?.sourceUrl && (
+                        <div className="relative w-full h-64 md:h-96 mb-8 rounded-2xl overflow-hidden">
+                            <Image
+                                src={post.featuredImage.node.sourceUrl}
+                                alt={post.featuredImage.node.altText || post.title}
+                                fill
+                                className="object-cover"
+                                priority
+                            />
+                        </div>
+                    )}
+
+                    {/* Title */}
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+                        {post.title}
+                    </h1>
+
+                    {/* Meta info */}
+                    <div className="flex items-center gap-4 text-sm text-slate-500 mb-8 pb-6 border-b border-slate-200">
+                        <span>{formatDate(post.date)}</span>
+                        {post.author?.node?.name && (
+                            <>
+                                <span>•</span>
+                                <span>{post.author.node.name}</span>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Content */}
+                    <div
+                        className="prose prose-slate max-w-none"
+                        dangerouslySetInnerHTML={{ __html: post.content || '' }}
+                    />
+                </div>
             </div>
         );
     }
