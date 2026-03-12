@@ -4,8 +4,13 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Search, X, TrendingUp, Clock, ArrowRight, ChevronRight, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { searchProductsLive } from '@/app/actions/searchActions';
+import { algoliasearch } from 'algoliasearch';
 import { useRouter } from 'next/navigation';
+
+const algoliaClient = algoliasearch(
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
+    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY!
+);
 
 interface SearchResult {
     id: string;
@@ -18,6 +23,31 @@ interface SearchResult {
         sourceUrl: string;
         altText: string;
     };
+}
+
+function parseAlgoliaPrice(priceHtml: string): string {
+    if (!priceHtml) return 'Liên hệ';
+    // Use [\s\S] instead of /s flag for ES2017 compat
+    const insMatch = priceHtml.match(/<ins[^>]*>[\s\S]*?(\d[\d.,]+)\s*[₫đ]/);
+    if (insMatch) return insMatch[1].replace(/\./g, '') + ' ₫';
+    const match = priceHtml.match(/(\d[\d.,]+)\s*[₫đ]/);
+    if (match) return match[1].replace(/\./g, '') + ' ₫';
+    return 'Liên hệ';
+}
+
+async function searchAlgolia(query: string, hitsPerPage = 5): Promise<SearchResult[]> {
+    const result = await algoliaClient.searchSingleIndex({
+        indexName: 'wp_posts_product',
+        searchParams: { query, hitsPerPage, attributesToRetrieve: ['post_id', 'post_title', 'permalink', 'images', 'price_html'] },
+    });
+    return (result.hits as any[]).map((h) => ({
+        id: String(h.post_id),
+        databaseId: h.post_id,
+        name: h.post_title,
+        slug: h.permalink?.replace(/^https?:\/\/[^/]+\//, '').replace(/\/$/, '') ?? '',
+        price: parseAlgoliaPrice(h.price_html),
+        image: { sourceUrl: h.images?.thumbnail?.url ?? '', altText: h.post_title },
+    }));
 }
 
 // Highlighted text: makes the matched query bold/orange
@@ -103,10 +133,10 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
             return;
         }
 
-        // Update debounced query after user stops typing (150ms)
+        // Update debounced query after user stops typing (80ms - Algolia is fast)
         const timer = setTimeout(() => {
             setDebouncedQuery(query.trim());
-        }, 150);
+        }, 80);
 
         return () => clearTimeout(timer);
     }, [query]);
@@ -120,7 +150,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
 
         const doSearch = async () => {
             try {
-                const hits = await searchProductsLive(debouncedQuery, 5) as SearchResult[];
+                const hits = await searchAlgolia(debouncedQuery, 5);
                 // Check if component still mounted and query hasn't changed
                 if (!controller.signal.aborted) {
                     setResults(hits);
