@@ -7,10 +7,17 @@ import Link from 'next/link';
 import { algoliasearch } from 'algoliasearch';
 import { useRouter } from 'next/navigation';
 
-const algoliaClient = algoliasearch(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
-    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY!
-);
+// Lazy client - only initialize when actually searching (avoids build-time errors)
+let algoliaClient: ReturnType<typeof algoliasearch> | null = null;
+function getAlgoliaClient() {
+    if (!algoliaClient && typeof window !== 'undefined') {
+        algoliaClient = algoliasearch(
+            process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
+            process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY!
+        );
+    }
+    return algoliaClient;
+}
 
 interface SearchResult {
     id: string;
@@ -36,7 +43,9 @@ function parseAlgoliaPrice(priceHtml: string): string {
 }
 
 async function searchAlgolia(query: string, hitsPerPage = 5): Promise<SearchResult[]> {
-    const result = await algoliaClient.searchSingleIndex({
+    const client = getAlgoliaClient();
+    if (!client) return [];
+    const result = await client.searchSingleIndex({
         indexName: 'wp_posts_product',
         searchParams: { query, hitsPerPage, attributesToRetrieve: ['post_id', 'post_title', 'permalink', 'images', 'price_html'] },
     });
