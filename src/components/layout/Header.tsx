@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, X, Home } from 'lucide-react';
+import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, Loader2, X, Home } from 'lucide-react';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
+import { searchProductsLive } from '@/app/actions/searchActions';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
 
 import { STATIC_MENU_ITEMS, MenuItemType } from '@/constants/menuData';
@@ -76,6 +77,12 @@ const getMenuIconSmall = (label: string) => renderMenuIcon(undefined, label, [],
 export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const [mounted, setMounted] = useState(false);
     const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
+    // Desktop inline search state
+    const [desktopQuery, setDesktopQuery] = useState('');
+    const [desktopResults, setDesktopResults] = useState<any[]>([]);
+    const [desktopSearching, setDesktopSearching] = useState(false);
+    const [showDesktopDropdown, setShowDesktopDropdown] = useState(false);
+    const desktopSearchRef = useRef<HTMLDivElement>(null);
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -141,17 +148,41 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // '/' key to open search overlay
+    // Desktop inline search: debounced search
     useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === '/' && e.target === document.body) {
-                e.preventDefault();
-                setSearchOverlayOpen(true);
+        if (desktopQuery.trim().length < 2) {
+            setDesktopResults([]);
+            setDesktopSearching(false);
+            return;
+        }
+        setDesktopSearching(true);
+        const t = setTimeout(async () => {
+            try {
+                const hits = await searchProductsLive(desktopQuery, 6);
+                setDesktopResults(hits as any[]);
+            } catch { setDesktopResults([]); }
+            finally { setDesktopSearching(false); }
+        }, 200);
+        return () => clearTimeout(t);
+    }, [desktopQuery]);
+
+    // Close desktop dropdown when clicking outside
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (desktopSearchRef.current && !desktopSearchRef.current.contains(e.target as Node)) {
+                setShowDesktopDropdown(false);
             }
         };
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
     }, []);
+
+    const handleDesktopSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!desktopQuery.trim()) return;
+        setShowDesktopDropdown(false);
+        router.push(`/search?q=${encodeURIComponent(desktopQuery.trim())}`);
+    };
 
     return (
         <>
@@ -194,16 +225,82 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                             <span className="text-sm font-bold">Danh mục</span>
                         </button>
 
-                        {/* Search Bar - triggers SearchOverlay */}
-                        <div className="flex-1 max-w-3xl lg:px-8">
+                        {/* Desktop Search - Inline input with dropdown */}
+                        <div ref={desktopSearchRef} className="hidden lg:flex flex-1 max-w-3xl px-8 relative">
+                            <form onSubmit={handleDesktopSearch} className="w-full relative">
+                                <input
+                                    type="search"
+                                    placeholder="Tìm sản phẩm..."
+                                    value={desktopQuery}
+                                    onChange={e => { setDesktopQuery(e.target.value); setShowDesktopDropdown(true); }}
+                                    onFocus={() => { if (desktopQuery.trim().length >= 2) setShowDesktopDropdown(true); }}
+                                    className="w-full h-12 pl-5 pr-14 rounded-full text-gray-800 bg-white/95 focus:bg-white focus:outline-none focus:ring-4 focus:ring-yellow-400/50 shadow-inner transition-all text-sm"
+                                />
+                                <button type="submit" className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-yellow-400 hover:text-blue-900 transition-colors shadow-sm">
+                                    {desktopSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-5 w-5" />}
+                                </button>
+
+                                {/* Desktop Results Dropdown */}
+                                {showDesktopDropdown && desktopQuery.trim().length >= 2 && (
+                                    <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[60] text-gray-800">
+                                        {desktopSearching ? (
+                                            <div className="p-5 text-center text-sm text-gray-400 flex items-center justify-center gap-2">
+                                                <Loader2 className="w-4 h-4 animate-spin text-blue-500" /> Đang tìm kiếm...
+                                            </div>
+                                        ) : desktopResults.length > 0 ? (
+                                            <>
+                                                <div className="flex items-center justify-between px-4 pt-3 pb-2">
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Kết quả nổi bật</span>
+                                                    <span className="text-[10px] text-gray-400">Cung cấp bởi <span className="font-semibold text-orange-500">Meilisearch</span></span>
+                                                </div>
+                                                <div className="divide-y divide-gray-50">
+                                                    {desktopResults.map((p: any) => (
+                                                        <Link
+                                                            key={p.id || p.slug}
+                                                            href={`/product/${p.slug}`}
+                                                            onClick={() => setShowDesktopDropdown(false)}
+                                                            className="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50/60 transition-colors group"
+                                                        >
+                                                            <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0 relative">
+                                                                {p.image?.sourceUrl
+                                                                    ? <Image src={p.image.sourceUrl} alt={p.name} fill className="object-contain p-0.5" sizes="40px" />
+                                                                    : <div className="w-full h-full flex items-center justify-center"><Search className="w-3 h-3 text-gray-300" /></div>
+                                                                }
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-[13px] font-semibold text-gray-800 truncate group-hover:text-blue-700">{p.name}</p>
+                                                                <p className="text-[12px] font-bold text-rose-600">{p.price}</p>
+                                                            </div>
+                                                            <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-blue-500 flex-shrink-0" />
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                                <button
+                                                    onClick={() => handleDesktopSearch({ preventDefault: () => {} } as any)}
+                                                    className="w-full py-3 text-center text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                                                >
+                                                    Xem tất cả kết quả cho &quot;{desktopQuery}&quot;
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <div className="p-5 text-center text-sm text-gray-400">
+                                                Không tìm thấy kết quả cho <span className="font-semibold text-gray-600">&quot;{desktopQuery}&quot;</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </form>
+                        </div>
+
+                        {/* Mobile Search - triggers SearchOverlay */}
+                        <div className="flex lg:hidden flex-1 px-2">
                             <button
                                 type="button"
                                 onClick={() => setSearchOverlayOpen(true)}
-                                className="w-full h-9 lg:h-12 pl-4 lg:pl-5 pr-10 lg:pr-14 rounded-full text-gray-400 bg-white/95 hover:bg-white shadow-inner transition-all text-sm lg:text-base flex items-center gap-2 group"
+                                className="w-full h-9 pl-3 pr-3 rounded-full text-gray-400 bg-white/95 shadow-inner transition-all text-sm flex items-center gap-2"
                             >
                                 <Search className="h-4 w-4 text-gray-400 flex-shrink-0" />
                                 <span className="flex-1 text-left truncate">Tìm sản phẩm...</span>
-                                <kbd className="hidden lg:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] text-gray-300 border border-gray-200 rounded bg-gray-50 flex-shrink-0">/</kbd>
                             </button>
                         </div>
 
