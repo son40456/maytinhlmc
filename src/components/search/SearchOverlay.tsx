@@ -93,10 +93,14 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
 
     useEffect(() => {
         if (query.trim().length < 2) { setResults([]); setTotalCount(0); setIsSearching(false); return; }
-        setIsSearching(true);
+
+        let cancelled = false;
         const timer = setTimeout(async () => {
+            if (cancelled) return;
+            setIsSearching(true);
             try {
                 const hits = await clientSearchProducts(query, 5);
+                if (cancelled) return; // Stale result - do NOT update state
                 const mapped: SearchResult[] = hits.map(h => ({
                     id: h.id,
                     databaseId: parseInt(h.id),
@@ -107,10 +111,14 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                 }));
                 setResults(mapped);
                 setTotalCount(mapped.length > 0 ? mapped.length * 3 : 0);
-            } catch { setResults([]); setTotalCount(0); }
-            finally { setIsSearching(false); }
-        }, 80); // 80ms debounce - direct to Meilisearch
-        return () => clearTimeout(timer);
+            } catch {
+                if (!cancelled) { setResults([]); setTotalCount(0); }
+            } finally {
+                if (!cancelled) setIsSearching(false);
+            }
+        }, 150);
+
+        return () => { cancelled = true; clearTimeout(timer); };
     }, [query]);
 
     const handleSearch = useCallback((searchQuery: string) => {

@@ -166,22 +166,28 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Desktop inline search: debounced search
+    // Desktop inline search: debounced search with cancelled flag
     useEffect(() => {
         if (desktopQuery.trim().length < 2) {
             setDesktopResults([]);
             setDesktopSearching(false);
             return;
         }
-        setDesktopSearching(true);
+        let cancelled = false;
         const t = setTimeout(async () => {
+            if (cancelled) return;
+            setDesktopSearching(true);
             try {
                 const hits = await clientSearchProducts(desktopQuery, 6);
+                if (cancelled) return; // Stale result - do NOT update state
                 setDesktopResults(hits as any[]);
-            } catch { setDesktopResults([]); }
-            finally { setDesktopSearching(false); }
-        }, 80); // Direct to Meilisearch - no server round-trip
-        return () => clearTimeout(t);
+            } catch {
+                if (!cancelled) setDesktopResults([]);
+            } finally {
+                if (!cancelled) setDesktopSearching(false);
+            }
+        }, 150);
+        return () => { cancelled = true; clearTimeout(t); };
     }, [desktopQuery]);
 
     // Close desktop dropdown when clicking outside
