@@ -62,6 +62,20 @@ export function CategoryFilterSort({
     const dynamicPriceFilter = filters.find(f => f.slug.startsWith('khoang-gia-'));
     const otherFilters = filters.filter(f => f.slug !== 'thuong-hieu' && !f.slug.startsWith('khoang-gia-'));
 
+    // Sort price range options by extracting the leading number from the slug.
+    // slug formats: 'duoi-2-trieu' → 0, '2-trieu-4-trieu' → 2, 'tren-8-trieu' → 8.5 (always last)
+    const sortedPriceOptions = dynamicPriceFilter
+        ? [...dynamicPriceFilter.options].sort((a, b) => {
+            const getMin = (slug: string): number => {
+                if (slug.startsWith('duoi-') || slug.startsWith('under-')) return 0;
+                if (slug.startsWith('tren-') || slug.startsWith('over-')) return Infinity;
+                const match = slug.match(/^(\d+(?:[.,]\d+)?)/);
+                return match ? parseFloat(match[1].replace(',', '.')) : 999;
+            };
+            return getMin(a.slug) - getMin(b.slug);
+        })
+        : [];
+
     // Count active filters
     const activeCount = Object.values(selectedAttributes).reduce((sum, arr) => sum + arr.length, 0)
         + (priceRange.min !== null || priceRange.max !== null ? 1 : 0);
@@ -131,7 +145,7 @@ export function CategoryFilterSort({
                 <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-center gap-3'}>
                     <span className="text-sm font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Khoảng giá:</span>
                     <div className="flex flex-wrap gap-2">
-                        {dynamicPriceFilter.options.map((opt) => {
+                        {sortedPriceOptions.map((opt) => {
                             const isSelected = selectedAttributes[dynamicPriceFilter.slug]?.includes(opt.slug);
                             return (
                                 <button
