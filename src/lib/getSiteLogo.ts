@@ -1,10 +1,21 @@
-import { getSiteSettings } from '@/app/actions/configActions';
+import { Redis } from '@upstash/redis';
+
+async function getLogoFromRedis(): Promise<string | null> {
+    const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+    const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+
+    if (!kvUrl || !kvToken) return null;
+
+    const redis = new Redis({ url: kvUrl, token: kvToken });
+    const data = await redis.get<{ logo?: string }>('siteSettings');
+    return data?.logo ?? null;
+}
 
 export async function getSiteLogo(): Promise<string | null> {
     // Priority 1: logo saved in admin settings (Redis)
     try {
-        const settings = await getSiteSettings();
-        if (settings.logo) return settings.logo;
+        const logo = await getLogoFromRedis();
+        if (logo) return logo;
     } catch { /* ignore */ }
 
     // Priority 2: custom logo from env (e.g. /logo.png or https://...)
