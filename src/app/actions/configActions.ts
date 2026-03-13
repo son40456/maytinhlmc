@@ -208,3 +208,53 @@ export async function getHardwareGridConfig(): Promise<HardwareGridConfig> {
 
     return DEFAULT_HARDWARE_GRID_CONFIG;
 }
+
+export interface SiteSettings {
+    logo?: string;
+    favicon?: string;
+    siteName?: string;
+    contactEmail?: string;
+    contactPhone?: string;
+}
+
+const DEFAULT_SITE_SETTINGS: SiteSettings = {};
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+    const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+    const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+
+    const useKV = !!kvUrl && !!kvToken;
+    const redis = useKV ? new Redis({ url: kvUrl, token: kvToken }) : null;
+
+    try {
+        if (useKV && redis) {
+            const data = await redis.get('siteSettings');
+            if (data) {
+                return typeof data === 'string' ? JSON.parse(data) : (data as SiteSettings);
+            }
+        }
+    } catch (error) {
+        console.error('Error reading site settings:', error);
+    }
+
+    return DEFAULT_SITE_SETTINGS;
+}
+
+export async function saveSiteSettings(settings: SiteSettings): Promise<{ success: boolean }> {
+    const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+    const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+
+    const useKV = !!kvUrl && !!kvToken;
+    const redis = useKV ? new Redis({ url: kvUrl, token: kvToken }) : null;
+
+    try {
+        if (useKV && redis) {
+            await redis.set('siteSettings', JSON.stringify(settings));
+            return { success: true };
+        }
+        return { success: false };
+    } catch (error) {
+        console.error('Error saving site settings:', error);
+        return { success: false };
+    }
+}

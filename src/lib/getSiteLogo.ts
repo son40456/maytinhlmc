@@ -1,9 +1,17 @@
+import { getSiteSettings } from '@/app/actions/configActions';
+
 export async function getSiteLogo(): Promise<string | null> {
-    // Priority 1: custom logo from env (e.g. /logo.png or https://...)
+    // Priority 1: logo saved in admin settings (Redis)
+    try {
+        const settings = await getSiteSettings();
+        if (settings.logo) return settings.logo;
+    } catch { /* ignore */ }
+
+    // Priority 2: custom logo from env (e.g. /logo.png or https://...)
     const customLogo = process.env.NEXT_PUBLIC_SITE_LOGO;
     if (customLogo) return customLogo;
 
-    // Priority 2: fallback - scrape from WordPress site
+    // Priority 3: fallback - scrape from WordPress site
     const apiUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || '';
     const baseUrl = apiUrl.replace(/\/graphql\/?$/, '');
 
