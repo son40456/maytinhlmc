@@ -49,8 +49,8 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
         // Run in rAF to avoid forced reflow during render/commit
         requestAnimationFrame(() => {
             if (!container) return;
-            // Each thumb is 100px + 4px gap = 104px total height
-            const THUMB_SIZE = 104;
+            // Each thumb is 96px + 10px gap (gap-2.5 = 10px)
+            const THUMB_SIZE = 106;
             const targetTop = activeIndex * THUMB_SIZE - container.clientHeight / 2 + THUMB_SIZE / 2;
             container.scrollTop = Math.max(0, Math.min(targetTop, container.scrollHeight - container.clientHeight));
         });
@@ -70,7 +70,7 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
 
     const scrollThumbs = (dir: 'up' | 'down') => {
         if (thumbContainerRef.current) {
-            thumbContainerRef.current.scrollTop += dir === 'up' ? -104 : 104;
+            thumbContainerRef.current.scrollTop += dir === 'up' ? -106 : 106;
         }
     };
 
@@ -98,25 +98,25 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
             <div className="hidden md:flex gap-4 lg:gap-5">
                 {/* Vertical thumbnail strip */}
                 {allImages.length > 1 && (
-                    <div className="flex flex-col items-center gap-1 shrink-0 self-stretch">
+                    <div className="flex flex-col items-center gap-1.5 shrink-0">
                         {allImages.length > 5 && (
-                            <button onClick={() => scrollThumbs('up')} className="w-[100px] h-6 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors rounded hover:bg-slate-50">
+                            <button onClick={() => scrollThumbs('up')} className="w-[96px] h-6 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors rounded hover:bg-slate-50">
                                 <ChevronUp className="w-4 h-4" />
                             </button>
                         )}
-                        <div ref={thumbContainerRef} className="flex flex-col gap-1 h-full overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                        <div ref={thumbContainerRef} className="flex flex-col gap-2.5 max-h-[520px] overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                             {allImages.map((img, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => goTo(idx)}
-                                    className={`relative w-[100px] h-[100px] rounded-lg overflow-hidden border-2 transition-all duration-200 bg-white shrink-0 ${activeIndex === idx ? "border-blue-600 shadow-md" : "border-slate-200 opacity-60 hover:opacity-100 hover:border-slate-300"}`}
+                                    className={`relative w-[96px] h-[96px] rounded-lg overflow-hidden border-2 transition-all duration-200 bg-white shrink-0 ${activeIndex === idx ? "border-blue-600 shadow-md" : "border-slate-200 opacity-60 hover:opacity-100 hover:border-slate-300"}`}
                                 >
-                                    <Image src={img.sourceUrl} alt={img.altText || `${name} ${idx}`} fill className="object-cover p-1.5" sizes="100px" />
+                                    <Image src={img.sourceUrl} alt={img.altText || `${name} ${idx}`} fill className="object-cover p-1.5" sizes="96px" />
                                 </button>
                             ))}
                         </div>
                         {allImages.length > 5 && (
-                            <button onClick={() => scrollThumbs('down')} className="w-[100px] h-6 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors rounded hover:bg-slate-50">
+                            <button onClick={() => scrollThumbs('down')} className="w-[96px] h-6 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors rounded hover:bg-slate-50">
                                 <ChevronDown className="w-4 h-4" />
                             </button>
                         )}
