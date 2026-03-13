@@ -129,14 +129,14 @@ export default async function SlugPage({ params }: {
                     description={product.shortDescription || product.description || ''}
                     image={imageUrl}
                     price={saleNum > 0 ? saleNum : regularNum}
-                    url={`https://maytinhlmc.vn/${product.slug}`}
+                    url={`https://lmc.vn/${product.slug}`}
                     stockStatus={product.stockStatus || "IN_STOCK"}
                     sku={product.sku}
                 />
                 <BreadcrumbSchema
                     items={[
-                        { name: 'Trang chủ', item: 'https://maytinhlmc.vn/' },
-                        { name: product.name, item: `https://maytinhlmc.vn/${product.slug}` }
+                        { name: 'Trang chủ', item: 'https://lmc.vn/' },
+                        { name: product.name, item: `https://lmc.vn/${product.slug}` }
                     ]}
                 />
                 <div className="max-w-[1600px] mx-auto px-3 md:px-4 py-2 md:py-4">

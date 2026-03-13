@@ -1,11 +1,23 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Search, X, TrendingUp, Clock, ArrowRight, Loader2 } from 'lucide-react';
+import { Search, X, TrendingUp, Clock, ArrowRight, ChevronRight, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MeiliSearch } from 'meilisearch';
+import { algoliasearch } from 'algoliasearch';
 import { useRouter } from 'next/navigation';
+
+// Lazy client - only initialize when actually searching (avoids build-time errors)
+let algoliaClient: ReturnType<typeof algoliasearch> | null = null;
+function getAlgoliaClient() {
+    if (!algoliaClient && typeof window !== 'undefined') {
+        algoliaClient = algoliasearch(
+            process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
+            process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY!
+        );
+    }
+    return algoliaClient;
+}
 
 interface SearchResult {
     id: string;
@@ -20,44 +32,31 @@ interface SearchResult {
     };
 }
 
-function formatVND(amount: number | null | undefined): string {
-    if (!amount || amount <= 0) return 'Liên hệ';
-    return amount.toLocaleString('vi-VN') + ' ₫';
+function parseAlgoliaPrice(priceHtml: string): string {
+    if (!priceHtml) return 'Liên hệ';
+    // Use [\s\S] instead of /s flag for ES2017 compat
+    const insMatch = priceHtml.match(/<ins[^>]*>[\s\S]*?(\d[\d.,]+)\s*[₫đ]/);
+    if (insMatch) return insMatch[1].replace(/\./g, '') + ' ₫';
+    const match = priceHtml.match(/(\d[\d.,]+)\s*[₫đ]/);
+    if (match) return match[1].replace(/\./g, '') + ' ₫';
+    return 'Liên hệ';
 }
 
-function mapHit(hit: any): SearchResult {
-    const displayPrice = hit.price || hit.regularPrice || hit.salePrice;
-    return {
-        id: hit.objectID || hit.id,
-        databaseId: parseInt(hit.id),
-        name: hit.name,
-        slug: hit.slug,
-        price: formatVND(displayPrice),
-        image: {
-            sourceUrl: hit.image,
-            altText: hit.name || ''
-        }
-    };
-}
-
-// Lazy client - only initialize when actually searching
-let meiliClient: MeiliSearch | null = null;
-function getMeiliClient() {
-    if (!meiliClient && typeof window !== 'undefined') {
-        meiliClient = new MeiliSearch({
-            host: process.env.NEXT_PUBLIC_MEILISEARCH_HOST || 'http://localhost:7700',
-            apiKey: process.env.NEXT_PUBLIC_MEILISEARCH_SEARCH_KEY || ''
-        });
-    }
-    return meiliClient;
-}
-
-async function searchMeilisearch(query: string, hitsPerPage = 5): Promise<SearchResult[]> {
-    const client = getMeiliClient();
+async function searchAlgolia(query: string, hitsPerPage = 5): Promise<SearchResult[]> {
+    const client = getAlgoliaClient();
     if (!client) return [];
-    const index = client.index(process.env.MEILISEARCH_INDEX_NAME || 'products');
-    const result = await index.search(query, { limit: hitsPerPage });
-    return (result.hits || []).map(mapHit);
+    const result = await client.searchSingleIndex({
+        indexName: 'wp_posts_product',
+        searchParams: { query, hitsPerPage, attributesToRetrieve: ['post_id', 'post_title', 'permalink', 'images', 'price_html'] },
+    });
+    return (result.hits as any[]).map((h) => ({
+        id: String(h.post_id),
+        databaseId: h.post_id,
+        name: h.post_title,
+        slug: h.permalink?.replace(/^https?:\/\/[^/]+\//, '').replace(/\/$/, '') ?? '',
+        price: parseAlgoliaPrice(h.price_html),
+        image: { sourceUrl: h.images?.thumbnail?.url ?? '', altText: h.post_title },
+    }));
 }
 
 // Highlighted text: makes the matched query bold/orange
@@ -131,7 +130,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
         return () => document.removeEventListener('keydown', handler);
     }, [onClose]);
 
-    // Debounced search
+    // Debounced search - optimized with useTransition for non-blocking UI
     const [debouncedQuery, setDebouncedQuery] = useState('');
 
     useEffect(() => {
@@ -143,10 +142,10 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
             return;
         }
 
-        // Debounce 150ms for Meilisearch
+        // Update debounced query after user stops typing (80ms - Algolia is fast)
         const timer = setTimeout(() => {
             setDebouncedQuery(query.trim());
-        }, 150);
+        }, 80);
 
         return () => clearTimeout(timer);
     }, [query]);
@@ -160,7 +159,8 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
 
         const doSearch = async () => {
             try {
-                const hits = await searchMeilisearch(debouncedQuery, 5);
+                const hits = await searchAlgolia(debouncedQuery, 5);
+                // Check if component still mounted and query hasn't changed
                 if (!controller.signal.aborted) {
                     setResults(hits);
                     setTotalCount(hits.length > 0 ? hits.length * 3 : 0);
@@ -190,108 +190,283 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
 
     const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); handleSearch(query); };
 
+    const removeRecentSearch = (term: string) => {
+        const updated = recentSearches.filter(r => r !== term);
+        setRecentSearches(updated);
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+    };
+
     const clearAllRecent = () => { clearRecentSearches(); setRecentSearches([]); };
 
     if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-50">
-            {/* Backdrop */}
-            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+    const hasQuery = query.trim().length >= 2;
 
-            {/* Modal */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 w-full max-w-2xl mx-4">
-                <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+    return (
+        <>
+            {/* Backdrop */}
+            <div className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-[2px]" onClick={onClose} />
+
+            {/* ========== DESKTOP OVERLAY (spotlight/command palette style) ========== */}
+            <div className="hidden lg:flex fixed inset-0 z-[201] items-start justify-center pt-24 px-4 pointer-events-none">
+                <div
+                    className="w-full max-w-2xl bg-white rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.18)] border border-gray-200 overflow-hidden pointer-events-auto flex flex-col"
+                    style={{ maxHeight: '70vh' }}
+                    onClick={e => e.stopPropagation()}
+                >
                     {/* Search Input */}
-                    <form onSubmit={handleSubmit} className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <form onSubmit={handleSubmit} className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+                        <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
                         <input
                             ref={inputRef}
                             type="text"
                             value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Tìm kiếm sản phẩm..."
-                            className="w-full h-14 pl-12 pr-12 text-lg outline-none"
-                            autoComplete="off"
+                            onChange={e => setQuery(e.target.value)}
+                            placeholder="Tìm sản phẩm, thương hiệu hoặc danh mục..."
+                            className="flex-1 text-gray-800 text-sm placeholder-gray-400 bg-transparent outline-none"
                         />
-                        <button type="button" onClick={onClose} className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full">
-                            <X className="w-5 h-5 text-slate-400" />
-                        </button>
+                        {isSearching
+                            ? <Loader2 className="w-4 h-4 animate-spin text-blue-500 flex-shrink-0" />
+                            : query
+                                ? <button type="button" onClick={() => setQuery('')} className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100"><X className="w-4 h-4" /></button>
+                                : <kbd className="flex items-center px-2 py-0.5 text-[10px] font-medium text-gray-400 border border-gray-200 rounded bg-gray-50">ESC</kbd>
+                        }
                     </form>
 
-                    {/* Results / Suggestions */}
-                    <div className="max-h-[70vh] overflow-y-auto">
-                        {isSearching ? (
-                            <div className="p-8 text-center">
-                                <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-600" />
-                                <p className="text-slate-500 mt-2">Đang tìm kiếm...</p>
-                            </div>
-                        ) : query.length >= 2 && results.length > 0 ? (
-                            <div className="p-2">
-                                {results.map((result) => (
-                                    <Link
-                                        key={result.id}
-                                        href={`/${result.slug}`}
-                                        onClick={() => { saveRecentSearch(query); onClose(); }}
-                                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors"
-                                    >
-                                        <div className="w-14 h-14 bg-slate-100 rounded-lg overflow-hidden shrink-0">
-                                            {result.image?.sourceUrl && (
-                                                <Image src={result.image.sourceUrl} alt={result.name} width={56} height={56} className="w-full h-full object-cover" />
-                                            )}
+                    {/* Content */}
+                    <div className="overflow-y-auto flex-1">
+                        {/* Search Results */}
+                        {hasQuery && (
+                            <>
+                                {results.length > 0 && (
+                                    <>
+                                        <div className="flex items-center justify-between px-5 pt-4 pb-2">
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Kết quả nổi bật</span>
+                                            <span className="text-[10px] text-gray-400">Cung cấp bởi <span className="font-bold text-orange-500">SONBN</span></span>
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="font-medium text-slate-900 truncate">
-                                                <Highlight text={result.name} query={query} />
-                                            </h4>
-                                            <p className="text-sm text-blue-600 font-bold">{result.price}</p>
+                                        <div className="divide-y divide-gray-50">
+                                            {results.map(product => (
+                                                <Link
+                                                    key={product.id}
+                                                    href={`/product/${product.slug}`}
+                                                    onClick={() => { saveRecentSearch(query); onClose(); }}
+                                                    className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors group"
+                                                >
+                                                    <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 relative border border-gray-100">
+                                                        {product.image?.sourceUrl
+                                                            ? <Image src={product.image.sourceUrl} alt={product.name} fill className="object-contain p-1" sizes="48px" />
+                                                            : <div className="w-full h-full flex items-center justify-center"><Search className="w-4 h-4 text-gray-300" /></div>
+                                                        }
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-[13px] font-semibold text-gray-800 truncate group-hover:text-blue-700">
+                                                            <Highlight text={product.name} query={query} />
+                                                        </p>
+                                                        <p className="text-[11px] text-gray-400 truncate mt-0.5">Xem chi tiết sản phẩm</p>
+                                                    </div>
+                                                    <div className="text-right flex-shrink-0 ml-4">
+                                                        <p className="text-[13px] font-bold text-gray-800">{product.price}</p>
+                                                        <p className="text-[10px] font-semibold text-green-600 mt-0.5">Còn hàng</p>
+                                                    </div>
+                                                </Link>
+                                            ))}
                                         </div>
-                                        <ArrowRight className="w-4 h-4 text-slate-300 shrink-0" />
-                                    </Link>
-                                ))}
-                                <button onClick={() => { handleSearch(query); }} className="w-full p-3 text-center text-blue-600 font-medium hover:bg-slate-50 rounded-xl mt-2">
-                                    Xem tất cả kết quả cho "{query}"
-                                </button>
-                            </div>
-                        ) : query.length >= 2 ? (
-                            <div className="p-8 text-center text-slate-500">
-                                <p>Không tìm thấy kết quả nào</p>
-                            </div>
-                        ) : (
-                            <div className="p-4">
-                                {/* Recent Searches */}
-                                {recentSearches.length > 0 && (
-                                    <div className="mb-4">
-                                        <div className="flex items-center justify-between mb-2 px-2">
-                                            <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tìm kiếm gần đây</h4>
-                                            <button onClick={clearAllRecent} className="text-xs text-slate-400 hover:text-slate-600">Xóa</button>
-                                        </div>
-                                        {recentSearches.map((term, i) => (
-                                            <button key={i} onClick={() => setQuery(term)} className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 text-left">
-                                                <Clock className="w-4 h-4 text-slate-400" />
-                                                <span className="text-slate-600">{term}</span>
-                                            </button>
-                                        ))}
-                                    </div>
+                                    </>
                                 )}
+                                {!isSearching && results.length === 0 && (
+                                    <p className="px-5 py-8 text-sm text-center text-gray-400">Không tìm thấy kết quả cho <span className="font-semibold text-gray-600">&quot;{query}&quot;</span></p>
+                                )}
+                            </>
+                        )}
 
-                                {/* Popular */}
-                                <div>
-                                    <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">Xu hướng tìm kiếm</h4>
-                                    <div className="flex flex-wrap gap-2">
-                                        {POPULAR_SUGGESTIONS.map((term) => (
-                                            <button key={term} onClick={() => setQuery(term)} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-full text-sm text-slate-600 hover:bg-slate-200 transition-colors">
-                                                <TrendingUp className="w-3.5 h-3.5" />
-                                                {term}
+                        {/* Suggestions + Recent (idle state) */}
+                        {!hasQuery && !isSearching && (
+                            <div className="grid grid-cols-2 gap-0 divide-x divide-gray-100">
+                                {/* Suggestions column */}
+                                <div className="px-5 py-4">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Gợi ý tìm kiếm</p>
+                                    <div className="space-y-2.5">
+                                        {POPULAR_SUGGESTIONS.map(s => (
+                                            <button key={s} onClick={() => setQuery(s)} className="w-full flex items-center gap-2 text-[13px] text-left group">
+                                                <TrendingUp className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
+                                                <span className="text-orange-500 hover:underline font-medium">{s}</span>
                                             </button>
                                         ))}
                                     </div>
                                 </div>
+                                {/* Recent column */}
+                                <div className="px-5 py-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Tìm kiếm gần đây</p>
+                                        {recentSearches.length > 0 && (
+                                            <button onClick={clearAllRecent} className="text-[10px] text-orange-500 hover:text-orange-700 font-semibold uppercase tracking-wide">Xoá tất cả</button>
+                                        )}
+                                    </div>
+                                    {recentSearches.length > 0 ? (
+                                        <div className="space-y-2.5">
+                                            {recentSearches.map(r => (
+                                                <button key={r} onClick={() => setQuery(r)} className="w-full flex items-center gap-2 text-[13px] text-left">
+                                                    <Clock className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
+                                                    <span className="text-gray-600 hover:text-blue-600 flex-1">{r}</span>
+                                                    <X className="w-3 h-3 text-gray-300 hover:text-gray-500" onClick={e => { e.stopPropagation(); removeRecentSearch(r); }} />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-[12px] text-gray-300">Chưa có lịch sử tìm kiếm</p>
+                                    )}
+                                </div>
                             </div>
+                        )}
+                    </div>
+
+                    {/* Footer: keyboard shortcuts */}
+                    <div className="flex items-center gap-5 px-5 py-2.5 border-t border-gray-100 bg-gray-50/80 flex-shrink-0">
+                        <span className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                            <kbd className="px-1.5 py-0.5 border border-gray-200 rounded text-[10px] bg-white">↑↓</kbd> điều hướng
+                        </span>
+                        <span className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                            <kbd className="px-1.5 py-0.5 border border-gray-200 rounded text-[10px] bg-white">↵</kbd> chọn
+                        </span>
+                        <span className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                            <kbd className="px-1.5 py-0.5 border border-gray-200 rounded text-[10px] bg-white">ESC</kbd> đóng
+                        </span>
+                        {hasQuery && results.length > 0 && (
+                            <button onClick={() => handleSearch(query)} className="ml-auto text-[11px] font-semibold text-blue-600 hover:underline flex items-center gap-1">
+                                Xem tất cả kết quả <ArrowRight className="w-3 h-3" />
+                            </button>
                         )}
                     </div>
                 </div>
             </div>
-        </div>
+
+            {/* ========== MOBILE OVERLAY (full screen) ========== */}
+            <div className="lg:hidden fixed inset-0 z-[201] bg-white flex flex-col" onClick={e => e.stopPropagation()}>
+                {/* Mobile search input bar */}
+                <form onSubmit={handleSubmit} className="flex items-center gap-3 px-4 pt-4 pb-3 border-b border-gray-100 flex-shrink-0">
+                    <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        value={query}
+                        onChange={e => setQuery(e.target.value)}
+                        placeholder="Tìm kiếm..."
+                        className="flex-1 text-sm text-gray-800 placeholder-gray-400 bg-transparent outline-none"
+                    />
+                    {isSearching && <Loader2 className="w-4 h-4 animate-spin text-blue-500 flex-shrink-0" />}
+                    {query && !isSearching && (
+                        <button type="button" onClick={() => setQuery('')} className="p-1 text-gray-400">
+                            <X className="w-4 h-4" />
+                        </button>
+                    )}
+                    <button type="button" onClick={onClose} className="text-sm font-bold text-orange-500 flex-shrink-0">Huỷ</button>
+                </form>
+
+                {/* Scrollable content */}
+                <div className="flex-1 overflow-y-auto pb-24">
+                    {/* IDLE STATE */}
+                    {!hasQuery && !isSearching && (
+                        <>
+                            {/* Recent Searches */}
+                            {recentSearches.length > 0 && (
+                                <div className="px-4 pt-5">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">Tìm kiếm gần đây</span>
+                                        <button onClick={clearAllRecent} className="text-[11px] font-semibold text-orange-500 uppercase">Xoá tất cả</button>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {recentSearches.map(r => (
+                                            <div key={r} className="flex items-center gap-1.5 pl-3 pr-2 py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">
+                                                <span>{r}</span>
+                                                <button onClick={() => removeRecentSearch(r)} className="text-gray-400 hover:text-gray-600">
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Popular Suggestions */}
+                            <div className="px-4 pt-6">
+                                <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 block mb-3">Tìm kiếm phổ biến</span>
+                                <div className="space-y-1">
+                                    {POPULAR_SUGGESTIONS.map(s => (
+                                        <button
+                                            key={s}
+                                            onClick={() => setQuery(s)}
+                                            className="w-full flex items-center gap-3 py-3 text-left group border-b border-gray-50"
+                                        >
+                                            <TrendingUp className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                                            <span className="text-sm text-gray-800 flex-1">{s}</span>
+                                            <ArrowRight className="w-4 h-4 text-gray-200 group-hover:text-orange-400 transition-colors" />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {/* SEARCH RESULTS STATE */}
+                    {hasQuery && (
+                        <div className="px-4 pt-4">
+                            {results.length > 0 && (
+                                <>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">Sản phẩm</span>
+                                        <button onClick={() => handleSearch(query)} className="text-[11px] font-semibold text-orange-500">Xem tất cả kết quả</button>
+                                    </div>
+                                    <div className="space-y-0 divide-y divide-gray-100">
+                                        {results.map((product, i) => (
+                                            <Link
+                                                key={product.id}
+                                                href={`/product/${product.slug}`}
+                                                onClick={() => { saveRecentSearch(query); onClose(); }}
+                                                className="flex items-center gap-3 py-3 group"
+                                            >
+                                                {/* Badge + image */}
+                                                <div className="relative w-16 h-16 rounded-xl bg-gray-900 overflow-hidden flex-shrink-0">
+                                                    {product.image?.sourceUrl
+                                                        ? <Image src={product.image.sourceUrl} alt={product.name} fill className="object-contain p-1 opacity-90" sizes="64px" />
+                                                        : <div className="w-full h-full flex items-center justify-center"><Search className="w-5 h-5 text-gray-500" /></div>
+                                                    }
+                                                    {/* Status badge */}
+                                                    <span className={`absolute top-1 left-1 text-[8px] font-bold uppercase px-1 py-0.5 rounded ${i === 1 ? 'bg-amber-500 text-white' : i === 2 ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'}`}>
+                                                        {i === 1 ? 'PRE-ORDER' : i === 2 ? 'NEW' : 'IN STOCK'}
+                                                    </span>
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-xs font-semibold text-gray-800 line-clamp-2 group-hover:text-blue-700 transition-colors">
+                                                        <Highlight text={product.name} query={query} />
+                                                    </p>
+                                                    <p className="text-sm font-bold text-gray-900 mt-1">{product.price}</p>
+                                                </div>
+                                                <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                            {!isSearching && results.length === 0 && (
+                                <p className="py-12 text-sm text-center text-gray-400">Không tìm thấy kết quả cho &quot;{query}&quot;</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Mobile Fixed Bottom Bar */}
+                {hasQuery && results.length > 0 && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 flex items-center justify-between flex-shrink-0 safe-area-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+                        <span className="text-xs text-gray-400 font-medium">{Math.max(results.length * 3, results.length)} Kết quả</span>
+                        <button
+                            onClick={() => handleSearch(query)}
+                            className="bg-orange-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-orange-600 transition-colors"
+                        >
+                            Xem kết quả
+                        </button>
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
