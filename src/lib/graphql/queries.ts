@@ -228,7 +228,7 @@ export const GET_CUSTOMER_DETAILS = `
         postcode
         phone
       }
-      orders(first: 50) {
+      orders {
         nodes {
           id
           databaseId
