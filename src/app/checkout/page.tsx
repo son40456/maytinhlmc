@@ -57,6 +57,8 @@ export default function CheckoutPage() {
             const headers: Record<string, string> = { 'Content-Type': 'application/json' };
             if (token) headers['Authorization'] = `Bearer ${token}`;
 
+            console.log("DEBUG: Adding first item to cart", { databaseId: firstItem.databaseId, quantity: firstItem.quantity });
+
             const res1 = await fetch(process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string, {
                 method: 'POST',
                 headers,
@@ -69,7 +71,11 @@ export default function CheckoutPage() {
                 })
             });
 
+            const res1Json = await res1.json();
+            console.log("DEBUG: AddToCart response", res1Json);
+
             const sessionToken = res1.headers.get('woocommerce-session');
+            console.log("DEBUG: Session token", sessionToken);
 
             // Bước 2: Thêm các sản phẩm còn lại (nếu có) cùng Session
             if (items.length > 1) {
@@ -122,7 +128,13 @@ export default function CheckoutPage() {
                 })
             });
 
+            console.log("DEBUG: Checkout request headers", {
+                'woocommerce-session': sessionToken ? `Session ${sessionToken}` : '(none)',
+                'Authorization': token ? 'Bearer [MASKED]' : '(none)'
+            });
+
             const checkoutData = await checkoutRes.json();
+            console.log("DEBUG: Checkout response", checkoutData);
 
             if (checkoutData.errors) {
                 console.error("Checkout errors:", checkoutData.errors);
