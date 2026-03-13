@@ -7,7 +7,7 @@ import { GlobalModalProvider } from "@/components/common/GlobalModalProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   display: 'swap',
 });
 
@@ -32,7 +32,7 @@ export default async function RootLayout({
   const logoUrl = await getSiteLogo();
 
   return (
-    <html lang="en">
+    <html lang="vi">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
       >

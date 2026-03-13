@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
 import { GET_RECENT_POSTS } from "@/lib/graphql/queries";
 
@@ -36,10 +37,12 @@ export async function RelatedNews() {
                         <Link href={`/${news.slug}`} key={news.id} className="group block">
                             <div className="flex flex-col gap-3">
                                 <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-100">
-                                    <img
+                                    <Image
                                         src={imgUrl}
                                         alt={news.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 absolute top-0 left-0"
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, 33vw"
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
                                 </div>
                                 <div>
