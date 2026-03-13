@@ -57,7 +57,6 @@ export default function MyAccountPage() {
                 });
 
                 const json = await res.json();
-                console.log('Customer API Response:', JSON.stringify(json, null, 2));
                 const { data, errors } = json;
 
                 if (errors) {
@@ -66,14 +65,10 @@ export default function MyAccountPage() {
 
                 if (data?.customer) {
                     const c = data.customer;
-                    console.log('Customer Data:', c);
-                    console.log('Orders:', c.orders?.nodes);
                     setCustomerData(c);
                     setProfileForm({ firstName: c.firstName || '', lastName: c.lastName || '', email: c.email || '' });
                     setBillingForm(c.billing || {});
                     setShippingForm(c.shipping || {});
-                } else {
-                    console.warn('No customer data returned. User might not be logged in or orders are empty.');
                 }
             } catch (err) {
                 console.error('Error fetching customer details:', err);
@@ -315,15 +310,30 @@ export default function MyAccountPage() {
                                     <h2 className="text-xl font-bold text-white flex items-center gap-2"><Package className="w-5 h-5 text-purple-400" /> Lịch sử đơn hàng</h2>
                                 </div>
 
-                                {/* DEBUG */}
-                                <div className="p-4 border-b border-red-500/20 bg-red-500/5">
-                                    <details>
-                                        <summary className="text-xs text-red-400 cursor-pointer">Debug: Click to see API response</summary>
-                                        <pre className="mt-2 text-xs text-gray-400 overflow-x-auto whitespace-pre-wrap">
-                                            {JSON.stringify(customerData, (k, v) => k === 'orders' ? JSON.stringify(v) : v, 2)}
-                                        </pre>
-                                    </details>
-                                </div>
+                                {/* Hiển thị thông báo nếu không có đơn hàng hoặc chưa đăng nhập */}
+                                {(!customerData || !customerData.orders?.nodes?.length) && (
+                                    <div className="p-12 text-center">
+                                        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <Package className="w-10 h-10 text-gray-500" />
+                                        </div>
+                                        <h3 className="text-lg font-bold text-white mb-2">Chưa có đơn hàng nào</h3>
+                                        <p className="text-gray-400 mb-6 text-sm max-w-md mx-auto">
+                                            {customerData
+                                                ? "Bạn chưa có đơn hàng nào trong tài khoản này. Các đơn hàng đặt khi chưa đăng nhập (guest checkout) sẽ không hiển thị ở đây."
+                                                : "Vui lòng đăng nhập để xem lịch sử đơn hàng."}
+                                        </p>
+                                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                            <Link href="/" className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-medium transition-colors">
+                                                Tiếp tục mua sắm
+                                            </Link>
+                                            {!customerData && (
+                                                <Link href="/login" className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-6 py-2.5 rounded-xl font-medium transition-colors">
+                                                    Đăng nhập ngay
+                                                </Link>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {customerData?.orders?.nodes?.length > 0 ? (
                                     <div className="divide-y divide-white/5">
@@ -383,13 +393,7 @@ export default function MyAccountPage() {
                                             </div>
                                         ))}
                                     </div>
-                                ) : (
-                                    <div className="p-12 text-center">
-                                        <Package className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                                        <p className="text-white font-bold mb-2">Chưa có đơn hàng nào</p>
-                                        <Link href="/" className="text-blue-400 hover:underline">Tiếp tục mua sắm</Link>
-                                    </div>
-                                )}
+                                ) : null}
                             </div>
                         )}
 
