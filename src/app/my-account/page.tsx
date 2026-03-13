@@ -38,8 +38,17 @@ export default function MyAccountPage() {
     const [shippingForm, setShippingForm] = useState<any>({});
     const [addrSaving, setAddrSaving] = useState(false);
     const [addrMsg, setAddrMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [ready, setReady] = useState(false);
+
+    // Wait for hydration before checking auth
+    useEffect(() => {
+        // Use a small timeout to ensure hydration completes
+        const timer = setTimeout(() => setReady(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
 
     useEffect(() => {
+        if (!ready) return;
         if (!isAuthenticated) {
             router.push('/login');
             return;
@@ -57,7 +66,6 @@ export default function MyAccountPage() {
                 });
 
                 const json = await res.json();
-                console.log('API Response:', json);
                 const { data, errors } = json;
 
                 if (errors) {
@@ -79,7 +87,7 @@ export default function MyAccountPage() {
         };
 
         fetchCustomerDetails();
-    }, [isAuthenticated, token, router]);
+    }, [ready, isAuthenticated, token, router]);
 
     const gqlFetch = async (query: string, variables: any) => {
         const res = await fetch(process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string, {
@@ -157,7 +165,7 @@ export default function MyAccountPage() {
         router.push('/');
     };
 
-    if (isLoading) {
+    if (!ready || isLoading) {
         return (
             <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
                 <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
