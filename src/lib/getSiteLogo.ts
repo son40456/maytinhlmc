@@ -1,15 +1,20 @@
 import { Redis } from '@upstash/redis';
+import { unstable_cache } from 'next/cache';
 
-async function getLogoFromRedis(): Promise<string | null> {
-    const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
-    const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+const getLogoFromRedis = unstable_cache(
+    async (): Promise<string | null> => {
+        const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+        const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
 
-    if (!kvUrl || !kvToken) return null;
+        if (!kvUrl || !kvToken) return null;
 
-    const redis = new Redis({ url: kvUrl, token: kvToken });
-    const data = await redis.get<{ logo?: string }>('siteSettings');
-    return data?.logo ?? null;
-}
+        const redis = new Redis({ url: kvUrl, token: kvToken });
+        const data = await redis.get<{ logo?: string }>('siteSettings');
+        return data?.logo ?? null;
+    },
+    ['site-logo'],
+    { revalidate: 3600 }
+);
 
 export async function getSiteLogo(): Promise<string | null> {
     // Priority 1: logo saved in admin settings (Redis)
