@@ -57,6 +57,7 @@ export default function MyAccountPage() {
                 });
 
                 const json = await res.json();
+                console.log('API Response:', json);
                 const { data, errors } = json;
 
                 if (errors) {
@@ -310,28 +311,19 @@ export default function MyAccountPage() {
                                     <h2 className="text-xl font-bold text-white flex items-center gap-2"><Package className="w-5 h-5 text-purple-400" /> Lịch sử đơn hàng</h2>
                                 </div>
 
-                                {/* Hiển thị thông báo nếu không có đơn hàng hoặc chưa đăng nhập */}
-                                {(!customerData || !customerData.orders?.nodes?.length) && (
+                                {/* Hiển thị thông báo nếu không có đơn hàng */}
+                                {(!customerData?.orders?.nodes?.length) && (
                                     <div className="p-12 text-center">
                                         <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                                             <Package className="w-10 h-10 text-gray-500" />
                                         </div>
                                         <h3 className="text-lg font-bold text-white mb-2">Chưa có đơn hàng nào</h3>
                                         <p className="text-gray-400 mb-6 text-sm max-w-md mx-auto">
-                                            {customerData
-                                                ? "Bạn chưa có đơn hàng nào trong tài khoản này. Các đơn hàng đặt khi chưa đăng nhập (guest checkout) sẽ không hiển thị ở đây."
-                                                : "Vui lòng đăng nhập để xem lịch sử đơn hàng."}
+                                            Bạn chưa có đơn hàng nào trong tài khoản này. Các đơn hàng đặt khi chưa đăng nhập (guest checkout) sẽ không hiển thị ở đây.
                                         </p>
-                                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                                            <Link href="/" className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-medium transition-colors">
-                                                Tiếp tục mua sắm
-                                            </Link>
-                                            {!customerData && (
-                                                <Link href="/login" className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-6 py-2.5 rounded-xl font-medium transition-colors">
-                                                    Đăng nhập ngay
-                                                </Link>
-                                            )}
-                                        </div>
+                                        <Link href="/" className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-medium transition-colors">
+                                            Tiếp tục mua sắm
+                                        </Link>
                                     </div>
                                 )}
 
