@@ -28,6 +28,7 @@ const RelatedProductsCarousel = dynamic(() => import('@/components/product/Relat
 import { generateProductSEO, generateCategorySEO } from "@/utils/seo";
 import { ProductSchema } from "@/components/seo/ProductSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { CategorySchema } from "@/components/seo/CategorySchema";
 
 // ISR: Các trang đã build sẽ được phục vụ như HTML tĩnh, cache làm mới sau 1 tiếng.
 export const revalidate = 3600;
@@ -61,7 +62,23 @@ export async function generateMetadata({ params }: {
         return {
             title: seo.title,
             description: seo.description,
-            openGraph: { images: [data.product.image?.sourceUrl || ""] },
+            openGraph: {
+                title: seo.title,
+                description: seo.description,
+                url: `https://lmc.vn/${slug}`,
+                type: 'website',
+                siteName: 'LMC',
+                images: data.product.image?.sourceUrl ? [{ url: data.product.image.sourceUrl }] : [],
+            },
+            twitter: {
+                card: 'summary_large_image',
+                title: seo.title,
+                description: seo.description,
+                images: data.product.image?.sourceUrl ? [data.product.image.sourceUrl] : [],
+            },
+            alternates: {
+                canonical: `https://lmc.vn/${slug}`,
+            },
         };
     }
 
@@ -70,16 +87,49 @@ export async function generateMetadata({ params }: {
         return {
             title: seo.title,
             description: seo.description,
+            openGraph: {
+                title: seo.title,
+                description: seo.description,
+                url: `https://lmc.vn/${slug}`,
+                type: 'website',
+                siteName: 'LMC',
+            },
+            twitter: {
+                card: 'summary',
+                title: seo.title,
+                description: seo.description,
+            },
+            alternates: {
+                canonical: `https://lmc.vn/${slug}`,
+            },
         };
     }
 
     if (data?.post) {
         const post = data.post;
         const plainExcerpt = post.excerpt?.replace(/<[^>]+>/g, '').slice(0, 160) || '';
+        const postTitle = `${post.title} | LMC`;
+        const imgUrl = post.featuredImage?.node?.sourceUrl || '';
         return {
-            title: `${post.title} | LMC`,
+            title: postTitle,
             description: plainExcerpt,
-            openGraph: { images: [post.featuredImage?.node?.sourceUrl || ''] },
+            openGraph: {
+                title: postTitle,
+                description: plainExcerpt,
+                url: `https://lmc.vn/${slug}`,
+                type: 'article',
+                siteName: 'LMC',
+                images: imgUrl ? [{ url: imgUrl }] : [],
+            },
+            twitter: {
+                card: 'summary_large_image',
+                title: postTitle,
+                description: plainExcerpt,
+                images: imgUrl ? [imgUrl] : [],
+            },
+            alternates: {
+                canonical: `https://lmc.vn/${slug}`,
+            },
         };
     }
 
@@ -416,6 +466,11 @@ export default async function SlugPage({ params }: {
 
         return (
             <div className="container mx-auto px-4 py-12">
+                <CategorySchema
+                    name={category.name}
+                    description={category.description || undefined}
+                    url={`https://lmc.vn/${slug}`}
+                />
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Đang tải cấu trúc danh mục...</div>}>
                     <CategoryProductView
                         category={category}
