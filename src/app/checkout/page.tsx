@@ -126,7 +126,9 @@ export default function CheckoutPage() {
 
             if (checkoutData.errors) {
                 console.error("Checkout errors:", checkoutData.errors);
-                alert("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại!");
+                // Hiển thị lỗi chi tiết từ server để debug
+                const errorMessage = checkoutData.errors[0]?.message || 'Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại!';
+                alert(`Lỗi: ${errorMessage}`);
                 setIsSubmitting(false);
                 return;
             }

@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: {
             openGraph: {
                 title: seo.title,
                 description: seo.description,
-                url: `https://lmc.vn/${slug}`,
+                url: `https://maytinhlmc.vn/${slug}`,
                 type: 'website',
                 siteName: 'LMC',
                 images: data.product.image?.sourceUrl ? [{ url: data.product.image.sourceUrl }] : [],
@@ -77,7 +77,7 @@ export async function generateMetadata({ params }: {
                 images: data.product.image?.sourceUrl ? [data.product.image.sourceUrl] : [],
             },
             alternates: {
-                canonical: `https://lmc.vn/${slug}`,
+                canonical: `https://maytinhlmc.vn/${slug}`,
             },
         };
     }
@@ -90,7 +90,7 @@ export async function generateMetadata({ params }: {
             openGraph: {
                 title: seo.title,
                 description: seo.description,
-                url: `https://lmc.vn/${slug}`,
+                url: `https://maytinhlmc.vn/${slug}`,
                 type: 'website',
                 siteName: 'LMC',
             },
@@ -100,7 +100,7 @@ export async function generateMetadata({ params }: {
                 description: seo.description,
             },
             alternates: {
-                canonical: `https://lmc.vn/${slug}`,
+                canonical: `https://maytinhlmc.vn/${slug}`,
             },
         };
     }
@@ -116,7 +116,7 @@ export async function generateMetadata({ params }: {
             openGraph: {
                 title: postTitle,
                 description: plainExcerpt,
-                url: `https://lmc.vn/${slug}`,
+                url: `https://maytinhlmc.vn/${slug}`,
                 type: 'article',
                 siteName: 'LMC',
                 images: imgUrl ? [{ url: imgUrl }] : [],
@@ -128,7 +128,7 @@ export async function generateMetadata({ params }: {
                 images: imgUrl ? [imgUrl] : [],
             },
             alternates: {
-                canonical: `https://lmc.vn/${slug}`,
+                canonical: `https://maytinhlmc.vn/${slug}`,
             },
         };
     }
@@ -179,14 +179,14 @@ export default async function SlugPage({ params }: {
                     description={product.shortDescription || product.description || ''}
                     image={imageUrl}
                     price={saleNum > 0 ? saleNum : regularNum}
-                    url={`https://lmc.vn/${product.slug}`}
+                    url={`https://maytinhlmc.vn/${product.slug}`}
                     stockStatus={product.stockStatus || "IN_STOCK"}
                     sku={product.sku}
                 />
                 <BreadcrumbSchema
                     items={[
-                        { name: 'Trang chủ', item: 'https://lmc.vn/' },
-                        { name: product.name, item: `https://lmc.vn/${product.slug}` }
+                        { name: 'Trang chủ', item: 'https://maytinhlmc.vn/' },
+                        { name: product.name, item: `https://maytinhlmc.vn/${product.slug}` }
                     ]}
                 />
                 <div className="max-w-[1600px] mx-auto px-3 md:px-4 py-2 md:py-4">
@@ -469,7 +469,7 @@ export default async function SlugPage({ params }: {
                 <CategorySchema
                     name={category.name}
                     description={category.description || undefined}
-                    url={`https://lmc.vn/${slug}`}
+                    url={`https://maytinhlmc.vn/${slug}`}
                 />
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Đang tải cấu trúc danh mục...</div>}>
                     <CategoryProductView
