@@ -49,6 +49,37 @@ export const LOGIN_MUTATION = `
   }
 `;
 
+export const UPDATE_CUSTOMER_MUTATION = `
+  mutation UpdateCustomer($input: UpdateCustomerInput!) {
+    updateCustomer(input: $input) {
+      customer {
+        firstName
+        lastName
+        email
+        billing {
+          firstName lastName address1 city state postcode phone email
+        }
+        shipping {
+          firstName lastName address1 city state postcode phone
+        }
+      }
+    }
+  }
+`;
+
+export const UPDATE_USER_MUTATION = `
+  mutation UpdateUser($input: UpdateUserInput!) {
+    updateUser(input: $input) {
+      user {
+        id
+        firstName
+        lastName
+        email
+      }
+    }
+  }
+`;
+
 export const REGISTER_USER_MUTATION = `
   mutation RegisterUser($username: String!, $email: String!, $password: String!) {
     registerUser(input: {
