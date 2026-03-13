@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, Loader2, X, Home, TrendingUp, Clock } from 'lucide-react';
+import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, Loader2, X, Home, TrendingUp, Clock, Sun, Moon } from 'lucide-react';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useThemeStore } from '@/store/useThemeStore';
 import { useRouter } from 'next/navigation';
 import { searchProductsLive } from '@/app/actions/searchActions';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
@@ -110,6 +111,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const cartItems = useCartStore((state) => state.items);
     const cartTotal = useCartStore((state) => state.getRawTotal());
     const removeFromCart = useCartStore((state) => state.removeItem);
+    const { theme, toggleTheme } = useThemeStore();
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
 
@@ -436,6 +438,16 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     </span>
                                     <span className="text-[9px] text-blue-200 uppercase">&amp; Khuyến mãi</span>
                                 </div>
+                            </div>
+
+                            <div className="relative group">
+                                <button
+                                    onClick={toggleTheme}
+                                    className="flex items-center justify-center p-2 text-white hover:text-yellow-400 transition-colors border-l border-blue-400 ml-2 pl-4"
+                                    aria-label="Chuyển chế độ sáng/tối"
+                                >
+                                    {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                                </button>
                             </div>
 
                             <div className="relative group">
