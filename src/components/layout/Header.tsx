@@ -461,10 +461,10 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 </Link>
 
                                 {/* Cart Dropdown Tooltip */}
-                                <div className="absolute top-[48px] right-0 w-[340px] bg-white rounded-xl shadow-2xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[70] transform origin-top-right scale-95 group-hover:scale-100" style={{ pointerEvents: 'auto' }}>
+                                <div className="absolute top-[48px] right-0 w-[340px] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[70] transform origin-top-right scale-95 group-hover:scale-100" style={{ pointerEvents: 'auto' }}>
                                     {/* Header */}
-                                    <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
-                                        <h3 className="font-bold text-slate-800 flex items-center gap-2 text-sm capitalize">
+                                    <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 rounded-t-xl">
+                                        <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm capitalize">
                                             <ShoppingCart size={16} className="text-blue-600" />
                                             Giỏ hàng của bạn
                                         </h3>
@@ -475,8 +475,8 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     <div className="max-h-[320px] overflow-y-auto custom-scrollbar">
                                         {mounted && cartItems.length > 0 ? (
                                             cartItems.map((item) => (
-                                                <div key={item.id} className="group/item flex items-center gap-3 bg-white px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 relative">
-                                                    <div className="bg-white border border-slate-100 aspect-square rounded-lg w-16 h-16 shrink-0 shadow-sm relative overflow-hidden">
+                                                <div key={item.id} className="group/item flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-50 dark:border-slate-700 last:border-0 relative">
+                                                    <div className="bg-white dark:bg-slate-700 border border-slate-100 dark:border-slate-600 aspect-square rounded-lg w-16 h-16 shrink-0 shadow-sm relative overflow-hidden">
                                                         {item.imageUrl ? (
                                                             <Image src={item.imageUrl} alt={item.name} fill className="object-contain p-1" sizes="64px" />
                                                         ) : (
@@ -485,7 +485,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                     </div>
                                                     <div className="flex flex-col flex-1 min-w-0 py-1">
                                                         <div className="flex justify-between items-start gap-2">
-                                                            <Link href={`/product/${item.slug}`} className="text-slate-800 text-sm font-bold truncate hover:text-blue-600 transition-colors normal-case">
+                                                            <Link href={`/product/${item.slug}`} className="text-slate-800 dark:text-white text-sm font-bold truncate hover:text-blue-600 transition-colors normal-case">
                                                                 {item.name}
                                                             </Link>
                                                             <button
@@ -497,7 +497,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                             </button>
                                                         </div>
                                                         <div className="flex justify-between items-center mt-1.5">
-                                                            <p className="text-slate-500 text-[11px] font-semibold bg-slate-100 px-2 py-0.5 rounded-md">SL: {item.quantity}</p>
+                                                            <p className="text-slate-500 dark:text-slate-400 text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-md">SL: {item.quantity}</p>
                                                             <p className="text-blue-600 text-sm font-black tracking-tight">
                                                                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
                                                             </p>
@@ -510,7 +510,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-2">
                                                     <ShoppingCart size={24} />
                                                 </div>
-                                                <p className="text-slate-500 text-sm font-medium normal-case">Giỏ hàng trống</p>
+                                                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium normal-case">Giỏ hàng trống</p>
                                                 <Link href="/" className="text-blue-600 text-[11px] font-bold hover:underline mt-1 uppercase tracking-wider">Mua sắm ngay</Link>
                                             </div>
                                         )}
@@ -520,13 +520,13 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     {mounted && cartItems.length > 0 && (
                                         <div className="p-4 border-t border-slate-100 bg-white rounded-b-xl">
                                             <div className="flex justify-between items-center mb-4 px-1">
-                                                <span className="text-slate-500 text-[13px] font-semibold capitalize">Tổng cộng</span>
+                                                <span className="text-slate-500 dark:text-slate-400 text-[13px] font-semibold capitalize">Tổng cộng</span>
                                                 <span className="text-slate-800 text-lg font-black text-blue-600 tracking-tight">
                                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(cartTotal)}
                                                 </span>
                                             </div>
                                             <div className="flex gap-2">
-                                                <Link href="/cart" className="flex-1 px-3 py-2.5 rounded-lg border-2 border-slate-100 text-slate-700 text-[11px] font-black uppercase tracking-wider hover:bg-slate-50 hover:border-slate-200 transition-colors text-center flex items-center justify-center">
+                                                <Link href="/cart" className="flex-1 px-3 py-2.5 rounded-lg border-2 border-slate-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-black uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-200 transition-colors text-center flex items-center justify-center">
                                                     Chi tiết
                                                 </Link>
                                                 <Link href="/checkout" className="flex-[2] px-3 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black uppercase tracking-wider shadow-md shadow-blue-600/20 transition-all flex items-center justify-center gap-1.5">
