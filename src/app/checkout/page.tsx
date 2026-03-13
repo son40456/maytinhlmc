@@ -65,8 +65,8 @@ export default function CheckoutPage() {
                 body: JSON.stringify({
                     query: ADD_TO_CART,
                     variables: {
-                        productId: firstItem.databaseId,
-                        quantity: firstItem.quantity
+                        productId: Number(firstItem.databaseId),
+                        quantity: Number(firstItem.quantity)
                     }
                 })
             });
@@ -90,8 +90,8 @@ export default function CheckoutPage() {
                         body: JSON.stringify({
                             query: ADD_TO_CART,
                             variables: {
-                                productId: item.databaseId,
-                                quantity: item.quantity
+                                productId: Number(item.databaseId),
+                                quantity: Number(item.quantity)
                             }
                         })
                     })
