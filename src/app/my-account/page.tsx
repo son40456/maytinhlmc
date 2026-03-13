@@ -56,13 +56,24 @@ export default function MyAccountPage() {
                     body: JSON.stringify({ query: GET_CUSTOMER_DETAILS })
                 });
 
-                const { data } = await res.json();
+                const json = await res.json();
+                console.log('Customer API Response:', JSON.stringify(json, null, 2));
+                const { data, errors } = json;
+
+                if (errors) {
+                    console.error('GraphQL Errors:', errors);
+                }
+
                 if (data?.customer) {
                     const c = data.customer;
+                    console.log('Customer Data:', c);
+                    console.log('Orders:', c.orders?.nodes);
                     setCustomerData(c);
                     setProfileForm({ firstName: c.firstName || '', lastName: c.lastName || '', email: c.email || '' });
                     setBillingForm(c.billing || {});
                     setShippingForm(c.shipping || {});
+                } else {
+                    console.warn('No customer data returned. User might not be logged in or orders are empty.');
                 }
             } catch (err) {
                 console.error('Error fetching customer details:', err);
@@ -303,6 +314,17 @@ export default function MyAccountPage() {
                                 <div className="p-6 border-b border-white/10">
                                     <h2 className="text-xl font-bold text-white flex items-center gap-2"><Package className="w-5 h-5 text-purple-400" /> Lịch sử đơn hàng</h2>
                                 </div>
+
+                                {/* DEBUG */}
+                                <div className="p-4 border-b border-red-500/20 bg-red-500/5">
+                                    <details>
+                                        <summary className="text-xs text-red-400 cursor-pointer">Debug: Click to see API response</summary>
+                                        <pre className="mt-2 text-xs text-gray-400 overflow-x-auto whitespace-pre-wrap">
+                                            {JSON.stringify(customerData, (k, v) => k === 'orders' ? JSON.stringify(v) : v, 2)}
+                                        </pre>
+                                    </details>
+                                </div>
+
                                 {customerData?.orders?.nodes?.length > 0 ? (
                                     <div className="divide-y divide-white/5">
                                         {customerData.orders.nodes.map((order: any) => (
