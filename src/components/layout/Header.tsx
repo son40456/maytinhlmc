@@ -2,11 +2,10 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, Loader2, X, Home, TrendingUp, Clock, Sun, Moon } from 'lucide-react';
+import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, Loader2, X, Home, TrendingUp, Clock } from 'lucide-react';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useThemeStore } from '@/store/useThemeStore';
 import { useRouter } from 'next/navigation';
 import { searchProductsLive } from '@/app/actions/searchActions';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
@@ -50,7 +49,12 @@ const renderMenuIcon = (iconField: string | undefined, label: string, cssClasses
                 <img
                     src={iconField}
                     alt={label}
-                    className={`object-contain ${small ? 'w-6 h-6' : 'w-8 h-8'} dark:invert`}
+                    className="object-contain"
+                    style={{
+                        width: small ? '24px' : '32px',
+                        height: small ? '24px' : '32px',
+                        filter: 'brightness(0) invert(1)'
+                    }}
                 />
             );
         }
@@ -106,7 +110,6 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const cartItems = useCartStore((state) => state.items);
     const cartTotal = useCartStore((state) => state.getRawTotal());
     const removeFromCart = useCartStore((state) => state.removeItem);
-    const { theme, toggleTheme } = useThemeStore();
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
 
@@ -436,16 +439,6 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                             </div>
 
                             <div className="relative group">
-                                <button
-                                    onClick={toggleTheme}
-                                    className="flex items-center justify-center p-2 text-white hover:text-yellow-400 transition-colors border-l border-blue-400 ml-2 pl-4"
-                                    aria-label="Chuyển chế độ sáng/tối"
-                                >
-                                    {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                                </button>
-                            </div>
-
-                            <div className="relative group">
                                 <Link href="/cart" className="flex p-2 text-white hover:text-yellow-400 transition-colors border-l border-blue-400 ml-2 pl-4">
                                     <ShoppingCart className="h-6 w-6" />
                                     {mounted && itemCount > 0 && (
@@ -456,10 +449,10 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 </Link>
 
                                 {/* Cart Dropdown Tooltip */}
-                                <div className="absolute top-[48px] right-0 w-[340px] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[70] transform origin-top-right scale-95 group-hover:scale-100" style={{ pointerEvents: 'auto' }}>
+                                <div className="absolute top-[48px] right-0 w-[340px] bg-white rounded-xl shadow-2xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[70] transform origin-top-right scale-95 group-hover:scale-100" style={{ pointerEvents: 'auto' }}>
                                     {/* Header */}
-                                    <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 rounded-t-xl">
-                                        <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm capitalize">
+                                    <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
+                                        <h3 className="font-bold text-slate-800 flex items-center gap-2 text-sm capitalize">
                                             <ShoppingCart size={16} className="text-blue-600" />
                                             Giỏ hàng của bạn
                                         </h3>
@@ -470,8 +463,8 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     <div className="max-h-[320px] overflow-y-auto custom-scrollbar">
                                         {mounted && cartItems.length > 0 ? (
                                             cartItems.map((item) => (
-                                                <div key={item.id} className="group/item flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-50 dark:border-slate-700 last:border-0 relative">
-                                                    <div className="bg-white dark:bg-slate-700 border border-slate-100 dark:border-slate-600 aspect-square rounded-lg w-16 h-16 shrink-0 shadow-sm relative overflow-hidden">
+                                                <div key={item.id} className="group/item flex items-center gap-3 bg-white px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 relative">
+                                                    <div className="bg-white border border-slate-100 aspect-square rounded-lg w-16 h-16 shrink-0 shadow-sm relative overflow-hidden">
                                                         {item.imageUrl ? (
                                                             <Image src={item.imageUrl} alt={item.name} fill className="object-contain p-1" sizes="64px" />
                                                         ) : (
@@ -480,7 +473,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                     </div>
                                                     <div className="flex flex-col flex-1 min-w-0 py-1">
                                                         <div className="flex justify-between items-start gap-2">
-                                                            <Link href={`/product/${item.slug}`} className="text-slate-800 dark:text-white text-sm font-bold truncate hover:text-blue-600 transition-colors normal-case">
+                                                            <Link href={`/product/${item.slug}`} className="text-slate-800 text-sm font-bold truncate hover:text-blue-600 transition-colors normal-case">
                                                                 {item.name}
                                                             </Link>
                                                             <button
@@ -492,7 +485,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                             </button>
                                                         </div>
                                                         <div className="flex justify-between items-center mt-1.5">
-                                                            <p className="text-slate-500 dark:text-slate-400 text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-md">SL: {item.quantity}</p>
+                                                            <p className="text-slate-500 text-[11px] font-semibold bg-slate-100 px-2 py-0.5 rounded-md">SL: {item.quantity}</p>
                                                             <p className="text-blue-600 text-sm font-black tracking-tight">
                                                                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
                                                             </p>
@@ -505,7 +498,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-2">
                                                     <ShoppingCart size={24} />
                                                 </div>
-                                                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium normal-case">Giỏ hàng trống</p>
+                                                <p className="text-slate-500 text-sm font-medium normal-case">Giỏ hàng trống</p>
                                                 <Link href="/" className="text-blue-600 text-[11px] font-bold hover:underline mt-1 uppercase tracking-wider">Mua sắm ngay</Link>
                                             </div>
                                         )}
@@ -515,13 +508,13 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     {mounted && cartItems.length > 0 && (
                                         <div className="p-4 border-t border-slate-100 bg-white rounded-b-xl">
                                             <div className="flex justify-between items-center mb-4 px-1">
-                                                <span className="text-slate-500 dark:text-slate-400 text-[13px] font-semibold capitalize">Tổng cộng</span>
+                                                <span className="text-slate-500 text-[13px] font-semibold capitalize">Tổng cộng</span>
                                                 <span className="text-slate-800 text-lg font-black text-blue-600 tracking-tight">
                                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(cartTotal)}
                                                 </span>
                                             </div>
                                             <div className="flex gap-2">
-                                                <Link href="/cart" className="flex-1 px-3 py-2.5 rounded-lg border-2 border-slate-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-black uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-200 transition-colors text-center flex items-center justify-center">
+                                                <Link href="/cart" className="flex-1 px-3 py-2.5 rounded-lg border-2 border-slate-100 text-slate-700 text-[11px] font-black uppercase tracking-wider hover:bg-slate-50 hover:border-slate-200 transition-colors text-center flex items-center justify-center">
                                                     Chi tiết
                                                 </Link>
                                                 <Link href="/checkout" className="flex-[2] px-3 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black uppercase tracking-wider shadow-md shadow-blue-600/20 transition-all flex items-center justify-center gap-1.5">
@@ -549,7 +542,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                 </div>
 
                 {/* Tier 2: Desktop Nav Bar - hidden on mobile */}
-                <div className={`hidden lg:block bg-white dark:bg-[#12243d] text-gray-800 dark:text-white border-b border-gray-200 dark:border-[#1a3458] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[80px] opacity-100 scale-y-100'}`}
+                <div className={`hidden lg:block bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[80px] opacity-100 scale-y-100'}`}
                     style={scrolled && !menuOpen ? { overflow: 'hidden' } : {}}
                 >
                     <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative">
@@ -562,13 +555,13 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     <div key={item.id} className={`group/menu static lg:static ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
                                         <Link
                                             href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
-                                            className="flex flex-col items-center justify-center py-3 px-4 hover:bg-gray-100 dark:hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-blue-600 dark:hover:border-yellow-400"
+                                            className="flex flex-col items-center justify-center py-3 px-4 hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-yellow-400"
                                             onClick={handleMenuClick}
                                         >
-                                            <span className="mb-1.5 group-hover:scale-110 group-hover:text-blue-600 dark:group-hover:text-yellow-400 transition-all text-gray-600 dark:text-gray-300">
+                                            <span className="mb-1.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
                                                 {renderMenuIcon((item as any).icon, cleanLabel, item.cssClasses, false)}
                                             </span>
-                                            <span className="text-[11px] font-bold text-center tracking-tight text-gray-700 dark:text-gray-100 group-hover:text-black dark:group-hover:text-white flex items-center gap-1 uppercase whitespace-nowrap">
+                                            <span className="text-[11px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-1 uppercase whitespace-nowrap">
                                                 {cleanLabel}
                                                 {hasChildren && <ChevronDown size={12} />}
                                             </span>
@@ -576,7 +569,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
 
                                         {hasChildren && (
                                             <div
-                                                className={`absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white dark:bg-slate-800 text-gray-800 dark:text-white shadow-[0_10px_40px_rgba(0,0,0,0.08)] dark:shadow-slate-900/50 border-t-2 border-yellow-400 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200 rounded-b-xl ${isMenuForceHidden ? '!hidden' : ''}`}
+                                                className={`absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-[0_10px_40px_rgba(0,0,0,0.08)] border-t-2 border-yellow-400 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200 rounded-b-xl ${isMenuForceHidden ? '!hidden' : ''}`}
                                                 onClick={handleMenuClick}
                                             >
                                                 <div className="flex justify-between items-start gap-8">
@@ -589,7 +582,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                                 return (
                                                                     <div key={idx} className="flex flex-col min-w-[150px]">
                                                                         {heading && (
-                                                                            <span className="text-[12px] font-black text-orange-600 uppercase tracking-wider mb-3 pb-1.5 border-b-2 border-orange-100 dark:border-orange-900/40 block">
+                                                                            <span className="text-[12px] font-black text-orange-600 uppercase tracking-wider mb-3 pb-1.5 border-b-2 border-orange-100 block">
                                                                                 {heading}
                                                                             </span>
                                                                         )}
@@ -598,7 +591,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                                                 <Link
                                                                                     key={child.id}
                                                                                     href={child.path.replace('/category/', '/').replace('/product/', '/')}
-                                                                                    className="block text-[13px] font-semibold text-gray-600 dark:text-slate-300 hover:text-blue-600 hover:translate-x-1 transition-all"
+                                                                                    className="block text-[13px] font-semibold text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all"
                                                                                 >
                                                                                     {child.label.replace(/<\/?[^>]+(\>|$)/g, "")}
                                                                                 </Link>
