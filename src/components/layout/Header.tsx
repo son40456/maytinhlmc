@@ -50,12 +50,7 @@ const renderMenuIcon = (iconField: string | undefined, label: string, cssClasses
                 <img
                     src={iconField}
                     alt={label}
-                    className="object-contain"
-                    style={{
-                        width: small ? '24px' : '32px',
-                        height: small ? '24px' : '32px',
-                        filter: 'brightness(0) invert(1)'
-                    }}
+                    className={`object-contain ${small ? 'w-6 h-6' : 'w-8 h-8'} dark:invert`}
                 />
             );
         }
