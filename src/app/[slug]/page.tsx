@@ -56,30 +56,78 @@ export async function generateMetadata({ params }: {
         taxFilters: null
     });
 
+    const SITE_URL = "https://lmc.vn";
+
     if (data?.product) {
-        const seo = generateProductSEO(data.product.name, data.product.shortDescription);
+        const product = data.product;
+        const seo = generateProductSEO(product.name, product.shortDescription);
+        const fullUrl = `${SITE_URL}/${product.slug}`;
         return {
             title: seo.title,
             description: seo.description,
-            openGraph: { images: [data.product.image?.sourceUrl || ""] },
+            alternates: { canonical: fullUrl },
+            openGraph: {
+                title: seo.title,
+                description: seo.description,
+                url: fullUrl,
+                type: "website",
+                siteName: "Máy Tính LMC",
+                images: [{ url: product.image?.sourceUrl || "" }],
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: seo.title,
+                description: seo.description,
+                images: [product.image?.sourceUrl || ""],
+            },
         };
     }
 
     if (data?.productCategory) {
-        const seo = generateCategorySEO(data.productCategory.name);
+        const category = data.productCategory;
+        const seo = generateCategorySEO(category.name);
+        const fullUrl = `${SITE_URL}/${category.slug}`;
         return {
             title: seo.title,
             description: seo.description,
+            alternates: { canonical: fullUrl },
+            openGraph: {
+                title: seo.title,
+                description: seo.description,
+                url: fullUrl,
+                type: "website",
+                siteName: "Máy Tính LMC",
+            },
+            twitter: {
+                card: "summary",
+                title: seo.title,
+                description: seo.description,
+            },
         };
     }
 
     if (data?.post) {
         const post = data.post;
         const plainExcerpt = post.excerpt?.replace(/<[^>]+>/g, '').slice(0, 160) || '';
+        const fullUrl = `${SITE_URL}/${post.slug}`;
         return {
             title: `${post.title} | LMC`,
             description: plainExcerpt,
-            openGraph: { images: [post.featuredImage?.node?.sourceUrl || ''] },
+            alternates: { canonical: fullUrl },
+            openGraph: {
+                title: `${post.title} | LMC`,
+                description: plainExcerpt,
+                url: fullUrl,
+                type: "article",
+                siteName: "Máy Tính LMC",
+                images: [{ url: post.featuredImage?.node?.sourceUrl || "" }],
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: `${post.title} | LMC`,
+                description: plainExcerpt,
+                images: [post.featuredImage?.node?.sourceUrl || ""],
+            },
         };
     }
 
@@ -416,6 +464,18 @@ export default async function SlugPage({ params }: {
 
         return (
             <div className="container mx-auto px-4 py-12">
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "CollectionPage",
+                            "name": category.name,
+                            "description": category.description || `Danh mục ${category.name} tại Máy Tính LMC`,
+                            "url": `https://lmc.vn/${category.slug}`,
+                        })
+                    }}
+                />
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Đang tải cấu trúc danh mục...</div>}>
                     <CategoryProductView
                         category={category}
