@@ -554,7 +554,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                 </div>
 
                 {/* Tier 2: Desktop Nav Bar - hidden on mobile */}
-                <div className={`hidden lg:block bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[80px] opacity-100 scale-y-100'}`}
+                <div className={`hidden lg:block bg-white dark:bg-[#12243d] text-gray-800 dark:text-white border-b border-gray-200 dark:border-[#1a3458] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[80px] opacity-100 scale-y-100'}`}
                     style={scrolled && !menuOpen ? { overflow: 'hidden' } : {}}
                 >
                     <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative">
@@ -567,13 +567,13 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     <div key={item.id} className={`group/menu static lg:static ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
                                         <Link
                                             href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
-                                            className="flex flex-col items-center justify-center py-3 px-4 hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-yellow-400"
+                                            className="flex flex-col items-center justify-center py-3 px-4 hover:bg-gray-100 dark:hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-blue-600 dark:hover:border-yellow-400"
                                             onClick={handleMenuClick}
                                         >
-                                            <span className="mb-1.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
+                                            <span className="mb-1.5 group-hover:scale-110 group-hover:text-blue-600 dark:group-hover:text-yellow-400 transition-all text-gray-600 dark:text-gray-300">
                                                 {renderMenuIcon((item as any).icon, cleanLabel, item.cssClasses, false)}
                                             </span>
-                                            <span className="text-[11px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-1 uppercase whitespace-nowrap">
+                                            <span className="text-[11px] font-bold text-center tracking-tight text-gray-700 dark:text-gray-100 group-hover:text-black dark:group-hover:text-white flex items-center gap-1 uppercase whitespace-nowrap">
                                                 {cleanLabel}
                                                 {hasChildren && <ChevronDown size={12} />}
                                             </span>
@@ -581,7 +581,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
 
                                         {hasChildren && (
                                             <div
-                                                className={`absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-[0_10px_40px_rgba(0,0,0,0.08)] border-t-2 border-yellow-400 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200 rounded-b-xl ${isMenuForceHidden ? '!hidden' : ''}`}
+                                                className={`absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white dark:bg-slate-800 text-gray-800 dark:text-white shadow-[0_10px_40px_rgba(0,0,0,0.08)] dark:shadow-slate-900/50 border-t-2 border-yellow-400 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200 rounded-b-xl ${isMenuForceHidden ? '!hidden' : ''}`}
                                                 onClick={handleMenuClick}
                                             >
                                                 <div className="flex justify-between items-start gap-8">
@@ -594,7 +594,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                                 return (
                                                                     <div key={idx} className="flex flex-col min-w-[150px]">
                                                                         {heading && (
-                                                                            <span className="text-[12px] font-black text-orange-600 uppercase tracking-wider mb-3 pb-1.5 border-b-2 border-orange-100 block">
+                                                                            <span className="text-[12px] font-black text-orange-600 uppercase tracking-wider mb-3 pb-1.5 border-b-2 border-orange-100 dark:border-orange-900/40 block">
                                                                                 {heading}
                                                                             </span>
                                                                         )}
@@ -603,7 +603,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                                                 <Link
                                                                                     key={child.id}
                                                                                     href={child.path.replace('/category/', '/').replace('/product/', '/')}
-                                                                                    className="block text-[13px] font-semibold text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all"
+                                                                                    className="block text-[13px] font-semibold text-gray-600 dark:text-slate-300 hover:text-blue-600 hover:translate-x-1 transition-all"
                                                                                 >
                                                                                     {child.label.replace(/<\/?[^>]+(\>|$)/g, "")}
                                                                                 </Link>
