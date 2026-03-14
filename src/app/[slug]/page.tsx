@@ -53,7 +53,8 @@ export async function generateMetadata({ params }: {
     const { data } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
         slugId: slug,
         slugStr: slug,
-        taxFilters: null
+        taxFilters: null,
+        pageUri: `/${slug}/`
     });
 
     if (data?.product) {
@@ -83,8 +84,8 @@ export async function generateMetadata({ params }: {
         };
     }
 
-    if (data?.page) {
-        const page = data.page;
+    if (data?.pageBy) {
+        const page = data.pageBy;
         return {
             title: `${page.title} | LMC`,
             openGraph: { images: [page.featuredImage?.node?.sourceUrl || ''] },
@@ -112,7 +113,8 @@ export default async function SlugPage({ params }: {
         minPrice: null,
         maxPrice: null,
         orderBy: [{ field: "DATE", order: "DESC" }],
-        taxFilters: null
+        taxFilters: null,
+        pageUri: `/${slug}/`
     });
 
     if (nodeData?.product) {
@@ -494,8 +496,8 @@ export default async function SlugPage({ params }: {
         );
     }
 
-    if (nodeData?.page) {
-        const page = nodeData.page;
+    if (nodeData?.pageBy) {
+        const page = nodeData.pageBy;
 
         return (
             <div className="bg-white min-h-screen">
