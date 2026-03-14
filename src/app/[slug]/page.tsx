@@ -53,8 +53,7 @@ export async function generateMetadata({ params }: {
     const { data } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
         slugId: slug,
         slugStr: slug,
-        taxFilters: null,
-        pageUri: `/${slug}/`
+        taxFilters: null
     });
 
     if (data?.product) {
@@ -84,14 +83,6 @@ export async function generateMetadata({ params }: {
         };
     }
 
-    if (data?.pageBy) {
-        const page = data.pageBy;
-        return {
-            title: `${page.title} | LMC`,
-            openGraph: { images: [page.featuredImage?.node?.sourceUrl || ''] },
-        };
-    }
-
     return { title: '404 - Không tìm thấy trang | LMC' };
 }
 
@@ -113,8 +104,7 @@ export default async function SlugPage({ params }: {
         minPrice: null,
         maxPrice: null,
         orderBy: [{ field: "DATE", order: "DESC" }],
-        taxFilters: null,
-        pageUri: `/${slug}/`
+        taxFilters: null
     });
 
     if (nodeData?.product) {
@@ -490,47 +480,6 @@ export default async function SlugPage({ params }: {
                     <div
                         className="prose prose-slate max-w-none"
                         dangerouslySetInnerHTML={{ __html: post.content || '' }}
-                    />
-                </div>
-            </div>
-        );
-    }
-
-    if (nodeData?.pageBy) {
-        const page = nodeData.pageBy;
-
-        return (
-            <div className="bg-white min-h-screen">
-                <div className="container mx-auto px-4 py-8 max-w-4xl">
-                    {/* Breadcrumb */}
-                    <nav className="flex items-center gap-1.5 text-sm text-slate-500 mb-6">
-                        <Link href="/" className="hover:text-blue-600">Trang chủ</Link>
-                        <span>/</span>
-                        <span className="text-slate-900 font-medium truncate">{page.title}</span>
-                    </nav>
-
-                    {/* Featured Image */}
-                    {page.featuredImage?.node?.sourceUrl && (
-                        <div className="relative w-full h-64 md:h-96 mb-8 rounded-2xl overflow-hidden">
-                            <Image
-                                src={page.featuredImage.node.sourceUrl}
-                                alt={page.featuredImage.node.altText || page.title}
-                                fill
-                                className="object-cover"
-                                priority
-                            />
-                        </div>
-                    )}
-
-                    {/* Title */}
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
-                        {page.title}
-                    </h1>
-
-                    {/* Content */}
-                    <div
-                        className="prose prose-slate max-w-none"
-                        dangerouslySetInnerHTML={{ __html: page.content || '' }}
                     />
                 </div>
             </div>

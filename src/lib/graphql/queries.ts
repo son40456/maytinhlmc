@@ -279,15 +279,14 @@ export const GET_MENU_ITEMS = `
 
 export const GET_NODE_BY_SLUG = `
   query GetNodeBySlug(
-    $slugId: ID!,
+    $slugId: ID!, 
     $slugStr: String!,
-    $first: Int = 24,
+    $first: Int = 24, 
     $after: String = "",
     $minPrice: Float,
     $maxPrice: Float,
     $orderBy: [ProductsOrderbyInput] = [{ field: DATE, order: DESC }],
-    $taxFilters: [ProductTaxonomyFilterInput],
-    $pageUri: String = ""
+    $taxFilters: [ProductTaxonomyFilterInput]
   ) {
     product(id: $slugId, idType: SLUG) {
       id
@@ -419,32 +418,6 @@ export const GET_NODE_BY_SLUG = `
         nodes {
           name
           slug
-        }
-      }
-    }
-    pageBy(uri: $pageUri) {
-      id
-      databaseId
-      title
-      slug
-      content
-      featuredImage {
-        node {
-          sourceUrl
-          altText
-        }
-      }
-    }
-    page(id: $slugId, idType: SLUG) {
-      id
-      databaseId
-      title
-      slug
-      content
-      featuredImage {
-        node {
-          sourceUrl
-          altText
         }
       }
     }
