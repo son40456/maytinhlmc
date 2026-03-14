@@ -4,7 +4,6 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { GlobalModalProvider } from "@/components/common/GlobalModalProvider";
-import { ThemeSync } from "@/components/common/ThemeSync";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,12 +32,11 @@ export default async function RootLayout({
   const logoUrl = await getSiteLogo();
 
   return (
-    <html lang="vi" suppressHydrationWarning>
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
       >
-        <ThemeSync />
-        <div className="flex flex-col min-h-screen text-gray-900 dark:text-white">
+        <div className="flex flex-col min-h-screen text-gray-900">
           <Header logoUrl={logoUrl} />
           <main className="flex-1 pb-16 lg:pb-0">
             <GlobalModalProvider>

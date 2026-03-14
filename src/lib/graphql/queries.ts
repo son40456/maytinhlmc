@@ -421,6 +421,19 @@ export const GET_NODE_BY_SLUG = `
         }
       }
     }
+    page(id: $slugId, idType: SLUG) {
+      id
+      databaseId
+      title
+      slug
+      content
+      featuredImage {
+        node {
+          sourceUrl
+          altText
+        }
+      }
+    }
     categoryProducts: products(
       first: $first, 
       after: $after, 
