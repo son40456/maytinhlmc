@@ -10,7 +10,7 @@ async function wpFetch(query: string, variables: Record<string, any> = {}) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query, variables }),
-            next: { revalidate: 3600 },
+            cache: 'no-store',
         });
         return res.json();
     } catch {
