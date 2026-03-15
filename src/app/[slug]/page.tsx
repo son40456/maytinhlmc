@@ -97,13 +97,11 @@ export async function generateMetadata({ params }: {
                 url: fullUrl,
                 type: "website",
                 siteName: "Máy Tính LMC",
-                images: category.image?.sourceUrl ? [{ url: category.image.sourceUrl }] : [],
             },
             twitter: {
-                card: "summary_large_image",
+                card: "summary",
                 title: seo.title,
                 description: seo.description,
-                images: category.image?.sourceUrl ? [category.image.sourceUrl] : [],
             },
         };
     }
@@ -182,9 +180,6 @@ export default async function SlugPage({ params }: {
                     url={`https://lmc.vn/${product.slug}`}
                     stockStatus={product.stockStatus || "IN_STOCK"}
                     sku={product.sku}
-                    brand={product.attributes?.nodes?.find((a: any) =>
-                        a.name?.toLowerCase().includes('thuong-hieu') || a.name?.toLowerCase().includes('thương hiệu')
-                    )?.options?.[0]}
                 />
                 <BreadcrumbSchema
                     items={[
@@ -500,41 +495,8 @@ export default async function SlugPage({ params }: {
             return new Date(dateStr).toLocaleDateString('vi-VN', { day: '2-digit', month: 'long', year: 'numeric' });
         };
 
-        const articleSchema = {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": post.title,
-            "image": post.featuredImage?.node?.sourceUrl,
-            "datePublished": post.date,
-            "dateModified": post.date,
-            "author": {
-                "@type": "Person",
-                "name": post.author?.node?.name || "Máy Tính LMC",
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "Máy Tính LMC",
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://lmc.vn/logo.png",
-                },
-            },
-            "description": post.excerpt?.replace(/<[^>]+>/g, '').slice(0, 160) || '',
-        };
-
         return (
             <div className="bg-white min-h-screen">
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-                />
-                <BreadcrumbSchema
-                    items={[
-                        { name: 'Trang chủ', item: 'https://lmc.vn/' },
-                        { name: 'Tin tức', item: 'https://lmc.vn/blog' },
-                        { name: post.title, item: `https://lmc.vn/${post.slug}` },
-                    ]}
-                />
                 <div className="container mx-auto px-4 py-8 max-w-4xl">
                     {/* Breadcrumb */}
                     <nav className="flex items-center gap-1.5 text-sm text-slate-500 mb-6">

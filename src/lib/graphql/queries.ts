@@ -364,10 +364,6 @@ export const GET_NODE_BY_SLUG = `
       name
       description
       slug
-      image {
-        sourceUrl
-        altText
-      }
       parent {
         node {
           id

@@ -63,7 +63,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
         : 0;
 
     return (
-        <div className="product-card group bg-white rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 flex flex-col h-full relative">
+        <div className="product-card group bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-700 flex flex-col h-full relative">
             <Link href={`/${slug}`} className="relative mb-4 block aspect-square w-full">
                 {imageUrl ? (
                     <Image
@@ -76,7 +76,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                         fetchPriority={priority ? "high" : "auto"}
                     />
                 ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-slate-100 rounded-lg text-slate-400">
+                    <div className="flex h-full w-full items-center justify-center bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-400">
                         No Image
                     </div>
                 )}
@@ -92,7 +92,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
 
             <Link href={`/${slug}`} className="mb-2 block">
                 <div className="flex items-center justify-between mb-1 min-h-[15px]">
-                    <div className="text-[10px] font-medium text-slate-400 truncate pr-2">
+                    <div className="text-[10px] font-medium text-slate-400 dark:text-slate-500 truncate pr-2">
                         {sku ? `Mã: ${sku}` : ''}
                     </div>
                     <div className="flex items-center gap-[1px] shrink-0">
@@ -103,7 +103,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                         ))}
                     </div>
                 </div>
-                <h3 className="text-sm font-semibold uppercase leading-snug line-clamp-2 min-h-[40px] group-hover:text-blue-600 transition-colors">
+                <h3 className="text-sm font-semibold uppercase leading-snug line-clamp-2 min-h-[40px] text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">
                     {name}
                 </h3>
             </Link>
@@ -147,7 +147,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                         }}
                         className={`flex items-center gap-1 text-[11px] transition-all duration-200 ${compareAnim ? 'scale-125' : 'scale-100'} ${isInCompare
                             ? 'text-blue-600 font-bold'
-                            : 'text-slate-500 hover:text-blue-600'
+                            : 'text-slate-500 dark:text-slate-400 hover:text-blue-600'
                             }`}
                     >
                         {isInCompare ? (
@@ -160,7 +160,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                     <button
                         onClick={handleAddToCart}
                         disabled={isPending}
-                        className="group-hover:bg-blue-600 group-hover:text-white text-slate-500 w-8 h-8 flex items-center justify-center bg-slate-100 rounded-md transition-colors disabled:bg-slate-300 disabled:cursor-wait"
+                        className="group-hover:bg-blue-600 group-hover:text-white text-slate-500 dark:text-slate-400 w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-700 rounded-md transition-colors disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-wait"
                         title="Thêm vào giỏ"
                     >
                         {isPending ? (
