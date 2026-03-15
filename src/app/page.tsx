@@ -2,8 +2,47 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { HomeSection } from "@/components/home/HomeSection";
 import { HardwareCategoryGrid } from "@/components/home/HardwareCategoryGrid";
-import fs from "fs/promises";
-import path from "path";
+import type { Metadata } from "next";
+
+const SITE_URL = "https://lmc.vn";
+
+export const metadata: Metadata = {
+  title: "Máy Tính LMC - Laptop, PC, Linh Kiện Chính Hãng",
+  description: "Mua laptop, PC, linh kiện máy tính chính hãng, giá tốt nhất tại Hà Nội. Trả góp 0%, freeship toàn quốc, bảo hành chính hãng.",
+  alternates: { canonical: SITE_URL },
+  openGraph: {
+    title: "Máy Tính LMC - Laptop, PC, Linh Kiện Chính Hãng",
+    description: "Mua laptop, PC, linh kiện máy tính chính hãng, giá tốt nhất tại Hà Nội. Trả góp 0%, freeship toàn quốc, bảo hành chính hãng.",
+    url: SITE_URL,
+    type: "website",
+    siteName: "Máy Tính LMC",
+  },
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Máy Tính LMC",
+  "url": SITE_URL,
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": { "@type": "EntryPoint", "urlTemplate": `${SITE_URL}/search?q={search_term_string}` },
+    "query-input": "required name=search_term_string",
+  },
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Máy Tính LMC",
+  "url": SITE_URL,
+  "telephone": "+84",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "VN",
+  },
+  "priceRange": "₫₫",
+};
 
 const dummyProducts = [
   {
@@ -51,7 +90,16 @@ export default async function Home() {
   let hardwareGridConfig = await getHardwareGridConfig();
 
   return (
-    <div className="flex flex-col gap-6 md:gap-10 pb-6 md:pb-12">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <div className="flex flex-col gap-6 md:gap-10 pb-6 md:pb-12">
       {/* Hero Banner */}
       <section className="bg-blue-600 text-white py-10 md:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -94,5 +142,6 @@ export default async function Home() {
       </div>
 
     </div>
+    </>
   );
 }

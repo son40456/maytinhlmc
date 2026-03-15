@@ -8,6 +8,7 @@ interface ProductSchemaProps {
     url: string;
     stockStatus: string;
     sku?: string;
+    brand?: string;
 }
 
 export const ProductSchema: React.FC<ProductSchemaProps> = ({
@@ -17,7 +18,8 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({
     price,
     url,
     stockStatus,
-    sku
+    sku,
+    brand,
 }) => {
     const isAvailable = stockStatus === 'IN_STOCK' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock';
 
@@ -34,6 +36,7 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({
         "image": image,
         "description": cleanDescription,
         ...(sku && { "sku": sku }),
+        ...(brand && { "brand": { "@type": "Brand", "name": brand } }),
         "offers": {
             "@type": "Offer",
             "url": url,
