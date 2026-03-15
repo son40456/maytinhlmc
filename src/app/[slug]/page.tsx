@@ -56,78 +56,30 @@ export async function generateMetadata({ params }: {
         taxFilters: null
     });
 
-    const SITE_URL = "https://lmc.vn";
-
     if (data?.product) {
-        const product = data.product;
-        const seo = generateProductSEO(product.name, product.shortDescription);
-        const fullUrl = `${SITE_URL}/${product.slug}`;
+        const seo = generateProductSEO(data.product.name, data.product.shortDescription);
         return {
             title: seo.title,
             description: seo.description,
-            alternates: { canonical: fullUrl },
-            openGraph: {
-                title: seo.title,
-                description: seo.description,
-                url: fullUrl,
-                type: "website",
-                siteName: "Máy Tính LMC",
-                images: [{ url: product.image?.sourceUrl || "" }],
-            },
-            twitter: {
-                card: "summary_large_image",
-                title: seo.title,
-                description: seo.description,
-                images: [product.image?.sourceUrl || ""],
-            },
+            openGraph: { images: [data.product.image?.sourceUrl || ""] },
         };
     }
 
     if (data?.productCategory) {
-        const category = data.productCategory;
-        const seo = generateCategorySEO(category.name);
-        const fullUrl = `${SITE_URL}/${category.slug}`;
+        const seo = generateCategorySEO(data.productCategory.name);
         return {
             title: seo.title,
             description: seo.description,
-            alternates: { canonical: fullUrl },
-            openGraph: {
-                title: seo.title,
-                description: seo.description,
-                url: fullUrl,
-                type: "website",
-                siteName: "Máy Tính LMC",
-            },
-            twitter: {
-                card: "summary",
-                title: seo.title,
-                description: seo.description,
-            },
         };
     }
 
     if (data?.post) {
         const post = data.post;
         const plainExcerpt = post.excerpt?.replace(/<[^>]+>/g, '').slice(0, 160) || '';
-        const fullUrl = `${SITE_URL}/${post.slug}`;
         return {
             title: `${post.title} | LMC`,
             description: plainExcerpt,
-            alternates: { canonical: fullUrl },
-            openGraph: {
-                title: `${post.title} | LMC`,
-                description: plainExcerpt,
-                url: fullUrl,
-                type: "article",
-                siteName: "Máy Tính LMC",
-                images: [{ url: post.featuredImage?.node?.sourceUrl || "" }],
-            },
-            twitter: {
-                card: "summary_large_image",
-                title: `${post.title} | LMC`,
-                description: plainExcerpt,
-                images: [post.featuredImage?.node?.sourceUrl || ""],
-            },
+            openGraph: { images: [post.featuredImage?.node?.sourceUrl || ''] },
         };
     }
 
@@ -171,7 +123,7 @@ export default async function SlugPage({ params }: {
         const relatedProducts = product.related?.nodes || [];
 
         return (
-            <div className="bg-[#f8fafc] min-h-screen pb-16">
+            <div className="bg-[#f8fafc] dark:bg-gray-900 min-h-screen pb-16">
                 <ProductSchema
                     name={product.name}
                     description={product.shortDescription || product.description || ''}
@@ -189,13 +141,13 @@ export default async function SlugPage({ params }: {
                 />
                 <div className="max-w-[1600px] mx-auto px-3 md:px-4 py-2 md:py-4">
                     {/* Breadcrumbs */}
-                    <nav className="flex items-center gap-1.5 md:gap-2 text-xs text-slate-500 mb-6">
+                    <nav className="flex items-center gap-1.5 md:gap-2 text-xs text-slate-500 dark:text-slate-400 mb-6">
                         <Link href="/" className="hover:text-blue-600">Trang chủ</Link>
                         <span>/</span>
-                        <span className="text-slate-900 font-medium truncate">{product.name}</span>
+                        <span className="text-slate-900 dark:text-white font-medium truncate">{product.name}</span>
                     </nav>
 
-                    <div className="bg-white rounded-xl border border-slate-200 p-3 md:p-6 lg:p-8 mb-4 md:mb-8">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 md:p-6 lg:p-8 mb-4 md:mb-8">
                         <div className="lg:grid gap-6 lg:gap-8" style={{ gridTemplateColumns: '62% 38%', alignItems: 'start' }}>
                             {/* Gallery: sticky chỉ trên lg+ (desktop), không sticky trên mobile để tránh che nội dung */}
                             <div className="lg:sticky" style={{ top: '104px' }}>
@@ -211,7 +163,7 @@ export default async function SlugPage({ params }: {
                             {/* Phần thông tin sản phẩm (phải) */}
                             <div className="space-y-3 mt-3 lg:mt-0 lg:pr-4">
                                 {/* Tên sản phẩm */}
-                                <h1 className="text-base md:text-xl lg:text-2xl font-bold text-slate-900 leading-snug">
+                                <h1 className="text-base md:text-xl lg:text-2xl font-bold text-slate-900 dark:text-white leading-snug">
                                     {product.name}
                                 </h1>
 
@@ -222,13 +174,13 @@ export default async function SlugPage({ params }: {
                                 <ProductSpecs shortDescription={product.shortDescription} attributes={product.attributes} />
 
                                 {/* === KHỐI GIÁ (tách riêng) === */}
-                                <div className="bg-gradient-to-br from-red-50 to-orange-50 border border-red-100 rounded-xl p-3 md:p-4">
+                                <div className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 border border-red-100 dark:border-red-900/50 rounded-xl p-3 md:p-4">
                                     <div className="flex items-end gap-2 md:gap-3 flex-wrap">
                                         <span className="text-2xl md:text-3xl lg:text-4xl font-black text-red-600 leading-none">
                                             {displayPrice}
                                         </span>
                                         {hasDiscount && (
-                                            <span className="text-sm md:text-base text-slate-400 line-through leading-none pb-0.5">
+                                            <span className="text-sm md:text-base text-slate-400 dark:text-slate-500 line-through leading-none pb-0.5">
                                                 {regularPrice}
                                             </span>
                                         )}
@@ -464,18 +416,6 @@ export default async function SlugPage({ params }: {
 
         return (
             <div className="container mx-auto px-4 py-12">
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{
-                        __html: JSON.stringify({
-                            "@context": "https://schema.org",
-                            "@type": "CollectionPage",
-                            "name": category.name,
-                            "description": category.description || `Danh mục ${category.name} tại Máy Tính LMC`,
-                            "url": `https://lmc.vn/${category.slug}`,
-                        })
-                    }}
-                />
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Đang tải cấu trúc danh mục...</div>}>
                     <CategoryProductView
                         category={category}
@@ -496,15 +436,15 @@ export default async function SlugPage({ params }: {
         };
 
         return (
-            <div className="bg-white min-h-screen">
+            <div className="bg-white dark:bg-gray-900 min-h-screen">
                 <div className="container mx-auto px-4 py-8 max-w-4xl">
                     {/* Breadcrumb */}
-                    <nav className="flex items-center gap-1.5 text-sm text-slate-500 mb-6">
+                    <nav className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 mb-6">
                         <Link href="/" className="hover:text-blue-600">Trang chủ</Link>
                         <span>/</span>
                         <Link href="/blog" className="hover:text-blue-600">Tin tức</Link>
                         <span>/</span>
-                        <span className="text-slate-900 font-medium truncate">{post.title}</span>
+                        <span className="text-slate-900 dark:text-white font-medium truncate">{post.title}</span>
                     </nav>
 
                     {/* Featured Image */}
@@ -521,12 +461,12 @@ export default async function SlugPage({ params }: {
                     )}
 
                     {/* Title */}
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4">
                         {post.title}
                     </h1>
 
                     {/* Meta info */}
-                    <div className="flex items-center gap-4 text-sm text-slate-500 mb-8 pb-6 border-b border-slate-200">
+                    <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-8 pb-6 border-b border-slate-200 dark:border-slate-700">
                         <span>{formatDate(post.date)}</span>
                         {post.author?.node?.name && (
                             <>
