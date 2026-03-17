@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 
 interface ProductGalleryProps {
     mainImage: { sourceUrl: string; altText?: string };
@@ -21,6 +22,7 @@ function Lightbox({
     onClose,
     onPrev,
     onNext,
+    onGoTo,
     name
 }: {
     images: Array<{ sourceUrl: string; altText?: string }>;
@@ -28,6 +30,7 @@ function Lightbox({
     onClose: () => void;
     onPrev: () => void;
     onNext: () => void;
+    onGoTo: (idx: number) => void;
     name: string;
 }) {
     const [zoom, setZoom] = useState(1);
@@ -83,25 +86,64 @@ function Lightbox({
         isDragging.current = false;
     };
 
-    return (
+    const handleOverlayClick = (e: React.MouseEvent) => {
+        // Only close if clicking the overlay itself, not children
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
+
+    return createPortal(
         <div
-            className="fixed inset-0 z-50 bg-black/95 flex flex-col"
-            onClick={onClose}
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 99999,
+                backgroundColor: 'rgba(0,0,0,0.92)',
+                display: 'flex',
+                flexDirection: 'column'
+            }}
+            onClick={handleOverlayClick}
         >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-black/50">
-                <span className="text-white text-sm font-medium">{currentIndex + 1} / {images.length}</span>
-                <button
-                    onClick={onClose}
-                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                >
-                    <X className="w-6 h-6" />
-                </button>
+            {/* Close button — top right */}
+            <button
+                onClick={onClose}
+                style={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    zIndex: 100000,
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    backgroundColor: 'rgba(255,255,255,0.25)',
+                    border: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    padding: 0,
+                    fontSize: 28,
+                    lineHeight: 1,
+                    color: 'white',
+                    fontWeight: 300
+                }}
+                aria-label="Đóng"
+            >
+                ✕
+            </button>
+
+            {/* Counter — top left */}
+            <div style={{ position: 'absolute', top: 24, left: 24, zIndex: 100000, color: '#fff', fontSize: 15, fontWeight: 500 }}>
+                {currentIndex + 1} / {images.length}
             </div>
 
             {/* Main Image Area */}
             <div
-                className="flex-1 flex items-center justify-center overflow-hidden cursor-zoom-in"
+                className="flex-1 flex items-center justify-center overflow-hidden relative"
                 onClick={(e) => e.stopPropagation()}
                 onWheel={handleWheel}
                 onMouseDown={handleMouseDown}
@@ -109,55 +151,77 @@ function Lightbox({
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
             >
+                {/* Left arrow */}
+                {images.length > 1 && (
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onPrev(); }}
+                        className="absolute left-4 z-10 w-12 h-12 rounded-full bg-white/15 hover:bg-white/30 flex items-center justify-center text-white transition-colors"
+                        aria-label="Ảnh trước"
+                    >
+                        <ChevronLeft className="w-7 h-7" />
+                    </button>
+                )}
+
                 <div
                     className="relative transition-transform duration-200"
                     style={{
                         transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-                        cursor: zoom > 1 ? 'grab' : 'zoom-in'
+                        cursor: zoom > 1 ? 'grab' : 'default'
                     }}
                 >
                     <img
                         src={images[currentIndex].sourceUrl}
                         alt={images[currentIndex].altText || name}
-                        className="max-h-[80vh] max-w-[90vw] object-contain"
+                        className="max-h-[75vh] max-w-[85vw] object-contain select-none"
                         draggable={false}
                     />
                 </div>
+
+                {/* Right arrow */}
+                {images.length > 1 && (
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onNext(); }}
+                        className="absolute right-4 z-10 w-12 h-12 rounded-full bg-white/15 hover:bg-white/30 flex items-center justify-center text-white transition-colors"
+                        aria-label="Ảnh tiếp"
+                    >
+                        <ChevronRight className="w-7 h-7" />
+                    </button>
+                )}
             </div>
 
-            {/* Zoom Controls */}
-            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-2 bg-black/60 rounded-full px-4 py-2">
-                <button
-                    onClick={() => { setZoom(z => Math.max(z / 1.5, 1)); if (zoom <= 1.5) setPosition({ x: 0, y: 0 }); }}
-                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                    disabled={zoom <= 1}
-                >
-                    <ZoomOut className="w-5 h-5" />
-                </button>
-                <span className="text-white text-sm flex items-center min-w-[50px] justify-center">{Math.round(zoom * 100)}%</span>
-                <button
-                    onClick={() => setZoom(z => Math.min(z * 1.5, 4))}
-                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                    disabled={zoom >= 4}
-                >
-                    <ZoomIn className="w-5 h-5" />
-                </button>
-            </div>
-
-            {/* Navigation & Thumbnails */}
+            {/* Bottom bar: zoom controls + thumbnails */}
             <div
-                className="bg-black/80 px-4 py-3"
+                className="shrink-0 bg-black/60 px-4 pt-3 pb-4"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Thumbnail Strip */}
+                {/* Zoom controls */}
+                <div className="flex items-center justify-center gap-3 mb-3">
+                    <button
+                        onClick={() => { setZoom(z => { const nz = Math.max(z / 1.5, 1); if (nz === 1) setPosition({ x: 0, y: 0 }); return nz; }); }}
+                        disabled={zoom <= 1}
+                        className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-30 flex items-center justify-center text-white transition-colors"
+                    >
+                        <ZoomOut className="w-4 h-4" />
+                    </button>
+                    <span className="text-white/70 text-xs min-w-[44px] text-center">{Math.round(zoom * 100)}%</span>
+                    <button
+                        onClick={() => setZoom(z => Math.min(z * 1.5, 4))}
+                        disabled={zoom >= 4}
+                        className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-30 flex items-center justify-center text-white transition-colors"
+                    >
+                        <ZoomIn className="w-4 h-4" />
+                    </button>
+                </div>
+
+                {/* Thumbnail strip */}
                 {images.length > 1 && (
-                    <div className="flex gap-2 overflow-x-auto pb-2 mb-3 justify-center">
+                    <div className="flex gap-2 overflow-x-auto justify-center" style={{ scrollbarWidth: 'none' }}>
                         {images.map((img, idx) => (
                             <button
                                 key={idx}
-                                onClick={() => { resetZoom(); }}
+                                onClick={() => { onGoTo(idx); resetZoom(); }}
                                 className={`relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden border-2 transition-all ${
-                                    idx === currentIndex ? "border-blue-500 opacity-100" : "border-transparent opacity-50 hover:opacity-80"
+                                    idx === currentIndex ? "border-white opacity-100" : "border-transparent opacity-40 hover:opacity-70"
                                 }`}
                             >
                                 <img src={img.sourceUrl} alt="" className="w-full h-full object-cover" />
@@ -165,28 +229,9 @@ function Lightbox({
                         ))}
                     </div>
                 )}
-
-                {/* Arrows */}
-                {images.length > 1 && (
-                    <div className="flex items-center justify-between">
-                        <button
-                            onClick={onPrev}
-                            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                        >
-                            <ChevronLeft className="w-6 h-6" />
-                        </button>
-                        <span className="text-white/70 text-sm">{name}</span>
-                        <button
-                            onClick={onNext}
-                            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                        >
-                            <ChevronRight className="w-6 h-6" />
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
-    );
+    , document.body);
 }
 
 export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regularPrice }: ProductGalleryProps) {
@@ -409,6 +454,7 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                 onClose={() => setLightboxOpen(false)}
                 onPrev={goToPrev}
                 onNext={goToNext}
+                onGoTo={goTo}
                 name={name}
             />
         )}
