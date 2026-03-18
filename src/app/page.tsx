@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { HomeSection } from "@/components/home/HomeSection";
 import { HardwareCategoryGrid } from "@/components/home/HardwareCategoryGrid";
+import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
+import { WebSiteSchema } from "@/components/seo/WebSiteSchema";
+import { generateHomepageSEO } from "@/utils/seo";
 import fs from "fs/promises";
 import path from "path";
 
@@ -45,6 +49,15 @@ const dummyProducts = [
 
 import { getHomepageConfig, getHardwareGridConfig } from '@/app/actions/configActions';
 
+const seo = generateHomepageSEO();
+export const metadata: Metadata = {
+  title: seo.title,
+  description: seo.description,
+  openGraph: seo.openGraph,
+  twitter: seo.twitter,
+  alternates: seo.alternates,
+};
+
 export default async function Home() {
   // Read dynamic homepage config (via KV or fallback to fs)
   let sections = await getHomepageConfig();
@@ -52,6 +65,8 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-6 md:gap-10 pb-6 md:pb-12">
+      <OrganizationSchema />
+      <WebSiteSchema />
       {/* Hero Banner */}
       <section className="bg-blue-600 text-white py-10 md:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">

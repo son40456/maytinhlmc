@@ -49,3 +49,34 @@ export const generatePostSEO = (postTitle: string, excerpt?: string) => {
 
     return { title, description };
 };
+
+export const generateHomepageSEO = () => {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maytinhlmc.vn';
+    const currentYear = new Date().getFullYear();
+
+    const title = `Máy Tính LMC – Laptop, PC, Linh Kiện Chính Hãng Giá Tốt ${currentYear}`;
+    const description =
+        `Mua laptop, PC, linh kiện máy tính chính hãng tại LMC. Giá rẻ nhất, bảo hành chính hãng, ` +
+        `trả góp 0%, giao hàng toàn quốc. Xem ngay!`;
+
+    return {
+        title,
+        description,
+        openGraph: {
+            type: 'website' as const,
+            url: baseUrl,
+            title,
+            description,
+            siteName: 'Máy Tính LMC',
+            locale: 'vi_VN',
+        },
+        twitter: {
+            card: 'summary_large_image' as const,
+            title,
+            description,
+        },
+        alternates: {
+            canonical: baseUrl,
+        },
+    };
+};
