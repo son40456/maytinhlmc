@@ -6,48 +6,9 @@ import { HardwareCategoryGrid } from "@/components/home/HardwareCategoryGrid";
 import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
 import { WebSiteSchema } from "@/components/seo/WebSiteSchema";
 import { generateHomepageSEO } from "@/utils/seo";
-import fs from "fs/promises";
-import path from "path";
-
-const dummyProducts = [
-  {
-    id: "1",
-    name: "Laptop Gaming TỐI THƯỢNG 15.6 inch 144Hz",
-    price: "24.990.000₫",
-    imageUrl: "",
-    slug: "laptop-gaming-1",
-  },
-  {
-    id: "2",
-    name: "PC Văn phòng mượt mà - Trải nghiệm siêu êm",
-    price: "12.500.000₫",
-    imageUrl: "",
-    slug: "pc-van-phong",
-  },
-  {
-    id: "3",
-    name: "Bàn phím cơ Không Dây siêu cấp Pro Max",
-    price: "1.250.000₫",
-    imageUrl: "",
-    slug: "ban-phim-co",
-  },
-  {
-    id: "4",
-    name: "Chuột Gaming RGB cực chất, DPI 16000",
-    price: "850.000₫",
-    imageUrl: "",
-    slug: "chuot-gaming",
-  },
-  {
-    id: "5",
-    name: "Màn hình 27 inch 2K IPS 165Hz",
-    price: "6.500.000₫",
-    imageUrl: "",
-    slug: "man-hinh-2k",
-  },
-];
-
 import { getHomepageConfig, getHardwareGridConfig } from '@/app/actions/configActions';
+import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
+import { GET_PRODUCTS_BY_CATEGORY } from "@/lib/graphql/queries";
 
 const seo = generateHomepageSEO();
 export const metadata: Metadata = {
@@ -58,10 +19,45 @@ export const metadata: Metadata = {
   alternates: seo.alternates,
 };
 
+async function fetchSectionProducts(categorySlug: string) {
+  try {
+    const { data } = await wpgraphqlFetch<any>(
+      GET_PRODUCTS_BY_CATEGORY,
+      {
+        slugId: categorySlug,
+        slugStr: categorySlug,
+        first: 12,
+      },
+      {
+        next: { revalidate: 3600 }, // ISR 1 hour
+      }
+    );
+    const rawProducts = data?.products?.nodes || [];
+    return rawProducts.map((p: any) => ({
+      id: p.id,
+      databaseId: p.databaseId,
+      name: p.name,
+      price: p.price || p.regularPrice || "Liên hệ",
+      imageUrl: p.image?.sourceUrl || "",
+      slug: p.slug,
+    }));
+  } catch (error) {
+    console.error(`Error fetching products for section ${categorySlug}:`, error);
+    return [];
+  }
+}
+
 export default async function Home() {
-  // Read dynamic homepage config (via KV or fallback to fs)
-  let sections = await getHomepageConfig();
-  let hardwareGridConfig = await getHardwareGridConfig();
+  // Fetch cấu hình KV song song
+  const [sections, hardwareGridConfig] = await Promise.all([
+    getHomepageConfig(),
+    getHardwareGridConfig(),
+  ]);
+
+  // Fetch tất cả products của các sections song song (thay vì waterfall)
+  const productsBySections = await Promise.all(
+    sections.map((section: any) => fetchSectionProducts(section.categorySlug))
+  );
 
   return (
     <div className="flex flex-col gap-6 md:gap-10 pb-6 md:pb-12">
@@ -98,12 +94,13 @@ export default async function Home() {
 
       {/* Dynamic Sections từ Cấu hình Admin */}
       <div className="flex flex-col gap-4 md:gap-6">
-        {sections.map((section: any) => (
+        {sections.map((section: any, idx: number) => (
           <HomeSection
             key={section.id}
             title={section.title}
             categorySlug={section.categorySlug}
             subFilters={section.subFilters}
+            products={productsBySections[idx]}
           />
         ))}
       </div>

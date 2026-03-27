@@ -1,47 +1,26 @@
-import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
-import { GET_PRODUCTS_BY_CATEGORY } from "@/lib/graphql/queries";
 import { ProductCard } from "@/components/ui/ProductCard";
 import Link from "next/link";
+
+interface Product {
+    id: string;
+    databaseId?: number | undefined;
+    name: string;
+    price: string;
+    imageUrl: string;
+    slug: string;
+}
 
 interface HomeSectionProps {
     title: string;
     categorySlug: string;
     subFilters: { name: string; slug: string }[];
+    products: Product[];
 }
 
-export async function HomeSection({ title, categorySlug, subFilters }: HomeSectionProps) {
-    // Fetch products by category
-    let rawProducts = [];
-    try {
-        const { data } = await wpgraphqlFetch<any>(
-            GET_PRODUCTS_BY_CATEGORY,
-            {
-                slugId: categorySlug,
-                slugStr: categorySlug,
-                first: 12, // Tăng lên 12 để hiển thị 2 dòng full cho lưới 6 cột
-            },
-            {
-                next: { revalidate: 3600 } // ISR 1 hour
-            }
-        );
-        rawProducts = data?.products?.nodes || [];
-    } catch (error) {
-        console.error(`Error fetching products for section ${categorySlug}:`, error);
-    }
-
-    if (!rawProducts || rawProducts.length === 0) {
+export function HomeSection({ title, categorySlug, subFilters, products }: HomeSectionProps) {
+    if (!products || products.length === 0) {
         return null; // Không render section nếu không có sản phẩm
     }
-
-    // Map data
-    const displayProducts = rawProducts.map((p: any) => ({
-        id: p.id,
-        databaseId: p.databaseId,
-        name: p.name,
-        price: p.price || p.regularPrice || "Liên hệ",
-        imageUrl: p.image?.sourceUrl || "",
-        slug: p.slug,
-    }));
 
     return (
         <section className="container mx-auto px-3 sm:px-6 lg:px-8 mb-6 md:mb-12">
@@ -73,11 +52,11 @@ export async function HomeSection({ title, categorySlug, subFilters }: HomeSecti
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 md:gap-3 lg:gap-4">
-                {displayProducts.map((p: any, idx: number) => (
+                {products.map((p: Product, idx: number) => (
                     <ProductCard
                         key={p.id}
                         id={p.id}
-                        databaseId={p.databaseId}
+                        databaseId={p.databaseId ?? 0}
                         name={p.name}
                         price={(p.price || "Liên hệ").replace(/&nbsp;/g, ' ')}
                         imageUrl={p.imageUrl}
