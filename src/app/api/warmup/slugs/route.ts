@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { wpgraphqlFetch } from '@/lib/graphql/fetcher';
 
+export const maxDuration = 60; // Tăng timeout lên 60s để Vercel không bị ngắt ngang khi lấy 5000+ sản phẩm
+
+
 /**
  * GET /api/warmup/slugs
  *
