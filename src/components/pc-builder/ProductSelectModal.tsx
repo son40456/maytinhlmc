@@ -148,7 +148,8 @@ export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, 
 
             try {
                 // 1. Initial Fast Load: Fetch only the first 10 items to display immediately
-                const initialResponse: Response = await fetch('https://maytinhlmc.vn/graphql', {
+                const apiUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'https://next.maytinhlmc.vn/graphql';
+                const initialResponse: Response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -175,7 +176,7 @@ export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, 
                 if (hasNextPage && isMounted) setBgLoading(true);
 
                 while (hasNextPage && isMounted) {
-                    const bgResponse: Response = await fetch('https://maytinhlmc.vn/graphql', {
+                    const bgResponse: Response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
