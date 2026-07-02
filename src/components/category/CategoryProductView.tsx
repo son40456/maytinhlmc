@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
-import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
-import { GET_PRODUCTS_BY_CATEGORY } from "@/lib/graphql/queries";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -134,39 +132,32 @@ export function CategoryProductView({
         endCursorRef.current = pageInfo?.endCursor;
     }, [pageInfo?.endCursor]);
 
-    // AJAX Fetch products
+    // Debounce timer ref: tránh gửi nhiều requests khi click filter nhanh
+    const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // AJAX Fetch products — gọi qua /api/products (có Vercel Edge Cache)
     const fetchProducts = useCallback(async (isLoadMore = false) => {
         setLoading(true);
 
-        const taxFilters = Object.entries(selectedAttributes)
-            .filter(([_, values]) => values.length > 0)
-            .map(([key, values]) => {
-                const taxonomy = `PA_${key.toUpperCase().replace(/-/g, '_')}`;
-                return {
-                    taxonomy,
-                    terms: values,
-                    operator: 'IN'
-                };
-            });
-
-        let orderBy = [{ field: "DATE", order: "DESC" }];
-        if (sortOrder === "PRICE_ASC") orderBy = [{ field: "PRICE", order: "ASC" }];
-        if (sortOrder === "PRICE_DESC") orderBy = [{ field: "PRICE", order: "DESC" }];
-
         try {
-            const { data } = await wpgraphqlFetch<any>(GET_PRODUCTS_BY_CATEGORY, {
-                slugId: categorySlug,
-                slugStr: categorySlug,
-                first: 24,
-                after: isLoadMore ? endCursorRef.current : null,
-                minPrice: priceRange.min,
-                maxPrice: priceRange.max,
-                orderBy,
-                taxFilters: taxFilters.length > 0 ? taxFilters : null
+            // Xây dựng query params cho API route
+            const params = new URLSearchParams();
+            params.set('category', categorySlug);
+            params.set('sort', sortOrder);
+            params.set('first', '24');
+            if (isLoadMore && endCursorRef.current) params.set('after', endCursorRef.current);
+            if (priceRange.min !== null) params.set('min_price', priceRange.min.toString());
+            if (priceRange.max !== null) params.set('max_price', priceRange.max.toString());
+
+            // Thêm attribute filters: pa_thuong-hieu=asus,gigabyte
+            Object.entries(selectedAttributes).forEach(([key, values]) => {
+                if (values.length > 0) params.set(`pa_${key}`, values.join(','));
             });
 
-            const newProducts = data?.products?.nodes || [];
-            const newPageInfo = data?.products?.pageInfo;
+            const res = await fetch(`/api/products?${params.toString()}`);
+            if (!res.ok) throw new Error(`API error: ${res.status}`);
+
+            const { products: newProducts, pageInfo: newPageInfo } = await res.json();
 
             if (isLoadMore) {
                 setProducts(prev => {
@@ -185,7 +176,7 @@ export function CategoryProductView({
         }
     }, [categorySlug, selectedAttributes, priceRange, sortOrder]);
 
-    // Re-fetch when filters change
+    // Re-fetch when filters change (với debounce 200ms tránh requests thừa khi click nhanh)
     const isFirstRender = useRef(true);
 
     useEffect(() => {
@@ -201,7 +192,16 @@ export function CategoryProductView({
         }
 
         updateUrlParams();
-        fetchProducts();
+
+        // Debounce: Hủy timer cũ, đặt timer mới 200ms
+        if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = setTimeout(() => {
+            fetchProducts();
+        }, 200);
+
+        return () => {
+            if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+        };
     }, [selectedAttributes, priceRange, sortOrder, fetchProducts, updateUrlParams]);
 
     const handleFilterChange = (attrSlug: string, value: string) => {
@@ -326,26 +326,18 @@ export function CategoryProductView({
                 onClearAll={clearAllFilters}
             />
 
-            {/* Product List */}
+            {/* Product List — Optimistic UI: giữ sản phẩm cũ hiển thị khi đang load */}
             <div className="relative min-h-[400px]">
-                {loading ? (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4">
-                        {[...Array(12)].map((_, i) => (
-                            <div key={i} className="flex flex-col overflow-hidden rounded-xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-                                <div className="aspect-square w-full animate-shimmer" />
-                                <div className="flex flex-1 flex-col p-3">
-                                    <div className="h-3 animate-shimmer rounded w-1/4 mb-2" />
-                                    <div className="h-4 animate-shimmer rounded w-3/4 mb-1.5" />
-                                    <div className="h-4 animate-shimmer rounded w-1/2 mb-4" />
-                                    <div className="mt-auto pt-3 flex items-center justify-between gap-2 border-t border-gray-50">
-                                        <div className="h-6 animate-shimmer rounded w-1/2" />
-                                        <div className="w-10 h-10 animate-shimmer rounded-xl shrink-0" />
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                {/* Loading overlay nhỏ ở góc trên phải thay vì xóa trắng toàn bộ */}
+                {loading && (
+                    <div className="absolute top-0 right-0 z-10 flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl px-3 py-2 shadow-sm text-sm font-medium text-gray-600 m-2">
+                        <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                        <span>Đang tải...</span>
                     </div>
-                ) : products.length === 0 ? (
+                )}
+
+                {/* Sản phẩm: mờ nhẹ khi loading, không xóa để tránh layout shift */}
+                {products.length === 0 && !loading ? (
                     <div className="bg-gray-50 rounded-3xl py-20 text-center border-2 border-dashed border-gray-100">
                         <p className="text-gray-400 font-medium">Không tìm thấy sản phẩm nào phù hợp với bộ lọc.</p>
                         <button
@@ -356,7 +348,7 @@ export function CategoryProductView({
                         </button>
                     </div>
                 ) : (
-                    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4 transition-opacity ${loading ? 'opacity-50' : 'opacity-100'}`}>
+                    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4 transition-opacity duration-200 ${loading ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
                         {products.map((p: any, idx: number) => (
                             <ProductCard
                                 key={p.id}
