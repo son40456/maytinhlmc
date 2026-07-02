@@ -14,7 +14,7 @@ export default function imageKitLoader({ src, width, quality }: { src: string, w
     }
 
     // 2. Nếu URL là domain gốc WordPress
-    const wpDomain = 'https://next.maytinhlmc.vn';
+    const wpDomain = 'https://data.maytinhlmc.vn';
     if (src.includes(wpDomain)) {
         const relativePath = src.replace(wpDomain, '');
         return `${ikEndpoint}${relativePath}${trString}`;
