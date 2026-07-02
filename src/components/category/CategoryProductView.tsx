@@ -4,9 +4,40 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+
+// Skeleton card khớp chính xác layout của ProductCard
+function ProductCardSkeleton() {
+    return (
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col h-full">
+            {/* Image area */}
+            <div className="aspect-square w-full rounded-lg animate-shimmer mb-4" />
+            {/* SKU + Stars row */}
+            <div className="flex items-center justify-between mb-2">
+                <div className="h-2.5 w-14 rounded animate-shimmer" />
+                <div className="h-2.5 w-16 rounded animate-shimmer" />
+            </div>
+            {/* Title */}
+            <div className="space-y-1.5 mb-3">
+                <div className="h-3.5 w-full rounded animate-shimmer" />
+                <div className="h-3.5 w-4/5 rounded animate-shimmer" />
+            </div>
+            {/* Price */}
+            <div className="mt-auto">
+                <div className="h-6 w-2/3 rounded animate-shimmer mb-2" />
+                <div className="h-3 w-1/3 rounded animate-shimmer mb-3" />
+                {/* Stock */}
+                <div className="h-3 w-1/4 rounded animate-shimmer mb-3" />
+                {/* Actions row */}
+                <div className="flex items-center justify-between">
+                    <div className="h-4 w-16 rounded animate-shimmer" />
+                    <div className="w-8 h-8 rounded-md animate-shimmer" />
+                </div>
+            </div>
+        </div>
+    );
+}
 
 interface CategoryProductViewProps {
     category: any;
@@ -326,17 +357,23 @@ export function CategoryProductView({
                 onClearAll={clearAllFilters}
             />
 
-            {/* Product List — Optimistic UI: giữ sản phẩm cũ hiển thị khi đang load */}
+            {/* Product List — Skeleton overlay crossfade */}
             <div className="relative min-h-[400px]">
-                {/* Loading overlay nhỏ ở góc trên phải thay vì xóa trắng toàn bộ */}
-                {loading && (
-                    <div className="absolute top-0 right-0 z-10 flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl px-3 py-2 shadow-sm text-sm font-medium text-gray-600 m-2">
-                        <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-                        <span>Đang tải...</span>
-                    </div>
-                )}
 
-                {/* Sản phẩm: mờ nhẹ khi loading, không xóa để tránh layout shift */}
+                {/* Skeleton grid: hiện đè lên khi loading với transition mượt */}
+                <div
+                    aria-hidden="true"
+                    className={`absolute inset-0 z-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4
+                        transition-opacity duration-300 pointer-events-none
+                        ${loading ? 'opacity-100' : 'opacity-0'}`}
+                >
+                    {/* Số skeleton bằng số product hiện tại (max 24) — giữ layout không bị giật */}
+                    {Array.from({ length: Math.max(products.length, 6) }).slice(0, 24).map((_, i) => (
+                        <ProductCardSkeleton key={i} />
+                    ))}
+                </div>
+
+                {/* Products thật: fade mờ khi loading để skeleton lộ ra phía trước */}
                 {products.length === 0 && !loading ? (
                     <div className="bg-gray-50 rounded-3xl py-20 text-center border-2 border-dashed border-gray-100">
                         <p className="text-gray-400 font-medium">Không tìm thấy sản phẩm nào phù hợp với bộ lọc.</p>
@@ -348,7 +385,10 @@ export function CategoryProductView({
                         </button>
                     </div>
                 ) : (
-                    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4 transition-opacity duration-200 ${loading ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+                    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4
+                        transition-opacity duration-300
+                        ${loading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                    >
                         {products.map((p: any, idx: number) => (
                             <ProductCard
                                 key={p.id}
@@ -376,7 +416,6 @@ export function CategoryProductView({
                             disabled={loading}
                             className="px-6 py-2.5 bg-white border border-gray-200 rounded-xl font-bold text-sm text-gray-700 hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
                         >
-                            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                             Tải thêm sản phẩm
                         </button>
                     </div>
