@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'next.maytinhlmc.vn',
+        hostname: 'data.maytinhlmc.vn',
       },
       {
         protocol: 'https',
