@@ -487,4 +487,4 @@ export default async function SlugPage({ params }: {
     }
 
     notFound();
-}
+}// trigger rebuild
