@@ -1,6 +1,6 @@
 <?php
 // Tải môi trường WordPress
-require_once('../wp-load.php');
+require_once(dirname(__FILE__) . '/wp-load.php');
 
 $args = array(
     'post_type'      => 'product',
