@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'next.maytinhlmc.vn',
+        hostname: 'apiserver.maytinhlmc.vn',
       },
       {
         protocol: 'https',

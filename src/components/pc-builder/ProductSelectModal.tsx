@@ -148,7 +148,7 @@ export function ProductSelectModal({ isOpen, onClose, categoryId, categoryName, 
 
             try {
                 // 1. Initial Fast Load: Fetch only the first 10 items to display immediately
-                const apiUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'https://next.maytinhlmc.vn/graphql';
+                const apiUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'https://apiserver.maytinhlmc.vn/graphql';
                 const initialResponse: Response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
