@@ -21,7 +21,7 @@ async function wpgraphqlFetchRaw<T>(
             query,
             variables,
         }),
-        next: { revalidate: 3600 }, // Default ISR cache for 1 hour
+        next: { revalidate: 3600, tags: ['wordpress'] }, // Default ISR cache for 1 hour, tag for manual revalidation
         ...options,
     });
 
