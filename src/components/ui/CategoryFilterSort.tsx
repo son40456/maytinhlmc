@@ -128,7 +128,7 @@ export function CategoryFilterSort({
                                 >
                                     {logo ? (
                                         <div className="relative w-20 h-7">
-                                            <Image src={logo} alt={opt.name} fill className="object-contain" sizes="80px" />
+                                            <Image src={logo} alt={opt.name} fill className="object-contain" sizes="80px" unoptimized={true} />
                                         </div>
                                     ) : (
                                         <span className="text-xs font-bold">{opt.name}</span>
