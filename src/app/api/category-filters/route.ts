@@ -24,13 +24,6 @@ const FILTER_QUERY = `
                                     nodes {
                                         name
                                         slug
-                                        ... on PaThuongHieu {
-                                            logo {
-                                                logo {
-                                                    node { sourceUrl }
-                                                }
-                                            }
-                                        }
                                     }
                                 }
                             }
@@ -48,13 +41,6 @@ const FILTER_QUERY = `
                                     nodes {
                                         name
                                         slug
-                                        ... on PaThuongHieu {
-                                            logo {
-                                                logo {
-                                                    node { sourceUrl }
-                                                }
-                                            }
-                                        }
                                     }
                                 }
                             }

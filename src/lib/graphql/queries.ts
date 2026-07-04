@@ -493,15 +493,6 @@ export const GET_CATEGORY_FILTERS = `
                   nodes {
                     name
                     slug
-                    ... on PaThuongHieu {
-                      logo {
-                        logo {
-                          node {
-                            sourceUrl
-                          }
-                        }
-                      }
-                    }
                   }
                 }
               }
@@ -519,15 +510,6 @@ export const GET_CATEGORY_FILTERS = `
                   nodes {
                     name
                     slug
-                    ... on PaThuongHieu {
-                      logo {
-                        logo {
-                          node {
-                            sourceUrl
-                          }
-                        }
-                      }
-                    }
                   }
                 }
               }

@@ -315,9 +315,6 @@ export default async function SlugPage({ params }: {
                                         terms {
                                             nodes {
                                                 name slug
-                                                ... on PaThuongHieu {
-                                                    logo { logo { node { sourceUrl } } }
-                                                }
                                             }
                                         }
                                     }
@@ -333,9 +330,6 @@ export default async function SlugPage({ params }: {
                                         terms {
                                             nodes {
                                                 name slug
-                                                ... on PaThuongHieu {
-                                                    logo { logo { node { sourceUrl } } }
-                                                }
                                             }
                                         }
                                     }
