@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Menu } from "lucide-react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { LogoutButton } from "@/components/admin/LogoutButton";
 
 export const metadata: Metadata = {
     title: "Admin Dashboard - LMC",
@@ -27,7 +28,8 @@ export default function AdminLayout({
                         <h2 className="text-lg font-bold text-slate-800 hidden sm:block">Dashboard</h2>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        <LogoutButton />
                         <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200">
                             <span className="text-blue-700 font-bold text-sm">AD</span>
                         </div>

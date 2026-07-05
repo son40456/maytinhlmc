@@ -6,28 +6,34 @@ export function middleware(request: NextRequest) {
     
     // Bảo vệ trang quản trị (/admin) và các thao tác ghi dữ liệu của API (/api/admin)
     if (pathname.startsWith('/admin') || (pathname.startsWith('/api/admin') && request.method !== 'GET')) {
-        const basicAuth = request.headers.get('authorization');
         
-        if (basicAuth) {
-            const authValue = basicAuth.split(' ')[1];
-            // Decode base64
-            const [user, pwd] = atob(authValue).split(':');
+        // Ngoại trừ trang đăng nhập
+        if (pathname.startsWith('/admin-login')) {
+            return NextResponse.next();
+        }
 
-            const validUser = process.env.ADMIN_USERNAME;
-            const validPwd = process.env.ADMIN_PASSWORD;
+        const token = request.cookies.get('admin_token')?.value;
+        const validUser = process.env.ADMIN_USERNAME;
+        const validPwd = process.env.ADMIN_PASSWORD;
 
-            if (user === validUser && pwd === validPwd) {
-                return NextResponse.next();
-            }
+        // Mã hóa lại token mẫu để so sánh
+        const expectedToken = btoa(`${validUser}:${validPwd}`);
+        
+        if (token && token === expectedToken) {
+            return NextResponse.next();
         }
         
-        // Trả về 401 Unauthorized kèm header yêu cầu đăng nhập Basic Auth
-        return new NextResponse('Auth required', {
-            status: 401,
-            headers: {
-                'WWW-Authenticate': 'Basic realm="Admin Secure Area"',
-            },
-        });
+        // Nếu là API call thì trả về 401
+        if (pathname.startsWith('/api/admin')) {
+             return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
+                 status: 401,
+                 headers: { 'Content-Type': 'application/json' }
+             });
+        }
+        
+        // Nếu là truy cập giao diện, chuyển hướng về trang đăng nhập
+        const loginUrl = new URL('/admin-login', request.url);
+        return NextResponse.redirect(loginUrl);
     }
     
     return NextResponse.next();
