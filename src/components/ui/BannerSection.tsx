@@ -36,24 +36,24 @@ export function BannerSection({ config }: { config: BannerConfig }) {
         <div className="w-full flex flex-col items-center">
             {/* Main Slider Banner (Full Width effect) */}
             <section 
-                className="relative w-full max-w-[1920px] mx-auto aspect-[16/7] md:aspect-[21/7] lg:h-[590px] overflow-hidden group"
+                className="relative w-full max-w-[1920px] mx-auto overflow-hidden group"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
                 {/* Slider Track */}
                 <div 
-                    className="w-full h-full flex transition-transform duration-700 ease-in-out"
+                    className="w-full flex transition-transform duration-700 ease-in-out"
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                 >
                     {config?.mainBanners?.map((banner, idx) => (
-                        <div key={banner.id || idx} className="w-full h-full flex-shrink-0 relative">
-                            <Link href={banner.link || "#"} className="block w-full h-full">
-                                {/* Background Image */}
-                                <div 
-                                    className="absolute inset-0 bg-contain bg-center bg-no-repeat"
-                                    style={{ backgroundImage: `url(${banner.image})` }}
-                                >
-                                </div>
+                        <div key={banner.id || idx} className="w-full flex-shrink-0 relative">
+                            <Link href={banner.link || "#"} className="block w-full">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img 
+                                    src={banner.image} 
+                                    alt={`Banner ${idx}`}
+                                    className="w-full h-auto object-cover block"
+                                />
                             </Link>
                         </div>
                     ))}
