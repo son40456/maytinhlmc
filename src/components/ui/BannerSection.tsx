@@ -36,7 +36,7 @@ export function BannerSection({ config }: { config: BannerConfig }) {
         <div className="w-full flex flex-col items-center">
             {/* Main Slider Banner (Full Width effect) */}
             <section 
-                className="relative w-full max-w-[1920px] mx-auto aspect-[16/7] md:aspect-[21/7] lg:h-[500px] overflow-hidden group"
+                className="relative w-full max-w-[1920px] mx-auto aspect-[16/7] md:aspect-[21/7] lg:h-[590px] overflow-hidden group"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
@@ -93,12 +93,12 @@ export function BannerSection({ config }: { config: BannerConfig }) {
             </section>
 
             {/* 4 Small Banners below - Ẩn trên mobile */}
-            {config?.smallBanners?.length > 0 && (
+            {config?.smallBanners?.length > 0 && config.showSmallBanners !== false && (
                 <section className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-8 md:-mt-6 lg:-mt-10 relative z-30 mb-8 hidden md:block">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                         {config.smallBanners.map((banner, idx) => (
                             <Link href={banner.link || "#"} key={banner.id || idx} className="block group">
-                                <div className="relative aspect-[4/3] md:h-[160px] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden shadow-xl border-2 border-white/20 transform transition-transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl">
+                                <div className="relative aspect-[4/3] md:h-[220px] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden shadow-xl border-2 border-white/20 transform transition-transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent after:-translate-x-[150%] group-hover:after:translate-x-[150%] after:transition-transform after:duration-1000 after:ease-in-out">
                                     <div 
                                         className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
                                         style={{ backgroundImage: `url(${banner.image})` }}

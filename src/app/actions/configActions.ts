@@ -272,11 +272,13 @@ export interface BannerItem {
 export interface BannerConfig {
     mainBanners: BannerItem[];
     smallBanners: BannerItem[];
+    showSmallBanners?: boolean;
 }
 
 const DEFAULT_BANNER_CONFIG: BannerConfig = {
     mainBanners: [],
-    smallBanners: []
+    smallBanners: [],
+    showSmallBanners: true
 };
 
 const bannerConfigPath = path.join(process.cwd(), 'src', 'data', 'bannerConfig.json');

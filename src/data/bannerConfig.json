@@ -9,22 +9,12 @@
       "id": "2",
       "image": "https://kccshop.vn/media/banner/banner-1920x6001.jpg",
       "link": "/pc-builder"
-    },
-    {
-      "id": "3",
-      "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop",
-      "link": "http://baohanh.maytinhlmc.vn"
     }
   ],
   "smallBanners": [
     {
-      "id": "1",
-      "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=600&auto=format&fit=crop",
-      "link": "/category/man-hinh"
-    },
-    {
       "id": "2",
-      "image": "https://images.unsplash.com/photo-1593640495253-23196b27a87f?q=80&w=600&auto=format&fit=crop",
+      "image": "https://kccshop.vn/media/banner/ChatGPTImage00_00_445thg520261.png",
       "link": "/category/phu-kien"
     },
     {
@@ -34,8 +24,14 @@
     },
     {
       "id": "4",
-      "image": "https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=600&auto=format&fit=crop",
+      "image": "https://kccshop.vn/media/banner/ChatGPTImage00_00_445thg520262.png",
       "link": "/pc-builder"
+    },
+    {
+      "id": "banner-1783265346192",
+      "image": "https://kccshop.vn/media/banner/ChatGPTImage00_00_455thg520263.png",
+      "link": ""
     }
-  ]
+  ],
+  "showSmallBanners": true
 }
