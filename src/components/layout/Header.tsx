@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, Loader2, X, Home, TrendingUp, Clock } from 'lucide-react';
+import { ShoppingCart, Search, Menu, User, Phone, Monitor, Cpu, HardDrive, Fan, Headphones, MousePointer2, Layout as CaseIcon, MonitorPlay, ChevronDown, ChevronRight, Loader2, X, Home, TrendingUp, Clock, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -420,6 +420,16 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 </div>
                             </Link>
 
+                            <Link href="http://baohanh.maytinhlmc.vn" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-yellow-400 transition-colors group">
+                                <div className="bg-white text-blue-800 rounded-full p-2 group-hover:bg-yellow-400 transition-colors">
+                                    <ShieldCheck size={20} />
+                                </div>
+                                <div className="leading-tight text-white">
+                                    <span>Tra cứu</span><br />
+                                    <span>Bảo hành</span>
+                                </div>
+                            </Link>
+
                             <div className="flex items-center gap-2 text-white">
                                 <Phone className="h-5 w-5 text-yellow-400" />
                                 <div className="leading-tight">
@@ -680,13 +690,17 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                         </div>
 
                         {/* Quick Links */}
-                        <div className="px-3 py-2 flex gap-2 border-b border-slate-100 shrink-0">
-                            <Link href="/pc-builder" onClick={() => setMobileDrawerOpen(false)} className="flex-1 flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg text-blue-700">
-                                <MonitorPlay size={16} />
+                        <div className="px-3 py-2 grid grid-cols-2 gap-2 border-b border-slate-100 shrink-0">
+                            <Link href="/pc-builder" onClick={() => setMobileDrawerOpen(false)} className="flex items-center gap-2 px-2 py-2 bg-blue-50 rounded-lg text-blue-700 justify-center">
+                                <MonitorPlay size={14} />
                                 <span className="text-[11px] font-bold">Xây dựng PC</span>
                             </Link>
-                            <Link href="/cart" onClick={() => setMobileDrawerOpen(false)} className="flex-1 flex items-center gap-2 px-3 py-2 bg-orange-50 rounded-lg text-orange-700">
-                                <ShoppingCart size={16} />
+                            <Link href="http://baohanh.maytinhlmc.vn" target="_blank" rel="noopener noreferrer" onClick={() => setMobileDrawerOpen(false)} className="flex items-center gap-2 px-2 py-2 bg-green-50 rounded-lg text-green-700 justify-center">
+                                <ShieldCheck size={14} />
+                                <span className="text-[11px] font-bold">Tra cứu Bảo hành</span>
+                            </Link>
+                            <Link href="/cart" onClick={() => setMobileDrawerOpen(false)} className="col-span-2 flex items-center gap-2 px-2 py-2 bg-orange-50 rounded-lg text-orange-700 justify-center">
+                                <ShoppingCart size={14} />
                                 <span className="text-[11px] font-bold">Giỏ hàng {mounted && itemCount > 0 && `(${itemCount})`}</span>
                             </Link>
                         </div>
