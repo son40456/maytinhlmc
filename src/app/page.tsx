@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { BannerSlider } from '@/components/ui/BannerSlider';
+import { BannerSection } from '@/components/ui/BannerSection';
 import { HomeSection } from "@/components/home/HomeSection";
 import { HardwareCategoryGrid } from "@/components/home/HardwareCategoryGrid";
 import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
@@ -64,8 +64,8 @@ export default async function Home() {
     <div className="flex flex-col gap-6 md:gap-10 pb-6 md:pb-12">
       <OrganizationSchema />
       <WebSiteSchema />
-      {/* Hero Banner Slider */}
-      <BannerSlider />
+      {/* Hero Banner Slider + Small Banners */}
+      <BannerSection />
 
       {/* Danh mục nổi bật */}
       <div className="mb-2 md:mb-4">
