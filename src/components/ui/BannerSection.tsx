@@ -50,7 +50,7 @@ export function BannerSection({ config }: { config: BannerConfig }) {
                             <Link href={banner.link || "#"} className="block w-full h-full">
                                 {/* Background Image */}
                                 <div 
-                                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                                    className="absolute inset-0 bg-contain bg-center bg-no-repeat"
                                     style={{ backgroundImage: `url(${banner.image})` }}
                                 >
                                 </div>
