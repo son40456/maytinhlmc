@@ -5,34 +5,22 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, Cpu, Sparkles, MonitorPlay, Mouse, Keyboard, Headphones, Monitor } from "lucide-react";
 import Image from "next/image";
 
-// Mock data cho banner chính
+// Mock data cho banner chính (Chỉ cần ảnh)
 const MAIN_BANNERS = [
     {
         id: 1,
-        title: "PC GAMING THỜI BÃO GIÁ",
-        subtitle: "CẤU HÌNH QUÁ NGON - GIÁ VẪN MỀM",
         image: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?q=80&w=2000&auto=format&fit=crop", // Hi-tech gaming setup
-        primaryCTA: { label: "Khám phá ngay", link: "/category/all" },
-        icon: <Cpu className="w-12 h-12 text-blue-400 mb-4" />,
-        gradient: "from-red-900/90 via-slate-900/80 to-transparent",
+        link: "/category/all",
     },
     {
         id: 2,
-        title: "Tự Do Build PC Theo Cách Của Bạn",
-        subtitle: "Hàng ngàn linh kiện chính hãng, tương thích 100%. Công cụ xây dựng cấu hình chuyên nghiệp, dễ sử dụng nhất.",
         image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?q=80&w=2000&auto=format&fit=crop", // PC Hardware
-        primaryCTA: { label: "Xây dựng ngay", link: "/pc-builder" },
-        icon: <MonitorPlay className="w-12 h-12 text-purple-400 mb-4" />,
-        gradient: "from-purple-900/90 via-slate-900/80 to-transparent",
+        link: "/pc-builder",
     },
     {
         id: 3,
-        title: "Bảo Hành Tốc Độ - Hỗ Trợ Tận Tâm",
-        subtitle: "Cam kết bảo hành chính hãng, hỗ trợ kỹ thuật 24/7. Trải nghiệm dịch vụ hậu mãi đẳng cấp.",
-        image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop", // Tech support / Circuit
-        primaryCTA: { label: "Tra cứu bảo hành", link: "http://baohanh.maytinhlmc.vn" },
-        icon: <Sparkles className="w-12 h-12 text-yellow-400 mb-4" />,
-        gradient: "from-indigo-900/90 via-slate-900/80 to-transparent",
+        image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop", // Tech support
+        link: "http://baohanh.maytinhlmc.vn",
     }
 ];
 
@@ -107,7 +95,7 @@ export function BannerSection() {
         <div className="w-full flex flex-col items-center">
             {/* Main Slider Banner (Full Width effect) */}
             <section 
-                className="relative w-full max-w-[1920px] mx-auto h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden group"
+                className="relative w-full max-w-[1920px] mx-auto aspect-[16/7] md:aspect-[21/7] lg:h-[500px] overflow-hidden group"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
@@ -118,39 +106,14 @@ export function BannerSection() {
                 >
                     {MAIN_BANNERS.map((banner, idx) => (
                         <div key={banner.id} className="w-full h-full flex-shrink-0 relative">
-                            {/* Background Image */}
-                            <div 
-                                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                                style={{ backgroundImage: `url(${banner.image})` }}
-                            >
-                                {/* Gradient Overlay */}
-                                <div className={`absolute inset-0 bg-gradient-to-r ${banner.gradient}`}></div>
-                            </div>
-
-                            {/* Content */}
-                            <div className="absolute inset-0 flex items-center justify-start">
-                                <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                                    <div className="max-w-3xl transform transition-all duration-700 delay-100 opacity-0 translate-y-8" 
-                                         style={currentIndex === idx ? { opacity: 1, transform: 'translateY(0)' } : {}}>
-                                        
-                                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-none mb-2 tracking-tighter drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] italic uppercase">
-                                            {banner.title}
-                                        </h1>
-                                        
-                                        <div className="inline-block bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold px-6 py-2 rounded-full text-xl md:text-2xl mb-8 shadow-lg transform -skew-x-12 border-2 border-yellow-400">
-                                            <span className="inline-block skew-x-12">{banner.subtitle}</span>
-                                        </div>
-                                        
-                                        <div>
-                                            <Link href={banner.primaryCTA.link}>
-                                                <button className="px-8 py-4 bg-yellow-400 text-slate-900 font-extrabold rounded-xl hover:bg-yellow-300 hover:shadow-[0_0_20px_rgba(250,204,21,0.6)] transition-all duration-300 text-lg uppercase tracking-wider">
-                                                    {banner.primaryCTA.label}
-                                                </button>
-                                            </Link>
-                                        </div>
-                                    </div>
+                            <Link href={banner.link} className="block w-full h-full">
+                                {/* Background Image */}
+                                <div 
+                                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                                    style={{ backgroundImage: `url(${banner.image})` }}
+                                >
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                     ))}
                 </div>
@@ -188,8 +151,8 @@ export function BannerSection() {
                 </div>
             </section>
 
-            {/* 4 Small Banners below */}
-            <section className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-8 -mt-6 lg:-mt-10 relative z-30 mb-8">
+            {/* 4 Small Banners below - Ẩn trên mobile */}
+            <section className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-8 md:-mt-6 lg:-mt-10 relative z-30 mb-8 hidden md:block">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                     {SMALL_BANNERS.map((banner) => (
                         <Link href={banner.link} key={banner.id} className="block group">
