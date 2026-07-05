@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
+import fs from 'fs/promises';
+import path from 'path';
 
 export async function POST(req: Request) {
     try {
@@ -14,14 +16,31 @@ export async function POST(req: Request) {
         const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         const finalFilename = `${Date.now()}-${safeName}`;
 
-        // Upload to Vercel Blob
-        const blob = await put(finalFilename, file, {
-            access: 'public',
-            token: process.env.BLOB_READ_WRITE_TOKEN,
-        });
+        const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
 
-        // Trả về URL từ Vercel Blob để hiển thị ở frontend
-        return NextResponse.json({ url: blob.url });
+        if (blobToken) {
+            // Upload to Vercel Blob
+            const blob = await put(finalFilename, file, {
+                access: 'public',
+                token: blobToken,
+            });
+            return NextResponse.json({ url: blob.url });
+        } else {
+            // Local fallback: save to public/uploads
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+            
+            try {
+                await fs.access(uploadDir);
+            } catch {
+                await fs.mkdir(uploadDir, { recursive: true });
+            }
+            
+            const filePath = path.join(uploadDir, finalFilename);
+            await fs.writeFile(filePath, buffer);
+            
+            return NextResponse.json({ url: `/uploads/${finalFilename}` });
+        }
     } catch (error: any) {
         console.error('API /api/admin/upload error:', error);
         return NextResponse.json({
