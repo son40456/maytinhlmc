@@ -4,8 +4,8 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     
-    // Chỉ bảo vệ các đường dẫn bắt đầu bằng /admin hoặc /api/admin
-    if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
+    // Bảo vệ trang quản trị (/admin) và các thao tác ghi dữ liệu của API (/api/admin)
+    if (pathname.startsWith('/admin') || (pathname.startsWith('/api/admin') && request.method !== 'GET')) {
         const basicAuth = request.headers.get('authorization');
         
         if (basicAuth) {
