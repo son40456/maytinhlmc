@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import { BannerSlider } from '@/components/ui/BannerSlider';
 import { HomeSection } from "@/components/home/HomeSection";
 import { HardwareCategoryGrid } from "@/components/home/HardwareCategoryGrid";
 import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
@@ -63,29 +64,8 @@ export default async function Home() {
     <div className="flex flex-col gap-6 md:gap-10 pb-6 md:pb-12">
       <OrganizationSchema />
       <WebSiteSchema />
-      {/* Hero Banner */}
-      <section className="bg-blue-600 text-white py-10 md:py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-2xl md:text-5xl font-extrabold tracking-tight mb-3 md:mb-6">
-            Nâng Tầm Trải Nghiệm Công Nghệ
-          </h1>
-          <p className="text-sm md:text-xl max-w-2xl mx-auto mb-4 md:mb-8 text-blue-100">
-            Săn deal công nghệ siêu hot mỗi ngày. Tận hưởng trải nghiệm mua sắm nhanh chóng, tiện lợi qua hệ thống Next.js siêu tốc.
-          </p>
-          <div className="flex justify-center gap-3 md:gap-4">
-            <Link href="/category/all">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 font-bold">
-                Khám phá ngay
-              </Button>
-            </Link>
-            <Link href="/sale">
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-blue-700">
-                Sản phẩm Sale
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Hero Banner Slider */}
+      <BannerSlider />
 
       {/* Danh mục nổi bật */}
       <div className="mb-2 md:mb-4">
