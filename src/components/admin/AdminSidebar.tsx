@@ -8,7 +8,8 @@ import {
     MonitorPlay,
     LogOut,
     Box,
-    Menu
+    Menu,
+    Images
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -46,6 +47,13 @@ export default function AdminSidebar() {
                     >
                         <Menu className="w-5 h-5" />
                         Quản lý Mega Menu
+                    </Link>
+                    <Link
+                        href="/admin/banners"
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${pathname === '/admin/banners' ? 'bg-blue-600/10 text-blue-400' : 'hover:bg-slate-800 hover:text-white'}`}
+                    >
+                        <Images className="w-5 h-5" />
+                        Quản lý Banner
                     </Link>
                     <Link
                         href="/admin/settings"

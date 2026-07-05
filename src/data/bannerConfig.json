@@ -1,0 +1,41 @@
+{
+  "mainBanners": [
+    {
+      "id": "1",
+      "image": "https://kccshop.vn/media/banner/KCC_1920x560.jpg",
+      "link": "/category/all"
+    },
+    {
+      "id": "2",
+      "image": "https://kccshop.vn/media/banner/banner-1920x6001.jpg",
+      "link": "/pc-builder"
+    },
+    {
+      "id": "3",
+      "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop",
+      "link": "http://baohanh.maytinhlmc.vn"
+    }
+  ],
+  "smallBanners": [
+    {
+      "id": "1",
+      "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=600&auto=format&fit=crop",
+      "link": "/category/man-hinh"
+    },
+    {
+      "id": "2",
+      "image": "https://images.unsplash.com/photo-1593640495253-23196b27a87f?q=80&w=600&auto=format&fit=crop",
+      "link": "/category/phu-kien"
+    },
+    {
+      "id": "3",
+      "image": "https://cdn-transformations.hacom.vn/insecure/f:webp/q:75/rt:fit/w:828/aHR0cHM6Ly9jZG4tZmlsZXMuaGFjb20udm4vaGFjb20vY2RuL01lZGlhL0ltYWdlL0Jhbm5lci8xMDA2MjAyNi9raHV5ZW4tbWFpLW11YS1wYy1tYW5oaW5oLTEwMDYyMDI2LnBuZw.webp",
+      "link": "/category/pc-lap-rap"
+    },
+    {
+      "id": "4",
+      "image": "https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=600&auto=format&fit=crop",
+      "link": "/pc-builder"
+    }
+  ]
+}

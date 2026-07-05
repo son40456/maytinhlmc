@@ -258,3 +258,48 @@ export async function saveSiteSettings(settings: SiteSettings): Promise<{ succes
         return { success: false };
     }
 }
+
+// --------------------------------------------------------------------------------
+// Banner Config
+// --------------------------------------------------------------------------------
+
+export interface BannerItem {
+    id: string;
+    image: string;
+    link: string;
+}
+
+export interface BannerConfig {
+    mainBanners: BannerItem[];
+    smallBanners: BannerItem[];
+}
+
+const DEFAULT_BANNER_CONFIG: BannerConfig = {
+    mainBanners: [],
+    smallBanners: []
+};
+
+const bannerConfigPath = path.join(process.cwd(), 'src', 'data', 'bannerConfig.json');
+
+export async function getBannerConfig(): Promise<BannerConfig> {
+    const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+    const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+
+    const useKV = !!kvUrl && !!kvToken;
+    const redis = useKV ? new Redis({ url: kvUrl, token: kvToken }) : null;
+
+    try {
+        if (useKV && redis) {
+            const data = await redis.get('bannerConfig');
+            if (data) {
+                return (typeof data === 'string' ? JSON.parse(data) : data) as BannerConfig;
+            }
+        }
+
+        const data = await fs.readFile(bannerConfigPath, 'utf-8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading banner config:', error);
+        return DEFAULT_BANNER_CONFIG;
+    }
+}

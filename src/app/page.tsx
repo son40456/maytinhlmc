@@ -7,7 +7,7 @@ import { HardwareCategoryGrid } from "@/components/home/HardwareCategoryGrid";
 import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
 import { WebSiteSchema } from "@/components/seo/WebSiteSchema";
 import { generateHomepageSEO } from "@/utils/seo";
-import { getHomepageConfig, getHardwareGridConfig } from '@/app/actions/configActions';
+import { getHomepageConfig, getHardwareGridConfig, getBannerConfig } from '@/app/actions/configActions';
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
 import { GET_PRODUCTS_BY_CATEGORY } from "@/lib/graphql/queries";
 
@@ -50,9 +50,10 @@ async function fetchSectionProducts(categorySlug: string) {
 
 export default async function Home() {
   // Fetch cấu hình KV song song
-  const [sections, hardwareGridConfig] = await Promise.all([
+  const [sections, hardwareGridConfig, bannerConfig] = await Promise.all([
     getHomepageConfig(),
     getHardwareGridConfig(),
+    getBannerConfig()
   ]);
 
   // Fetch tất cả products của các sections song song (thay vì waterfall)
@@ -65,7 +66,7 @@ export default async function Home() {
       <OrganizationSchema />
       <WebSiteSchema />
       {/* Hero Banner Slider + Small Banners */}
-      <BannerSection />
+      <BannerSection config={bannerConfig} />
 
       {/* Danh mục nổi bật */}
       <div className="mb-2 md:mb-4">
