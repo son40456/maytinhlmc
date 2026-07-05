@@ -100,7 +100,7 @@ export function BannerSection({ config }: { config: BannerConfig }) {
                             <Link href={banner.link || "#"} key={banner.id || idx} className="block group">
                                 <div className="relative aspect-[4/3] md:h-[220px] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden shadow-xl border-2 border-white/20 transform transition-transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent after:-translate-x-[150%] group-hover:after:translate-x-[150%] after:transition-transform after:duration-1000 after:ease-in-out">
                                     <div 
-                                        className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+                                        className="w-full h-full bg-cover bg-center"
                                         style={{ backgroundImage: `url(${banner.image})` }}
                                     ></div>
                                 </div>
