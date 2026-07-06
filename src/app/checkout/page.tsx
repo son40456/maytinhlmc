@@ -105,8 +105,7 @@ export default function CheckoutPage() {
                     country: billingInfo.country,
                 },
                 paymentMethod,
-                customerNote: note,
-                isPaid: false
+                customerNote: note
             };
 
             const checkoutRes = await fetch(process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string, {
@@ -126,7 +125,8 @@ export default function CheckoutPage() {
 
             if (checkoutData.errors) {
                 console.error("Checkout errors:", checkoutData.errors);
-                alert("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại!");
+                const errorMessages = checkoutData.errors.map((e: any) => e.message).join("\\n");
+                alert(`Đã xảy ra lỗi khi tạo đơn hàng:\\n${errorMessages}`);
                 setIsSubmitting(false);
                 return;
             }
