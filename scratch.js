@@ -1,13 +1,12 @@
 const fetch = require('node-fetch');
 async function run() {
   const query = `
-    query GetCoupons {
+    query GetAllCoupons {
       coupons {
         nodes {
           code
           amount
           discountType
-          description
         }
       }
     }
