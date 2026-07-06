@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Button } from "@/components/ui/Button";
-import Link from "next/link";
+import { Suspense } from "react";
 import { BannerSection } from '@/components/ui/BannerSection';
 import { HomeSection } from "@/components/home/HomeSection";
 import { HardwareCategoryGrid } from "@/components/home/HardwareCategoryGrid";
@@ -48,44 +47,66 @@ async function fetchSectionProducts(categorySlug: string) {
   }
 }
 
-export default async function Home() {
-  // Fetch cấu hình KV song song
-  const [sections, hardwareGridConfig, bannerConfig] = await Promise.all([
-    getHomepageConfig(),
-    getHardwareGridConfig(),
-    getBannerConfig()
-  ]);
+async function BannerWrapper() {
+  const bannerConfig = await getBannerConfig();
+  return <BannerSection config={bannerConfig} />;
+}
 
-  // Fetch tất cả products của các sections song song (thay vì waterfall)
+async function HardwareGridWrapper() {
+  const hardwareGridConfig = await getHardwareGridConfig();
+  return <HardwareCategoryGrid config={hardwareGridConfig} />;
+}
+
+async function HomeSectionsWrapper() {
+  const sections = await getHomepageConfig();
   const productsBySections = await Promise.all(
     sections.map((section: any) => fetchSectionProducts(section.categorySlug))
   );
 
   return (
+    <>
+      {sections.map((section: any, idx: number) => (
+        <HomeSection
+          key={section.id}
+          title={section.title}
+          categorySlug={section.categorySlug}
+          subFilters={section.subFilters}
+          products={productsBySections[idx]}
+        />
+      ))}
+    </>
+  );
+}
+
+export default function Home() {
+  return (
     <div className="flex flex-col gap-6 md:gap-10 pb-6 md:pb-12">
       <OrganizationSchema />
       <WebSiteSchema />
+      
       {/* Hero Banner Slider + Small Banners */}
-      <BannerSection config={bannerConfig} />
+      <Suspense fallback={<div className="w-full aspect-[21/9] md:aspect-[3/1] bg-slate-100 animate-pulse rounded-lg"></div>}>
+        <BannerWrapper />
+      </Suspense>
 
       {/* Danh mục nổi bật */}
       <div className="mb-2 md:mb-4">
-        <HardwareCategoryGrid config={hardwareGridConfig} />
+        <Suspense fallback={<div className="w-full h-[150px] md:h-[200px] bg-slate-100 animate-pulse rounded-lg"></div>}>
+          <HardwareGridWrapper />
+        </Suspense>
       </div>
 
       {/* Dynamic Sections từ Cấu hình Admin */}
       <div className="flex flex-col gap-4 md:gap-6">
-        {sections.map((section: any, idx: number) => (
-          <HomeSection
-            key={section.id}
-            title={section.title}
-            categorySlug={section.categorySlug}
-            subFilters={section.subFilters}
-            products={productsBySections[idx]}
-          />
-        ))}
+        <Suspense fallback={
+          <div className="w-full flex flex-col gap-4">
+            <div className="h-[400px] bg-slate-100 animate-pulse rounded-lg"></div>
+            <div className="h-[400px] bg-slate-100 animate-pulse rounded-lg"></div>
+          </div>
+        }>
+          <HomeSectionsWrapper />
+        </Suspense>
       </div>
-
     </div>
   );
 }
