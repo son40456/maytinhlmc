@@ -5,7 +5,7 @@ import { useCartStore } from '@/store/useCartStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useRouter } from 'next/navigation';
-import { ADD_TO_CART, CHECKOUT_MUTATION } from '@/lib/graphql/mutations';
+
 import { useAuthStore } from '@/store/useAuthStore';
 import { ShieldCheck, Truck, CreditCard, CheckCircle2, ShoppingBag, MapPin, Package, ArrowLeft, Info } from 'lucide-react';
 import Link from 'next/link';
@@ -52,48 +52,6 @@ export default function CheckoutPage() {
         const note = formData.get('note') as string;
 
         try {
-            // Bước 1: Gọi AddToCart cho sản phẩm đầu tiên để lấy woocommerce-session
-            const firstItem = items[0];
-            const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-            if (token) headers['Authorization'] = `Bearer ${token}`;
-
-            const res1 = await fetch(process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({
-                    query: ADD_TO_CART,
-                    variables: {
-                        productId: firstItem.databaseId,
-                        quantity: firstItem.quantity
-                    }
-                })
-            });
-
-            const sessionToken = res1.headers.get('woocommerce-session');
-
-            // Bước 2: Thêm các sản phẩm còn lại (nếu có) cùng Session
-            if (items.length > 1) {
-                const addPromises = items.slice(1).map(item =>
-                    fetch(process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'woocommerce-session': sessionToken ? `Session ${sessionToken}` : '',
-                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                        },
-                        body: JSON.stringify({
-                            query: ADD_TO_CART,
-                            variables: {
-                                productId: item.databaseId,
-                                quantity: item.quantity
-                            }
-                        })
-                    })
-                );
-                await Promise.all(addPromises);
-            }
-
-            // Bước 3: Gửi mutation Checkout
             const checkoutInput = {
                 clientMutationId: `checkout-${Date.now()}`,
                 billing: billingInfo,
@@ -108,16 +66,15 @@ export default function CheckoutPage() {
                 customerNote: note
             };
 
-            const checkoutRes = await fetch(process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string, {
+            const checkoutRes = await fetch('/api/checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'woocommerce-session': sessionToken ? `Session ${sessionToken}` : '',
-                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
                 },
                 body: JSON.stringify({
-                    query: CHECKOUT_MUTATION,
-                    variables: { input: checkoutInput }
+                    items,
+                    checkoutInput,
+                    token
                 })
             });
 
