@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, ClipboardList } from "lucide-react";
 
 interface DetailedSpecsTableProps {
@@ -11,6 +12,11 @@ interface DetailedSpecsTableProps {
 
 export function DetailedSpecsTable({ shortDescription, attributes, acfDetailedSpecs }: DetailedSpecsTableProps) {
     const [showModal, setShowModal] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // 1. Extract info from shortDescription
     const extractSpecsFromText = (text: string) => {
@@ -88,7 +94,7 @@ export function DetailedSpecsTable({ shortDescription, attributes, acfDetailedSp
             </div>
 
             {/* Modal: ACF Detailed Specs */}
-            {showModal && acfDetailedSpecs && (
+            {showModal && acfDetailedSpecs && mounted && createPortal(
                 <div
                     className="fixed inset-0 z-[99999] flex items-start justify-center pt-[88px] px-4 pb-4"
                     onClick={() => setShowModal(false)}
@@ -141,7 +147,8 @@ export function DetailedSpecsTable({ shortDescription, attributes, acfDetailedSp
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Keyframe styles */}

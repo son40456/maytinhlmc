@@ -32,13 +32,13 @@ export function ExpandableDescription({ content }: ExpandableDescriptionProps) {
             />
 
             {needsExpansion && !isExpanded && (
-                <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-white via-white/80 to-transparent flex items-end justify-center pb-6">
+                <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-white via-white/95 to-transparent flex items-end justify-center pb-6 z-10 pointer-events-none">
                     <button
                         onClick={() => setIsExpanded(true)}
-                        className="flex items-center gap-2 px-8 py-3 bg-white border border-blue-600 text-blue-600 rounded-full font-bold shadow-sm hover:bg-blue-50 hover:shadow-md transition-all z-10"
+                        className="pointer-events-auto group flex items-center gap-2 px-8 py-2.5 bg-white border border-slate-200 text-blue-600 rounded-full font-semibold shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_25px_rgba(0,0,0,0.1)] hover:border-blue-300 hover:text-blue-700 transition-all duration-300"
                     >
                         Xem thêm
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                        <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
                     </button>
                 </div>
             )}
@@ -47,10 +47,10 @@ export function ExpandableDescription({ content }: ExpandableDescriptionProps) {
                 <div className="mt-8 flex justify-center">
                     <button
                         onClick={() => setIsExpanded(false)}
-                        className="flex items-center gap-2 px-8 py-3 bg-white border border-slate-300 text-slate-700 rounded-full font-bold shadow-sm hover:bg-slate-50 hover:shadow-md transition-all"
+                        className="group flex items-center gap-2 px-8 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-full font-semibold shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_25px_rgba(0,0,0,0.08)] hover:border-slate-300 hover:text-slate-800 transition-all duration-300"
                     >
                         Thu gọn
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" /></svg>
+                        <svg className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" /></svg>
                     </button>
                 </div>
             )}
