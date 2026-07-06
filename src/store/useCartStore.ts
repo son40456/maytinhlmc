@@ -13,20 +13,31 @@ export interface CartItem {
     attributes?: { [key: string]: string }; // VD: { size: 'XL', color: 'Red' }
 }
 
+export interface Coupon {
+    code: string;
+    amount: number;
+    discountType: string;
+}
+
 interface CartState {
     items: CartItem[];
+    coupon: Coupon | null;
     addItem: (item: CartItem) => void;
     removeItem: (id: string) => void;
     updateQuantity: (id: string, quantity: number) => void;
     clearCart: () => void;
     getRawTotal: () => number;
     getItemCount: () => number;
+    applyCoupon: (coupon: Coupon) => void;
+    removeCoupon: () => void;
+    getDiscountAmount: () => number;
 }
 
 export const useCartStore = create<CartState>()(
     persist(
         (set, get) => ({
             items: [],
+            coupon: null,
 
             addItem: (item) => {
                 set((state) => {
@@ -58,7 +69,7 @@ export const useCartStore = create<CartState>()(
                 }));
             },
 
-            clearCart: () => set({ items: [] }),
+            clearCart: () => set({ items: [], coupon: null }),
 
             getRawTotal: () => {
                 return get().items.reduce((total, item) => total + (item.price * item.quantity), 0);
@@ -66,6 +77,23 @@ export const useCartStore = create<CartState>()(
 
             getItemCount: () => {
                 return get().items.reduce((count, item) => count + item.quantity, 0);
+            },
+            
+            applyCoupon: (coupon) => set({ coupon }),
+            
+            removeCoupon: () => set({ coupon: null }),
+            
+            getDiscountAmount: () => {
+                const { coupon, getRawTotal } = get();
+                if (!coupon) return 0;
+                const total = getRawTotal();
+                
+                if (coupon.discountType === 'percent') {
+                    return Math.round((total * coupon.amount) / 100);
+                } else if (coupon.discountType === 'fixed_cart') {
+                    return coupon.amount;
+                }
+                return 0; // Other types like fixed_product not implemented here yet
             }
         }),
         {

@@ -9,7 +9,11 @@ import { Trash2, ShoppingCart, ArrowRight, Minus, Plus, ShieldCheck, CreditCard,
 
 export default function CartPage() {
     const [mounted, setMounted] = useState(false);
-    const { items, removeItem, updateQuantity, getRawTotal, clearCart } = useCartStore();
+    const [promoCodeInput, setPromoCodeInput] = useState('');
+    const [isApplying, setIsApplying] = useState(false);
+    const [couponError, setCouponError] = useState('');
+    
+    const { items, removeItem, updateQuantity, getRawTotal, clearCart, coupon, applyCoupon, removeCoupon, getDiscountAmount } = useCartStore();
 
     useEffect(() => {
         setMounted(true);
@@ -17,10 +21,46 @@ export default function CartPage() {
 
     if (!mounted) return <div className="container mx-auto px-4 py-12 min-h-[50vh] flex items-center justify-center text-gray-400">Đang tải giỏ hàng...</div>;
 
-    const total = getRawTotal();
+    const rawTotal = getRawTotal();
+    const discountAmount = getDiscountAmount();
+    const finalTotal = Math.max(0, rawTotal - discountAmount);
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    };
+
+    const handleApplyCoupon = async () => {
+        if (!promoCodeInput.trim()) {
+            setCouponError('Vui lòng nhập mã giảm giá');
+            return;
+        }
+
+        setIsApplying(true);
+        setCouponError('');
+
+        try {
+            const res = await fetch('/api/coupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: promoCodeInput.trim() })
+            });
+
+            const data = await res.json();
+
+            if (data.errors) {
+                setCouponError(data.errors[0]?.message || 'Mã giảm giá không hợp lệ');
+                return;
+            }
+
+            if (data.coupon) {
+                applyCoupon(data.coupon);
+                setPromoCodeInput(''); // Clear input after success
+            }
+        } catch (error) {
+            setCouponError('Đã xảy ra lỗi, vui lòng thử lại');
+        } finally {
+            setIsApplying(false);
+        }
     };
 
     return (
@@ -149,7 +189,7 @@ export default function CartPage() {
                                 <div className="space-y-4 py-2 border-y border-gray-100">
                                     <div className="flex justify-between text-gray-600 text-sm">
                                         <span>Tạm tính ({items.length} sản phẩm)</span>
-                                        <span className="font-bold text-gray-900">{formatPrice(total)}</span>
+                                        <span className="font-bold text-gray-900">{formatPrice(rawTotal)}</span>
                                     </div>
                                     <div className="flex justify-between text-gray-600 text-sm">
                                         <span>Phí vận chuyển</span>
@@ -159,26 +199,48 @@ export default function CartPage() {
                                         <span>Thuế VAT</span>
                                         <span className="font-bold text-gray-900">Đã bao gồm</span>
                                     </div>
+                                    
+                                    {coupon && (
+                                        <div className="flex justify-between text-green-600 text-sm">
+                                            <span className="flex items-center gap-1">
+                                                Mã giảm giá <strong>{coupon.code}</strong>
+                                                <button onClick={removeCoupon} className="text-red-500 hover:text-red-700 ml-1 text-xs" title="Xóa mã giảm giá">[Xóa]</button>
+                                            </span>
+                                            <span className="font-bold">- {formatPrice(discountAmount)}</span>
+                                        </div>
+                                    )}
 
                                     <div className="pt-4 flex justify-between items-end">
                                         <span className="text-sm font-bold text-gray-900">Tổng cộng</span>
-                                        <span className="text-2xl font-black text-rose-600 leading-none">{formatPrice(total)}</span>
+                                        <span className="text-2xl font-black text-rose-600 leading-none">{formatPrice(finalTotal)}</span>
                                     </div>
                                     <p className="text-right text-[11px] text-gray-400 italic mb-2">(Đã bao gồm VAT nếu có)</p>
                                 </div>
 
                                 {/* Promo Code */}
-                                <div className="space-y-2 lg:space-y-3 pt-2">
-                                    <label className="text-[10px] lg:text-xs font-bold uppercase tracking-wider text-gray-500 block">Mã giảm giá</label>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            className="flex-grow bg-gray-50 border border-gray-200 rounded-lg lg:rounded-xl px-3 lg:px-4 py-2 lg:py-2.5 text-xs lg:text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
-                                            placeholder="Nhập mã KM"
-                                        />
-                                        <button className="bg-blue-50 text-blue-700 font-bold px-3 lg:px-5 rounded-lg lg:rounded-xl text-xs lg:text-sm hover:bg-blue-100 transition-colors border border-blue-100 whitespace-nowrap">Áp dụng</button>
+                                {!coupon && (
+                                    <div className="space-y-2 lg:space-y-3 pt-2">
+                                        <label className="text-[10px] lg:text-xs font-bold uppercase tracking-wider text-gray-500 block">Mã giảm giá</label>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                value={promoCodeInput}
+                                                onChange={(e) => setPromoCodeInput(e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                                                className="flex-grow bg-gray-50 border border-gray-200 rounded-lg lg:rounded-xl px-3 lg:px-4 py-2 lg:py-2.5 text-xs lg:text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
+                                                placeholder="Nhập mã KM"
+                                            />
+                                            <button 
+                                                onClick={handleApplyCoupon}
+                                                disabled={isApplying}
+                                                className="bg-blue-50 text-blue-700 font-bold px-3 lg:px-5 rounded-lg lg:rounded-xl text-xs lg:text-sm hover:bg-blue-100 transition-colors border border-blue-100 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {isApplying ? 'Đang áp dụng...' : 'Áp dụng'}
+                                            </button>
+                                        </div>
+                                        {couponError && <p className="text-xs text-red-500 mt-1">{couponError}</p>}
                                     </div>
-                                </div>
+                                )}
 
                                 {/* Checkout Button */}
                                 <Link href="/checkout" className="block w-full pt-2 lg:pt-4">

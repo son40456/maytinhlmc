@@ -89,6 +89,31 @@ export async function POST(req: Request) {
             await Promise.all(addPromises);
         }
 
+        // Bước 2.5: Apply Coupon if provided
+        const { couponCode } = body;
+        if (couponCode) {
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'woocommerce-session': `Session ${sessionToken}`,
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({
+                    query: `
+                        mutation ApplyCoupon($code: String!) {
+                            applyCoupon(input: { code: $code }) {
+                                cart {
+                                    total
+                                }
+                            }
+                        }
+                    `,
+                    variables: { code: couponCode }
+                })
+            });
+        }
+
         // Bước 3: Gửi mutation Checkout
         const checkoutRes = await fetch(API_URL, {
             method: 'POST',

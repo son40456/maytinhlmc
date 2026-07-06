@@ -13,7 +13,7 @@ import Link from 'next/link';
 export default function CheckoutPage() {
     const [mounted, setMounted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { items, getRawTotal, clearCart } = useCartStore();
+    const { items, getRawTotal, clearCart, getDiscountAmount, coupon } = useCartStore();
     const { user, token, isAuthenticated } = useAuthStore();
     const router = useRouter();
 
@@ -21,7 +21,9 @@ export default function CheckoutPage() {
         setMounted(true);
     }, []);
 
-    const total = getRawTotal();
+    const rawTotal = getRawTotal();
+    const discountAmount = getDiscountAmount();
+    const finalTotal = Math.max(0, rawTotal - discountAmount);
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -74,7 +76,8 @@ export default function CheckoutPage() {
                 body: JSON.stringify({
                     items,
                     checkoutInput,
-                    token
+                    token,
+                    couponCode: useCartStore.getState().coupon?.code
                 })
             });
 
@@ -275,12 +278,14 @@ export default function CheckoutPage() {
                                 <div className="space-y-3 mb-6">
                                     <div className="flex justify-between items-center text-sm">
                                         <span className="text-gray-500 font-medium">Tạm tính</span>
-                                        <span className="font-bold text-gray-900">{formatPrice(total)}</span>
+                                        <span className="font-bold text-gray-900">{formatPrice(rawTotal)}</span>
                                     </div>
-                                    <div className="flex justify-between items-center text-sm">
-                                        <span className="text-gray-500 font-medium">Chiết khấu</span>
-                                        <span className="font-bold text-gray-900">0đ</span>
-                                    </div>
+                                    {coupon && (
+                                        <div className="flex justify-between items-center text-sm text-green-600">
+                                            <span className="font-medium">Mã giảm giá ({coupon.code})</span>
+                                            <span className="font-bold">- {formatPrice(discountAmount)}</span>
+                                        </div>
+                                    )}
                                     <div className="flex justify-between items-center text-sm">
                                         <span className="text-gray-500 font-medium flex items-center gap-1">
                                             Phí vận chuyển <Info className="w-3.5 h-3.5" />
@@ -295,7 +300,7 @@ export default function CheckoutPage() {
                                             <span className="block text-sm text-gray-500 font-medium mb-1">Tổng tiền thanh toán</span>
                                             <span className="block text-[10px] text-gray-400 italic">Đã bao gồm VAT (nếu có)</span>
                                         </div>
-                                        <span className="text-2xl lg:text-3xl font-black text-rose-600 leading-none">{formatPrice(total)}</span>
+                                        <span className="text-2xl lg:text-3xl font-black text-rose-600 leading-none">{formatPrice(finalTotal)}</span>
                                     </div>
                                 </div>
 
