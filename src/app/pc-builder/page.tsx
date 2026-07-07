@@ -71,7 +71,6 @@ function BuildPcPageInner() {
         });
 
         if (idsToFetch.length > 0) {
-            router.replace('/pc-builder', { scroll: false });
             const ids = idsToFetch.map(i => i.dbId).join(',');
             
             // Artificial delay to show off the loader animation
@@ -91,7 +90,10 @@ function BuildPcPageInner() {
                     }
                 })
                 .catch(console.error)
-                .finally(() => setApplyingTemplateName(null));
+                .finally(() => {
+                    setApplyingTemplateName(null);
+                    router.replace('/pc-builder', { scroll: false });
+                });
         } else {
             setApplyingTemplateName(null);
         }
