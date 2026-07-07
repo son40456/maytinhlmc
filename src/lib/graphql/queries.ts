@@ -616,8 +616,7 @@ export const GET_PRODUCTS_BY_IDS = `
           regularPrice
           salePrice
           image { sourceUrl altText }
-          thongtinsanpham { chinhSachBaoHanh chinh_sach_bao_hanh }
-          thontinsanpham { chinhSachBaoHanh chinh_sach_bao_hanh }
+          thongtinsanpham { chinhSachBaoHanh }
         }
         ... on VariableProduct {
           price
@@ -625,8 +624,7 @@ export const GET_PRODUCTS_BY_IDS = `
           regularPrice
           salePrice
           image { sourceUrl altText }
-          thongtinsanpham { chinhSachBaoHanh chinh_sach_bao_hanh }
-          thontinsanpham { chinhSachBaoHanh chinh_sach_bao_hanh }
+          thongtinsanpham { chinhSachBaoHanh }
         }
       }
     }

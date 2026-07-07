@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
                 query: GET_PRODUCTS_BY_IDS,
                 variables: { in: ids },
             }),
-            next: { revalidate: 60 },
+            cache: 'no-store'
         });
 
         const json = await res.json();
