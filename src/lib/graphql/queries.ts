@@ -604,7 +604,7 @@ export const GET_RECENT_POSTS = `
 
 export const GET_PRODUCTS_BY_IDS = `
   query GetProductsByIds($in: [Int]!) {
-    products(first: 100, where: { in: $in }) {
+    products(first: 100, where: { include: $in }) {
       nodes {
         id
         databaseId
