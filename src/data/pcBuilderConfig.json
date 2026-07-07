@@ -1,8 +1,8 @@
 [
   {
-    "id": "ram",
-    "name": "RAM - Bộ Nhớ Trong",
-    "slug": "ram-bo-nho-trong"
+    "id": "cpu",
+    "name": "CPU - Bộ Vi Xử Lý",
+    "slug": "cpu-bo-vi-xu-ly"
   },
   {
     "id": "mainboard",
@@ -10,9 +10,9 @@
     "slug": "mainboard-bo-mach-chu"
   },
   {
-    "id": "cpu",
-    "name": "CPU - Bộ Vi Xử Lý",
-    "slug": "cpu-bo-vi-xu-ly"
+    "id": "ram",
+    "name": "RAM - Bộ Nhớ Trong",
+    "slug": "ram-bo-nho-trong"
   },
   {
     "id": "vga",

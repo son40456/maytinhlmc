@@ -42,12 +42,24 @@ function BuildPcPageInner() {
     const summaryRef = useRef<HTMLDivElement>(null);
     const exportRef = useRef<HTMLDivElement>(null);
 
-    const urlParsedRef = useRef(false);
-    const [templateApplied, setTemplateApplied] = useState(false);
+    const [configLoaded, setConfigLoaded] = useState(false);
 
     useEffect(() => {
-        if (urlParsedRef.current) return;
-        urlParsedRef.current = true;
+        getPcBuilderConfig().then((config: any) => {
+            if (config) {
+                if (Array.isArray(config)) {
+                    initComponents(config);
+                } else if (config.components) {
+                    initComponents(config.components);
+                    if (config.companyInfo) setCompanyInfo(config.companyInfo);
+                }
+            }
+            setConfigLoaded(true);
+        }).catch(() => setConfigLoaded(true));
+    }, [initComponents]);
+
+    useEffect(() => {
+        if (!configLoaded) return;
 
         const knownKeys = ['mainboard', 'cpu', 'ram', 'vga', 'ssd', 'hdd', 'psu', 'case', 'cooler', 'monitor', 'keyboard_mouse', 'headphone'];
         const idsToFetch: { categoryId: string; dbId: number }[] = [];
@@ -59,7 +71,6 @@ function BuildPcPageInner() {
         });
 
         if (idsToFetch.length > 0) {
-            // Remove query params from URL immediately
             router.replace('/pc-builder', { scroll: false });
             const ids = idsToFetch.map(i => i.dbId).join(',');
             fetch(`/api/products-by-ids?ids=${ids}`)
@@ -72,24 +83,10 @@ function BuildPcPageInner() {
                         }).filter((i): i is { categoryId: string; product: any } => !!i.product);
                         usePcBuilderStore.getState().applyTemplate(templateItems);
                     }
-                    setTemplateApplied(true);
                 })
-                .catch(() => setTemplateApplied(true));
-        } else {
-            setTemplateApplied(true);
-            getPcBuilderConfig().then((config: any) => {
-                if (config) {
-                    if (Array.isArray(config)) {
-                        initComponents(config);
-                    } else if (config.components) {
-                        initComponents(config.components);
-                        if (config.companyInfo) setCompanyInfo(config.companyInfo);
-                    }
-                }
-            });
+                .catch(console.error);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [searchParams, configLoaded, router]);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
