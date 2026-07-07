@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { usePcBuilderStore } from "@/store/usePcBuilderStore";
 import { ProductSelectModal } from "@/components/pc-builder/ProductSelectModal";
@@ -17,7 +18,7 @@ import { getPcBuilderConfig } from '@/app/actions/configActions';
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
 import { fetchProductsByIdsAction } from "@/app/actions/productActions";
 
-export default function BuildPcPage() {
+function BuildPcPageInner() {
     const { components, totalPrice, removeProduct, clearAll, initComponents, compatibilityHints } = usePcBuilderStore();
     const addItem = useCartStore(state => state.addItem);
 
@@ -27,9 +28,11 @@ export default function BuildPcPage() {
 
     const [wantsAssembly, setWantsAssembly] = useState(true);
     const [wantsSoftware, setWantsSoftware] = useState(false);
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
     const PREBUILT_TEMPLATES = [
-        { name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", onClick: () => { window.location.search = "?mainboard=34558&cpu=31318&ram=34655&ssd=34524&psu=34387&case=34146"; } },
+        { name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", onClick: () => { router.push('/pc-builder?mainboard=34558&cpu=31318&ram=34655&ssd=34524&psu=34387&case=34146'); } },
         { name: "PC Gaming", priceHint: "Quốc dân", icon: "🎮", description: "Chiến mượt LOL, FO4, CSGO", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") },
         { name: "PC Đồ Họa", priceHint: "Render", icon: "🎨", description: "Photoshop, Premiere, 3D", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") }
     ];
@@ -46,11 +49,10 @@ export default function BuildPcPage() {
         if (urlParsedRef.current) return;
         urlParsedRef.current = true;
 
-        const queryParams = new URLSearchParams(window.location.search);
         const knownKeys = ['mainboard', 'cpu', 'ram', 'vga', 'ssd', 'hdd', 'psu', 'case', 'cooler', 'monitor', 'keyboard_mouse', 'headphone'];
         const idsToFetch: { categoryId: string; dbId: number }[] = [];
         knownKeys.forEach(key => {
-            const val = queryParams.get(key);
+            const val = searchParams.get(key);
             if (val && !isNaN(parseInt(val))) {
                 idsToFetch.push({ categoryId: key, dbId: parseInt(val) });
             }
@@ -58,20 +60,22 @@ export default function BuildPcPage() {
 
         if (idsToFetch.length > 0) {
             // Remove query params from URL immediately
-            window.history.replaceState({}, document.title, window.location.pathname);
-            const ids = idsToFetch.map(i => i.dbId);
-            fetchProductsByIdsAction(ids).then(products => {
-                if (products && products.length > 0) {
-                    const templateItems = idsToFetch.map(item => {
-                        const product = products.find((p: any) => p.databaseId === item.dbId);
-                        return { categoryId: item.categoryId, product };
-                    }).filter((i): i is { categoryId: string; product: any } => !!i.product);
-                    usePcBuilderStore.getState().applyTemplate(templateItems);
-                }
-                setTemplateApplied(true);
-            }).catch(() => setTemplateApplied(true));
+            router.replace('/pc-builder', { scroll: false });
+            const ids = idsToFetch.map(i => i.dbId).join(',');
+            fetch(`/api/products-by-ids?ids=${ids}`)
+                .then(r => r.json())
+                .then(({ products }) => {
+                    if (products && products.length > 0) {
+                        const templateItems = idsToFetch.map(item => {
+                            const product = products.find((p: any) => p.databaseId === item.dbId);
+                            return { categoryId: item.categoryId, product };
+                        }).filter((i): i is { categoryId: string; product: any } => !!i.product);
+                        usePcBuilderStore.getState().applyTemplate(templateItems);
+                    }
+                    setTemplateApplied(true);
+                })
+                .catch(() => setTemplateApplied(true));
         } else {
-            // No URL params: load config from Redis/file as normal
             setTemplateApplied(true);
             getPcBuilderConfig().then((config: any) => {
                 if (config) {
@@ -663,5 +667,13 @@ export default function BuildPcPage() {
 
             <PcBuilderPrintTemplate components={components} totalPrice={totalPrice} companyInfo={companyInfo} />
         </>
+    );
+}
+
+export default function BuildPcPage() {
+    return (
+        <Suspense fallback={null}>
+            <BuildPcPageInner />
+        </Suspense>
     );
 }
