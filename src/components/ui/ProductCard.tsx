@@ -63,14 +63,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
         : 0;
 
     return (
-        <div className="product-card group bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-700 flex flex-col h-full relative">
+        <div className="product-card group bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-700 flex flex-col h-full relative overflow-hidden">
             <Link href={`/${slug}`} className="relative mb-4 block aspect-square w-full">
                 {imageUrl ? (
                     <Image
                         src={imageUrl}
                         alt={name}
                         fill
-                        className="object-contain rounded-lg transition-transform duration-300 group-hover:scale-105"
+                        className="object-contain transition-transform duration-300 group-hover:scale-105"
                         sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 17vw"
                         priority={priority}
                         fetchPriority={priority ? "high" : "auto"}
@@ -90,7 +90,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                 )}
             </Link>
 
-            <Link href={`/${slug}`} className="mb-2 block">
+            <div className="px-3 pb-3 flex flex-col flex-1">
+                <Link href={`/${slug}`} className="mb-2 block">
                 <div className="flex items-center justify-between mb-1 min-h-[15px]">
                     <div className="text-[10px] font-medium text-slate-400 dark:text-slate-500 truncate pr-2">
                         {sku ? `Mã: ${sku}` : ''}
@@ -171,6 +172,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
                     </button>
                 </div>
             </div>
+        </div>
         </div>
     );
 };
