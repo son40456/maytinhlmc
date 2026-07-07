@@ -64,7 +64,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, databaseId, name, 
 
     return (
         <div className="product-card group bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-xl transition-all border border-slate-100 dark:border-slate-700 flex flex-col h-full relative overflow-hidden">
-            <Link href={`/${slug}`} className="relative mb-4 block aspect-square w-full">
+            <Link href={`/${slug}`} className="relative mb-4 block aspect-square w-full overflow-hidden after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent after:-translate-x-[150%] group-hover:after:translate-x-[150%] after:transition-transform after:duration-1000 after:ease-in-out after:z-20">
                 {imageUrl ? (
                     <Image
                         src={imageUrl}
