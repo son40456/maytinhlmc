@@ -1,13 +1,13 @@
 [
   {
-    "id": "cpu",
-    "name": "CPU - Bộ Vi Xử Lý",
-    "slug": "cpu-bo-vi-xu-ly"
-  },
-  {
     "id": "mainboard",
     "name": "Mainboard - Bo Mạch Chủ",
     "slug": "mainboard-bo-mach-chu"
+  },
+  {
+    "id": "cpu",
+    "name": "CPU - Bộ Vi Xử Lý",
+    "slug": "cpu-bo-vi-xu-ly"
   },
   {
     "id": "ram",
