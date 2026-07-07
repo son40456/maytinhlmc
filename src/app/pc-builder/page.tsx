@@ -445,8 +445,8 @@ function BuildPcPageInner() {
                                             {isLoading && (
                                                 <div className="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-[1px] z-10 animate-in fade-in duration-300">
                                                     <div className="flex flex-col items-center gap-1.5">
-                                                        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                                                        <span className="text-[10px] md:text-xs font-semibold text-blue-600 animate-pulse">Đang nạp...</span>
+                                                        <div className="uiverse-spinner scale-75"></div>
+                                                        <span className="text-[10px] md:text-xs font-semibold text-blue-600 animate-pulse mt-1">Đang nạp...</span>
                                                     </div>
                                                 </div>
                                             )}
