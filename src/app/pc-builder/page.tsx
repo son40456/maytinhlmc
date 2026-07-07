@@ -29,8 +29,7 @@ export default function BuildPcPage() {
     const [wantsSoftware, setWantsSoftware] = useState(false);
 
     const PREBUILT_TEMPLATES = [
-        { name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") },
-        //onClick: () => { window.location.search = "?mainboard=123&cpu=456&ram=789";
+        { name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", onClick: () => { window.location.search = "?mainboard=34558&cpu=31318&ram=34655&ssd=34524&psu=34387&case=34146"; } },
         { name: "PC Gaming", priceHint: "Quốc dân", icon: "🎮", description: "Chiến mượt LOL, FO4, CSGO", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") },
         { name: "PC Đồ Họa", priceHint: "Render", icon: "🎨", description: "Photoshop, Premiere, 3D", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") }
     ];
