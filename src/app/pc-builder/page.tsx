@@ -39,28 +39,14 @@ export default function BuildPcPage() {
     const summaryRef = useRef<HTMLDivElement>(null);
     const exportRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        // Fetch dynamic configuration from Redis/File
-        getPcBuilderConfig().then((config: any) => {
-            if (config) {
-                if (Array.isArray(config)) {
-                    initComponents(config);
-                } else if (config.components) {
-                    initComponents(config.components);
-                    if (config.companyInfo) setCompanyInfo(config.companyInfo);
-                }
-            }
-        });
-    }, [initComponents]);
-
     const urlParsedRef = useRef(false);
+    const [templateApplied, setTemplateApplied] = useState(false);
 
     useEffect(() => {
-        // Only run once on mount, check if there are URL params to parse
         if (urlParsedRef.current) return;
+        urlParsedRef.current = true;
 
         const queryParams = new URLSearchParams(window.location.search);
-        // Collect all known category keys from URL
         const knownKeys = ['mainboard', 'cpu', 'ram', 'vga', 'ssd', 'hdd', 'psu', 'case', 'cooler', 'monitor', 'keyboard_mouse', 'headphone'];
         const idsToFetch: { categoryId: string; dbId: number }[] = [];
         knownKeys.forEach(key => {
@@ -71,8 +57,7 @@ export default function BuildPcPage() {
         });
 
         if (idsToFetch.length > 0) {
-            urlParsedRef.current = true;
-            // Remove query params from URL immediately to avoid re-processing
+            // Remove query params from URL immediately
             window.history.replaceState({}, document.title, window.location.pathname);
             const ids = idsToFetch.map(i => i.dbId);
             fetchProductsByIdsAction(ids).then(products => {
@@ -83,7 +68,21 @@ export default function BuildPcPage() {
                     }).filter((i): i is { categoryId: string; product: any } => !!i.product);
                     usePcBuilderStore.getState().applyTemplate(templateItems);
                 }
-            }).catch(console.error);
+                setTemplateApplied(true);
+            }).catch(() => setTemplateApplied(true));
+        } else {
+            // No URL params: load config from Redis/file as normal
+            setTemplateApplied(true);
+            getPcBuilderConfig().then((config: any) => {
+                if (config) {
+                    if (Array.isArray(config)) {
+                        initComponents(config);
+                    } else if (config.components) {
+                        initComponents(config.components);
+                        if (config.companyInfo) setCompanyInfo(config.companyInfo);
+                    }
+                }
+            });
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
