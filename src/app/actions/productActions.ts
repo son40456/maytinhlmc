@@ -1,7 +1,7 @@
 "use server";
 
 import { wpgraphqlFetch } from '@/lib/graphql/fetcher';
-import { GET_RELATED_PRODUCTS, GET_RANDOM_PRODUCTS, GET_PRODUCT_BY_SLUG } from '@/lib/graphql/queries';
+import { GET_RELATED_PRODUCTS, GET_RANDOM_PRODUCTS, GET_PRODUCT_BY_SLUG, GET_PRODUCTS_BY_IDS } from '@/lib/graphql/queries';
 
 export async function fetchRelatedProducts(slug: string) {
     try {
