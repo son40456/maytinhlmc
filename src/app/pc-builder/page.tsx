@@ -53,35 +53,40 @@ export default function BuildPcPage() {
         });
     }, [initComponents]);
 
-    const [isParsingUrl, setIsParsingUrl] = useState(false);
+    const urlParsedRef = useRef(false);
 
     useEffect(() => {
-        if (components.length === 0 || isParsingUrl) return;
+        // Only run once on mount, check if there are URL params to parse
+        if (urlParsedRef.current) return;
 
         const queryParams = new URLSearchParams(window.location.search);
+        // Collect all known category keys from URL
+        const knownKeys = ['mainboard', 'cpu', 'ram', 'vga', 'ssd', 'hdd', 'psu', 'case', 'cooler', 'monitor', 'keyboard_mouse', 'headphone'];
         const idsToFetch: { categoryId: string; dbId: number }[] = [];
-        components.forEach(c => {
-            const val = queryParams.get(c.id);
-            if (val) idsToFetch.push({ categoryId: c.id, dbId: parseInt(val) });
+        knownKeys.forEach(key => {
+            const val = queryParams.get(key);
+            if (val && !isNaN(parseInt(val))) {
+                idsToFetch.push({ categoryId: key, dbId: parseInt(val) });
+            }
         });
 
         if (idsToFetch.length > 0) {
-            setIsParsingUrl(true);
+            urlParsedRef.current = true;
+            // Remove query params from URL immediately to avoid re-processing
+            window.history.replaceState({}, document.title, window.location.pathname);
             const ids = idsToFetch.map(i => i.dbId);
             fetchProductsByIdsAction(ids).then(products => {
                 if (products && products.length > 0) {
                     const templateItems = idsToFetch.map(item => {
                         const product = products.find((p: any) => p.databaseId === item.dbId);
                         return { categoryId: item.categoryId, product };
-                    }).filter(i => i.product);
+                    }).filter((i): i is { categoryId: string; product: any } => !!i.product);
                     usePcBuilderStore.getState().applyTemplate(templateItems);
                 }
-            }).catch(console.error).finally(() => {
-                // Remove query params from URL without reloading
-                window.history.replaceState({}, document.title, window.location.pathname);
-            });
+            }).catch(console.error);
         }
-    }, [components.length, isParsingUrl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
