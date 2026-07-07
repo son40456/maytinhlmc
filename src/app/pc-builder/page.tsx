@@ -40,6 +40,10 @@ function BuildPcPageInner() {
         { name: "PC Đồ Họa", priceHint: "Render", icon: "🎨", description: "Photoshop, Premiere, 3D", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") }
     ];
 
+    const activeCategoryRef = useRef<{ id: string; name: string; slug: string } | null>(null);
+    const summaryRef = useRef<HTMLDivElement>(null);
+    const exportRef = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
         getPcBuilderConfig().then((config: any) => {
             if (config) {
