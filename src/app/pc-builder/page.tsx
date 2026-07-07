@@ -72,15 +72,15 @@ function BuildPcPageInner() {
 
         if (idsToFetch.length > 0) {
             const ids = idsToFetch.map(i => i.dbId).join(',');
-            
+
             // Artificial delay to show off the loader animation
             const delayPromise = new Promise(resolve => setTimeout(resolve, 1500));
-            
+
             Promise.all([
                 fetch(`/api/products-by-ids?ids=${ids}`).then(r => r.json()),
                 delayPromise
             ])
-                .then(([ { products } ]) => {
+                .then(([{ products }]) => {
                     if (products && products.length > 0) {
                         const templateItems = idsToFetch.map(item => {
                             const product = products.find((p: any) => p.databaseId === item.dbId);
@@ -444,9 +444,9 @@ function BuildPcPageInner() {
                                 {PREBUILT_TEMPLATES.map((tpl, idx) => {
                                     const isLoading = applyingTemplateName === tpl.name;
                                     return (
-                                        <button 
-                                            key={idx} 
-                                            onClick={tpl.onClick} 
+                                        <button
+                                            key={idx}
+                                            onClick={tpl.onClick}
                                             disabled={applyingTemplateName !== null}
                                             className={`relative bg-white border ${isLoading ? 'border-blue-500 shadow-md scale-[1.02]' : 'border-gray-100 hover:border-blue-300 hover:shadow-md'} transition-all duration-300 rounded-xl p-3 md:p-4 text-left overflow-hidden group disabled:opacity-80 disabled:cursor-not-allowed`}
                                         >
@@ -454,7 +454,7 @@ function BuildPcPageInner() {
                                                 <div className="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-[1px] z-10 animate-in fade-in duration-300">
                                                     <div className="flex flex-col items-center gap-1.5">
                                                         <div className="uiverse-spinner scale-75"></div>
-                                                        <span className="text-[10px] md:text-xs font-semibold text-blue-600 animate-pulse mt-1">Đang nạp...</span>
+                                                        <span className="text-[10px] md:text-xs font-semibold text-blue-600 animate-pulse mt-1">Đang tìm linh kiện...</span>
                                                     </div>
                                                 </div>
                                             )}
@@ -482,8 +482,8 @@ function BuildPcPageInner() {
                                 {/* Components */}
                                 <div className="divide-y divide-gray-100">
                                     {components.map((comp, index) => (
-                                        <div 
-                                            key={comp.id} 
+                                        <div
+                                            key={comp.id}
                                             className="p-3 md:p-6 hover:bg-gray-50/50 transition-colors animate-in fade-in slide-in-from-bottom-4 duration-500"
                                             style={{ animationFillMode: 'both', animationDelay: `${index * 50}ms` }}
                                         >
