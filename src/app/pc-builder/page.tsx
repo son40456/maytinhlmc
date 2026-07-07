@@ -31,19 +31,14 @@ function BuildPcPageInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    const [configLoaded, setConfigLoaded] = useState(false);
+    const [applyingTemplateName, setApplyingTemplateName] = useState<string | null>(null);
+
     const PREBUILT_TEMPLATES = [
-        { name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", onClick: () => { router.push('/pc-builder?mainboard=34558&cpu=31318&ram=34655&ssd=34524&psu=34387&case=34146'); } },
+        { name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", onClick: () => { setApplyingTemplateName("PC Văn Phòng"); router.push('/pc-builder?mainboard=34558&cpu=31318&ram=34655&ssd=34524&psu=34387&case=34146'); } },
         { name: "PC Gaming", priceHint: "Quốc dân", icon: "🎮", description: "Chiến mượt LOL, FO4, CSGO", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") },
         { name: "PC Đồ Họa", priceHint: "Render", icon: "🎨", description: "Photoshop, Premiere, 3D", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") }
     ];
-
-    const activeCategoryRef = useRef<{ id: string; name: string; slug: string } | null>(null);
-
-    const summaryRef = useRef<HTMLDivElement>(null);
-    const exportRef = useRef<HTMLDivElement>(null);
-
-    const [configLoaded, setConfigLoaded] = useState(false);
-    const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
 
     useEffect(() => {
         getPcBuilderConfig().then((config: any) => {
@@ -72,7 +67,6 @@ function BuildPcPageInner() {
         });
 
         if (idsToFetch.length > 0) {
-            setIsApplyingTemplate(true);
             router.replace('/pc-builder', { scroll: false });
             const ids = idsToFetch.map(i => i.dbId).join(',');
             fetch(`/api/products-by-ids?ids=${ids}`)
@@ -87,7 +81,9 @@ function BuildPcPageInner() {
                     }
                 })
                 .catch(console.error)
-                .finally(() => setIsApplyingTemplate(false));
+                .finally(() => setApplyingTemplateName(null));
+        } else {
+            setApplyingTemplateName(null);
         }
     }, [searchParams, configLoaded, router]);
 
@@ -421,23 +417,6 @@ function BuildPcPageInner() {
     // Component layout
     return (
         <>
-            {isApplyingTemplate && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-all duration-300">
-                    <div className="flex flex-col items-center bg-white p-8 rounded-3xl shadow-2xl scale-100 animate-in zoom-in-95 duration-300">
-                        <div className="relative w-20 h-20 mb-6">
-                            <div className="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
-                            <div className="absolute inset-0 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                            <div className="absolute inset-0 flex items-center justify-center text-blue-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <h3 className="text-xl font-black text-gray-900 mb-2">Đang tải cấu hình</h3>
-                        <p className="text-sm text-gray-500 font-medium">Vui lòng chờ trong giây lát...</p>
-                    </div>
-                </div>
-            )}
             <div className="py-4 lg:py-12 print:hidden">
                 <div className="container mx-auto px-3 sm:px-6 lg:px-8">
                     <div className="mb-4 md:mb-8">
@@ -450,16 +429,34 @@ function BuildPcPageInner() {
                         <div className="lg:col-span-8 space-y-3 md:space-y-4">
                             {/* Pre-built Templates */}
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-2">
-                                {PREBUILT_TEMPLATES.map((tpl, idx) => (
-                                    <button key={idx} onClick={tpl.onClick} className="bg-white border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all rounded-xl p-3 md:p-4 text-left group">
-                                        <div className="flex items-start justify-between mb-2">
-                                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-lg md:text-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">{tpl.icon}</div>
-                                            <span className="bg-gray-100 text-gray-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded-full">{tpl.priceHint}</span>
-                                        </div>
-                                        <h3 className="font-bold text-gray-900 text-xs md:text-sm mb-0.5 md:mb-1">{tpl.name}</h3>
-                                        <p className="text-[10px] md:text-xs text-gray-500">{tpl.description}</p>
-                                    </button>
-                                ))}
+                                {PREBUILT_TEMPLATES.map((tpl, idx) => {
+                                    const isLoading = applyingTemplateName === tpl.name;
+                                    return (
+                                        <button 
+                                            key={idx} 
+                                            onClick={tpl.onClick} 
+                                            disabled={applyingTemplateName !== null}
+                                            className={`relative bg-white border ${isLoading ? 'border-blue-500 shadow-md scale-[1.02]' : 'border-gray-100 hover:border-blue-300 hover:shadow-md'} transition-all duration-300 rounded-xl p-3 md:p-4 text-left overflow-hidden group disabled:opacity-80 disabled:cursor-not-allowed`}
+                                        >
+                                            {isLoading && (
+                                                <div className="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-[1px] z-10 animate-in fade-in duration-300">
+                                                    <div className="flex flex-col items-center gap-1.5">
+                                                        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                                        <span className="text-[10px] md:text-xs font-semibold text-blue-600 animate-pulse">Đang nạp...</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div className={`transition-opacity duration-300 ${isLoading ? 'opacity-30' : 'opacity-100'}`}>
+                                                <div className="flex items-start justify-between mb-2">
+                                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-lg md:text-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">{tpl.icon}</div>
+                                                    <span className="bg-gray-100 text-gray-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded-full">{tpl.priceHint}</span>
+                                                </div>
+                                                <h3 className="font-bold text-gray-900 text-xs md:text-sm mb-0.5 md:mb-1">{tpl.name}</h3>
+                                                <p className="text-[10px] md:text-xs text-gray-500">{tpl.description}</p>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
                             </div>
 
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
