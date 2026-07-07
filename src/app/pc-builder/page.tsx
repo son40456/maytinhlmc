@@ -15,7 +15,7 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { getPcBuilderConfig } from '@/app/actions/configActions';
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
-import { GET_PRODUCTS_BY_IDS } from "@/lib/graphql/queries";
+import { fetchProductsByIdsAction } from "@/app/actions/productActions";
 
 export default function BuildPcPage() {
     const { components, totalPrice, removeProduct, clearAll, initComponents, compatibilityHints } = usePcBuilderStore();
@@ -68,9 +68,8 @@ export default function BuildPcPage() {
         if (idsToFetch.length > 0) {
             setIsParsingUrl(true);
             const ids = idsToFetch.map(i => i.dbId);
-            wpgraphqlFetch<any>(GET_PRODUCTS_BY_IDS, { in: ids }).then(res => {
-                if (res.data?.products?.nodes) {
-                    const products = res.data.products.nodes;
+            fetchProductsByIdsAction(ids).then(products => {
+                if (products && products.length > 0) {
                     const templateItems = idsToFetch.map(item => {
                         const product = products.find((p: any) => p.databaseId === item.dbId);
                         return { categoryId: item.categoryId, product };

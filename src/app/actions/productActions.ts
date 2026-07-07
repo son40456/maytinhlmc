@@ -68,3 +68,13 @@ export async function fetchProductsForCompare(slugs: string[]) {
         return [];
     }
 }
+
+export async function fetchProductsByIdsAction(ids: number[]) {
+    try {
+        const { data } = await wpgraphqlFetch<any>(GET_PRODUCTS_BY_IDS, { in: ids });
+        return data?.products?.nodes || [];
+    } catch (error) {
+        console.error("fetchProductsByIdsAction Exception:", error);
+        return [];
+    }
+}
