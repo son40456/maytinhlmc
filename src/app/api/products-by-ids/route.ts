@@ -2,32 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const GRAPHQL_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL!;
 
-const GET_PRODUCTS_BY_IDS = `
-  query GetProductsByIds($include: [Int]!) {
-    products(first: 100, where: { include: $include }) {
-      nodes {
-        id
-        databaseId
-        name
-        slug
-        ... on SimpleProduct {
-          price
-          sku
-          regularPrice
-          salePrice
-          image { sourceUrl altText }
-        }
-        ... on VariableProduct {
-          price
-          sku
-          regularPrice
-          salePrice
-          image { sourceUrl altText }
-        }
-      }
-    }
-  }
-`;
+import { GET_PRODUCTS_BY_IDS } from '@/lib/graphql/queries';
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -49,7 +24,7 @@ export async function GET(request: NextRequest) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 query: GET_PRODUCTS_BY_IDS,
-                variables: { include: ids },
+                variables: { in: ids },
             }),
             next: { revalidate: 60 },
         });
