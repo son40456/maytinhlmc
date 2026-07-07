@@ -23,7 +23,7 @@ export function HomeSection({ title, categorySlug, subFilters, products }: HomeS
     }
 
     return (
-        <section className="container mx-auto px-3 sm:px-6 lg:px-8 mb-6 md:mb-12">
+        <section className="container mx-auto px-4 mb-6 md:mb-12">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-3 md:mb-6">
                 <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-1 md:pb-2 scrollbar-hide">
                     <div className="flex items-center bg-blue-600 rounded-md overflow-hidden flex-shrink-0 shadow-sm h-8 md:h-11">

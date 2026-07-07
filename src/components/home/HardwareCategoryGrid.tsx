@@ -14,7 +14,7 @@ export function HardwareCategoryGrid({ config }: Props) {
 
     return (
         <div className="font-body text-zinc-700 w-full mb-6 md:mb-12">
-            <div className="max-w-[1600px] mx-auto py-4 md:py-8 px-3 sm:px-6 lg:px-8">
+            <div className="container mx-auto py-4 md:py-8 px-4">
                 <div className="mb-6 md:mb-12 text-left border-l-4 md:border-l-8 border-blue-600 pl-4 md:pl-8">
                     <h2 className="text-xl md:text-5xl font-black font-display text-zinc-900 uppercase tracking-tight">
                         DANH MỤC <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">NỔI BẬT</span>

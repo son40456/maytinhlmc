@@ -94,7 +94,7 @@ export function BannerSection({ config }: { config: BannerConfig }) {
 
             {/* 4 Small Banners below - Ẩn trên mobile */}
             {config?.smallBanners?.length > 0 && config.showSmallBanners !== false && (
-                <section className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-8 md:-mt-6 lg:-mt-10 relative z-30 mb-8 hidden md:block">
+                <section className="container mx-auto px-4 md:-mt-6 lg:-mt-10 relative z-30 mb-8 hidden md:block">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                         {config.smallBanners.map((banner, idx) => (
                             <Link href={banner.link || "#"} key={banner.id || idx} className="block group">
