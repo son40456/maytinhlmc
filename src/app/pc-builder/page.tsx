@@ -35,9 +35,27 @@ function BuildPcPageInner() {
     const [applyingTemplateName, setApplyingTemplateName] = useState<string | null>(null);
 
     const PREBUILT_TEMPLATES = [
-        { name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", onClick: () => { setApplyingTemplateName("PC Văn Phòng"); router.push('/pc-builder?mainboard=34558&cpu=31318&ram=34655&ssd=34524&psu=34387&case=34146'); } },
-        { name: "PC Gaming", priceHint: "Quốc dân", icon: "🎮", description: "Chiến mượt LOL, FO4, CSGO", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") },
-        { name: "PC Đồ Họa", priceHint: "Render", icon: "🎨", description: "Photoshop, Premiere, 3D", onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") }
+        { 
+            name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", 
+            theme: "from-blue-50 to-cyan-50 border-blue-100 hover:border-blue-300 hover:shadow-blue-100", 
+            iconBg: "bg-white text-blue-500 group-hover:bg-blue-500",
+            badge: "bg-white text-blue-700 border border-blue-100",
+            onClick: () => { setApplyingTemplateName("PC Văn Phòng"); router.push('/pc-builder?mainboard=34558&cpu=31318&ram=34655&ssd=34524&psu=34387&case=34146'); } 
+        },
+        { 
+            name: "PC Gaming", priceHint: "Quốc dân", icon: "🎮", description: "Chiến mượt LOL, FO4, CSGO", 
+            theme: "from-rose-50 to-orange-50 border-rose-100 hover:border-rose-300 hover:shadow-rose-100",
+            iconBg: "bg-white text-rose-500 group-hover:bg-rose-500",
+            badge: "bg-white text-rose-700 border border-rose-100",
+            onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") 
+        },
+        { 
+            name: "PC Đồ Họa", priceHint: "Render", icon: "🎨", description: "Photoshop, Premiere, 3D", 
+            theme: "from-purple-50 to-fuchsia-50 border-purple-100 hover:border-purple-300 hover:shadow-purple-100",
+            iconBg: "bg-white text-purple-500 group-hover:bg-purple-500",
+            badge: "bg-white text-purple-700 border border-purple-100",
+            onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") 
+        }
     ];
 
     const activeCategoryRef = useRef<{ id: string; name: string; slug: string } | null>(null);
@@ -448,23 +466,29 @@ function BuildPcPageInner() {
                                             key={idx}
                                             onClick={tpl.onClick}
                                             disabled={applyingTemplateName !== null}
-                                            className={`relative bg-white border ${isLoading ? 'border-blue-500 shadow-md scale-[1.02]' : 'border-gray-100 hover:border-blue-300 hover:shadow-md'} transition-all duration-300 rounded-xl p-3 md:p-4 text-left overflow-hidden group disabled:opacity-80 disabled:cursor-not-allowed`}
+                                            className={`relative bg-gradient-to-br ${tpl.theme} border ${isLoading ? 'shadow-lg scale-[1.02] ring-2 ring-blue-500/50' : 'hover:shadow-lg hover:-translate-y-1'} transition-all duration-300 rounded-2xl p-4 md:p-5 text-left overflow-hidden group disabled:opacity-80 disabled:cursor-not-allowed`}
                                         >
+                                            {/* Decorative element */}
+                                            <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/40 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+                                            
                                             {isLoading && (
-                                                <div className="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-[1px] z-10 animate-in fade-in duration-300">
+                                                <div className="absolute inset-0 bg-white/60 flex items-center justify-center backdrop-blur-[2px] z-20 animate-in fade-in duration-300">
                                                     <div className="flex flex-col items-center gap-1.5">
-                                                        <div className="uiverse-spinner scale-75"></div>
-                                                        <span className="text-[10px] md:text-xs font-semibold text-blue-600 animate-pulse mt-1">Đang tìm linh kiện...</span>
+                                                        <div className="uiverse-spinner scale-[0.6]"></div>
+                                                        <span className="text-[10px] md:text-xs font-black text-blue-700 animate-pulse mt-1 drop-shadow-sm">Đang nạp...</span>
                                                     </div>
                                                 </div>
                                             )}
-                                            <div className={`transition-opacity duration-300 ${isLoading ? 'opacity-30' : 'opacity-100'}`}>
-                                                <div className="flex items-start justify-between mb-2">
-                                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-lg md:text-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">{tpl.icon}</div>
-                                                    <span className="bg-gray-100 text-gray-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded-full">{tpl.priceHint}</span>
+                                            
+                                            <div className={`relative z-10 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
+                                                <div className="flex items-start justify-between mb-3">
+                                                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center text-xl md:text-2xl shadow-sm group-hover:text-white transition-colors duration-300 ${tpl.iconBg}`}>
+                                                        {tpl.icon}
+                                                    </div>
+                                                    <span className={`text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-full shadow-sm ${tpl.badge}`}>{tpl.priceHint}</span>
                                                 </div>
-                                                <h3 className="font-bold text-gray-900 text-xs md:text-sm mb-0.5 md:mb-1">{tpl.name}</h3>
-                                                <p className="text-[10px] md:text-xs text-gray-500">{tpl.description}</p>
+                                                <h3 className="font-extrabold text-gray-900 text-sm md:text-base mb-1 group-hover:text-gray-800 transition-colors">{tpl.name}</h3>
+                                                <p className="text-xs text-gray-600 font-medium line-clamp-1">{tpl.description}</p>
                                             </div>
                                         </button>
                                     );
