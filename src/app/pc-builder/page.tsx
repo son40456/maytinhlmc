@@ -43,6 +43,7 @@ function BuildPcPageInner() {
     const exportRef = useRef<HTMLDivElement>(null);
 
     const [configLoaded, setConfigLoaded] = useState(false);
+    const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
 
     useEffect(() => {
         getPcBuilderConfig().then((config: any) => {
@@ -71,6 +72,7 @@ function BuildPcPageInner() {
         });
 
         if (idsToFetch.length > 0) {
+            setIsApplyingTemplate(true);
             router.replace('/pc-builder', { scroll: false });
             const ids = idsToFetch.map(i => i.dbId).join(',');
             fetch(`/api/products-by-ids?ids=${ids}`)
@@ -84,7 +86,8 @@ function BuildPcPageInner() {
                         usePcBuilderStore.getState().applyTemplate(templateItems);
                     }
                 })
-                .catch(console.error);
+                .catch(console.error)
+                .finally(() => setIsApplyingTemplate(false));
         }
     }, [searchParams, configLoaded, router]);
 
@@ -418,6 +421,23 @@ function BuildPcPageInner() {
     // Component layout
     return (
         <>
+            {isApplyingTemplate && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-all duration-300">
+                    <div className="flex flex-col items-center bg-white p-8 rounded-3xl shadow-2xl scale-100 animate-in zoom-in-95 duration-300">
+                        <div className="relative w-20 h-20 mb-6">
+                            <div className="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
+                            <div className="absolute inset-0 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                            <div className="absolute inset-0 flex items-center justify-center text-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 className="text-xl font-black text-gray-900 mb-2">Đang tải cấu hình</h3>
+                        <p className="text-sm text-gray-500 font-medium">Vui lòng chờ trong giây lát...</p>
+                    </div>
+                </div>
+            )}
             <div className="py-4 lg:py-12 print:hidden">
                 <div className="container mx-auto px-3 sm:px-6 lg:px-8">
                     <div className="mb-4 md:mb-8">
@@ -452,8 +472,12 @@ function BuildPcPageInner() {
 
                                 {/* Components */}
                                 <div className="divide-y divide-gray-100">
-                                    {components.map((comp) => (
-                                        <div key={comp.id} className="p-3 md:p-6 hover:bg-gray-50/50 transition-colors">
+                                    {components.map((comp, index) => (
+                                        <div 
+                                            key={comp.id} 
+                                            className="p-3 md:p-6 hover:bg-gray-50/50 transition-colors animate-in fade-in slide-in-from-bottom-4 duration-500"
+                                            style={{ animationFillMode: 'both', animationDelay: `${index * 50}ms` }}
+                                        >
                                             <div className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
                                                 {/* Category Name */}
                                                 <div className="md:col-span-3">
