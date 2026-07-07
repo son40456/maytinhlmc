@@ -73,9 +73,15 @@ function BuildPcPageInner() {
         if (idsToFetch.length > 0) {
             router.replace('/pc-builder', { scroll: false });
             const ids = idsToFetch.map(i => i.dbId).join(',');
-            fetch(`/api/products-by-ids?ids=${ids}`)
-                .then(r => r.json())
-                .then(({ products }) => {
+            
+            // Artificial delay to show off the loader animation
+            const delayPromise = new Promise(resolve => setTimeout(resolve, 1500));
+            
+            Promise.all([
+                fetch(`/api/products-by-ids?ids=${ids}`).then(r => r.json()),
+                delayPromise
+            ])
+                .then(([ { products } ]) => {
                     if (products && products.length > 0) {
                         const templateItems = idsToFetch.map(item => {
                             const product = products.find((p: any) => p.databaseId === item.dbId);
