@@ -1,0 +1,394 @@
+<!DOCTYPE html><html class="light" lang="vi" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PC Builder - Mainboard Picker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#265fa5",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f3f3fa",
+                    "on-surface": "#191c20",
+                    "inverse-primary": "#a8c8ff",
+                    "on-tertiary-fixed-variant": "#773200",
+                    "surface": "#f9f9ff",
+                    "primary": "#003469",
+                    "primary-container": "#014b91",
+                    "primary-fixed-dim": "#a8c8ff",
+                    "secondary-fixed": "#dce2f3",
+                    "surface-dim": "#d9d9e0",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb68f",
+                    "on-tertiary-fixed": "#331200",
+                    "error-container": "#ffdad6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed": "#151c27",
+                    "secondary-fixed-dim": "#c0c7d6",
+                    "on-primary-fixed-variant": "#004689",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#c2c6d2",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f9f9ff",
+                    "on-surface-variant": "#424751",
+                    "inverse-surface": "#2e3035",
+                    "error": "#ba1a1a",
+                    "surface-variant": "#e1e2e9",
+                    "on-secondary-container": "#5e6572",
+                    "surface-container-high": "#e7e8ee",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e1e2e9",
+                    "background": "#f9f9ff",
+                    "on-tertiary-container": "#ffa675",
+                    "secondary-container": "#dce2f3",
+                    "tertiary-container": "#7e3600",
+                    "primary-fixed": "#d5e3ff",
+                    "on-primary-fixed": "#001b3c",
+                    "on-primary-container": "#95bdff",
+                    "surface-container": "#ededf4",
+                    "on-secondary-fixed-variant": "#404754",
+                    "secondary": "#585f6c",
+                    "tertiary-fixed": "#ffdbca",
+                    "outline": "#727782",
+                    "tertiary": "#5b2500",
+                    "on-background": "#191c20",
+                    "inverse-on-surface": "#f0f0f7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "lg": "24px",
+                    "gutter": "24px",
+                    "2xl": "48px",
+                    "container-max": "1280px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "base": "4px",
+                    "3xl": "64px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "display": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "price-display": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "price-display": ["20px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface overflow-hidden">
+<!-- Modal Overlay -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md p-lg">
+<!-- Main Modal Container -->
+<div class="relative w-full max-w-[1400px] h-[921px] bg-surface-container-lowest rounded-[20px] shadow-[0px_20px_50px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300 border border-outline-variant/30 shadow-2xl">
+<!-- Sticky Header -->
+<header class="h-[90px] w-full bg-primary-container text-white flex items-center justify-between px-lg z-10">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[32px]">developer_board</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md leading-none">MAINBOARD</h1>
+<p class="font-label-sm text-label-sm opacity-80 mt-1">Lựa chọn bo mạch chủ phù hợp</p>
+</div>
+</div>
+<div class="flex-1 max-w-2xl px-xl">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/60 group-focus-within:text-white transition-colors">search</span>
+<input class="w-full bg-white/10 border-none rounded-full py-3 pl-12 pr-6 text-white placeholder-white/60 focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all outline-none" placeholder="Tìm tên sản phẩm..." type="text">
+</div>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[28px]">cancel</span>
+</button>
+</header>
+<!-- 2-Column Body -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left Sidebar Filters -->
+<aside class="w-[300px] bg-surface-container-lowest border-r border-outline-variant flex flex-col overflow-y-auto border-outline-variant/50">
+<div class="p-lg space-y-xl">
+<!-- Filter Group -->
+<div>
+<h3 class="font-label-md text-label-md mb-md text-on-surface">Thương hiệu</h3>
+<div class="flex flex-wrap gap-sm">
+<button class="px-md py-1.5 rounded-lg bg-primary text-white text-sm font-medium border border-primary">Tất cả</button>
+<button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">ASUS</button>
+<button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">MSI</button>
+<button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">Gigabyte</button>
+<button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">ASRock</button>
+</div>
+</div>
+<div>
+<h3 class="font-label-md text-label-md mb-md text-on-surface">Socket</h3>
+<div class="flex flex-wrap gap-sm"><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">LGA 1700</button><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">AM5</button><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">AM4</button></div>
+</div>
+<div>
+<h3 class="font-label-md text-label-md mb-md text-on-surface">Chipset</h3>
+<div class="flex flex-wrap gap-sm"><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">Z790</button><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">B760</button><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">X670</button><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">B650</button></div>
+</div>
+<div>
+<h3 class="font-label-md text-label-md mb-md text-on-surface">Chuẩn RAM</h3>
+<div class="flex flex-wrap gap-sm"><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">DDR5</button><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">DDR4</button></div>
+</div>
+<div>
+<h3 class="font-label-md text-label-md mb-md text-on-surface">Form Factor</h3>
+<div class="flex flex-wrap gap-sm"><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">ATX</button><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">Micro-ATX</button><button class="px-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-sm font-medium border border-outline-variant hover:bg-surface-tint/5 transition-colors border-outline-variant/40">Mini-ITX</button></div>
+</div>
+</div>
+
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 bg-surface-container-low flex flex-col overflow-hidden">
+<!-- Top Bar -->
+<div class="bg-surface-container-lowest border-b border-outline-variant flex flex-col border-outline-variant/50">
+  <!-- Row 1: Count and Filters -->
+  <div class="h-14 px-lg flex items-center justify-between border-b border-outline-variant/50"><div class="flex items-center gap-2">
+      <span class="text-xs text-on-surface-variant uppercase tracking-wider font-bold">Đang lọc:</span>
+      <div class="flex flex-wrap gap-2">
+        <span class="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase">
+          DDR4
+          <button class="hover:text-primary-container transition-colors">
+            <span class="material-symbols-outlined text-[14px]">close</span>
+          </button>
+        </span>
+        <span class="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase">
+          LGA 1700
+          <button class="hover:text-primary-container transition-colors">
+            <span class="material-symbols-outlined text-[14px]">close</span>
+          </button>
+        </span>
+      </div>
+      <button class="text-xs font-bold text-primary hover:underline ml-2">Xóa tất cả</button>
+    </div>
+    <div class="flex items-center gap-xl">
+      <span class="font-label-md text-label-md text-on-surface-variant"><strong class="text-on-surface">301</strong> sản phẩm</span>
+    </div></div>
+  <!-- Row 2: Sorting and View Toggles -->
+  <div class="h-14 px-lg flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="text-xs text-on-surface-variant uppercase tracking-wider font-bold">Sắp xếp:</span>
+      <div class="flex bg-surface-container-low p-1 rounded-lg">
+        <button class="px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-primary">Mới nhất</button>
+        <button class="px-4 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors">Bán chạy</button>
+        <button class="px-4 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors">Giá thấp</button>
+        <button class="px-4 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors">Giá cao</button>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="p-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-primary-fixed-dim transition-colors">
+        <span class="material-symbols-outlined">grid_view</span>
+      </button>
+      <button class="p-2 rounded-lg text-on-surface-variant hover:bg-primary-fixed-dim transition-colors">
+        <span class="material-symbols-outlined">view_list</span>
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Product Grid -->
+<div class="flex-1 overflow-y-auto p-lg grid gap-lg">
+<!-- Product Card 1 -->
+<div class="group bg-white rounded-xl border border-outline-variant p-md flex flex-col hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-200 border-outline-variant/30 shadow-sm hover:border-primary-container"><div class="flex gap-lg relative items-center w-full">
+  <div class="w-40 h-40 bg-surface-container-low rounded-lg overflow-hidden flex-shrink-0">
+    <img class="w-full h-full object-contain p-4 mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPVNLqmkEKxOndu1wXXILCwLP9V0yJVuG7jnbqAKrVVoso0iGz9Avth8diXaGdjnWMuETnD2zPutrhRsqKFCN3F-05MkLqI0bON04dgN0g1qgJUeJ-zaWFFzrVMHskb3DCluZIlSuQI9kBsx99r6fV1lgQ-ifhx9hmMVsO-AUPQHqcyQpgWLgAerjLAwAYVgADrE7y-j4Y0Mim4crOmekc-aMvGkwlL6pYCb7eEkwkvLjJAZnuQGPr_LRdxtGj1C0lnKysSSJtFqMI">
+  </div>
+  <div class="flex-1 flex flex-col gap-2">
+    <h3 class="font-bold text-headline-sm text-on-surface group-hover:text-primary transition-colors">ASUS ROG STRIX Z790-E GAMING WIFI II</h3>
+    <div class="flex flex-wrap gap-xs">
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">LGA 1700</span>
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">Z790</span>
+      <span class="px-2 py-0.5 rounded bg-primary/10 text-[10px] font-bold text-primary uppercase">DDR5</span>
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">ATX</span>
+    </div>
+    <div class="flex items-baseline gap-2 mt-2">
+      <span class="text-primary font-price-display text-price-display">12.990.000₫</span>
+      <span class="text-xs text-on-surface-variant line-through">14.500.000₫</span>
+    </div>
+  </div>
+  <div class="flex flex-col items-end gap-md min-w-[140px]">
+    <span class="bg-green-600 text-white px-3 py-1 rounded-md font-bold text-[10px] uppercase">Còn hàng</span>
+    <button class="px-8 py-2.5 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary-container transition-all active:scale-95 shadow-md">Chọn</button>
+  </div>
+  <div class="absolute top-0 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-br-lg rounded-tl-lg">-10%</div>
+</div></div>
+<!-- Product Card 2 -->
+<div class="group bg-white rounded-xl border border-outline-variant p-md flex flex-col hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-200 border-outline-variant/30 shadow-sm hover:border-primary-container"><div class="flex gap-lg relative items-center w-full">
+  <div class="w-40 h-40 bg-surface-container-low rounded-lg overflow-hidden flex-shrink-0">
+    <img class="w-full h-full object-contain p-4 mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBE22ZvneWRoZJ80fyzGu_fbNeBUTg6PNGdSdwN7bVWwtg5e6Sc7N4k9Z6y__Bk-M6Niv1gTDtzrGIvdnE3dVeJAy3PPCmTYdYXCaasTL2cZ6Q9nCdXK_8fO38Hmt98aziFayVAaBl7mca6fzwJ7H5pDOw_zTV5iANIXAE05gDrER5zZE2Uuhm5skzqUwZJQ-x16rO71iV6joWjk9tq3AKB_1GVRa1xlHmHU6D2RKawnkSSeNBGd_nPFQtz-9G5M2MbQLaaXtx9wqJs">
+  </div>
+  <div class="flex-1 flex flex-col gap-2">
+    <h3 class="font-bold text-headline-sm text-on-surface group-hover:text-primary transition-colors">MSI MAG B760 TOMAHAWK WIFI DDR4</h3>
+    <div class="flex flex-wrap gap-xs">
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">LGA 1700</span>
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">B760</span>
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">DDR4</span>
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">ATX</span>
+    </div>
+    <div class="flex items-baseline gap-2 mt-2">
+      <span class="text-primary font-price-display text-price-display">4.890.000₫</span>
+      <span class="text-xs text-on-surface-variant line-through">5.200.000₫</span>
+    </div>
+  </div>
+  <div class="flex flex-col items-end gap-md min-w-[140px]">
+    <span class="bg-green-600 text-white px-3 py-1 rounded-md font-bold text-[10px] uppercase">Còn hàng</span>
+    <button class="px-8 py-2.5 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary-container transition-all active:scale-95 shadow-md">Chọn</button>
+  </div>
+</div></div>
+<!-- Product Card 3 -->
+<div class="group bg-white rounded-xl border border-outline-variant p-md flex flex-col hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-200 border-outline-variant/30 shadow-sm hover:border-primary-container"><div class="flex gap-lg relative items-center w-full">
+  <div class="w-40 h-40 bg-surface-container-low rounded-lg overflow-hidden flex-shrink-0">
+    <img class="w-full h-full object-contain p-4 mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpkP2ko8prPrd4bgbXeFritr-I5VpbbK2-8wqKxkRbsoaT6ZORB_2CZEls2LcWSiPyDRqz9q9iuPEhoYcqOd2hwJdy5nLfPNCqCY9YlyNCG7_KB-d6oAck41gGknFyNe3ET2ZCJTv5ATXSEwjivhqJhOAFlMi9S5tK4AzkSilmNnZg5NSmUSzthJm8UfkVrdPiZArJtzVxa6ZQRn7R27P3PiiwutlkPbGSP6xyZ3QoHNiVKRmX3g9Ay3u6CGY1gnSx8QJj4NKpJTd4">
+  </div>
+  <div class="flex-1 flex flex-col gap-2">
+    <h3 class="font-bold text-headline-sm text-on-surface group-hover:text-primary transition-colors">GIGABYTE X670E AORUS MASTER</h3>
+    <div class="flex flex-wrap gap-xs">
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">AM5</span>
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">X670E</span>
+      <span class="px-2 py-0.5 rounded bg-primary/10 text-[10px] font-bold text-primary uppercase">DDR5</span>
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">E-ATX</span>
+    </div>
+    <div class="flex items-baseline gap-2 mt-2">
+      <span class="text-primary font-price-display text-price-display">13.250.000₫</span>
+      <span class="text-xs text-on-surface-variant line-through">14.100.000₫</span>
+    </div>
+  </div>
+  <div class="flex flex-col items-end gap-md min-w-[140px]">
+    <span class="bg-green-600 text-white px-3 py-1 rounded-md font-bold text-[10px] uppercase">Còn hàng</span>
+    <button class="px-8 py-2.5 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary-container transition-all active:scale-95 shadow-md">Chọn</button>
+  </div>
+</div></div>
+<!-- Product Card 4 -->
+<div class="group bg-white rounded-xl border border-outline-variant p-md flex flex-col hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-200 border-outline-variant/30 shadow-sm hover:border-primary-container"><div class="flex gap-lg relative items-center w-full">
+  <div class="w-40 h-40 bg-surface-container-low rounded-lg overflow-hidden flex-shrink-0">
+    <img class="w-full h-full object-contain p-4 mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuf4Dtya3_eoQn7BJkdcNm8Qc1B1zpOU742HMpd29d9hdTpsZq3thrI_FRayW3hu0Sa9_0F0BVzYRdwAfQhHd8ShhLRfYA7WXDqZZSap0LlZM_tqeazIN35jSJjKslCDYVSE7horYK_6uNPIPt8H6x9s5mGO8uQZjcP4DwELSmpzUEPitSRA8g5J-_uGJ-E8RE46yYejegvuB2F5wwJ0PohaeSb8I7EvwVKC2uMLEkC9egTVE5418HaT6ad0gzAooVLVErfp6HX8Yj">
+  </div>
+  <div class="flex-1 flex flex-col gap-2">
+    <h3 class="font-bold text-headline-sm text-on-surface group-hover:text-primary transition-colors">ASRock B650M Pro RS WiFi</h3>
+    <div class="flex flex-wrap gap-xs">
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">AM5</span>
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">B650</span>
+      <span class="px-2 py-0.5 rounded bg-primary/10 text-[10px] font-bold text-primary uppercase">DDR5</span>
+      <span class="px-2 py-0.5 rounded bg-surface-container-high text-[10px] font-bold text-on-surface-variant uppercase">M-ATX</span>
+    </div>
+    <div class="flex items-baseline gap-2 mt-2">
+      <span class="text-primary font-price-display text-price-display">3.990.000₫</span>
+      <span class="text-xs text-on-surface-variant line-through">4.500.000₫</span>
+    </div>
+  </div>
+  <div class="flex flex-col items-end gap-md min-w-[140px]">
+    <span class="bg-green-600 text-white px-3 py-1 rounded-md font-bold text-[10px] uppercase">Còn hàng</span>
+    <button class="px-8 py-2.5 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary-container transition-all active:scale-95 shadow-md">Chọn</button>
+  </div>
+</div></div>
+</div>
+<!-- Pagination Footer -->
+<footer class="h-20 bg-surface-container-lowest border-t border-outline-variant px-lg flex items-center justify-between z-10">
+<div class="flex items-center gap-md">
+<span class="font-label-md text-label-md text-on-surface-variant">Hiển thị</span>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low border border-outline-variant px-4 py-1.5 pr-8 rounded-lg text-sm font-semibold text-on-surface outline-none focus:ring-2 focus:ring-primary/20">
+<option>24 / trang</option>
+<option>48 / trang</option>
+<option>96 / trang</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-sm">expand_more</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-low text-on-surface-variant disabled:opacity-30 border-outline-variant/50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold shadow-sm">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-transparent hover:bg-surface-container-low text-on-surface-variant transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-transparent hover:bg-surface-container-low text-on-surface-variant transition-colors">3</button>
+<span class="px-2 text-on-surface-variant">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-transparent hover:bg-surface-container-low text-on-surface-variant transition-colors">12</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-low text-on-surface-variant transition-colors border-outline-variant/50">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="w-40 text-right">
+<span class="text-sm font-medium text-on-surface-variant">Trang 1 / 13</span>
+</div>
+</footer>
+</main>
+</div>
+</div>
+</div>
+<!-- Floating UI Micro-interactions Script -->
+<script>
+        // Simple interactivity for demonstration
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-[0.98]');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-[0.98]');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('scale-[0.98]');
+            });
+        });
+
+        // Toggle logic for filter buttons
+        document.querySelectorAll('aside button').forEach(btn => {
+            if (btn.innerText !== 'Xóa bộ lọc') {
+                btn.addEventListener('click', () => {
+                    const isSelected = btn.classList.contains('bg-primary');
+                    if (isSelected && btn.innerText !== 'Tất cả') {
+                        btn.classList.remove('bg-primary', 'text-white', 'border-primary');
+                        btn.classList.add('bg-surface-container-low', 'text-on-surface-variant', 'border-outline-variant');
+                    } else {
+                        // For demo, just toggle the individual button
+                        btn.classList.add('bg-primary', 'text-white', 'border-primary');
+                        btn.classList.remove('bg-surface-container-low', 'text-on-surface-variant', 'border-outline-variant');
+                    }
+                });
+            }
+        });
+    </script>
+
+
+</body></html>

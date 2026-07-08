@@ -35,6 +35,7 @@ const GET_PRODUCTS_FILTERED = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image { sourceUrl altText }
         }
         ... on VariableProduct {
@@ -42,6 +43,7 @@ const GET_PRODUCTS_FILTERED = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image { sourceUrl altText }
         }
       }

@@ -401,6 +401,7 @@ export function CategoryProductView({
                                 sku={p.sku}
                                 regularPrice={p.regularPrice}
                                 salePrice={p.salePrice}
+                                stockStatus={p.stockStatus}
                                 category={categorySlug}
                                 priority={idx < 12}
                             />

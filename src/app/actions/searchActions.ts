@@ -29,6 +29,10 @@ function mapHit(hit: any) {
         name: hit.name,
         slug: hit.slug,
         price: formatVND(displayPrice),
+        sku: hit.sku,
+        regularPrice: hit.regularPrice ? formatVND(hit.regularPrice) : undefined,
+        salePrice: hit.salePrice ? formatVND(hit.salePrice) : undefined,
+        stockStatus: hit.stockStatus || 'IN_STOCK',
         image: {
             sourceUrl: hit.image,
             altText: hit.name || ''

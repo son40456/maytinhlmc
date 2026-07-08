@@ -8,6 +8,10 @@ interface Product {
     price: string;
     imageUrl: string;
     slug: string;
+    sku?: string;
+    regularPrice?: string;
+    salePrice?: string;
+    stockStatus?: string;
 }
 
 interface HomeSectionProps {
@@ -61,6 +65,10 @@ export function HomeSection({ title, categorySlug, subFilters, products }: HomeS
                         price={(p.price || "Liên hệ").replace(/&nbsp;/g, ' ')}
                         imageUrl={p.imageUrl}
                         slug={p.slug}
+                        sku={p.sku}
+                        regularPrice={p.regularPrice}
+                        salePrice={p.salePrice}
+                        stockStatus={p.stockStatus}
                         category={categorySlug}
                         priority={idx < 6}
                     />

@@ -97,6 +97,7 @@ export default async function SearchPage({
                                 sku={product.sku || ''}
                                 regularPrice={product.regularPrice || ''}
                                 salePrice={product.salePrice || ''}
+                                stockStatus={product.stockStatus || 'IN_STOCK'}
                             />
                         ))}
                     </div>

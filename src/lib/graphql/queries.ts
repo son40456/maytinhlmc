@@ -11,6 +11,7 @@ export const GET_FEATURED_PRODUCTS = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image {
             sourceUrl
             altText
@@ -21,6 +22,7 @@ export const GET_FEATURED_PRODUCTS = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image {
             sourceUrl
             altText
@@ -89,6 +91,7 @@ export const GET_PRODUCTS_BY_CATEGORY = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image {
             sourceUrl
             altText
@@ -99,6 +102,7 @@ export const GET_PRODUCTS_BY_CATEGORY = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image {
             sourceUrl
             altText
@@ -179,6 +183,7 @@ export const SEARCH_PRODUCTS = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image {
             sourceUrl
             altText
@@ -189,6 +194,7 @@ export const SEARCH_PRODUCTS = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image {
             sourceUrl
             altText
@@ -446,6 +452,7 @@ export const GET_NODE_BY_SLUG = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image {
             sourceUrl
             altText
@@ -456,6 +463,7 @@ export const GET_NODE_BY_SLUG = `
           sku
           regularPrice
           salePrice
+          stockStatus
           image {
             sourceUrl
             altText

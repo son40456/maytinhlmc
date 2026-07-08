@@ -40,6 +40,10 @@ async function fetchSectionProducts(categorySlug: string) {
       price: p.price || p.regularPrice || "Liên hệ",
       imageUrl: p.image?.sourceUrl || "",
       slug: p.slug,
+      sku: p.sku,
+      regularPrice: p.regularPrice,
+      salePrice: p.salePrice,
+      stockStatus: p.stockStatus || 'IN_STOCK',
     }));
   } catch (error) {
     console.error(`Error fetching products for section ${categorySlug}:`, error);
