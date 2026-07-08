@@ -552,28 +552,28 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                 </div>
 
                 {/* Tier 2: Desktop Nav Bar - hidden on mobile */}
-                <div className={`hidden lg:block bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[110px] opacity-100 scale-y-100'}`}
+                <div className={`hidden lg:block bg-[#194c86] text-white border-b border-[#134074] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[110px] opacity-100 scale-y-100'}`}
                     style={scrolled && !menuOpen ? { overflow: 'hidden' } : {}}
                 >
                     <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative h-full">
-                        <nav className="flex items-center justify-between w-full min-w-max lg:min-w-0 h-full">
+                        <nav className="flex items-center justify-between gap-2 py-2 w-full min-w-max lg:min-w-0 h-full">
                             {menuTree.map((item) => {
                                 const cleanLabel = item.label.replace(/<\/?[^>]+(>|$)/g, "");
                                 const hasChildren = (item.children && item.children.length > 0) || (item.columns && item.columns.length > 0);
 
                                 return (
-                                    <div key={item.id} className={`group/menu static lg:static h-full ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
+                                    <div key={item.id} className={`group/menu static lg:static h-full flex-1 ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
                                         <Link
                                             href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
-                                            className="flex flex-col items-center justify-center py-3 px-4 hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-yellow-400 h-full w-full"
+                                            className="flex flex-col items-center justify-center py-2 px-1 bg-[#2962a2] hover:bg-[#3673b8] rounded-xl transition-all group h-full w-full shadow-sm"
                                             onClick={handleMenuClick}
                                         >
-                                            <span className="mb-1.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
+                                            <span className="mb-1.5 group-hover:scale-110 group-hover:text-white transition-all text-gray-200">
                                                 {renderMenuIcon((item as any).icon, cleanLabel, item.cssClasses, false)}
                                             </span>
-                                            <span className="text-[12px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-1 uppercase whitespace-nowrap">
+                                            <span className="text-[12px] font-bold text-center tracking-tight text-white flex items-center gap-1 uppercase whitespace-nowrap">
                                                 {cleanLabel}
-                                                {hasChildren && <ChevronDown size={12} />}
+                                                {hasChildren && <ChevronDown size={12} className="opacity-70" />}
                                             </span>
                                         </Link>
 
