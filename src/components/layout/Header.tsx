@@ -214,7 +214,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
             <SearchOverlay isOpen={searchOverlayOpen} onClose={() => setSearchOverlayOpen(false)} />
             <header className="sticky top-0 z-50 w-full shadow-md font-sans">
                 {/* Tier 1: Blue Bar */}
-                <div className="bg-[#004b91] text-white h-14 lg:h-[100px]">
+                <div className="bg-[#0a3d7a] text-white h-14 lg:h-[100px]">
                     <div className="container mx-auto px-3 lg:px-4 flex items-center justify-between gap-2 lg:gap-6 h-full">
                         {/* Mobile: Hamburger */}
                         <button
@@ -552,7 +552,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                 </div>
 
                 {/* Tier 2: Desktop Nav Bar - hidden on mobile */}
-                <div className={`hidden lg:block bg-[#194c86] text-white border-b border-[#134074] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[110px] opacity-100 scale-y-100'}`}
+                <div className={`hidden lg:block bg-[#145094] text-white border-b border-white/10 z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[110px] opacity-100 scale-y-100'}`}
                     style={scrolled && !menuOpen ? { overflow: 'hidden' } : {}}
                 >
                     <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative h-full">
@@ -565,7 +565,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     <div key={item.id} className={`group/menu static lg:static h-full flex-1 ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
                                         <Link
                                             href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
-                                            className="flex flex-col items-center justify-center py-2 px-1 bg-[#2962a2] hover:bg-[#3673b8] rounded-xl transition-all group h-full w-full shadow-sm"
+                                            className="flex flex-col items-center justify-center py-2 px-1 bg-white/5 hover:bg-white/15 rounded-xl transition-all group h-full w-full shadow-sm"
                                             onClick={handleMenuClick}
                                         >
                                             <span className="mb-1.5 group-hover:scale-110 group-hover:text-white transition-all text-gray-200">
