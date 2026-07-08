@@ -552,7 +552,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                 </div>
 
                 {/* Tier 2: Desktop Nav Bar - hidden on mobile */}
-                <div className={`hidden lg:block bg-[#194c86] text-white border-b border-[#134074] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[110px] opacity-100 scale-y-100'}`}
+                <div className={`hidden lg:block bg-[#004b91] text-white border-b border-[#003870] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[110px] opacity-100 scale-y-100'}`}
                     style={scrolled && !menuOpen ? { overflow: 'hidden' } : {}}
                 >
                     <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative h-full">
