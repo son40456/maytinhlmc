@@ -556,7 +556,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                     style={scrolled && !menuOpen ? { overflow: 'hidden' } : {}}
                 >
                     <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative h-full">
-                        <nav className="flex items-center justify-between gap-2 py-2 w-full min-w-max lg:min-w-0 h-full">
+                        <nav className="flex items-center justify-between min-w-max lg:min-w-0 h-full py-3 gap-2">
                             {menuTree.map((item) => {
                                 const cleanLabel = item.label.replace(/<\/?[^>]+(>|$)/g, "");
                                 const hasChildren = (item.children && item.children.length > 0) || (item.columns && item.columns.length > 0);
