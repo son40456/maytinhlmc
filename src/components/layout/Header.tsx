@@ -17,14 +17,14 @@ const LayoutIcon = ({ size }: { size: number }) => (
 );
 
 const lucideIconMap: Record<string, React.ReactNode> = {
-    'MonitorPlay': <MonitorPlay size={22} />,
-    'Layout': <LayoutIcon size={22} />,
-    'Cpu': <Cpu size={22} />,
-    'HardDrive': <HardDrive size={22} />,
-    'Monitor': <Monitor size={22} />,
-    'Fan': <Fan size={22} />,
-    'MousePointer2': <MousePointer2 size={22} />,
-    'Headphones': <Headphones size={22} />,
+    'MonitorPlay': <MonitorPlay size={32} />,
+    'Layout': <LayoutIcon size={32} />,
+    'Cpu': <Cpu size={32} />,
+    'HardDrive': <HardDrive size={32} />,
+    'Monitor': <Monitor size={32} />,
+    'Fan': <Fan size={32} />,
+    'MousePointer2': <MousePointer2 size={32} />,
+    'Headphones': <Headphones size={32} />,
 };
 const lucideIconMapSmall: Record<string, React.ReactNode> = {
     'MonitorPlay': <MonitorPlay size={18} />,
@@ -51,15 +51,15 @@ const renderMenuIcon = (iconField: string | undefined, label: string, cssClasses
                     alt={label}
                     className="object-contain"
                     style={{
-                        width: small ? '24px' : '32px',
-                        height: small ? '24px' : '32px',
+                        width: small ? '24px' : '40px',
+                        height: small ? '24px' : '40px',
                         filter: 'brightness(0) invert(1)'
                     }}
                 />
             );
         }
         // It's an emoji or custom string — render as text
-        return <span style={{ fontSize: small ? '18px' : '22px', lineHeight: 1 }}>{iconField}</span>;
+        return <span style={{ fontSize: small ? '18px' : '32px', lineHeight: 1 }}>{iconField}</span>;
     }
     // 2. Fallback: label-based lookup (backward compat)
     const cleanLabel = label.replace(/<\/?[^>]+(>|$)/g, "").toUpperCase();
@@ -68,7 +68,7 @@ const renderMenuIcon = (iconField: string | undefined, label: string, cssClasses
         'RAM': 'HardDrive', 'VGA': 'Monitor', 'Ổ CỨNG HDD': 'HardDrive',
         'Ổ CỨNG SSD': 'HardDrive', 'PSU': 'Fan', 'CASE': 'Layout',
         'MÀN HÌNH': 'Monitor', 'TẢN NHIỆT': 'Fan', 'PHÍM CHUỘT': 'MousePointer2', 'TAI NGHE': 'Headphones',
-    }[cleanLabel] ?? ''] ?? (small ? <Monitor size={18} /> : <Monitor size={22} />);
+    }[cleanLabel] ?? ''] ?? (small ? <Monitor size={18} /> : <Monitor size={32} />);
 };
 
 const getMenuIcon = (label: string, cssClasses: string[] = []) => renderMenuIcon(undefined, label, cssClasses, false);
@@ -214,7 +214,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
             <SearchOverlay isOpen={searchOverlayOpen} onClose={() => setSearchOverlayOpen(false)} />
             <header className="sticky top-0 z-50 w-full shadow-md font-sans">
                 {/* Tier 1: Blue Bar */}
-                <div className="bg-[#004b91] text-white h-14 lg:h-[72px]">
+                <div className="bg-[#004b91] text-white h-14 lg:h-[100px]">
                     <div className="container mx-auto px-3 lg:px-4 flex items-center justify-between gap-2 lg:gap-6 h-full">
                         {/* Mobile: Hamburger */}
                         <button
@@ -230,9 +230,9 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 <Image
                                     src={logoUrl}
                                     alt="LMC"
-                                    width={160}
-                                    height={48}
-                                    className="h-8 lg:h-12 w-auto object-contain"
+                                    width={240}
+                                    height={80}
+                                    className="h-8 lg:h-[70px] w-auto object-contain"
                                     priority
                                 />
                             ) : (
@@ -552,26 +552,26 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                 </div>
 
                 {/* Tier 2: Desktop Nav Bar - hidden on mobile */}
-                <div className={`hidden lg:block bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[80px] opacity-100 scale-y-100'}`}
+                <div className={`hidden lg:block bg-[#12243d] text-white border-b border-[#1a3458] z-50 relative origin-top transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled && !menuOpen ? 'h-0 opacity-0 scale-y-0 pointer-events-none' : 'h-[110px] opacity-100 scale-y-100'}`}
                     style={scrolled && !menuOpen ? { overflow: 'hidden' } : {}}
                 >
-                    <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative">
-                        <nav className="flex items-center justify-between w-full min-w-max lg:min-w-0">
+                    <div className="container mx-auto px-2 lg:overflow-visible overflow-x-auto scrollbar-hide relative h-full">
+                        <nav className="flex items-center justify-between w-full min-w-max lg:min-w-0 h-full">
                             {menuTree.map((item) => {
                                 const cleanLabel = item.label.replace(/<\/?[^>]+(>|$)/g, "");
                                 const hasChildren = (item.children && item.children.length > 0) || (item.columns && item.columns.length > 0);
 
                                 return (
-                                    <div key={item.id} className={`group/menu static lg:static ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
+                                    <div key={item.id} className={`group/menu static lg:static h-full ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
                                         <Link
                                             href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
-                                            className="flex flex-col items-center justify-center py-3 px-4 hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-yellow-400"
+                                            className="flex flex-col items-center justify-center py-3 px-4 hover:bg-[#1a3458] transition-all group border-b-2 border-transparent hover:border-yellow-400 h-full w-full"
                                             onClick={handleMenuClick}
                                         >
                                             <span className="mb-1.5 group-hover:scale-110 group-hover:text-yellow-400 transition-all text-gray-300">
                                                 {renderMenuIcon((item as any).icon, cleanLabel, item.cssClasses, false)}
                                             </span>
-                                            <span className="text-[11px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-1 uppercase whitespace-nowrap">
+                                            <span className="text-[12px] font-bold text-center tracking-tight text-gray-100 group-hover:text-white flex items-center gap-1 uppercase whitespace-nowrap">
                                                 {cleanLabel}
                                                 {hasChildren && <ChevronDown size={12} />}
                                             </span>
