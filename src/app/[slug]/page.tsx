@@ -483,7 +483,7 @@ export default async function SlugPage({ params }: {
                             <span>Trang chủ</span>
                         </Link>
                         <span>/</span>
-                        <Link href="/blog" className="hover:text-blue-600">Tin tức</Link>
+                        <Link href="/tin-tuc" className="hover:text-blue-600">Tin tức</Link>
                         <span>/</span>
                         <span className="text-slate-900 dark:text-white font-medium truncate max-w-[250px] md:max-w-[400px]">{post.title}</span>
                     </nav>

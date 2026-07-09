@@ -1,21 +1,52 @@
-const fetch = require('node-fetch');
-
 const query = `
-  query GetProductsByIds($in: [Int]!) {
-    products(first: 100, where: { include: $in }) {
+  query GetPostsPage($first: Int!, $after: String, $categoryName: String) {
+    posts(first: $first, after: $after, where: { categoryName: $categoryName }) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       nodes {
-        databaseId
+        id
+        title
+        slug
+        date
+        excerpt
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        categories {
+          nodes {
+            name
+            slug
+          }
+        }
+      }
+    }
+    categories(where: { hideEmpty: true }) {
+      nodes {
+        id
         name
+        slug
+        count
       }
     }
   }
 `;
 
-fetch('https://apiserver.maytinhlmc.vn/graphql', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    query,
-    variables: { in: [34558, 31318, 34655, 34524, 34387, 34146] }
-  })
-}).then(res => res.json()).then(data => console.log(JSON.stringify(data, null, 2))).catch(console.error);
+async function test() {
+  const res = await fetch('https://apiserver.maytinhlmc.vn/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      query,
+      variables: { first: 5, after: "", categoryName: "" }
+    })
+  });
+  const json = await res.json();
+  console.log(JSON.stringify(json, null, 2));
+}
+
+test();

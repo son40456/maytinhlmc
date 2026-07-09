@@ -650,3 +650,51 @@ export const GET_PRODUCTS_BY_IDS = `
     }
   }
 `;
+
+export const GET_POST_CATEGORIES = `
+  query GetPostCategories {
+    categories(where: { hideEmpty: true }) {
+      nodes {
+        id
+        name
+        slug
+        count
+      }
+    }
+  }
+`;
+
+export const GET_POSTS_PAGE = `
+  query GetPostsPage($first: Int!, $after: String, $categoryName: String) {
+    posts(first: $first, after: $after, where: { categoryName: $categoryName }) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        id
+        title
+        slug
+        date
+        excerpt
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        categories {
+          nodes {
+            name
+            slug
+          }
+        }
+        author {
+          node {
+            name
+          }
+        }
+      }
+    }
+  }
+`;
