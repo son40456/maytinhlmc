@@ -565,7 +565,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     <div key={item.id} className={`group/menu static lg:static h-full flex-1 ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
                                         <Link
                                             href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
-                                            className="flex flex-col items-center justify-center py-2 px-1 bg-white/5 hover:bg-white/15 rounded-xl transition-all group h-full w-full shadow-sm"
+                                            className="flex flex-col items-center justify-center py-2 px-1 bg-white/5 hover:bg-white/15 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20 border border-transparent hover:border-white/20 rounded-xl transition-all duration-300 group h-full w-full shadow-sm"
                                             onClick={handleMenuClick}
                                         >
                                             <span className="mb-1.5 group-hover:scale-110 group-hover:text-white transition-all text-gray-200">
