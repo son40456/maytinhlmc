@@ -2,6 +2,7 @@ import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
 import { GET_NODE_BY_SLUG } from "@/lib/graphql/queries";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -121,6 +122,25 @@ export default async function SlugPage({ params }: {
         const discountPct = hasDiscount ? Math.round((1 - saleNum / regularNum) * 100) : 0;
         const savingsAmount = hasDiscount ? (regularNum - saleNum).toLocaleString("vi-VN") + "₫" : "";
         const relatedProducts = product.related?.nodes || [];
+        const categories = product.productCategories?.nodes || [];
+        let deepestCategory: any = null;
+        let maxDepth = -1;
+        categories.forEach((cat: any) => {
+            const depth = cat.ancestors?.nodes?.length || 0;
+            if (depth > maxDepth) {
+                maxDepth = depth;
+                deepestCategory = cat;
+            }
+        });
+
+        const breadcrumbs: { name: string, slug: string }[] = [];
+        if (deepestCategory) {
+            const ancestors = deepestCategory.ancestors?.nodes ? [...deepestCategory.ancestors.nodes].reverse() : [];
+            ancestors.forEach((anc: any) => {
+                breadcrumbs.push({ name: anc.name, slug: anc.slug });
+            });
+            breadcrumbs.push({ name: deepestCategory.name, slug: deepestCategory.slug });
+        }
 
         return (
             <div className="bg-[#f8fafc] dark:bg-gray-900 min-h-screen pb-16">
@@ -129,22 +149,32 @@ export default async function SlugPage({ params }: {
                     description={product.shortDescription || product.description || ''}
                     image={imageUrl}
                     price={saleNum > 0 ? saleNum : regularNum}
-                    url={`https://lmc.vn/${product.slug}`}
+                    url={`https://maytinhlmc.vn/${product.slug}`}
                     stockStatus={product.stockStatus || "IN_STOCK"}
                     sku={product.sku}
                 />
                 <BreadcrumbSchema
                     items={[
-                        { name: 'Trang chủ', item: 'https://lmc.vn/' },
-                        { name: product.name, item: `https://lmc.vn/${product.slug}` }
+                        { name: 'Trang chủ', item: 'https://maytinhlmc.vn/' },
+                        ...breadcrumbs.map(bc => ({ name: bc.name, item: `https://maytinhlmc.vn/${bc.slug}` })),
+                        { name: product.name, item: `https://maytinhlmc.vn/${product.slug}` }
                     ]}
                 />
                 <div className="max-w-[1600px] mx-auto px-3 md:px-4 py-2 md:py-4">
                     {/* Breadcrumbs */}
-                    <nav className="flex items-center gap-1.5 md:gap-2 text-xs text-slate-500 dark:text-slate-400 mb-6">
-                        <Link href="/" className="hover:text-blue-600">Trang chủ</Link>
+                    <nav className="flex items-center flex-wrap gap-1.5 md:gap-2 text-sm md:text-base text-slate-500 dark:text-slate-400 mb-6">
+                        <Link href="/" className="hover:text-blue-600 flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+                            <span>Trang chủ</span>
+                        </Link>
+                        {breadcrumbs.map((bc, idx) => (
+                            <React.Fragment key={idx}>
+                                <span>/</span>
+                                <Link href={`/${bc.slug}`} className="hover:text-blue-600 truncate max-w-[200px]" title={bc.name}>{bc.name}</Link>
+                            </React.Fragment>
+                        ))}
                         <span>/</span>
-                        <span className="text-slate-900 dark:text-white font-medium truncate">{product.name}</span>
+                        <span className="text-slate-900 dark:text-white font-medium truncate max-w-[250px] md:max-w-[400px]" title={product.name}>{product.name}</span>
                     </nav>
 
                     <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 md:p-6 lg:p-8 mb-4 md:mb-8">
@@ -447,12 +477,15 @@ export default async function SlugPage({ params }: {
             <div className="bg-white dark:bg-gray-900 min-h-screen">
                 <div className="container mx-auto px-4 py-8 max-w-4xl">
                     {/* Breadcrumb */}
-                    <nav className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 mb-6">
-                        <Link href="/" className="hover:text-blue-600">Trang chủ</Link>
+                    <nav className="flex items-center flex-wrap gap-1.5 md:gap-2 text-sm md:text-base text-slate-500 dark:text-slate-400 mb-6">
+                        <Link href="/" className="hover:text-blue-600 flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+                            <span>Trang chủ</span>
+                        </Link>
                         <span>/</span>
                         <Link href="/blog" className="hover:text-blue-600">Tin tức</Link>
                         <span>/</span>
-                        <span className="text-slate-900 dark:text-white font-medium truncate">{post.title}</span>
+                        <span className="text-slate-900 dark:text-white font-medium truncate max-w-[250px] md:max-w-[400px]">{post.title}</span>
                     </nav>
 
                     {/* Featured Image */}

@@ -137,6 +137,12 @@ export const GET_PRODUCT_BY_SLUG = `
         nodes {
           name
           slug
+          ancestors {
+            nodes {
+              name
+              slug
+            }
+          }
         }
       }
       ... on SimpleProduct {
@@ -315,6 +321,12 @@ export const GET_NODE_BY_SLUG = `
         nodes {
           name
           slug
+          ancestors {
+            nodes {
+              name
+              slug
+            }
+          }
         }
       }
       related {
