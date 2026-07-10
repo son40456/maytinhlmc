@@ -1,6 +1,6 @@
 "use server";
 
-import Typesense from 'typesense';
+import { Client as TypesenseClient } from 'typesense';
 import { unstable_cache } from 'next/cache';
 
 const TYPESENSE_HOST = process.env.TYPESENSE_HOST || 'localhost';
@@ -10,10 +10,10 @@ const TYPESENSE_API_KEY = process.env.TYPESENSE_API_KEY || 'test';
 const COLLECTION_NAME = process.env.TYPESENSE_COLLECTION_NAME || 'products';
 
 // Singleton client - reuse across requests
-let _client: Typesense.Client | null = null;
+let _client: TypesenseClient | null = null;
 function getClient() {
     if (!_client) {
-        _client = new Typesense.Client({
+        _client = new TypesenseClient({
             nodes: [{
                 host: TYPESENSE_HOST,
                 port: parseInt(TYPESENSE_PORT),
