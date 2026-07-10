@@ -367,26 +367,28 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
             {/* ========== MOBILE OVERLAY (full screen) ========== */}
             <div className="lg:hidden fixed inset-0 z-[201] bg-white flex flex-col" onClick={e => e.stopPropagation()}>
                 {/* Mobile search input bar */}
-                <form onSubmit={handleSubmit} className="flex items-center gap-3 px-4 pt-4 pb-3 border-b border-gray-100 flex-shrink-0">
-                    <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        inputMode="search"
-                        enterKeyHint="search"
-                        value={query}
-                        onChange={e => setQuery(e.target.value)}
-                        placeholder="Tìm kiếm..."
-                        className="flex-1 text-sm text-gray-800 placeholder-gray-400 bg-transparent outline-none"
-                    />
-                    {isSearching && <Loader2 className="w-4 h-4 animate-spin text-blue-500 flex-shrink-0" />}
-                    {query && !isSearching && (
-                        <button type="button" onClick={() => setQuery('')} className="p-1 text-gray-400">
-                            <X className="w-4 h-4" />
-                        </button>
-                    )}
-                    <button type="button" onClick={onClose} className="text-sm font-bold text-orange-500 flex-shrink-0">Huỷ</button>
-                </form>
+                <div className="flex items-center gap-3 px-4 pt-4 pb-3 border-b border-gray-100 flex-shrink-0 bg-white">
+                    <form onSubmit={handleSubmit} className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-xl">
+                        <Search className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                        <input
+                            ref={inputRef}
+                            type="text"
+                            inputMode="search"
+                            enterKeyHint="search"
+                            value={query}
+                            onChange={e => setQuery(e.target.value)}
+                            placeholder="Tìm sản phẩm, danh mục..."
+                            className="flex-1 text-sm text-gray-800 placeholder-gray-500 bg-transparent outline-none"
+                        />
+                        {isSearching && <Loader2 className="w-4 h-4 animate-spin text-blue-500 flex-shrink-0" />}
+                        {query && !isSearching && (
+                            <button type="button" onClick={() => setQuery('')} className="p-1 text-gray-400 bg-gray-200 rounded-full active:bg-gray-300">
+                                <X className="w-3 h-3" />
+                            </button>
+                        )}
+                    </form>
+                    <button type="button" onClick={onClose} className="text-sm font-medium text-gray-700 flex-shrink-0">Huỷ</button>
+                </div>
 
                 {/* Scrollable content */}
                 <div className="flex-1 overflow-y-auto pb-24">
@@ -448,26 +450,24 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                                                 key={product.id}
                                                 href={`/product/${product.slug}`}
                                                 onClick={() => { saveRecentSearch(query); onClose(); }}
-                                                className="flex items-center gap-3 py-3 group"
+                                                className="flex items-start gap-3 py-3 group"
                                             >
-                                                {/* Badge + image */}
-                                                <div className="relative w-16 h-16 rounded-xl bg-gray-900 overflow-hidden flex-shrink-0">
+                                                {/* Image */}
+                                                <div className="relative w-16 h-16 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
                                                     {product.image?.sourceUrl
-                                                        ? <Image src={product.image.sourceUrl} alt={product.name} fill className="object-contain p-1 opacity-90" sizes="64px" />
-                                                        : <div className="w-full h-full flex items-center justify-center"><Search className="w-5 h-5 text-gray-500" /></div>
+                                                        ? <Image src={product.image.sourceUrl} alt={product.name} fill className="object-contain p-1" sizes="64px" />
+                                                        : <div className="w-full h-full flex items-center justify-center"><Search className="w-5 h-5 text-gray-300" /></div>
                                                     }
-                                                    {/* Status badge */}
-                                                    <span className={`absolute top-1 left-1 text-[8px] font-bold uppercase px-1 py-0.5 rounded ${i === 1 ? 'bg-amber-500 text-white' : i === 2 ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'}`}>
-                                                        {i === 1 ? 'PRE-ORDER' : i === 2 ? 'NEW' : 'IN STOCK'}
-                                                    </span>
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-xs font-semibold text-gray-800 line-clamp-2 group-hover:text-blue-700 transition-colors">
+                                                <div className="flex-1 min-w-0 pt-0.5">
+                                                    <p className="text-[13px] font-medium text-gray-800 line-clamp-2 group-hover:text-blue-600 transition-colors leading-snug">
                                                         <Highlight text={product.name} query={query} />
                                                     </p>
-                                                    <p className="text-sm font-bold text-gray-900 mt-1">{product.price}</p>
+                                                    <p className="text-sm font-bold text-red-600 mt-1">{product.price}</p>
                                                 </div>
-                                                <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                                                <div className="pt-1">
+                                                    <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                                                </div>
                                             </Link>
                                         ))}
                                     </div>
