@@ -8,7 +8,7 @@ import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { searchProductsLive } from '@/app/actions/searchActions';
-import { SearchOverlay } from '@/components/search/SearchOverlay';
+import { SearchOverlay, SearchOverlayHandle } from '@/components/search/SearchOverlay';
 
 import { STATIC_MENU_ITEMS, MenuItemType } from '@/constants/menuData';
 
@@ -100,6 +100,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const [showDesktopDropdown, setShowDesktopDropdown] = useState(false);
     const [desktopRecents, setDesktopRecents] = useState<string[]>([]);
     const desktopSearchRef = useRef<HTMLDivElement>(null);
+    const searchOverlayRef = useRef<SearchOverlayHandle>(null);
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -211,7 +212,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
 
     return (
         <>
-            <SearchOverlay isOpen={searchOverlayOpen} onClose={() => setSearchOverlayOpen(false)} />
+            <SearchOverlay ref={searchOverlayRef} isOpen={searchOverlayOpen} onClose={() => setSearchOverlayOpen(false)} />
             <header className="sticky top-0 z-50 w-full shadow-md font-sans">
                 {/* Tier 1: Blue Bar */}
                 <div className="bg-[#0a3d7a] text-white h-14 lg:h-[100px]">
@@ -390,7 +391,12 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                         <div className="flex lg:hidden flex-1 px-2">
                             <button
                                 type="button"
-                                onClick={() => setSearchOverlayOpen(true)}
+                                onClick={() => {
+                                    setSearchOverlayOpen(true);
+                                    // Call focus DIRECTLY in onClick (same user-gesture tick)
+                                    // This is the only reliable way to open iOS keyboard programmatically
+                                    searchOverlayRef.current?.focusInput();
+                                }}
                                 className="w-full h-9 pl-3 pr-3 rounded-full text-gray-400 bg-white/95 shadow-inner transition-all text-sm flex items-center gap-2"
                             >
                                 <Search className="h-4 w-4 text-gray-400 flex-shrink-0" />
