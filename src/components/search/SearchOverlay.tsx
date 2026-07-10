@@ -72,10 +72,9 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
         const [results, setResults] = useState<SearchResult[]>([]);
         const [isSearching, setIsSearching] = useState(false);
         const [recentSearches, setRecentSearches] = useState<string[]>([]);
-        // Track visualViewport height to push overlay above iOS keyboard
-        const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+        // Track BOTH offsetTop and height from visualViewport for correct iOS keyboard handling
+        const [vp, setVp] = useState({ top: 0, height: 0 });
         const inputRef = useRef<HTMLInputElement>(null);
-        const savedScrollY = useRef(0);
         const router = useRouter();
 
         // Expose focusInput so Header's onClick can call it directly in the user-gesture
@@ -88,33 +87,38 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
             }
         }));
 
-        // VisualViewport listener — keeps overlay above iOS keyboard
+        // Track visualViewport — positions overlay correctly above iOS keyboard.
+        // visualViewport.offsetTop = how much the page has scrolled (can be > 0 when keyboard opens)
+        // visualViewport.height    = the visible height above the keyboard
         useEffect(() => {
             const vv = window.visualViewport;
-            if (!vv) return;
-            const onResize = () => setViewportHeight(vv.height);
-            vv.addEventListener('resize', onResize);
-            vv.addEventListener('scroll', onResize);
-            return () => {
-                vv.removeEventListener('resize', onResize);
-                vv.removeEventListener('scroll', onResize);
+            const update = () => {
+                if (vv) {
+                    setVp({ top: vv.offsetTop, height: vv.height });
+                } else {
+                    setVp({ top: 0, height: window.innerHeight });
+                }
             };
+            update();
+            if (vv) {
+                vv.addEventListener('resize', update);
+                vv.addEventListener('scroll', update);
+                return () => {
+                    vv.removeEventListener('resize', update);
+                    vv.removeEventListener('scroll', update);
+                };
+            }
         }, []);
 
-        // Lock body scroll & load recent searches when opened
+        // Lock scroll behind overlay when open
         useEffect(() => {
             if (isOpen) {
                 setRecentSearches(getRecentSearches());
-                // iOS Safari fix: freeze body at current scroll position.
-                // `overflow: hidden` alone doesn't stop iOS from scrolling when keyboard opens.
-                savedScrollY.current = window.scrollY;
-                document.body.style.position = 'fixed';
-                document.body.style.top = `-${savedScrollY.current}px`;
-                document.body.style.left = '0';
-                document.body.style.right = '0';
+                // Use overflow:hidden on html+body — reliable across browsers without disrupting fixed layout
+                document.documentElement.style.overflow = 'hidden';
                 document.body.style.overflow = 'hidden';
 
-                // Fallback focus for Android / non-iOS
+                // Fallback focus for Android / non-iOS browsers
                 const t = setTimeout(() => {
                     const el = inputRef.current;
                     if (el && document.activeElement !== el) {
@@ -125,25 +129,15 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
 
                 return () => {
                     clearTimeout(t);
-                    // Restore body scroll position
-                    document.body.style.position = '';
-                    document.body.style.top = '';
-                    document.body.style.left = '';
-                    document.body.style.right = '';
+                    document.documentElement.style.overflow = '';
                     document.body.style.overflow = '';
-                    window.scrollTo(0, savedScrollY.current);
                 };
             } else {
-                document.body.style.position = '';
-                document.body.style.top = '';
-                document.body.style.left = '';
-                document.body.style.right = '';
+                document.documentElement.style.overflow = '';
                 document.body.style.overflow = '';
-                window.scrollTo(0, savedScrollY.current);
                 setQuery('');
                 setResults([]);
                 setIsSearching(false);
-                setViewportHeight(null);
             }
         }, [isOpen]);
 
@@ -340,13 +334,20 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                     </div>
                 </div>
 
-                {/* ========== MOBILE OVERLAY (full screen) ========== */}
-                {/* Use visualViewport height so overlay never goes behind iOS keyboard */}
+                {/* ========== MOBILE OVERLAY ========== */}
+                {/*
+                  Positioned using visualViewport.offsetTop + visualViewport.height.
+                  This anchors the overlay to exactly the visible screen area above the keyboard.
+                  When keyboard opens:
+                    - vp.top  = how far the visual viewport has been scrolled (usually 0 on iOS)
+                    - vp.height = visible height above keyboard
+                  Without this, 'top: 0' uses the LAYOUT viewport top which may be scrolled off-screen.
+                */}
                 <div
                     className={`lg:hidden fixed left-0 right-0 z-[201] bg-white flex flex-col transition-transform duration-200 ease-out ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
                     style={{
-                        top: 0,
-                        height: viewportHeight ? `${viewportHeight}px` : '100dvh',
+                        top: vp.top > 0 ? `${vp.top}px` : 0,
+                        height: vp.height > 0 ? `${vp.height}px` : '100dvh',
                     }}
                     onClick={e => e.stopPropagation()}
                 >
