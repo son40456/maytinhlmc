@@ -72,7 +72,10 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
         const [results, setResults] = useState<SearchResult[]>([]);
         const [isSearching, setIsSearching] = useState(false);
         const [recentSearches, setRecentSearches] = useState<string[]>([]);
+        // Track visualViewport height to push overlay above iOS keyboard
+        const [viewportHeight, setViewportHeight] = useState<number | null>(null);
         const inputRef = useRef<HTMLInputElement>(null);
+        const savedScrollY = useRef(0);
         const router = useRouter();
 
         // Expose focusInput so Header's onClick can call it directly in the user-gesture
@@ -85,12 +88,33 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
             }
         }));
 
+        // VisualViewport listener — keeps overlay above iOS keyboard
+        useEffect(() => {
+            const vv = window.visualViewport;
+            if (!vv) return;
+            const onResize = () => setViewportHeight(vv.height);
+            vv.addEventListener('resize', onResize);
+            vv.addEventListener('scroll', onResize);
+            return () => {
+                vv.removeEventListener('resize', onResize);
+                vv.removeEventListener('scroll', onResize);
+            };
+        }, []);
+
         // Lock body scroll & load recent searches when opened
         useEffect(() => {
             if (isOpen) {
                 setRecentSearches(getRecentSearches());
+                // iOS Safari fix: freeze body at current scroll position.
+                // `overflow: hidden` alone doesn't stop iOS from scrolling when keyboard opens.
+                savedScrollY.current = window.scrollY;
+                document.body.style.position = 'fixed';
+                document.body.style.top = `-${savedScrollY.current}px`;
+                document.body.style.left = '0';
+                document.body.style.right = '0';
                 document.body.style.overflow = 'hidden';
-                // Fallback focus for non-iOS (iOS is handled via focusInput in Header onClick)
+
+                // Fallback focus for Android / non-iOS
                 const t = setTimeout(() => {
                     const el = inputRef.current;
                     if (el && document.activeElement !== el) {
@@ -98,12 +122,28 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                         el.focus();
                     }
                 }, 80);
-                return () => { clearTimeout(t); document.body.style.overflow = ''; };
+
+                return () => {
+                    clearTimeout(t);
+                    // Restore body scroll position
+                    document.body.style.position = '';
+                    document.body.style.top = '';
+                    document.body.style.left = '';
+                    document.body.style.right = '';
+                    document.body.style.overflow = '';
+                    window.scrollTo(0, savedScrollY.current);
+                };
             } else {
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.left = '';
+                document.body.style.right = '';
                 document.body.style.overflow = '';
+                window.scrollTo(0, savedScrollY.current);
                 setQuery('');
                 setResults([]);
                 setIsSearching(false);
+                setViewportHeight(null);
             }
         }, [isOpen]);
 
@@ -301,8 +341,13 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                 </div>
 
                 {/* ========== MOBILE OVERLAY (full screen) ========== */}
+                {/* Use visualViewport height so overlay never goes behind iOS keyboard */}
                 <div
-                    className={`lg:hidden fixed inset-0 z-[201] bg-white flex flex-col transition-transform duration-200 ease-out ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+                    className={`lg:hidden fixed left-0 right-0 z-[201] bg-white flex flex-col transition-transform duration-200 ease-out ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+                    style={{
+                        top: 0,
+                        height: viewportHeight ? `${viewportHeight}px` : '100dvh',
+                    }}
                     onClick={e => e.stopPropagation()}
                 >
                     {/* Search bar */}
@@ -321,7 +366,8 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                                 value={query}
                                 onChange={e => setQuery(e.target.value)}
                                 placeholder="Tìm sản phẩm, danh mục..."
-                                className="flex-1 text-[15px] text-gray-800 placeholder-gray-500 bg-transparent outline-none min-w-0"
+                                // font-size >= 16px prevents iOS Safari from auto-zooming on focus
+                                className="flex-1 text-gray-800 placeholder-gray-500 bg-transparent outline-none min-w-0 text-base"
                             />
                             {isSearching && <Loader2 className="w-4 h-4 animate-spin text-blue-500 flex-shrink-0" />}
                             {query && !isSearching && (
