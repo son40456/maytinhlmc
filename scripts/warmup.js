@@ -21,7 +21,7 @@ const getArg = (flag) => { const i = args.indexOf(flag); return i !== -1 ? args[
 
 const BASE_URL = getArg('--url') || process.env.PRODUCTION_URL || 'https://maytinhlmc.vn';
 const SECRET = getArg('--secret') || process.env.WARMUP_SECRET || '';
-const CONCURRENCY = parseInt(getArg('--concurrency') || process.env.WARMUP_CONCURRENCY || '10');
+const CONCURRENCY = parseInt(getArg('--concurrency') || process.env.WARMUP_CONCURRENCY || '20');
 const TIMEOUT_MS = parseInt(getArg('--timeout') || process.env.WARMUP_TIMEOUT || '30000');
 
 if (!SECRET) {
@@ -34,11 +34,17 @@ function fetchJSON(url) {
     return new Promise((resolve, reject) => {
         const parsed = new URL(url);
         const lib = parsed.protocol === 'https:' ? https : http;
-        const req = lib.get(url, { timeout: TIMEOUT_MS }, (res) => {
+        const options = {
+            timeout: TIMEOUT_MS,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 LMC-Warmup/1.0'
+            }
+        };
+        const req = lib.get(url, options, (res) => {
             let data = '';
             res.on('data', chunk => { data += chunk; });
             res.on('end', () => {
-                try { resolve(JSON.parse(data)); } catch { reject(new Error('Invalid JSON')); }
+                try { resolve(JSON.parse(data)); } catch { reject(new Error('Invalid JSON: ' + data.substring(0, 100))); }
             });
         });
         req.on('error', reject);
@@ -50,7 +56,13 @@ function fetchPage(url) {
     return new Promise((resolve) => {
         const parsed = new URL(url);
         const lib = parsed.protocol === 'https:' ? https : http;
-        const req = lib.get(url, { timeout: TIMEOUT_MS }, (res) => {
+        const options = {
+            timeout: TIMEOUT_MS,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 LMC-Warmup/1.0'
+            }
+        };
+        const req = lib.get(url, options, (res) => {
             res.resume(); // Bỏ qua body, chỉ cần trigger render
             res.on('end', () => resolve({ ok: res.statusCode < 400, status: res.statusCode }));
         });

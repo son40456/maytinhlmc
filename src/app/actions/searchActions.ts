@@ -1,17 +1,27 @@
 "use server";
 
-import { MeiliSearch } from 'meilisearch';
+import Typesense from 'typesense';
 import { unstable_cache } from 'next/cache';
 
-const MEILISEARCH_HOST = process.env.MEILISEARCH_HOST || 'http://localhost:7700';
-const SEARCH_KEY = process.env.NEXT_PUBLIC_MEILISEARCH_SEARCH_KEY || '';
-const INDEX_NAME = process.env.MEILISEARCH_INDEX_NAME || 'products';
+const TYPESENSE_HOST = process.env.TYPESENSE_HOST || 'localhost';
+const TYPESENSE_PORT = process.env.TYPESENSE_PORT || '8108';
+const TYPESENSE_PROTOCOL = process.env.TYPESENSE_PROTOCOL || 'http';
+const TYPESENSE_API_KEY = process.env.TYPESENSE_API_KEY || 'test';
+const COLLECTION_NAME = process.env.TYPESENSE_COLLECTION_NAME || 'products';
 
 // Singleton client - reuse across requests
-let _client: MeiliSearch | null = null;
+let _client: Typesense.Client | null = null;
 function getClient() {
     if (!_client) {
-        _client = new MeiliSearch({ host: MEILISEARCH_HOST, apiKey: SEARCH_KEY });
+        _client = new Typesense.Client({
+            nodes: [{
+                host: TYPESENSE_HOST,
+                port: parseInt(TYPESENSE_PORT),
+                protocol: TYPESENSE_PROTOCOL,
+            }],
+            apiKey: TYPESENSE_API_KEY,
+            connectionTimeoutSeconds: 2
+        });
     }
     return _client;
 }
@@ -22,20 +32,21 @@ function formatVND(amount: number | null | undefined): string {
 }
 
 function mapHit(hit: any) {
-    const displayPrice = hit.price || hit.regularPrice || hit.salePrice;
+    const doc = hit.document;
+    const displayPrice = doc.price || doc.regularPrice || doc.salePrice;
     return {
-        id: hit.objectID || hit.id,
-        databaseId: parseInt(hit.id),
-        name: hit.name,
-        slug: hit.slug,
+        id: doc.id,
+        databaseId: parseInt(doc.id),
+        name: doc.name,
+        slug: doc.slug,
         price: formatVND(displayPrice),
-        sku: hit.sku,
-        regularPrice: hit.regularPrice ? formatVND(hit.regularPrice) : undefined,
-        salePrice: hit.salePrice ? formatVND(hit.salePrice) : undefined,
-        stockStatus: hit.stockStatus || 'IN_STOCK',
+        sku: doc.sku,
+        regularPrice: doc.regularPrice ? formatVND(doc.regularPrice) : undefined,
+        salePrice: doc.salePrice ? formatVND(doc.salePrice) : undefined,
+        stockStatus: doc.stockStatus || 'IN_STOCK',
         image: {
-            sourceUrl: hit.image,
-            altText: hit.name || ''
+            sourceUrl: doc.image,
+            altText: doc.name || ''
         }
     };
 }
@@ -45,11 +56,15 @@ export const searchProductsLive = unstable_cache(
     async (query: string, hitsPerPage: number = 6) => {
         if (!query || query.trim().length < 2) return [];
         try {
-            const index = getClient().index(INDEX_NAME);
-            const searchResponse = await index.search(query, { limit: hitsPerPage });
+            const searchParameters = {
+                q: query,
+                query_by: 'name,slug,sku',
+                per_page: hitsPerPage
+            };
+            const searchResponse = await getClient().collections(COLLECTION_NAME).documents().search(searchParameters);
             return (searchResponse.hits || []).map(mapHit);
         } catch (error) {
-            console.error("Error fetching Meilisearch search results:", error);
+            console.error("Error fetching Typesense search results:", error);
             return [];
         }
     },
@@ -66,10 +81,14 @@ export const searchProductsPaginated = unstable_cache(
     ): Promise<{ products: ReturnType<typeof mapHit>[]; totalHits: number; totalPages: number }> => {
         if (!query || query.trim().length < 2) return { products: [], totalHits: 0, totalPages: 0 };
         try {
-            const index = getClient().index(INDEX_NAME);
-            const offset = (page - 1) * hitsPerPage;
-            const searchResponse = await index.search(query, { limit: hitsPerPage, offset });
-            const totalHits = searchResponse.estimatedTotalHits ?? searchResponse.hits.length;
+            const searchParameters = {
+                q: query,
+                query_by: 'name,slug,sku',
+                page: page,
+                per_page: hitsPerPage
+            };
+            const searchResponse = await getClient().collections(COLLECTION_NAME).documents().search(searchParameters);
+            const totalHits = searchResponse.found || 0;
             const totalPages = Math.ceil(totalHits / hitsPerPage);
             return {
                 products: (searchResponse.hits || []).map(mapHit),
@@ -84,3 +103,4 @@ export const searchProductsPaginated = unstable_cache(
     ['search-paginated'],
     { revalidate: 60 }
 );
+

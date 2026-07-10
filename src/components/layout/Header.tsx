@@ -328,7 +328,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                             <>
                                                 <div className="flex items-center justify-between px-5 pt-4 pb-2">
                                                     <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Kết quả nổi bật</span>
-                                                    <span className="text-[10px] text-gray-400">Cung cấp bởi <span className="font-semibold text-orange-500">Meilisearch</span></span>
+                                                    
                                                 </div>
                                                 <div className="divide-y divide-gray-50">
                                                     {desktopResults.map((p: any) => (

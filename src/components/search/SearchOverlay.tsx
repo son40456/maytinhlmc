@@ -113,8 +113,32 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
     useEffect(() => {
         if (isOpen) {
             setRecentSearches(getRecentSearches());
-            setTimeout(() => inputRef.current?.focus(), 50);
             document.body.style.overflow = 'hidden';
+
+            // Focus the input as soon as overlay opens.
+            // On iOS Safari, programmatic .focus() only works when called from
+            // inside a user-gesture callstack OR after the element is painted.
+            // Strategy: try immediately, then retry at 100ms and 300ms.
+            const tryFocus = () => {
+                const el = inputRef.current;
+                if (!el) return;
+                // iOS workaround: temporarily remove readOnly so keyboard opens
+                el.removeAttribute('readonly');
+                el.focus();
+                // Scroll to top of input on iOS to prevent page jump
+                el.scrollIntoView({ block: 'nearest' });
+            };
+
+            // Attempt 1: next tick (works on Android / most browsers)
+            const t1 = setTimeout(tryFocus, 50);
+            // Attempt 2: after CSS transition finishes (works on iOS)
+            const t2 = setTimeout(tryFocus, 200);
+
+            return () => {
+                clearTimeout(t1);
+                clearTimeout(t2);
+                document.body.style.overflow = '';
+            };
         } else {
             document.body.style.overflow = '';
             setQuery('');
@@ -242,7 +266,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                                     <>
                                         <div className="flex items-center justify-between px-5 pt-4 pb-2">
                                             <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Kết quả nổi bật</span>
-                                            <span className="text-[10px] text-gray-400">Cung cấp bởi <span className="font-bold text-orange-500">SONBN</span></span>
+                                            
                                         </div>
                                         <div className="divide-y divide-gray-50">
                                             {results.map(product => (
@@ -348,6 +372,8 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                     <input
                         ref={inputRef}
                         type="text"
+                        inputMode="search"
+                        enterKeyHint="search"
                         value={query}
                         onChange={e => setQuery(e.target.value)}
                         placeholder="Tìm kiếm..."
