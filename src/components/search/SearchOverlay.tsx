@@ -215,7 +215,7 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                 {/* ========== DESKTOP OVERLAY ========== */}
                 <div className={`hidden lg:flex fixed inset-0 z-[201] items-start justify-center pt-24 px-4 pointer-events-none transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
                     <div
-                        className="w-full max-w-2xl bg-white rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.18)] border border-gray-200 overflow-hidden pointer-events-auto flex flex-col"
+                        className={`w-full max-w-2xl bg-white rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.18)] border border-gray-200 overflow-hidden flex flex-col ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
                         style={{ maxHeight: '70vh' }}
                         onClick={e => e.stopPropagation()}
                     >
