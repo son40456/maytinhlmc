@@ -260,7 +260,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                             >
                                 <div className="h-[40px] sm:h-[52px] w-[130px] sm:w-[170px] relative transition-opacity hover:opacity-90">
                                     <Image
-                                        src="http://fileserver.online.gov.vn/uploads/Resources/iconxacnhan/DaThongBao.png"
+                                        src="https://apiserver.maytinhlmc.vn/wp-content/uploads/dadangkybocongthuong.png"
                                         alt="Đã thông báo Bộ Công Thương"
                                         fill
                                         className="object-contain drop-shadow-md sm:-ml-2"
