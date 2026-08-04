@@ -106,6 +106,8 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
     const [isMenuForceHidden, setIsMenuForceHidden] = useState(false);
+    const [activeMenu, setActiveMenu] = useState<string | null>(null);
+    const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const itemCount = useCartStore((state) => state.getItemCount());
     const cartItems = useCartStore((state) => state.items);
@@ -137,7 +139,23 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     // Force hide menu temporarily when clicking a link inside it
     const handleMenuClick = useCallback(() => {
         setIsMenuForceHidden(true);
+        setActiveMenu(null);
         setTimeout(() => setIsMenuForceHidden(false), 300); // Tăng lên 300ms để đảm bảo UI kịp transition
+    }, []);
+
+    // Mega menu hover handlers with delay to prevent closing when moving cursor to submenu
+    const handleMenuEnter = useCallback((id: string) => {
+        if (closeTimerRef.current) {
+            clearTimeout(closeTimerRef.current);
+            closeTimerRef.current = null;
+        }
+        setActiveMenu(id);
+    }, []);
+
+    const handleMenuLeave = useCallback(() => {
+        closeTimerRef.current = setTimeout(() => {
+            setActiveMenu(null);
+        }, 150);
     }, []);
 
     // Prevent body scroll when drawer is open
@@ -567,25 +585,34 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                 const cleanLabel = item.label.replace(/<\/?[^>]+(>|$)/g, "");
                                 const hasChildren = (item.children && item.children.length > 0) || (item.columns && item.columns.length > 0);
 
+                                const isOpen = activeMenu === item.id && !isMenuForceHidden;
+
                                 return (
-                                    <div key={item.id} className={`group/menu static lg:static h-full flex-1 ${isMenuForceHidden ? 'pointer-events-none' : ''}`}>
+                                    <div
+                                        key={item.id}
+                                        className={`h-full flex-1 ${isMenuForceHidden ? 'pointer-events-none' : ''}`}
+                                        onMouseEnter={() => hasChildren && handleMenuEnter(item.id)}
+                                        onMouseLeave={hasChildren ? handleMenuLeave : undefined}
+                                    >
                                         <Link
                                             href={item.path.replace(/\/category\//g, '/').replace(/\/product\//g, '/')}
-                                            className="flex flex-col items-center justify-center py-2 px-1 bg-white/5 hover:bg-white/15 rounded-xl transition-all group h-full w-full shadow-sm"
+                                            className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all h-full w-full shadow-sm ${isOpen ? 'bg-white/20' : 'bg-white/5 hover:bg-white/15'}`}
                                             onClick={handleMenuClick}
                                         >
-                                            <span className="mb-1.5 group-hover:scale-110 group-hover:text-white transition-all text-gray-200">
+                                            <span className={`mb-1.5 transition-all text-gray-200 ${isOpen ? 'scale-110 text-white' : ''}`}>
                                                 {renderMenuIcon((item as any).icon, cleanLabel, item.cssClasses, false)}
                                             </span>
                                             <span className="text-[12px] font-bold text-center tracking-tight text-white flex items-center gap-1 uppercase whitespace-nowrap">
                                                 {cleanLabel}
-                                                {hasChildren && <ChevronDown size={12} className="opacity-70" />}
+                                                {hasChildren && <ChevronDown size={12} className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />}
                                             </span>
                                         </Link>
 
-                                        {hasChildren && (
+                                        {hasChildren && isOpen && (
                                             <div
-                                                className={`absolute left-0 right-0 top-full hidden group-hover/menu:block bg-white text-gray-800 shadow-[0_10px_40px_rgba(0,0,0,0.08)] border-t-2 border-yellow-400 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200 rounded-b-xl ${isMenuForceHidden ? '!hidden' : ''}`}
+                                                className="absolute left-0 right-0 top-full bg-white text-gray-800 shadow-[0_10px_40px_rgba(0,0,0,0.08)] border-t-2 border-yellow-400 p-8 z-[60] w-full animate-in fade-in slide-in-from-top-2 duration-200 rounded-b-xl"
+                                                onMouseEnter={() => handleMenuEnter(item.id)}
+                                                onMouseLeave={handleMenuLeave}
                                                 onClick={handleMenuClick}
                                             >
                                                 <div className="flex justify-between items-start gap-8">

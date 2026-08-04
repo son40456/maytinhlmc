@@ -14,6 +14,29 @@ export interface HardwareGridCategory {
     link?: string;
 }
 
+// PC Builder Tab & Template interfaces
+export interface PcTemplate {
+    id: string;
+    name: string;
+    image: string;
+    badge?: string;
+    badgeColor?: 'yellow' | 'blue' | 'green' | 'red' | 'purple';
+    price: string;
+    originalPrice?: string;
+    specs: string[];
+    components: Record<string, number>; // { cpu: 31318, mainboard: 34558, ... }
+}
+
+export interface PcBuilderTab {
+    id: string;
+    name: string;
+    icon: string;
+    priceHint: string;
+    description: string;
+    theme: 'blue' | 'rose' | 'purple' | 'amber' | 'green' | 'cyan';
+    templates: PcTemplate[];
+}
+
 export interface HardwareGridConfig {
     isEnabled: boolean;
     categories: HardwareGridCategory[];
@@ -131,18 +154,19 @@ export async function getPcBuilderConfig() {
 
     try {
         const processData = (parsed: any) => {
-            if (Array.isArray(parsed)) return { components: parsed, companyInfo: {} };
+            if (Array.isArray(parsed)) return { components: parsed, companyInfo: {}, tabs: [] };
             // Legacy Object format (before object was used for companyInfo)
             if (parsed && typeof parsed === 'object' && !('components' in parsed)) {
                 // check if it looks like the old dictionary
                 const isOldDict = Object.values(parsed).some(v => typeof v === 'object' && v !== null && 'id' in v);
                 if (isOldDict) {
-                    return { components: Object.values(parsed), companyInfo: {} };
+                    return { components: Object.values(parsed), companyInfo: {}, tabs: [] };
                 }
             }
             return {
                 components: parsed?.components || [],
-                companyInfo: parsed?.companyInfo || {}
+                companyInfo: parsed?.companyInfo || {},
+                tabs: parsed?.tabs || [],
             };
         };
 
@@ -179,14 +203,16 @@ export async function getPcBuilderConfig() {
                     { id: 'keyboard_mouse', name: 'Phím Chuột', slug: 'phim-chuot-ban-ghe-gear' },
                     { id: 'headphone', name: 'Tai Nghe', slug: 'loa-tai-nghe-mic-webcam' },
                 ],
-                companyInfo: {}
+                companyInfo: {},
+                tabs: [],
             };
         }
     } catch (error) {
         console.error('Error reading pc builder config:', error);
-        return { components: [], companyInfo: {} };
+        return { components: [], companyInfo: {}, tabs: [] };
     }
 }
+
 
 export async function getHardwareGridConfig(): Promise<HardwareGridConfig> {
     const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';

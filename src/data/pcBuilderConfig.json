@@ -1,67 +1,161 @@
-[
-  {
-    "id": "mainboard",
-    "name": "Mainboard - Bo Mạch Chủ",
-    "slug": "mainboard-bo-mach-chu"
+{
+  "components": [
+    {
+      "id": "mainboard",
+      "name": "Mainboard - Bo Mạch Chủ",
+      "slug": "mainboard-bo-mach-chu"
+    },
+    {
+      "id": "cpu",
+      "name": "CPU - Bộ Vi Xử Lý",
+      "slug": "cpu-bo-vi-xu-ly"
+    },
+    {
+      "id": "ram",
+      "name": "RAM - Bộ Nhớ Trong",
+      "slug": "ram-bo-nho-trong"
+    },
+    {
+      "id": "vga",
+      "name": "VGA - Card Màn Hình",
+      "slug": "vga-card-man-hinh"
+    },
+    {
+      "id": "ssd",
+      "name": "Ổ Cứng SSD",
+      "slug": "o-cung-ssd"
+    },
+    {
+      "id": "hdd",
+      "name": "Ổ Cứng HDD",
+      "slug": "o-cung-hdd"
+    },
+    {
+      "id": "psu",
+      "name": "Nguồn - PSU",
+      "slug": "psu-nguon-may-tinh"
+    },
+    {
+      "id": "case",
+      "name": "Vỏ Case",
+      "slug": "case-vo-may-tinh"
+    },
+    {
+      "id": "cooler",
+      "name": "Tản Nhiệt",
+      "slug": "fan-led-tan-nhiet-may-tinh"
+    },
+    {
+      "id": "comp-1772013032092",
+      "name": "Tản nhiệt nước",
+      "slug": "tan-nhiet-nuoc"
+    },
+    {
+      "id": "monitor",
+      "name": "Màn Hình",
+      "slug": "man-hinh-may-tinh"
+    },
+    {
+      "id": "keyboard_mouse",
+      "name": "Phím Chuột",
+      "slug": "phim-chuot-ban-ghe-gear"
+    },
+    {
+      "id": "headphone",
+      "name": "Tai Nghe",
+      "slug": "loa-tai-nghe-mic-webcam"
+    }
+  ],
+  "companyInfo": {
+    "logo": "",
+    "name": "",
+    "contact": "",
+    "contacts": [],
+    "description": ""
   },
-  {
-    "id": "cpu",
-    "name": "CPU - Bộ Vi Xử Lý",
-    "slug": "cpu-bo-vi-xu-ly"
-  },
-  {
-    "id": "ram",
-    "name": "RAM - Bộ Nhớ Trong",
-    "slug": "ram-bo-nho-trong"
-  },
-  {
-    "id": "vga",
-    "name": "VGA - Card Màn Hình",
-    "slug": "vga-card-man-hinh"
-  },
-  {
-    "id": "ssd",
-    "name": "Ổ Cứng SSD",
-    "slug": "o-cung-ssd"
-  },
-  {
-    "id": "hdd",
-    "name": "Ổ Cứng HDD",
-    "slug": "o-cung-hdd"
-  },
-  {
-    "id": "psu",
-    "name": "Nguồn - PSU",
-    "slug": "psu-nguon-may-tinh"
-  },
-  {
-    "id": "case",
-    "name": "Vỏ Case",
-    "slug": "case-vo-may-tinh"
-  },
-  {
-    "id": "cooler",
-    "name": "Tản Nhiệt",
-    "slug": "fan-led-tan-nhiet-may-tinh"
-  },
-  {
-    "id": "comp-1772013032092",
-    "name": "Tản nhiệt nước",
-    "slug": "tan-nhiet-nuoc"
-  },
-  {
-    "id": "monitor",
-    "name": "Màn Hình",
-    "slug": "man-hinh-may-tinh"
-  },
-  {
-    "id": "keyboard_mouse",
-    "name": "Phím Chuột",
-    "slug": "phim-chuot-ban-ghe-gear"
-  },
-  {
-    "id": "headphone",
-    "name": "Tai Nghe",
-    "slug": "loa-tai-nghe-mic-webcam"
-  }
-]
+  "tabs": [
+    {
+      "id": "tab-1783953214073",
+      "name": "PC Văn Phòng",
+      "icon": "",
+      "priceHint": "Cơ bản",
+      "description": "Lướt web, Office mượt mà",
+      "theme": "blue",
+      "templates": [
+        {
+          "id": "tpl-1783953777895",
+          "name": "",
+          "image": "https://ik.imagekit.io/maytinhlmc/wp-content/uploads/vp-r9.png?tr=w-640,f-auto,q-80",
+          "badge": "New",
+          "badgeColor": "red",
+          "price": "12900000",
+          "originalPrice": "",
+          "specs": [
+            "Intel Core I7"
+          ],
+          "components": {
+            "mainboard": 34566,
+            "cpu": 33963,
+            "ram": 34651
+          }
+        },
+        {
+          "id": "tpl-1783953837184",
+          "name": "",
+          "image": "",
+          "badge": "",
+          "badgeColor": "yellow",
+          "price": "",
+          "originalPrice": "",
+          "specs": [],
+          "components": {
+            "mainboard": 34583
+          }
+        }
+      ]
+    },
+    {
+      "id": "tab-1783954541586",
+      "name": "PC Gaming",
+      "icon": "💻",
+      "priceHint": "",
+      "description": "",
+      "theme": "blue",
+      "templates": [
+        {
+          "id": "tpl-1783954558818",
+          "name": "Gaming 1",
+          "image": "",
+          "badge": "",
+          "badgeColor": "yellow",
+          "price": "",
+          "originalPrice": "",
+          "specs": [],
+          "components": {}
+        },
+        {
+          "id": "tpl-1783954562797",
+          "name": "",
+          "image": "",
+          "badge": "",
+          "badgeColor": "yellow",
+          "price": "",
+          "originalPrice": "",
+          "specs": [],
+          "components": {}
+        },
+        {
+          "id": "tpl-1783954563264",
+          "name": "",
+          "image": "",
+          "badge": "",
+          "badgeColor": "yellow",
+          "price": "",
+          "originalPrice": "",
+          "specs": [],
+          "components": {}
+        }
+      ]
+    }
+  ]
+}

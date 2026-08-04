@@ -1,1128 +1,1128 @@
 [
-    {
-        "id": "148481",
-        "label": "Bộ PC",
-        "path": "/pc-gaming-streaming",
-        "icon": "MonitorPlay",
-        "cssClasses": [
-            "mega-menu-item-148481"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/boPC.png",
-        "children": [
-            {
-                "id": "148552",
-                "label": "PC Gaming AMD",
-                "path": "/pc-gaming-amd"
-            },
-            {
-                "id": "148553",
-                "label": "PC AI - Trí tuệ nhân tạo",
-                "path": "/pc-ai"
-            },
-            {
-                "id": "148557",
-                "label": "PC Gaming Intel",
-                "path": "/pc-gaming-intel"
-            },
-            {
-                "id": "148558",
-                "label": "Mini PC",
-                "path": "#"
-            },
-            {
-                "id": "148831",
-                "label": "PC Giả Lập Ảo Hoá - Server",
-                "path": "/pc-xeon"
-            },
-            {
-                "id": "148832",
-                "label": "PC Văn Phòng",
-                "path": "/pc-van-phong"
-            }
-        ],
-        "columns": null
-    },
-    {
-        "id": "148483",
-        "label": "Mainboard",
-        "path": "/mainboard-bo-mach-chu",
-        "icon": "Layout",
-        "cssClasses": [
-            "mega-menu-item-148483"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/MenuBgMain-1.png",
-        "children": null,
-        "columns": [
-            {
-                "heading": "LOẠI MAINBOARD",
-                "items": [
-                    {
-                        "id": "190617",
-                        "label": "Mainboard Intel",
-                        "path": "/mainboard-intel"
-                    },
-                    {
-                        "id": "190618",
-                        "label": "Mainboard AMD",
-                        "path": "/mainboard-amd"
-                    }
-                ]
-            },
-            {
-                "heading": "THEO THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "190610",
-                        "label": "Mainboard MSI",
-                        "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=msi"
-                    },
-                    {
-                        "id": "190613",
-                        "label": "Mainboard Gigabyte",
-                        "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=gigabyte"
-                    },
-                    {
-                        "id": "190614",
-                        "label": "Mainboard ASUS",
-                        "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=asus"
-                    },
-                    {
-                        "id": "190615",
-                        "label": "Mainboard Colorful",
-                        "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=colorful"
-                    },
-                    {
-                        "id": "190616",
-                        "label": "Mainboard ASROCK",
-                        "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=asrock"
-                    }
-                ]
-            },
-            {
-                "heading": "CHIPSET INTEL",
-                "items": [
-                    {
-                        "id": "190619",
-                        "label": "Mainboard Intel Z790",
-                        "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-z790"
-                    },
-                    {
-                        "id": "190620",
-                        "label": "Mainboard Intel Z890",
-                        "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-z890"
-                    },
-                    {
-                        "id": "190621",
-                        "label": "Mainboard Intel B760",
-                        "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-b760"
-                    },
-                    {
-                        "id": "190622",
-                        "label": "Mainboard Intel Z690",
-                        "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-z690"
-                    },
-                    {
-                        "id": "190623",
-                        "label": "Mainboard Intel B860",
-                        "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-b860"
-                    }
-                ]
-            },
-            {
-                "heading": "CHIPSET AMD",
-                "items": [
-                    {
-                        "id": "190624",
-                        "label": "Mainboard AMD B850",
-                        "path": "/mainboard-bo-mach-chu/?pa_chipset=amd-b850"
-                    },
-                    {
-                        "id": "190625",
-                        "label": "Mainboard AMD B650",
-                        "path": "/mainboard-bo-mach-chu/?pa_chipset=amd-b650"
-                    },
-                    {
-                        "id": "190626",
-                        "label": "Mainboard AMD B550",
-                        "path": "/mainboard-bo-mach-chu/?pa_chipset=amd-b550"
-                    }
-                ]
-            }
+  {
+    "id": "148481",
+    "label": "Bộ PC",
+    "path": "/pc-gaming-streaming",
+    "icon": "MonitorPlay",
+    "cssClasses": [
+      "mega-menu-item-148481"
+    ],
+    "image": "https://maytinhlmc.vn/wp-content/uploads/boPC.png",
+    "children": [
+      {
+        "id": "148552",
+        "label": "PC Gaming AMD",
+        "path": "/pc-gaming-amd"
+      },
+      {
+        "id": "148553",
+        "label": "PC AI - Trí tuệ nhân tạo",
+        "path": "/pc-ai"
+      },
+      {
+        "id": "148557",
+        "label": "PC Gaming Intel",
+        "path": "/pc-gaming-intel"
+      },
+      {
+        "id": "148558",
+        "label": "Mini PC",
+        "path": "#"
+      },
+      {
+        "id": "148831",
+        "label": "PC Giả Lập Ảo Hoá - Server",
+        "path": "/pc-xeon"
+      },
+      {
+        "id": "148832",
+        "label": "PC Văn Phòng",
+        "path": "/pc-van-phong"
+      }
+    ],
+    "columns": null
+  },
+  {
+    "id": "148483",
+    "label": "Mainboard",
+    "path": "/mainboard-bo-mach-chu",
+    "icon": "Layout",
+    "cssClasses": [
+      "mega-menu-item-148483"
+    ],
+    "image": "https://kccshop.vn/media/product/250-3477-0.png",
+    "children": null,
+    "columns": [
+      {
+        "heading": "LOẠI MAINBOARD",
+        "items": [
+          {
+            "id": "190617",
+            "label": "Mainboard Intel",
+            "path": "/mainboard-intel"
+          },
+          {
+            "id": "190618",
+            "label": "Mainboard AMD",
+            "path": "/mainboard-amd"
+          }
         ]
-    },
-    {
-        "id": "148484",
-        "label": "CPU",
-        "path": "/cpu-bo-vi-xu-ly",
-        "icon": "Cpu",
-        "cssClasses": [
-            "mega-menu-item-148484"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_CPUBg.png",
-        "children": null,
-        "columns": [
-            {
-                "heading": "CPU INTEL",
-                "items": [
-                    {
-                        "id": "190650",
-                        "label": "CPU Intel Core i3",
-                        "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-i3"
-                    },
-                    {
-                        "id": "190638",
-                        "label": "CPU Intel Core i5",
-                        "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-i5"
-                    },
-                    {
-                        "id": "190649",
-                        "label": "CPU Intel Core i7",
-                        "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-i7"
-                    },
-                    {
-                        "id": "190651",
-                        "label": "CPU Intel Core i9",
-                        "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-i9"
-                    },
-                    {
-                        "id": "190647",
-                        "label": "CPU Intel Core Ultra 5",
-                        "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-ultra-5"
-                    },
-                    {
-                        "id": "190648",
-                        "label": "CPU Intel Core Ultra 7",
-                        "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-ultra-7"
-                    }
-                ]
-            },
-            {
-                "heading": "CPU AMD",
-                "items": [
-                    {
-                        "id": "190637",
-                        "label": "CPU AMD Ryzen 5",
-                        "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=amd-ryzen-5"
-                    },
-                    {
-                        "id": "190646",
-                        "label": "CPU AMD Ryzen 7",
-                        "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=amd-ryzen-7"
-                    },
-                    {
-                        "id": "190645",
-                        "label": "CPU AMD Ryzen 9",
-                        "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=amd-ryzen-9"
-                    }
-                ]
-            }
+      },
+      {
+        "heading": "THEO THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "190610",
+            "label": "Mainboard MSI",
+            "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=msi"
+          },
+          {
+            "id": "190613",
+            "label": "Mainboard Gigabyte",
+            "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=gigabyte"
+          },
+          {
+            "id": "190614",
+            "label": "Mainboard ASUS",
+            "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=asus"
+          },
+          {
+            "id": "190615",
+            "label": "Mainboard Colorful",
+            "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=colorful"
+          },
+          {
+            "id": "190616",
+            "label": "Mainboard ASROCK",
+            "path": "/mainboard-bo-mach-chu/?pa_thuong-hieu=asrock"
+          }
         ]
-    },
-    {
-        "id": "148485",
-        "label": "RAM",
-        "path": "/ram-bo-nho-trong",
-        "icon": "HardDrive",
-        "cssClasses": [
-            "mega-menu-item-148485"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_RAM_BG.png",
-        "children": null,
-        "columns": [
-            {
-                "heading": "LOẠI RAM",
-                "items": [
-                    {
-                        "id": "190653",
-                        "label": "RAM DDR3",
-                        "path": "/ram-ddr3"
-                    },
-                    {
-                        "id": "190654",
-                        "label": "RAM DDR4",
-                        "path": "/ram-ddr4"
-                    },
-                    {
-                        "id": "190655",
-                        "label": "RAM DDR5",
-                        "path": "/ram-ddr5"
-                    }
-                ]
-            },
-            {
-                "heading": "THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "190658",
-                        "label": "RAM ADATA",
-                        "path": "/ram-bo-nho-trong/?pa_thuong-hieu=adata"
-                    },
-                    {
-                        "id": "190659",
-                        "label": "RAM Lexar",
-                        "path": "/ram-bo-nho-trong/?pa_thuong-hieu=lexar"
-                    },
-                    {
-                        "id": "190657",
-                        "label": "RAM TEAMGROUP",
-                        "path": "/ram-bo-nho-trong/?pa_thuong-hieu=teamgroup"
-                    },
-                    {
-                        "id": "190656",
-                        "label": "RAM Corsair",
-                        "path": "/ram-bo-nho-trong/?pa_thuong-hieu=corsair"
-                    },
-                    {
-                        "id": "190660",
-                        "label": "RAM Gskill",
-                        "path": "/ram-bo-nho-trong/?pa_thuong-hieu=gskill"
-                    }
-                ]
-            }
+      },
+      {
+        "heading": "CHIPSET INTEL",
+        "items": [
+          {
+            "id": "190619",
+            "label": "Mainboard Intel Z790",
+            "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-z790"
+          },
+          {
+            "id": "190620",
+            "label": "Mainboard Intel Z890",
+            "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-z890"
+          },
+          {
+            "id": "190621",
+            "label": "Mainboard Intel B760",
+            "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-b760"
+          },
+          {
+            "id": "190622",
+            "label": "Mainboard Intel Z690",
+            "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-z690"
+          },
+          {
+            "id": "190623",
+            "label": "Mainboard Intel B860",
+            "path": "/mainboard-bo-mach-chu/?pa_chipset=intel-b860"
+          }
         ]
-    },
-    {
-        "id": "148486",
-        "label": "VGA",
-        "path": "/vga-card-man-hinh",
-        "icon": "Monitor",
-        "cssClasses": [
-            "mega-menu-item-148486"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_VGA_BG.png",
-        "children": null,
-        "columns": [
-            {
-                "heading": "LOẠI VGA",
-                "items": [
-                    {
-                        "id": "190386",
-                        "label": "VGA Nvidia",
-                        "path": "/vga-nvidia"
-                    },
-                    {
-                        "id": "190385",
-                        "label": "VGA AMD",
-                        "path": "/vga-amd"
-                    },
-                    {
-                        "id": "190384",
-                        "label": "VGA Đã qua sử dụng",
-                        "path": "/vga-da-qua-su-dung"
-                    }
-                ]
-            },
-            {
-                "heading": "THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "190664",
-                        "label": "VGA MSI",
-                        "path": "/vga-card-man-hinh/?pa_thuong-hieu=msi"
-                    },
-                    {
-                        "id": "190666",
-                        "label": "VGA GIGABYTE",
-                        "path": "/vga-card-man-hinh/?pa_thuong-hieu=gigabyte"
-                    },
-                    {
-                        "id": "190667",
-                        "label": "VGA COLORFUL",
-                        "path": "/vga-card-man-hinh/?pa_thuong-hieu=colorful"
-                    },
-                    {
-                        "id": "190670",
-                        "label": "VGA ASUS",
-                        "path": "/vga-card-man-hinh/?pa_thuong-hieu=asus"
-                    },
-                    {
-                        "id": "190665",
-                        "label": "VGA PNY",
-                        "path": "/vga-card-man-hinh/?pa_thuong-hieu=pny"
-                    },
-                    {
-                        "id": "190668",
-                        "label": "VGA SAPPHIRE",
-                        "path": "/vga-card-man-hinh/?pa_thuong-hieu=sapphire"
-                    },
-                    {
-                        "id": "190669",
-                        "label": "VGA ASROCK",
-                        "path": "/vga-card-man-hinh/?pa_thuong-hieu=asrock"
-                    }
-                ]
-            },
-            {
-                "heading": "NVIDIA RTX 5000",
-                "items": [
-                    {
-                        "id": "190672",
-                        "label": "NVIDIA RTX 5060 Ti",
-                        "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-5060-ti"
-                    },
-                    {
-                        "id": "190671",
-                        "label": "NVIDIA RTX 5070",
-                        "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-5070"
-                    },
-                    {
-                        "id": "190673",
-                        "label": "NVIDIA RTX 5070 Ti",
-                        "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-5070-ti"
-                    }
-                ]
-            },
-            {
-                "heading": "NVIDIA RTX 4000",
-                "items": [
-                    {
-                        "id": "190676",
-                        "label": "NVIDIA RTX 4060",
-                        "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-4060"
-                    },
-                    {
-                        "id": "190675",
-                        "label": "NVIDIA RTX 4060 Ti",
-                        "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-4060-ti"
-                    },
-                    {
-                        "id": "190674",
-                        "label": "NVIDIA RTX 4070",
-                        "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-4070"
-                    }
-                ]
-            }
+      },
+      {
+        "heading": "CHIPSET AMD",
+        "items": [
+          {
+            "id": "190624",
+            "label": "Mainboard AMD B850",
+            "path": "/mainboard-bo-mach-chu/?pa_chipset=amd-b850"
+          },
+          {
+            "id": "190625",
+            "label": "Mainboard AMD B650",
+            "path": "/mainboard-bo-mach-chu/?pa_chipset=amd-b650"
+          },
+          {
+            "id": "190626",
+            "label": "Mainboard AMD B550",
+            "path": "/mainboard-bo-mach-chu/?pa_chipset=amd-b550"
+          }
         ]
-    },
-    {
-        "id": "166376",
-        "label": "Ổ cứng HDD",
-        "path": "/o-cung-hdd",
-        "icon": "HardDrive",
-        "cssClasses": [
-            "mega-menu-item-166376"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_HDD_bg.png",
-        "children": null,
-        "columns": [
-            {
-                "heading": "THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "190794",
-                        "label": "HDD Seagate",
-                        "path": "/o-cung-hdd?pa_thuong-hieu=seagate"
-                    },
-                    {
-                        "id": "190795",
-                        "label": "HDD Western Digital",
-                        "path": "/o-cung-hdd?pa_thuong-hieu=western-digital"
-                    }
-                ]
-            },
-            {
-                "heading": "DUNG LƯỢNG HDD",
-                "items": [
-                    {
-                        "id": "190804",
-                        "label": "HDD 1TB",
-                        "path": "/o-cung-hdd?pa_dung-luong=1tb"
-                    },
-                    {
-                        "id": "190803",
-                        "label": "HDD 2TB",
-                        "path": "/o-cung-hdd?pa_dung-luong=2tb"
-                    },
-                    {
-                        "id": "190802",
-                        "label": "HDD 3TB",
-                        "path": "/o-cung-hdd?pa_dung-luong=3tb"
-                    },
-                    {
-                        "id": "190801",
-                        "label": "HDD 4TB",
-                        "path": "/o-cung-hdd?pa_dung-luong=4tb"
-                    },
-                    {
-                        "id": "190800",
-                        "label": "HDD 6TB",
-                        "path": "/o-cung-hdd?pa_dung-luong=6tb"
-                    },
-                    {
-                        "id": "190799",
-                        "label": "HDD 14TB",
-                        "path": "/o-cung-hdd?pa_dung-luong=14tb"
-                    },
-                    {
-                        "id": "190798",
-                        "label": "HDD 16TB",
-                        "path": "/o-cung-hdd?pa_dung-luong=16tb"
-                    }
-                ]
-            },
-            {
-                "heading": "KHOẢNG GIÁ",
-                "items": [
-                    {
-                        "id": "p1",
-                        "label": "HDD dưới 2 triệu",
-                        "path": "/o-cung-hdd?pa_khoang-gia-hdd=duoi-2-trieu"
-                    },
-                    {
-                        "id": "p2",
-                        "label": "HDD 2 triệu - 4 triệu",
-                        "path": "/o-cung-hdd?pa_khoang-gia-hdd=2-trieu-4-trieu"
-                    },
-                    {
-                        "id": "p3",
-                        "label": "HDD 4 triệu - 8 triệu",
-                        "path": "/o-cung-hdd?pa_khoang-gia-hdd=4-trieu-8-trieu"
-                    },
-                    {
-                        "id": "p4",
-                        "label": "HDD trên 8 triệu",
-                        "path": "/o-cung-hdd?pa_khoang-gia-hdd=tren-8-trieu"
-                    }
-                ]
-            }
+      }
+    ]
+  },
+  {
+    "id": "148484",
+    "label": "CPU",
+    "path": "/cpu-bo-vi-xu-ly",
+    "icon": "Cpu",
+    "cssClasses": [
+      "mega-menu-item-148484"
+    ],
+    "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_CPUBg.png",
+    "children": null,
+    "columns": [
+      {
+        "heading": "CPU INTEL",
+        "items": [
+          {
+            "id": "190650",
+            "label": "CPU Intel Core i3",
+            "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-i3"
+          },
+          {
+            "id": "190638",
+            "label": "CPU Intel Core i5",
+            "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-i5"
+          },
+          {
+            "id": "190649",
+            "label": "CPU Intel Core i7",
+            "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-i7"
+          },
+          {
+            "id": "190651",
+            "label": "CPU Intel Core i9",
+            "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-i9"
+          },
+          {
+            "id": "190647",
+            "label": "CPU Intel Core Ultra 5",
+            "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-ultra-5"
+          },
+          {
+            "id": "190648",
+            "label": "CPU Intel Core Ultra 7",
+            "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=intel-core-ultra-7"
+          }
         ]
-    },
-    {
-        "id": "187926",
-        "label": "Ổ cứng SSD",
-        "path": "/o-cung-ssd",
-        "icon": "HardDrive",
-        "cssClasses": [
-            "mega-menu-item-187926"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_SSD_bg.png",
-        "children": null,
-        "columns": [
-            {
-                "heading": "THEO THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "s1",
-                        "label": "SSD ADATA",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=adata"
-                    },
-                    {
-                        "id": "s2",
-                        "label": "SSD PNY",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=pny"
-                    },
-                    {
-                        "id": "s3",
-                        "label": "SSD Lexar",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=lexar"
-                    },
-                    {
-                        "id": "s4",
-                        "label": "SSD MSI",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=msi"
-                    },
-                    {
-                        "id": "s5",
-                        "label": "SSD Hiksemi",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=hiksemi"
-                    },
-                    {
-                        "id": "s6",
-                        "label": "SSD Kingston",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=kingston"
-                    },
-                    {
-                        "id": "s7",
-                        "label": "SSD Samsung",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=samsung"
-                    },
-                    {
-                        "id": "s8",
-                        "label": "SSD KIOXIA",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=kioxia"
-                    },
-                    {
-                        "id": "s9",
-                        "label": "SSD Gigabyte",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=gigabyte"
-                    },
-                    {
-                        "id": "s10",
-                        "label": "SSD TEAMGROUP",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=teamgroup"
-                    },
-                    {
-                        "id": "s11",
-                        "label": "SSD Western Digital",
-                        "path": "/o-cung-ssd?pa_thuong-hieu=western-digital"
-                    }
-                ]
-            },
-            {
-                "heading": "DUNG LƯỢNG SSD",
-                "items": [
-                    {
-                        "id": "d1",
-                        "label": "SSD 120GB",
-                        "path": "/o-cung-ssd?pa_dung-luong=120gb"
-                    },
-                    {
-                        "id": "d2",
-                        "label": "SSD 240GB",
-                        "path": "/o-cung-ssd?pa_dung-luong=240gb"
-                    },
-                    {
-                        "id": "d3",
-                        "label": "SSD 250GB",
-                        "path": "/o-cung-ssd?pa_dung-luong=250gb"
-                    },
-                    {
-                        "id": "d4",
-                        "label": "SSD 256GB",
-                        "path": "/o-cung-ssd?pa_dung-luong=256gb"
-                    },
-                    {
-                        "id": "d5",
-                        "label": "SSD 500GB",
-                        "path": "/o-cung-ssd?pa_dung-luong=500gb"
-                    },
-                    {
-                        "id": "d6",
-                        "label": "SSD 512GB",
-                        "path": "/o-cung-ssd?pa_dung-luong=512gb"
-                    },
-                    {
-                        "id": "d7",
-                        "label": "SSD 960GB",
-                        "path": "/o-cung-ssd?pa_dung-luong=960gb"
-                    },
-                    {
-                        "id": "d8",
-                        "label": "SSD 1TB",
-                        "path": "/o-cung-ssd?pa_dung-luong=1tb"
-                    },
-                    {
-                        "id": "d9",
-                        "label": "SSD 2TB",
-                        "path": "/o-cung-ssd?pa_dung-luong=2tb"
-                    },
-                    {
-                        "id": "d10",
-                        "label": "SSD 4TB",
-                        "path": "/o-cung-ssd?pa_dung-luong=4tb"
-                    }
-                ]
-            },
-            {
-                "heading": "KHOẢNG GIÁ",
-                "items": [
-                    {
-                        "id": "p1s",
-                        "label": "SSD dưới 1 triệu",
-                        "path": "/o-cung-ssd?pa_khoang-gia-ssd=duoi-1-trieu"
-                    },
-                    {
-                        "id": "p2s",
-                        "label": "SSD 1 triệu - 2 triệu",
-                        "path": "/o-cung-ssd?pa_khoang-gia-ssd=1-trieu-2-trieu"
-                    },
-                    {
-                        "id": "p3s",
-                        "label": "SSD 2 triệu - 3 triệu",
-                        "path": "/o-cung-ssd?pa_khoang-gia-ssd=2-trieu-3-trieu"
-                    },
-                    {
-                        "id": "p4s",
-                        "label": "SSD 3 triệu - 4 triệu",
-                        "path": "/o-cung-ssd?pa_khoang-gia-ssd=3-trieu-4-trieu"
-                    },
-                    {
-                        "id": "p5s",
-                        "label": "SSD trên 4 triệu",
-                        "path": "/o-cung-ssd?pa_khoang-gia-ssd=tren-4-trieu"
-                    }
-                ]
-            },
-            {
-                "heading": "LOẠI Ổ CỨNG",
-                "items": [
-                    {
-                        "id": "t1",
-                        "label": "SSD 2.5 inch SATA",
-                        "path": "/o-cung-ssd?pa_loai-o-cung-ssd=2-5-inch-sata"
-                    },
-                    {
-                        "id": "t2",
-                        "label": "SSD M.2 NVMe",
-                        "path": "/o-cung-ssd?pa_loai-o-cung-ssd=m-2-nvme"
-                    },
-                    {
-                        "id": "t3",
-                        "label": "SSD M.2 SATA",
-                        "path": "/o-cung-ssd?pa_loai-o-cung-ssd=m-2-sata"
-                    }
-                ]
-            }
+      },
+      {
+        "heading": "CPU AMD",
+        "items": [
+          {
+            "id": "190637",
+            "label": "CPU AMD Ryzen 5",
+            "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=amd-ryzen-5"
+          },
+          {
+            "id": "190646",
+            "label": "CPU AMD Ryzen 7",
+            "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=amd-ryzen-7"
+          },
+          {
+            "id": "190645",
+            "label": "CPU AMD Ryzen 9",
+            "path": "/cpu-bo-vi-xu-ly?pa_dong-cpu=amd-ryzen-9"
+          }
         ]
-    },
-    {
-        "id": "148488",
-        "label": "PSU",
-        "path": "/psu-nguon-may-tinh",
-        "icon": "Fan",
-        "cssClasses": [
-            "mega-menu-item-148488"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_PSU_bg.png",
-        "children": null,
-        "columns": [
-            {
-                "heading": "THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "b1",
-                        "label": "NGUỒN ASUS",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=asus"
-                    },
-                    {
-                        "id": "b2",
-                        "label": "NGUỒN NZXT",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=nzxt"
-                    },
-                    {
-                        "id": "b3",
-                        "label": "NGUỒN SUPER FLOWER",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=super-flower"
-                    },
-                    {
-                        "id": "b4",
-                        "label": "NGUỒN THERMALTAKE",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=thermaltake"
-                    },
-                    {
-                        "id": "b5",
-                        "label": "NGUỒN ANTEC",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=antec"
-                    },
-                    {
-                        "id": "b6",
-                        "label": "NGUỒN ACER",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=acer"
-                    },
-                    {
-                        "id": "b7",
-                        "label": "NGUỒN CORSAIR",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=corsair"
-                    },
-                    {
-                        "id": "b8",
-                        "label": "NGUỒN HUNTKEY",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=huntkey"
-                    },
-                    {
-                        "id": "b9",
-                        "label": "NGUỒN COOLER MASTER",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=cooler-master"
-                    },
-                    {
-                        "id": "b10",
-                        "label": "NGUỒN GIGABYTE",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=gigabyte"
-                    },
-                    {
-                        "id": "b11",
-                        "label": "NGUỒN MSI",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=msi"
-                    },
-                    {
-                        "id": "b12",
-                        "label": "NGUỒN XIGMATEK",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=xigmatek"
-                    },
-                    {
-                        "id": "b13",
-                        "label": "NGUỒN DEEPCOOL",
-                        "path": "/psu-nguon-may-tinh?pa_thuong-hieu=deepcool"
-                    }
-                ]
-            },
-            {
-                "heading": "CÔNG SUẤT",
-                "items": [
-                    {
-                        "id": "w1",
-                        "label": "NGUỒN 450W",
-                        "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=450w"
-                    },
-                    {
-                        "id": "w2",
-                        "label": "NGUỒN 500W",
-                        "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=500w"
-                    },
-                    {
-                        "id": "w3",
-                        "label": "NGUỒN 550W",
-                        "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=550w"
-                    },
-                    {
-                        "id": "w4",
-                        "label": "NGUỒN 600W",
-                        "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=600w"
-                    },
-                    {
-                        "id": "w5",
-                        "label": "NGUỒN 650W",
-                        "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=650w"
-                    },
-                    {
-                        "id": "w6",
-                        "label": "NGUỒN 750W",
-                        "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=750w"
-                    },
-                    {
-                        "id": "w7",
-                        "label": "NGUỒN 850W",
-                        "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=850w"
-                    },
-                    {
-                        "id": "w8",
-                        "label": "NGUỒN 1000W",
-                        "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=1000w"
-                    },
-                    {
-                        "id": "w9",
-                        "label": "NGUỒN TRÊN 1000W",
-                        "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=tren-1000w"
-                    }
-                ]
-            },
-            {
-                "heading": "CHUẨN NGUỒN",
-                "items": [
-                    {
-                        "id": "st1",
-                        "label": "NGUỒN 80 PLUS SILVER",
-                        "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-silver"
-                    },
-                    {
-                        "id": "st2",
-                        "label": "NGUỒN 80 PLUS BRONZE",
-                        "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-bronze"
-                    },
-                    {
-                        "id": "st3",
-                        "label": "NGUỒN 80 PLUS GOLD",
-                        "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-gold"
-                    },
-                    {
-                        "id": "st4",
-                        "label": "NGUỒN 80 PLUS TITANIUM",
-                        "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-titanium"
-                    },
-                    {
-                        "id": "st5",
-                        "label": "NGUỒN 80 PLUS PLATINUM",
-                        "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-platinum"
-                    }
-                ]
-            },
-            {
-                "heading": "KHOẢNG GIÁ",
-                "items": [
-                    {
-                        "id": "pr1",
-                        "label": "DƯỚI 2 TRIỆU",
-                        "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=duoi-2-trieu"
-                    },
-                    {
-                        "id": "pr2",
-                        "label": "2 TRIỆU - 4 TRIỆU",
-                        "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=2-trieu-4-trieu"
-                    },
-                    {
-                        "id": "pr3",
-                        "label": "4 TRIỆU - 6 TRIỆU",
-                        "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=4-trieu-6-trieu"
-                    },
-                    {
-                        "id": "pr4",
-                        "label": "6 TRIỆU - 8 TRIỆU",
-                        "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=6-trieu-8-trieu"
-                    },
-                    {
-                        "id": "pr5",
-                        "label": "TRÊN 8 TRIỆU",
-                        "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=tren-8-trieu"
-                    }
-                ]
-            }
+      }
+    ]
+  },
+  {
+    "id": "148485",
+    "label": "RAM",
+    "path": "/ram-bo-nho-trong",
+    "icon": "HardDrive",
+    "cssClasses": [
+      "mega-menu-item-148485"
+    ],
+    "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_RAM_BG.png",
+    "children": null,
+    "columns": [
+      {
+        "heading": "LOẠI RAM",
+        "items": [
+          {
+            "id": "190653",
+            "label": "RAM DDR3",
+            "path": "/ram-ddr3"
+          },
+          {
+            "id": "190654",
+            "label": "RAM DDR4",
+            "path": "/ram-ddr4"
+          },
+          {
+            "id": "190655",
+            "label": "RAM DDR5",
+            "path": "/ram-ddr5"
+          }
         ]
-    },
-    {
-        "id": "148489",
-        "label": "Case",
-        "path": "/case-vo-may-tinh",
-        "icon": "Layout",
-        "cssClasses": [
-            "mega-menu-item-148489"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/Case_Menu.png",
-        "children": null,
-        "columns": [
-            {
-                "heading": "THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "c1",
-                        "label": "CASE MSI",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=msi"
-                    },
-                    {
-                        "id": "c2",
-                        "label": "CASE SAMA",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=sama"
-                    },
-                    {
-                        "id": "c3",
-                        "label": "CASE Corsair",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=corsair"
-                    },
-                    {
-                        "id": "c4",
-                        "label": "CASE NZXT",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=nzxt"
-                    },
-                    {
-                        "id": "c5",
-                        "label": "CASE Lian Li",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=lian-li"
-                    }
-                ]
-            },
-            {
-                "heading": "THÊM THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "c6",
-                        "label": "CASE ASUS",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=asus"
-                    },
-                    {
-                        "id": "c7",
-                        "label": "CASE XIGMATEK",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=xigmatek"
-                    },
-                    {
-                        "id": "c8",
-                        "label": "CASE MAGIC",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=magic"
-                    },
-                    {
-                        "id": "c9",
-                        "label": "CASE EDRA",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=edra"
-                    },
-                    {
-                        "id": "c10",
-                        "label": "CASE VITRA",
-                        "path": "/case-vo-may-tinh/?pa_thuong-hieu=vitra"
-                    }
-                ]
-            }
+      },
+      {
+        "heading": "THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "190658",
+            "label": "RAM ADATA",
+            "path": "/ram-bo-nho-trong/?pa_thuong-hieu=adata"
+          },
+          {
+            "id": "190659",
+            "label": "RAM Lexar",
+            "path": "/ram-bo-nho-trong/?pa_thuong-hieu=lexar"
+          },
+          {
+            "id": "190657",
+            "label": "RAM TEAMGROUP",
+            "path": "/ram-bo-nho-trong/?pa_thuong-hieu=teamgroup"
+          },
+          {
+            "id": "190656",
+            "label": "RAM Corsair",
+            "path": "/ram-bo-nho-trong/?pa_thuong-hieu=corsair"
+          },
+          {
+            "id": "190660",
+            "label": "RAM Gskill",
+            "path": "/ram-bo-nho-trong/?pa_thuong-hieu=gskill"
+          }
         ]
-    },
-    {
-        "id": "148494",
-        "label": "Màn hình",
-        "path": "/man-hinh-may-tinh",
-        "icon": "Monitor",
-        "cssClasses": [
-            "mega-menu-item-148494"
-        ],
-        "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_manhinh_bg.png",
-        "children": null,
-        "columns": [
-            {
-                "heading": "THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "m1",
-                        "label": "MÀN HÌNH MSI",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=msi"
-                    },
-                    {
-                        "id": "m2",
-                        "label": "MÀN HÌNH LG",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=lg"
-                    },
-                    {
-                        "id": "m3",
-                        "label": "MÀN HÌNH ASUS",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=asus"
-                    },
-                    {
-                        "id": "m4",
-                        "label": "MÀN HÌNH GIGABYTE",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=gigabyte"
-                    },
-                    {
-                        "id": "m5",
-                        "label": "MÀN HÌNH LENOVO",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=lenovo"
-                    },
-                    {
-                        "id": "m6",
-                        "label": "MÀN HÌNH EDRA",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=edra"
-                    },
-                    {
-                        "id": "m7",
-                        "label": "MÀN HÌNH VSP",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=vsp"
-                    }
-                ]
-            },
-            {
-                "heading": "THÊM THƯƠNG HIỆU",
-                "items": [
-                    {
-                        "id": "m8",
-                        "label": "MÀN HÌNH DELL",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=dell"
-                    },
-                    {
-                        "id": "m9",
-                        "label": "MÀN HÌNH ACER",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=acer"
-                    },
-                    {
-                        "id": "m10",
-                        "label": "MÀN HÌNH SAMSUNG",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=samsung"
-                    },
-                    {
-                        "id": "m11",
-                        "label": "MÀN HÌNH AOC",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=aoc"
-                    },
-                    {
-                        "id": "m12",
-                        "label": "MÀN HÌNH BENQ",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=benq"
-                    },
-                    {
-                        "id": "m13",
-                        "label": "MÀN HÌNH VIEWSONIC",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=viewsonic"
-                    },
-                    {
-                        "id": "m14",
-                        "label": "MÀN HÌNH HKC",
-                        "path": "/man-hinh-may-tinh?pa_thuong-hieu=hkc"
-                    }
-                ]
-            },
-            {
-                "heading": "ĐỘ PHÂN GIẢI",
-                "items": [
-                    {
-                        "id": "r1",
-                        "label": "Full HD (1920x1080)",
-                        "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=full-hd-1920x1080"
-                    },
-                    {
-                        "id": "r2",
-                        "label": "2K QHD (2560x1440)",
-                        "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=2k-qhd-2560x1440"
-                    },
-                    {
-                        "id": "r3",
-                        "label": "WQHD (3440x1440)",
-                        "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=wqhd-3440x1440"
-                    },
-                    {
-                        "id": "r4",
-                        "label": "4K (3840x2160)",
-                        "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=4k-3840x2160"
-                    },
-                    {
-                        "id": "r5",
-                        "label": "DualQHD (5120x1440)",
-                        "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=dualqhd-5120x1440"
-                    }
-                ]
-            },
-            {
-                "heading": "KÍCH THƯỚC",
-                "items": [
-                    {
-                        "id": "kz3",
-                        "label": "23.8 inch",
-                        "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=23-8-inch"
-                    },
-                    {
-                        "id": "kz4",
-                        "label": "24 inch",
-                        "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=24-inch"
-                    },
-                    {
-                        "id": "kz6",
-                        "label": "27 inch",
-                        "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=27-inch"
-                    },
-                    {
-                        "id": "kz8",
-                        "label": "31.5 inch",
-                        "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=31-5-inch"
-                    },
-                    {
-                        "id": "kz9",
-                        "label": "32 inch",
-                        "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=32-inch"
-                    },
-                    {
-                        "id": "kz10",
-                        "label": "34 inch",
-                        "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=34-inch"
-                    }
-                ]
-            }
+      }
+    ]
+  },
+  {
+    "id": "148486",
+    "label": "VGA",
+    "path": "/vga-card-man-hinh",
+    "icon": "Monitor",
+    "cssClasses": [
+      "mega-menu-item-148486"
+    ],
+    "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_VGA_BG.png",
+    "children": null,
+    "columns": [
+      {
+        "heading": "LOẠI VGA",
+        "items": [
+          {
+            "id": "190386",
+            "label": "VGA Nvidia",
+            "path": "/vga-nvidia"
+          },
+          {
+            "id": "190385",
+            "label": "VGA AMD",
+            "path": "/vga-amd"
+          },
+          {
+            "id": "190384",
+            "label": "VGA Đã qua sử dụng",
+            "path": "/vga-da-qua-su-dung"
+          }
         ]
-    },
-    {
-        "id": "190839",
-        "label": "Tản Nhiệt",
-        "path": "/fan-led-tan-nhiet-may-tinh",
-        "icon": "Fan",
-        "cssClasses": [
-            "mega-menu-item-190839"
-        ],
-        "image": "",
-        "children": [],
-        "columns": null
-    },
-    {
-        "id": "187911",
-        "label": "Phím Chuột",
-        "path": "/phim-chuot-ban-ghe-gear",
-        "icon": "MousePointer2",
-        "cssClasses": [
-            "mega-menu-item-187911"
-        ],
-        "image": "",
-        "children": [],
-        "columns": null
-    },
-    {
-        "id": "187914",
-        "label": "Tai Nghe",
-        "path": "/loa-tai-nghe-mic-webcam",
-        "icon": "Headphones",
-        "cssClasses": [
-            "mega-menu-item-187914"
-        ],
-        "image": "",
-        "children": [],
-        "columns": null
-    }
+      },
+      {
+        "heading": "THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "190664",
+            "label": "VGA MSI",
+            "path": "/vga-card-man-hinh/?pa_thuong-hieu=msi"
+          },
+          {
+            "id": "190666",
+            "label": "VGA GIGABYTE",
+            "path": "/vga-card-man-hinh/?pa_thuong-hieu=gigabyte"
+          },
+          {
+            "id": "190667",
+            "label": "VGA COLORFUL",
+            "path": "/vga-card-man-hinh/?pa_thuong-hieu=colorful"
+          },
+          {
+            "id": "190670",
+            "label": "VGA ASUS",
+            "path": "/vga-card-man-hinh/?pa_thuong-hieu=asus"
+          },
+          {
+            "id": "190665",
+            "label": "VGA PNY",
+            "path": "/vga-card-man-hinh/?pa_thuong-hieu=pny"
+          },
+          {
+            "id": "190668",
+            "label": "VGA SAPPHIRE",
+            "path": "/vga-card-man-hinh/?pa_thuong-hieu=sapphire"
+          },
+          {
+            "id": "190669",
+            "label": "VGA ASROCK",
+            "path": "/vga-card-man-hinh/?pa_thuong-hieu=asrock"
+          }
+        ]
+      },
+      {
+        "heading": "NVIDIA RTX 5000",
+        "items": [
+          {
+            "id": "190672",
+            "label": "NVIDIA RTX 5060 Ti",
+            "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-5060-ti"
+          },
+          {
+            "id": "190671",
+            "label": "NVIDIA RTX 5070",
+            "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-5070"
+          },
+          {
+            "id": "190673",
+            "label": "NVIDIA RTX 5070 Ti",
+            "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-5070-ti"
+          }
+        ]
+      },
+      {
+        "heading": "NVIDIA RTX 4000",
+        "items": [
+          {
+            "id": "190676",
+            "label": "NVIDIA RTX 4060",
+            "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-4060"
+          },
+          {
+            "id": "190675",
+            "label": "NVIDIA RTX 4060 Ti",
+            "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-4060-ti"
+          },
+          {
+            "id": "190674",
+            "label": "NVIDIA RTX 4070",
+            "path": "/vga-card-man-hinh/?pa_gpu=nvidia-rtx-4070"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "166376",
+    "label": "Ổ cứng HDD",
+    "path": "/o-cung-hdd",
+    "icon": "HardDrive",
+    "cssClasses": [
+      "mega-menu-item-166376"
+    ],
+    "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_HDD_bg.png",
+    "children": null,
+    "columns": [
+      {
+        "heading": "THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "190794",
+            "label": "HDD Seagate",
+            "path": "/o-cung-hdd?pa_thuong-hieu=seagate"
+          },
+          {
+            "id": "190795",
+            "label": "HDD Western Digital",
+            "path": "/o-cung-hdd?pa_thuong-hieu=western-digital"
+          }
+        ]
+      },
+      {
+        "heading": "DUNG LƯỢNG HDD",
+        "items": [
+          {
+            "id": "190804",
+            "label": "HDD 1TB",
+            "path": "/o-cung-hdd?pa_dung-luong=1tb"
+          },
+          {
+            "id": "190803",
+            "label": "HDD 2TB",
+            "path": "/o-cung-hdd?pa_dung-luong=2tb"
+          },
+          {
+            "id": "190802",
+            "label": "HDD 3TB",
+            "path": "/o-cung-hdd?pa_dung-luong=3tb"
+          },
+          {
+            "id": "190801",
+            "label": "HDD 4TB",
+            "path": "/o-cung-hdd?pa_dung-luong=4tb"
+          },
+          {
+            "id": "190800",
+            "label": "HDD 6TB",
+            "path": "/o-cung-hdd?pa_dung-luong=6tb"
+          },
+          {
+            "id": "190799",
+            "label": "HDD 14TB",
+            "path": "/o-cung-hdd?pa_dung-luong=14tb"
+          },
+          {
+            "id": "190798",
+            "label": "HDD 16TB",
+            "path": "/o-cung-hdd?pa_dung-luong=16tb"
+          }
+        ]
+      },
+      {
+        "heading": "KHOẢNG GIÁ",
+        "items": [
+          {
+            "id": "p1",
+            "label": "HDD dưới 2 triệu",
+            "path": "/o-cung-hdd?pa_khoang-gia-hdd=duoi-2-trieu"
+          },
+          {
+            "id": "p2",
+            "label": "HDD 2 triệu - 4 triệu",
+            "path": "/o-cung-hdd?pa_khoang-gia-hdd=2-trieu-4-trieu"
+          },
+          {
+            "id": "p3",
+            "label": "HDD 4 triệu - 8 triệu",
+            "path": "/o-cung-hdd?pa_khoang-gia-hdd=4-trieu-8-trieu"
+          },
+          {
+            "id": "p4",
+            "label": "HDD trên 8 triệu",
+            "path": "/o-cung-hdd?pa_khoang-gia-hdd=tren-8-trieu"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "187926",
+    "label": "Ổ cứng SSD",
+    "path": "/o-cung-ssd",
+    "icon": "HardDrive",
+    "cssClasses": [
+      "mega-menu-item-187926"
+    ],
+    "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_SSD_bg.png",
+    "children": null,
+    "columns": [
+      {
+        "heading": "THEO THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "s1",
+            "label": "SSD ADATA",
+            "path": "/o-cung-ssd?pa_thuong-hieu=adata"
+          },
+          {
+            "id": "s2",
+            "label": "SSD PNY",
+            "path": "/o-cung-ssd?pa_thuong-hieu=pny"
+          },
+          {
+            "id": "s3",
+            "label": "SSD Lexar",
+            "path": "/o-cung-ssd?pa_thuong-hieu=lexar"
+          },
+          {
+            "id": "s4",
+            "label": "SSD MSI",
+            "path": "/o-cung-ssd?pa_thuong-hieu=msi"
+          },
+          {
+            "id": "s5",
+            "label": "SSD Hiksemi",
+            "path": "/o-cung-ssd?pa_thuong-hieu=hiksemi"
+          },
+          {
+            "id": "s6",
+            "label": "SSD Kingston",
+            "path": "/o-cung-ssd?pa_thuong-hieu=kingston"
+          },
+          {
+            "id": "s7",
+            "label": "SSD Samsung",
+            "path": "/o-cung-ssd?pa_thuong-hieu=samsung"
+          },
+          {
+            "id": "s8",
+            "label": "SSD KIOXIA",
+            "path": "/o-cung-ssd?pa_thuong-hieu=kioxia"
+          },
+          {
+            "id": "s9",
+            "label": "SSD Gigabyte",
+            "path": "/o-cung-ssd?pa_thuong-hieu=gigabyte"
+          },
+          {
+            "id": "s10",
+            "label": "SSD TEAMGROUP",
+            "path": "/o-cung-ssd?pa_thuong-hieu=teamgroup"
+          },
+          {
+            "id": "s11",
+            "label": "SSD Western Digital",
+            "path": "/o-cung-ssd?pa_thuong-hieu=western-digital"
+          }
+        ]
+      },
+      {
+        "heading": "DUNG LƯỢNG SSD",
+        "items": [
+          {
+            "id": "d1",
+            "label": "SSD 120GB",
+            "path": "/o-cung-ssd?pa_dung-luong=120gb"
+          },
+          {
+            "id": "d2",
+            "label": "SSD 240GB",
+            "path": "/o-cung-ssd?pa_dung-luong=240gb"
+          },
+          {
+            "id": "d3",
+            "label": "SSD 250GB",
+            "path": "/o-cung-ssd?pa_dung-luong=250gb"
+          },
+          {
+            "id": "d4",
+            "label": "SSD 256GB",
+            "path": "/o-cung-ssd?pa_dung-luong=256gb"
+          },
+          {
+            "id": "d5",
+            "label": "SSD 500GB",
+            "path": "/o-cung-ssd?pa_dung-luong=500gb"
+          },
+          {
+            "id": "d6",
+            "label": "SSD 512GB",
+            "path": "/o-cung-ssd?pa_dung-luong=512gb"
+          },
+          {
+            "id": "d7",
+            "label": "SSD 960GB",
+            "path": "/o-cung-ssd?pa_dung-luong=960gb"
+          },
+          {
+            "id": "d8",
+            "label": "SSD 1TB",
+            "path": "/o-cung-ssd?pa_dung-luong=1tb"
+          },
+          {
+            "id": "d9",
+            "label": "SSD 2TB",
+            "path": "/o-cung-ssd?pa_dung-luong=2tb"
+          },
+          {
+            "id": "d10",
+            "label": "SSD 4TB",
+            "path": "/o-cung-ssd?pa_dung-luong=4tb"
+          }
+        ]
+      },
+      {
+        "heading": "KHOẢNG GIÁ",
+        "items": [
+          {
+            "id": "p1s",
+            "label": "SSD dưới 1 triệu",
+            "path": "/o-cung-ssd?pa_khoang-gia-ssd=duoi-1-trieu"
+          },
+          {
+            "id": "p2s",
+            "label": "SSD 1 triệu - 2 triệu",
+            "path": "/o-cung-ssd?pa_khoang-gia-ssd=1-trieu-2-trieu"
+          },
+          {
+            "id": "p3s",
+            "label": "SSD 2 triệu - 3 triệu",
+            "path": "/o-cung-ssd?pa_khoang-gia-ssd=2-trieu-3-trieu"
+          },
+          {
+            "id": "p4s",
+            "label": "SSD 3 triệu - 4 triệu",
+            "path": "/o-cung-ssd?pa_khoang-gia-ssd=3-trieu-4-trieu"
+          },
+          {
+            "id": "p5s",
+            "label": "SSD trên 4 triệu",
+            "path": "/o-cung-ssd?pa_khoang-gia-ssd=tren-4-trieu"
+          }
+        ]
+      },
+      {
+        "heading": "LOẠI Ổ CỨNG",
+        "items": [
+          {
+            "id": "t1",
+            "label": "SSD 2.5 inch SATA",
+            "path": "/o-cung-ssd?pa_loai-o-cung-ssd=2-5-inch-sata"
+          },
+          {
+            "id": "t2",
+            "label": "SSD M.2 NVMe",
+            "path": "/o-cung-ssd?pa_loai-o-cung-ssd=m-2-nvme"
+          },
+          {
+            "id": "t3",
+            "label": "SSD M.2 SATA",
+            "path": "/o-cung-ssd?pa_loai-o-cung-ssd=m-2-sata"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "148488",
+    "label": "PSU",
+    "path": "/psu-nguon-may-tinh",
+    "icon": "Fan",
+    "cssClasses": [
+      "mega-menu-item-148488"
+    ],
+    "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_PSU_bg.png",
+    "children": null,
+    "columns": [
+      {
+        "heading": "THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "b1",
+            "label": "NGUỒN ASUS",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=asus"
+          },
+          {
+            "id": "b2",
+            "label": "NGUỒN NZXT",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=nzxt"
+          },
+          {
+            "id": "b3",
+            "label": "NGUỒN SUPER FLOWER",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=super-flower"
+          },
+          {
+            "id": "b4",
+            "label": "NGUỒN THERMALTAKE",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=thermaltake"
+          },
+          {
+            "id": "b5",
+            "label": "NGUỒN ANTEC",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=antec"
+          },
+          {
+            "id": "b6",
+            "label": "NGUỒN ACER",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=acer"
+          },
+          {
+            "id": "b7",
+            "label": "NGUỒN CORSAIR",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=corsair"
+          },
+          {
+            "id": "b8",
+            "label": "NGUỒN HUNTKEY",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=huntkey"
+          },
+          {
+            "id": "b9",
+            "label": "NGUỒN COOLER MASTER",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=cooler-master"
+          },
+          {
+            "id": "b10",
+            "label": "NGUỒN GIGABYTE",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=gigabyte"
+          },
+          {
+            "id": "b11",
+            "label": "NGUỒN MSI",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=msi"
+          },
+          {
+            "id": "b12",
+            "label": "NGUỒN XIGMATEK",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=xigmatek"
+          },
+          {
+            "id": "b13",
+            "label": "NGUỒN DEEPCOOL",
+            "path": "/psu-nguon-may-tinh?pa_thuong-hieu=deepcool"
+          }
+        ]
+      },
+      {
+        "heading": "CÔNG SUẤT",
+        "items": [
+          {
+            "id": "w1",
+            "label": "NGUỒN 450W",
+            "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=450w"
+          },
+          {
+            "id": "w2",
+            "label": "NGUỒN 500W",
+            "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=500w"
+          },
+          {
+            "id": "w3",
+            "label": "NGUỒN 550W",
+            "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=550w"
+          },
+          {
+            "id": "w4",
+            "label": "NGUỒN 600W",
+            "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=600w"
+          },
+          {
+            "id": "w5",
+            "label": "NGUỒN 650W",
+            "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=650w"
+          },
+          {
+            "id": "w6",
+            "label": "NGUỒN 750W",
+            "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=750w"
+          },
+          {
+            "id": "w7",
+            "label": "NGUỒN 850W",
+            "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=850w"
+          },
+          {
+            "id": "w8",
+            "label": "NGUỒN 1000W",
+            "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=1000w"
+          },
+          {
+            "id": "w9",
+            "label": "NGUỒN TRÊN 1000W",
+            "path": "/psu-nguon-may-tinh?pa_cong-suat-nguon=tren-1000w"
+          }
+        ]
+      },
+      {
+        "heading": "CHUẨN NGUỒN",
+        "items": [
+          {
+            "id": "st1",
+            "label": "NGUỒN 80 PLUS SILVER",
+            "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-silver"
+          },
+          {
+            "id": "st2",
+            "label": "NGUỒN 80 PLUS BRONZE",
+            "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-bronze"
+          },
+          {
+            "id": "st3",
+            "label": "NGUỒN 80 PLUS GOLD",
+            "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-gold"
+          },
+          {
+            "id": "st4",
+            "label": "NGUỒN 80 PLUS TITANIUM",
+            "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-titanium"
+          },
+          {
+            "id": "st5",
+            "label": "NGUỒN 80 PLUS PLATINUM",
+            "path": "/psu-nguon-may-tinh?pa_chuan-nguon=80-plus-platinum"
+          }
+        ]
+      },
+      {
+        "heading": "KHOẢNG GIÁ",
+        "items": [
+          {
+            "id": "pr1",
+            "label": "DƯỚI 2 TRIỆU",
+            "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=duoi-2-trieu"
+          },
+          {
+            "id": "pr2",
+            "label": "2 TRIỆU - 4 TRIỆU",
+            "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=2-trieu-4-trieu"
+          },
+          {
+            "id": "pr3",
+            "label": "4 TRIỆU - 6 TRIỆU",
+            "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=4-trieu-6-trieu"
+          },
+          {
+            "id": "pr4",
+            "label": "6 TRIỆU - 8 TRIỆU",
+            "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=6-trieu-8-trieu"
+          },
+          {
+            "id": "pr5",
+            "label": "TRÊN 8 TRIỆU",
+            "path": "/psu-nguon-may-tinh?pa_khoang-gia-nguon=tren-8-trieu"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "148489",
+    "label": "Case",
+    "path": "/case-vo-may-tinh",
+    "icon": "Layout",
+    "cssClasses": [
+      "mega-menu-item-148489"
+    ],
+    "image": "https://maytinhlmc.vn/wp-content/uploads/Case_Menu.png",
+    "children": null,
+    "columns": [
+      {
+        "heading": "THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "c1",
+            "label": "CASE MSI",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=msi"
+          },
+          {
+            "id": "c2",
+            "label": "CASE SAMA",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=sama"
+          },
+          {
+            "id": "c3",
+            "label": "CASE Corsair",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=corsair"
+          },
+          {
+            "id": "c4",
+            "label": "CASE NZXT",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=nzxt"
+          },
+          {
+            "id": "c5",
+            "label": "CASE Lian Li",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=lian-li"
+          }
+        ]
+      },
+      {
+        "heading": "THÊM THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "c6",
+            "label": "CASE ASUS",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=asus"
+          },
+          {
+            "id": "c7",
+            "label": "CASE XIGMATEK",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=xigmatek"
+          },
+          {
+            "id": "c8",
+            "label": "CASE MAGIC",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=magic"
+          },
+          {
+            "id": "c9",
+            "label": "CASE EDRA",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=edra"
+          },
+          {
+            "id": "c10",
+            "label": "CASE VITRA",
+            "path": "/case-vo-may-tinh/?pa_thuong-hieu=vitra"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "148494",
+    "label": "Màn hình",
+    "path": "/man-hinh-may-tinh",
+    "icon": "Monitor",
+    "cssClasses": [
+      "mega-menu-item-148494"
+    ],
+    "image": "https://maytinhlmc.vn/wp-content/uploads/Menu_manhinh_bg.png",
+    "children": null,
+    "columns": [
+      {
+        "heading": "THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "m1",
+            "label": "MÀN HÌNH MSI",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=msi"
+          },
+          {
+            "id": "m2",
+            "label": "MÀN HÌNH LG",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=lg"
+          },
+          {
+            "id": "m3",
+            "label": "MÀN HÌNH ASUS",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=asus"
+          },
+          {
+            "id": "m4",
+            "label": "MÀN HÌNH GIGABYTE",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=gigabyte"
+          },
+          {
+            "id": "m5",
+            "label": "MÀN HÌNH LENOVO",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=lenovo"
+          },
+          {
+            "id": "m6",
+            "label": "MÀN HÌNH EDRA",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=edra"
+          },
+          {
+            "id": "m7",
+            "label": "MÀN HÌNH VSP",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=vsp"
+          }
+        ]
+      },
+      {
+        "heading": "THÊM THƯƠNG HIỆU",
+        "items": [
+          {
+            "id": "m8",
+            "label": "MÀN HÌNH DELL",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=dell"
+          },
+          {
+            "id": "m9",
+            "label": "MÀN HÌNH ACER",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=acer"
+          },
+          {
+            "id": "m10",
+            "label": "MÀN HÌNH SAMSUNG",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=samsung"
+          },
+          {
+            "id": "m11",
+            "label": "MÀN HÌNH AOC",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=aoc"
+          },
+          {
+            "id": "m12",
+            "label": "MÀN HÌNH BENQ",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=benq"
+          },
+          {
+            "id": "m13",
+            "label": "MÀN HÌNH VIEWSONIC",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=viewsonic"
+          },
+          {
+            "id": "m14",
+            "label": "MÀN HÌNH HKC",
+            "path": "/man-hinh-may-tinh?pa_thuong-hieu=hkc"
+          }
+        ]
+      },
+      {
+        "heading": "ĐỘ PHÂN GIẢI",
+        "items": [
+          {
+            "id": "r1",
+            "label": "Full HD (1920x1080)",
+            "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=full-hd-1920x1080"
+          },
+          {
+            "id": "r2",
+            "label": "2K QHD (2560x1440)",
+            "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=2k-qhd-2560x1440"
+          },
+          {
+            "id": "r3",
+            "label": "WQHD (3440x1440)",
+            "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=wqhd-3440x1440"
+          },
+          {
+            "id": "r4",
+            "label": "4K (3840x2160)",
+            "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=4k-3840x2160"
+          },
+          {
+            "id": "r5",
+            "label": "DualQHD (5120x1440)",
+            "path": "/man-hinh-may-tinh?pa_do-phan-giai-man-hinh=dualqhd-5120x1440"
+          }
+        ]
+      },
+      {
+        "heading": "KÍCH THƯỚC",
+        "items": [
+          {
+            "id": "kz3",
+            "label": "23.8 inch",
+            "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=23-8-inch"
+          },
+          {
+            "id": "kz4",
+            "label": "24 inch",
+            "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=24-inch"
+          },
+          {
+            "id": "kz6",
+            "label": "27 inch",
+            "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=27-inch"
+          },
+          {
+            "id": "kz8",
+            "label": "31.5 inch",
+            "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=31-5-inch"
+          },
+          {
+            "id": "kz9",
+            "label": "32 inch",
+            "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=32-inch"
+          },
+          {
+            "id": "kz10",
+            "label": "34 inch",
+            "path": "/man-hinh-may-tinh?pa_kich-thuoc-man-hinh=34-inch"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "190839",
+    "label": "Tản Nhiệt",
+    "path": "/fan-led-tan-nhiet-may-tinh",
+    "icon": "Fan",
+    "cssClasses": [
+      "mega-menu-item-190839"
+    ],
+    "image": "",
+    "children": [],
+    "columns": null
+  },
+  {
+    "id": "187911",
+    "label": "Phím Chuột",
+    "path": "/phim-chuot-ban-ghe-gear",
+    "icon": "MousePointer2",
+    "cssClasses": [
+      "mega-menu-item-187911"
+    ],
+    "image": "",
+    "children": [],
+    "columns": null
+  },
+  {
+    "id": "187914",
+    "label": "Tai Nghe",
+    "path": "/loa-tai-nghe-mic-webcam",
+    "icon": "Headphones",
+    "cssClasses": [
+      "mega-menu-item-187914"
+    ],
+    "image": "",
+    "children": [],
+    "columns": null
+  }
 ]

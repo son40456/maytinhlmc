@@ -15,6 +15,7 @@ import download from 'downloadjs';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { getPcBuilderConfig } from '@/app/actions/configActions';
+import type { PcBuilderTab, PcTemplate } from '@/app/actions/configActions';
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
 import { fetchProductsByIdsAction } from "@/app/actions/productActions";
 
@@ -25,38 +26,18 @@ function BuildPcPageInner() {
     const [modalOpen, setModalOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState<{ id: string; name: string; slug: string } | null>(null);
     const [companyInfo, setCompanyInfo] = useState<{ logo?: string, name?: string, contact?: string, contacts?: { icon: string, text: string }[], description?: string }>({});
+    const [pcBuilderTabs, setPcBuilderTabs] = useState<PcBuilderTab[]>([]);
+    const [activeTabId, setActiveTabId] = useState<string | null>(null);
+    const [applyingTemplateId, setApplyingTemplateId] = useState<string | null>(null);
 
     const [wantsAssembly, setWantsAssembly] = useState(true);
     const [wantsSoftware, setWantsSoftware] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
+    const componentsSectionRef = useRef<HTMLDivElement>(null);
 
     const [configLoaded, setConfigLoaded] = useState(false);
     const [applyingTemplateName, setApplyingTemplateName] = useState<string | null>(null);
-
-    const PREBUILT_TEMPLATES = [
-        { 
-            name: "PC Văn Phòng", priceHint: "Cơ bản", icon: "💻", description: "Lướt web, Office mượt mà", 
-            theme: "from-blue-50 to-cyan-50 border-blue-100 hover:border-blue-300 hover:shadow-blue-100", 
-            iconBg: "bg-white text-blue-500 group-hover:bg-blue-500",
-            badge: "bg-white text-blue-700 border border-blue-100",
-            onClick: () => { setApplyingTemplateName("PC Văn Phòng"); router.push('/pc-builder?mainboard=34558&cpu=31318&ram=34655&ssd=34524&psu=34387&case=34146'); } 
-        },
-        { 
-            name: "PC Gaming", priceHint: "Quốc dân", icon: "🎮", description: "Chiến mượt LOL, FO4, CSGO", 
-            theme: "from-rose-50 to-orange-50 border-rose-100 hover:border-rose-300 hover:shadow-rose-100",
-            iconBg: "bg-white text-rose-500 group-hover:bg-rose-500",
-            badge: "bg-white text-rose-700 border border-rose-100",
-            onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") 
-        },
-        { 
-            name: "PC Đồ Họa", priceHint: "Render", icon: "🎨", description: "Photoshop, Premiere, 3D", 
-            theme: "from-purple-50 to-fuchsia-50 border-purple-100 hover:border-purple-300 hover:shadow-purple-100",
-            iconBg: "bg-white text-purple-500 group-hover:bg-purple-500",
-            badge: "bg-white text-purple-700 border border-purple-100",
-            onClick: () => alert("Tính năng cấu hình sẵn đang được cập nhật.") 
-        }
-    ];
 
     const activeCategoryRef = useRef<{ id: string; name: string; slug: string } | null>(null);
     const summaryRef = useRef<HTMLDivElement>(null);
@@ -70,11 +51,48 @@ function BuildPcPageInner() {
                 } else if (config.components) {
                     initComponents(config.components);
                     if (config.companyInfo) setCompanyInfo(config.companyInfo);
+                    if (config.tabs && Array.isArray(config.tabs)) {
+                        setPcBuilderTabs(config.tabs);
+                        if (config.tabs.length > 0) setActiveTabId(config.tabs[0].id);
+                    }
                 }
             }
             setConfigLoaded(true);
         }).catch(() => setConfigLoaded(true));
     }, [initComponents]);
+
+    const handleApplyTemplate = async (template: PcTemplate) => {
+        if (applyingTemplateId) return;
+        setApplyingTemplateId(template.id);
+        try {
+            const ids = Object.values(template.components).join(',');
+            if (!ids) { setApplyingTemplateId(null); return; }
+
+            const delayPromise = new Promise(resolve => setTimeout(resolve, 1000));
+            const [{ products }] = await Promise.all([
+                fetch(`/api/products-by-ids?ids=${ids}`).then(r => r.json()),
+                delayPromise,
+            ]);
+
+            if (products && products.length > 0) {
+                const templateItems = Object.entries(template.components).map(([categoryId, dbId]) => {
+                    const product = products.find((p: any) => p.databaseId === dbId);
+                    return { categoryId, product };
+                }).filter((i): i is { categoryId: string; product: any } => !!i.product);
+                usePcBuilderStore.getState().applyTemplate(templateItems);
+            }
+
+            // Scroll to component section
+            setTimeout(() => {
+                componentsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        } catch (e) {
+            console.error('Error applying template:', e);
+        } finally {
+            setApplyingTemplateId(null);
+        }
+    };
+
 
     useEffect(() => {
         if (!configLoaded) return;
@@ -457,45 +475,150 @@ function BuildPcPageInner() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8">
                         {/* Left Column: Component List */}
                         <div className="lg:col-span-8 space-y-3 md:space-y-4">
-                            {/* Pre-built Templates */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-2">
-                                {PREBUILT_TEMPLATES.map((tpl, idx) => {
-                                    const isLoading = applyingTemplateName === tpl.name;
-                                    return (
-                                        <button
-                                            key={idx}
-                                            onClick={tpl.onClick}
-                                            disabled={applyingTemplateName !== null}
-                                            className={`relative bg-gradient-to-br ${tpl.theme} border ${isLoading ? 'shadow-lg scale-[1.02] ring-2 ring-blue-500/50' : 'hover:shadow-lg hover:-translate-y-1'} transition-all duration-300 rounded-2xl p-4 md:p-5 text-left overflow-hidden group disabled:opacity-80 disabled:cursor-not-allowed`}
-                                        >
-                                            {/* Decorative element */}
-                                            <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/40 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
-                                            
-                                            {isLoading && (
-                                                <div className="absolute inset-0 bg-white/60 flex items-center justify-center backdrop-blur-[2px] z-20 animate-in fade-in duration-300">
-                                                    <div className="flex flex-col items-center gap-1.5">
-                                                        <div className="uiverse-spinner scale-[0.6]"></div>
-                                                        <span className="text-[10px] md:text-xs font-black text-blue-700 animate-pulse mt-1 drop-shadow-sm">Đang nạp...</span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            
-                                            <div className={`relative z-10 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
-                                                <div className="flex items-start justify-between mb-3">
-                                                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center text-xl md:text-2xl shadow-sm group-hover:text-white transition-colors duration-300 ${tpl.iconBg}`}>
-                                                        {tpl.icon}
-                                                    </div>
-                                                    <span className={`text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-full shadow-sm ${tpl.badge}`}>{tpl.priceHint}</span>
-                                                </div>
-                                                <h3 className="font-extrabold text-gray-900 text-sm md:text-base mb-1 group-hover:text-gray-800 transition-colors">{tpl.name}</h3>
-                                                <p className="text-xs text-gray-600 font-medium line-clamp-1">{tpl.description}</p>
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                            {/* ===== TABS SECTION ===== */}
+                            {pcBuilderTabs.length > 0 && (() => {
+                                const themeMap: Record<string, { tab: string; tabActive: string; card: string; badge: string; btn: string }> = {
+                                    blue:   { tab: 'text-blue-700 border-blue-600 bg-blue-50', tabActive: 'bg-blue-600 text-white border-blue-600', card: 'hover:border-blue-300 hover:shadow-blue-100', badge: 'bg-blue-600', btn: 'bg-blue-600 hover:bg-blue-700' },
+                                    rose:   { tab: 'text-rose-700 border-rose-500 bg-rose-50', tabActive: 'bg-rose-500 text-white border-rose-500', card: 'hover:border-rose-300 hover:shadow-rose-100', badge: 'bg-rose-500', btn: 'bg-rose-500 hover:bg-rose-600' },
+                                    purple: { tab: 'text-purple-700 border-purple-600 bg-purple-50', tabActive: 'bg-purple-600 text-white border-purple-600', card: 'hover:border-purple-300 hover:shadow-purple-100', badge: 'bg-purple-600', btn: 'bg-purple-600 hover:bg-purple-700' },
+                                    amber:  { tab: 'text-amber-700 border-amber-500 bg-amber-50', tabActive: 'bg-amber-500 text-white border-amber-500', card: 'hover:border-amber-300 hover:shadow-amber-100', badge: 'bg-amber-500', btn: 'bg-amber-500 hover:bg-amber-600' },
+                                    green:  { tab: 'text-green-700 border-green-600 bg-green-50', tabActive: 'bg-green-600 text-white border-green-600', card: 'hover:border-green-300 hover:shadow-green-100', badge: 'bg-green-600', btn: 'bg-green-600 hover:bg-green-700' },
+                                    cyan:   { tab: 'text-cyan-700 border-cyan-600 bg-cyan-50', tabActive: 'bg-cyan-600 text-white border-cyan-600', card: 'hover:border-cyan-300 hover:shadow-cyan-100', badge: 'bg-cyan-600', btn: 'bg-cyan-600 hover:bg-cyan-700' },
+                                };
+                                const badgeColorMap: Record<string, string> = {
+                                    yellow: 'bg-yellow-400 text-yellow-900',
+                                    blue:   'bg-blue-600 text-white',
+                                    green:  'bg-green-500 text-white',
+                                    red:    'bg-red-500 text-white',
+                                    purple: 'bg-purple-600 text-white',
+                                };
+                                const activeTab = pcBuilderTabs.find(t => t.id === activeTabId);
+                                const theme = themeMap[activeTab?.theme || 'blue'] || themeMap.blue;
 
-                            <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                return (
+                                    <div className="mb-4 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                        {/* Tab Bar */}
+                                        <div className="flex overflow-x-auto scrollbar-hide border-b border-gray-100 px-3 pt-3 gap-2">
+                                            {pcBuilderTabs.map(tab => {
+                                                const isActive = tab.id === activeTabId;
+                                                const tm = themeMap[tab.theme] || themeMap.blue;
+                                                return (
+                                                    <button
+                                                        key={tab.id}
+                                                        onClick={() => setActiveTabId(isActive ? null : tab.id)}
+                                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 text-sm font-bold whitespace-nowrap transition-all duration-200 flex-shrink-0
+                                                            ${isActive
+                                                                ? `${tm.tabActive} -mb-px`
+                                                                : 'text-gray-500 border-transparent hover:text-gray-800 hover:bg-gray-50 -mb-px'
+                                                            }`}
+                                                    >
+                                                        <span className="text-base">{tab.icon}</span>
+                                                        <span>{tab.name}</span>
+                                                        {tab.priceHint && (
+                                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                                                {tab.priceHint}
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {/* Tab Content: Template Cards */}
+                                        {activeTab && (
+                                            <div className="p-3 md:p-4">
+                                                {activeTab.description && (
+                                                    <p className="text-xs text-gray-500 mb-3 font-medium">{activeTab.description}</p>
+                                                )}
+                                                {activeTab.templates.length === 0 ? (
+                                                    <div className="py-8 text-center text-gray-400 text-sm">
+                                                        Chưa có cấu hình mẫu nào trong tab này.
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                                                        {activeTab.templates.map(tpl => {
+                                                            const isApplying = applyingTemplateId === tpl.id;
+                                                            const badgeCls = badgeColorMap[tpl.badgeColor || 'yellow'] || badgeColorMap.yellow;
+                                                            return (
+                                                                <div
+                                                                    key={tpl.id}
+                                                                    className={`relative flex-shrink-0 w-[180px] sm:w-[200px] bg-white border-2 rounded-2xl overflow-hidden transition-all duration-200 hover:border-blue-300 hover:shadow-md ${isApplying ? 'ring-2 ring-blue-400 shadow-lg' : 'border-gray-100'}`}
+                                                                >
+                                                                    {/* Badge */}
+                                                                    {tpl.badge && (
+                                                                        <div className={`absolute top-2 left-2 z-10 text-[10px] font-black px-2 py-0.5 rounded-full ${badgeCls}`}>
+                                                                            {tpl.badge}
+                                                                        </div>
+                                                                    )}
+
+                                                                    {/* Loading overlay */}
+                                                                    {isApplying && (
+                                                                        <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20 backdrop-blur-[2px]">
+                                                                            <div className="flex flex-col items-center gap-1.5">
+                                                                                <div className="w-6 h-6 border-[3px] border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                                                                <span className="text-[10px] font-bold text-blue-700 animate-pulse">Đang nạp...</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+
+                                                                    {/* Image */}
+                                                                    <div className="relative w-full aspect-[4/3] bg-gray-50 flex items-center justify-center overflow-hidden">
+                                                                        {tpl.image ? (
+                                                                            <img
+                                                                                src={tpl.image}
+                                                                                alt={tpl.name}
+                                                                                className="w-full h-full object-cover"
+                                                                            />
+                                                                        ) : (
+                                                                            <div className="text-4xl">🖥️</div>
+                                                                        )}
+                                                                    </div>
+
+                                                                    {/* Card body */}
+                                                                    <div className="p-3">
+                                                                        <h4 className="font-bold text-gray-900 text-xs leading-snug mb-2 line-clamp-2">{tpl.name || 'Cấu hình mẫu'}</h4>
+
+                                                                        {/* Specs */}
+                                                                        {tpl.specs.length > 0 && (
+                                                                            <ul className="space-y-0.5 mb-2">
+                                                                                {tpl.specs.slice(0, 4).map((spec, si) => (
+                                                                                    <li key={si} className="flex items-center gap-1.5 text-[10px] text-gray-600">
+                                                                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0"></span>
+                                                                                        <span className="line-clamp-1">{spec}</span>
+                                                                                    </li>
+                                                                                ))}
+                                                                            </ul>
+                                                                        )}
+
+                                                                        {/* Price */}
+                                                                        <div className="mb-2">
+                                                                            {tpl.originalPrice && (
+                                                                                <p className="text-[10px] text-gray-400 line-through">{tpl.originalPrice}</p>
+                                                                            )}
+                                                                            <p className="text-sm font-black text-red-600">{tpl.price}</p>
+                                                                        </div>
+
+                                                                        {/* CTA Button */}
+                                                                        <button
+                                                                            onClick={() => handleApplyTemplate(tpl)}
+                                                                            disabled={!!applyingTemplateId}
+                                                                            className={`w-full py-2 rounded-xl text-white text-[11px] font-bold transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${theme.btn}`}
+                                                                        >
+                                                                            Xây dựng cấu hình
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })()}
+
+                            <div ref={componentsSectionRef} className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                                 {/* Header row */}
                                 <div className="hidden md:grid grid-cols-12 gap-4 bg-gray-50 p-4 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
                                     <div className="col-span-3">Linh kiện</div>
