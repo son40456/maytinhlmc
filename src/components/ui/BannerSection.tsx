@@ -46,13 +46,15 @@ export function BannerSection({ config }: { config: BannerConfig }) {
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                 >
                     {config?.mainBanners?.map((banner, idx) => (
-                        <div key={banner.id || idx} className="w-full flex-shrink-0 relative">
-                            <Link href={banner.link || "#"} className="block w-full">
+                        <div key={banner.id || idx} className="w-full flex-shrink-0 relative aspect-[21/9] md:aspect-[3/1]">
+                            <Link href={banner.link || "#"} className="block w-full h-full">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img 
                                     src={banner.image} 
                                     alt={`Banner ${idx}`}
-                                    className="w-full h-auto object-cover block"
+                                    className="w-full h-full object-cover block bg-slate-100"
+                                    fetchPriority={idx === 0 ? "high" : undefined}
+                                    loading={idx === 0 ? "eager" : "lazy"}
                                 />
                             </Link>
                         </div>

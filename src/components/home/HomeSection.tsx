@@ -70,7 +70,6 @@ export function HomeSection({ title, categorySlug, subFilters, products }: HomeS
                         salePrice={p.salePrice}
                         stockStatus={p.stockStatus}
                         category={categorySlug}
-                        priority={idx < 6}
                     />
                 ))}
             </div>
