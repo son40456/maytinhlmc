@@ -97,3 +97,54 @@ body {
  50% { transform: translateX(-100%) translateY(-100%); }
  75% { transform: translateY(-100%); }
 }
+
+/* ── Brand logo filter animations ── */
+@keyframes borderTrace {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes checkmarkPop {
+  0%   { opacity: 0; transform: scale(0) rotate(-15deg); }
+  70%  { opacity: 1; transform: scale(1.25) rotate(5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.brand-border-trace {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transform: scaleX(-1);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: borderTrace 0.52s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.brand-checkmark-pop {
+  animation: checkmarkPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ── Exit animations (deselect) ── */
+@keyframes borderTraceOut {
+  /* Retract: stroke-dashoffset goes 0 → 100, border undraws from start point (top-right) */
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: 100; }
+}
+
+@keyframes checkmarkPopOut {
+  from { opacity: 1; transform: scale(1) rotate(0deg); }
+  to   { opacity: 0; transform: scale(0) rotate(15deg); }
+}
+
+.brand-border-trace-out {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 0;
+  transform: scaleX(-1);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: borderTraceOut 0.52s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.brand-checkmark-pop-out {
+  /* Checkmark shrinks out quickly, then border retracts */
+  animation: checkmarkPopOut 0.25s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}

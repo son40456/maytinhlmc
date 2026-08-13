@@ -6,7 +6,7 @@
  *
  * Cách dùng:
  *   node scripts/warmup.js --url https://maytinhlmc.vn --secret YOUR_WARMUP_SECRET
- *
+ * 
  * Hoặc đặt biến môi trường:
  *   PRODUCTION_URL=https://maytinhlmc.vn WARMUP_SECRET=xxx node scripts/warmup.js
  */
@@ -22,7 +22,7 @@ const getArg = (flag) => { const i = args.indexOf(flag); return i !== -1 ? args[
 const BASE_URL = getArg('--url') || process.env.PRODUCTION_URL || 'https://maytinhlmc.vn';
 const SECRET = getArg('--secret') || process.env.WARMUP_SECRET || '';
 const CONCURRENCY = parseInt(getArg('--concurrency') || process.env.WARMUP_CONCURRENCY || '20');
-const TIMEOUT_MS = parseInt(getArg('--timeout') || process.env.WARMUP_TIMEOUT || '30000');
+const TIMEOUT_MS = parseInt(getArg('--timeout') || process.env.WARMUP_TIMEOUT || '60000');
 
 if (!SECRET) {
     console.error('❌ Cần cung cấp WARMUP_SECRET. Dùng --secret hoặc WARMUP_SECRET env var.');

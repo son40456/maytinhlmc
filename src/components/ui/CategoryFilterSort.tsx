@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, memo, useCallback, useEffect, useRef } from 'react';
 import { X, ChevronDown, SlidersHorizontal, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -44,6 +44,137 @@ const SORT_OPTIONS = [
     { label: "Tên A->Z", value: "NAME_ASC", icon: "🔤" },
 ];
 
+// ─────────────────────────────────────────────────────────────
+// BrandButton: separate memoized component so that:
+// 1. Clicking one brand does NOT restart animation of others
+// 2. Deselect plays a smooth reverse animation before unmounting
+// ─────────────────────────────────────────────────────────────
+const TRACE_MS = 520;   // border draw duration (ms)
+const EXIT_MS  = 520;   // border retract duration (ms)
+
+type AnimPhase = 'hidden' | 'showing' | 'hiding';
+
+const BrandButton = memo(function BrandButton({
+    opt,
+    brandSlug,
+    isSelected,
+    onFilterChange,
+}: {
+    opt: { name: string; slug: string; logo?: string };
+    brandSlug: string;
+    isSelected: boolean;
+    onFilterChange: (slug: string, value: string) => void;
+}) {
+    const logo = opt.logo || BRAND_LOGOS[opt.slug.toLowerCase()];
+
+    // animPhase drives which CSS animation class is applied
+    const [animPhase, setAnimPhase] = useState<AnimPhase>(isSelected ? 'showing' : 'hidden');
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+
+        if (isSelected) {
+            // Mount overlay and play enter animation
+            setAnimPhase('showing');
+        } else {
+            // Only play exit if we were showing something
+            setAnimPhase(prev => {
+                if (prev === 'hidden') return 'hidden'; // nothing to hide
+                return 'hiding';
+            });
+            // Unmount overlay after exit animation fully completes
+            // border (EXIT_MS) + checkmark fade (300ms) + buffer
+            timerRef.current = setTimeout(() => setAnimPhase('hidden'), EXIT_MS + 350);
+        }
+
+        return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    }, [isSelected]);
+
+    const showOverlay = animPhase !== 'hidden';
+    const isHiding    = animPhase === 'hiding';
+
+    return (
+        <button
+            onClick={() => onFilterChange(brandSlug, opt.slug)}
+            className={`relative h-10 px-3 rounded-lg border-2 transition-colors duration-200 flex items-center justify-center bg-white overflow-visible ${
+                isSelected ? 'border-transparent' : 'border-gray-100 hover:border-orange-200'
+            }`}
+        >
+            {logo ? (
+                <div className="relative w-20 h-7">
+                    <Image src={logo} alt={opt.name} fill className="object-contain" sizes="80px" unoptimized={true} />
+                </div>
+            ) : (
+                <span className="text-xs font-bold">{opt.name}</span>
+            )}
+
+            {showOverlay && (
+                <>
+                    {/* SVG border: enter = trace CW from top-right, exit = retract */}
+                    <svg
+                        aria-hidden="true"
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
+                            width: '100%',
+                            height: '100%',
+                            overflow: 'visible',
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        <rect
+                            x="1"
+                            y="1"
+                            width="99%"
+                            height="38"
+                            rx="8"
+                            fill="none"
+                            stroke="#f97316"
+                            strokeWidth="2"
+                            pathLength="100"
+                            className={isHiding ? 'brand-border-trace-out' : 'brand-border-trace'}
+                        />
+                    </svg>
+
+                    {/* Checkmark: pops in after border, shrinks out before border retracts */}
+                    <span
+                        aria-hidden="true"
+                        className={isHiding ? 'brand-checkmark-pop-out' : 'brand-checkmark-pop'}
+                        style={{
+                            position: 'absolute',
+                            top: '-8px',
+                            right: '-8px',
+                            width: '20px',
+                            height: '20px',
+                            borderRadius: '50%',
+                            backgroundColor: '#f97316',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 2px 8px rgba(249,115,22,0.55)',
+                            pointerEvents: 'none',
+                            // enter: wait for border; exit: border first, then checkmark
+                            animationDelay: isHiding ? `${EXIT_MS}ms` : `${TRACE_MS}ms`,
+                            animationFillMode: 'both',
+                        }}
+                    >
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                            <polyline
+                                points="1.5,6 4.5,9 10.5,3"
+                                stroke="white"
+                                strokeWidth="2.2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                    </span>
+                </>
+            )}
+        </button>
+    );
+});
+
 export function CategoryFilterSort({
     filters = [],
     selectedAttributes,
@@ -57,6 +188,9 @@ export function CategoryFilterSort({
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+
+    // Stable reference so React.memo on BrandButton works correctly
+    const stableOnFilterChange = useCallback(onFilterChange, [onFilterChange]);
 
     const brandFilter = filters.find(f => f.slug === 'thuong-hieu');
     const dynamicPriceFilter = filters.find(f => f.slug.startsWith('khoang-gia-'));
@@ -116,26 +250,15 @@ export function CategoryFilterSort({
                         >
                             Tất cả
                         </button>
-                        {brandFilter.options.map((opt) => {
-                            const isSelected = selectedAttributes[brandFilter.slug]?.includes(opt.slug);
-                            const logo = opt.logo || BRAND_LOGOS[opt.slug.toLowerCase()];
-                            return (
-                                <button
-                                    key={opt.slug}
-                                    onClick={() => onFilterChange(brandFilter.slug, opt.slug)}
-                                    className={`relative h-10 px-3 rounded-lg border-2 transition-all flex items-center justify-center bg-white ${isSelected ? 'border-orange-500' : 'border-gray-100 hover:border-orange-200'
-                                        }`}
-                                >
-                                    {logo ? (
-                                        <div className="relative w-20 h-7">
-                                            <Image src={logo} alt={opt.name} fill className="object-contain" sizes="80px" unoptimized={true} />
-                                        </div>
-                                    ) : (
-                                        <span className="text-xs font-bold">{opt.name}</span>
-                                    )}
-                                </button>
-                            );
-                        })}
+                        {brandFilter.options.map((opt) => (
+                            <BrandButton
+                                key={opt.slug}
+                                opt={opt}
+                                brandSlug={brandFilter.slug}
+                                isSelected={!!selectedAttributes[brandFilter.slug]?.includes(opt.slug)}
+                                onFilterChange={stableOnFilterChange}
+                            />
+                        ))}
                     </div>
                 </div>
             )}
@@ -370,7 +493,7 @@ export function CategoryFilterSort({
 
                             {/* Drawer Body */}
                             <div className="overflow-y-auto flex-1 px-4 py-4">
-                                <FilterContent isMobile={true} />
+                                {FilterContent({ isMobile: true })}
                             </div>
 
                             {/* Drawer Footer */}
@@ -389,7 +512,7 @@ export function CategoryFilterSort({
 
             {/* ===== DESKTOP: Full inline filter ===== */}
             <div className="hidden lg:block bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
-                <FilterContent />
+                {FilterContent({})}
 
                 {/* Active tags */}
                 {activeTags.length > 0 && (
