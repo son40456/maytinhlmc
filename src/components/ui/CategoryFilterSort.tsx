@@ -235,15 +235,15 @@ export function CategoryFilterSort({
 
     // Filter content (shared between desktop and mobile drawer)
     const FilterContent = ({ isMobile = false }: { isMobile?: boolean }) => (
-        <div className={`space-y-4 ${isMobile ? '' : ''}`}>
+        <div className={`space-y-2 ${isMobile ? '' : ''}`}>
             {/* Thương hiệu */}
             {brandFilter && (
-                <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-start gap-3'}>
+                <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-start gap-1'}>
                     <span className="text-[18px] font-semibold text-gray-900 w-[185px] shrink-0 whitespace-nowrap block mb-2 md:mb-0 md:pt-1">Thương hiệu:</span>
                     <div className={`flex gap-2 ${isMobile ? 'flex-wrap' : 'flex-wrap'}`}>
                         <button
                             onClick={() => onFilterChange(brandFilter.slug, 'all')}
-                            className={`px-5 py-2 rounded-lg text-sm font-bold transition-all ${!selectedAttributes[brandFilter.slug]?.length
+                            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${!selectedAttributes[brandFilter.slug]?.length
                                 ? 'bg-orange-600 text-white shadow-sm'
                                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                                 }`}
@@ -265,7 +265,7 @@ export function CategoryFilterSort({
 
             {/* Khoảng giá */}
             {dynamicPriceFilter && (
-                <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-start gap-3'}>
+                <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-start gap-1'}>
                     <span className="text-[18px] font-semibold text-gray-900 w-[185px] shrink-0 whitespace-nowrap block mb-2 md:mb-0 md:pt-1">Khoảng giá:</span>
                     <div className="flex flex-wrap gap-2">
                         {sortedPriceOptions.map((opt) => {
@@ -274,7 +274,7 @@ export function CategoryFilterSort({
                                 <button
                                     key={opt.slug}
                                     onClick={() => onFilterChange(dynamicPriceFilter.slug, opt.slug)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border ${isSelected
+                                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all border ${isSelected
                                         ? 'bg-orange-600 border-orange-600 text-white shadow-sm'
                                         : 'bg-gray-50 border-gray-100 text-gray-600 hover:border-orange-300'
                                         }`}
@@ -345,7 +345,7 @@ export function CategoryFilterSort({
                                     <div key={filter.slug} className="relative">
                                         <button
                                             onClick={() => setOpenDropdown(openDropdown === filter.slug ? null : filter.slug)}
-                                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-bold uppercase tracking-wider transition-all ${selectedAttributes[filter.slug]?.length > 0
+                                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-semibold uppercase tracking-wider transition-all ${selectedAttributes[filter.slug]?.length > 0
                                                 ? 'border-orange-500 bg-orange-50 text-orange-700'
                                                 : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-400'
                                                 }`}
