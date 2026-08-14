@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, memo, useCallback, useEffect, useRef } from 'react';
-import { X, ChevronDown, SlidersHorizontal, Trash2 } from 'lucide-react';
+import { X, ChevronDown, SlidersHorizontal, Trash2, Tag } from 'lucide-react';
 import Image from 'next/image';
 
 interface FilterOption {
@@ -441,26 +441,39 @@ export function CategoryFilterSort({
 
                 {/* Active tags on mobile */}
                 {activeTags.length > 0 && (
-                    <div className="flex gap-1.5 overflow-x-auto pb-2 scrollbar-hide mb-2" style={{ scrollbarWidth: 'none' }}>
-                        {activeTags.map((tag) => (
-                            <div
-                                key={`${tag.type}-${tag.slug}-${tag.value}`}
-                                className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-pink-200 bg-pink-50 text-[10px] font-medium text-gray-800 whitespace-nowrap shrink-0"
-                            >
-                                {tag.label}
-                                <button
-                                    onClick={() => tag.type === 'attr' ? onFilterChange(tag.slug, tag.value) : onPriceChange(null, null)}
-                                    className="p-0.5 rounded-full bg-red-500 text-white"
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide mb-2 items-center" style={{ scrollbarWidth: 'none' }}>
+                        {activeTags.map((tag) => {
+                            const isBrand = tag.slug === 'thuong-hieu';
+                            return (
+                                <div
+                                    key={`${tag.type}-${tag.slug}-${tag.value}`}
+                                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-semibold whitespace-nowrap shrink-0 ${
+                                        isBrand
+                                            ? 'bg-red-50 border-red-200 text-red-600'
+                                            : 'bg-blue-50 border-blue-200 text-blue-600'
+                                    }`}
                                 >
-                                    <X size={8} />
-                                </button>
-                            </div>
-                        ))}
+                                    {isBrand
+                                        ? <Tag size={10} className="shrink-0" />
+                                        : <SlidersHorizontal size={10} className="shrink-0" />
+                                    }
+                                    <span>{tag.label}</span>
+                                    <button
+                                        onClick={() => tag.type === 'attr' ? onFilterChange(tag.slug, tag.value) : onPriceChange(null, null)}
+                                        className={`w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 ${
+                                            isBrand ? 'bg-red-400 hover:bg-red-500 text-white' : 'bg-blue-400 hover:bg-blue-500 text-white'
+                                        }`}
+                                    >
+                                        <X size={8} />
+                                    </button>
+                                </div>
+                            );
+                        })}
                         <button
                             onClick={onClearAll}
-                            className="text-[10px] font-bold text-red-500 whitespace-nowrap shrink-0 px-2"
+                            className="text-[11px] font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-1 whitespace-nowrap shrink-0 px-2 py-1 rounded-full border border-gray-200 hover:border-gray-300 transition-colors"
                         >
-                            Xóa tất cả
+                            <X size={10} /> Xóa tất cả
                         </button>
                     </div>
                 )}
@@ -514,30 +527,45 @@ export function CategoryFilterSort({
             <div className="hidden lg:block bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 space-y-4">
                 {FilterContent({})}
 
-                {/* Active tags */}
+                {/* Active tags - desktop */}
                 {activeTags.length > 0 && (
-                    <div className="flex items-center gap-3 pt-3 border-t border-gray-50">
-                        <span className="text-xs font-bold text-gray-900 min-w-[100px]">Đã chọn:</span>
+                    <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+                        <span className="text-xs font-bold text-gray-500 shrink-0 min-w-[60px]">Đã chọn:</span>
                         <div className="flex flex-wrap gap-2 items-center">
-                            {activeTags.map((tag) => (
-                                <div
-                                    key={`${tag.type}-${tag.slug}-${tag.value}`}
-                                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-pink-200 bg-pink-50 text-xs font-medium text-gray-800"
-                                >
-                                    {tag.label}
-                                    <button
-                                        onClick={() => tag.type === 'attr' ? onFilterChange(tag.slug, tag.value) : onPriceChange(null, null)}
-                                        className="p-0.5 rounded-full bg-red-500 text-white hover:bg-red-600"
+                            {activeTags.map((tag) => {
+                                const isBrand = tag.slug === 'thuong-hieu';
+                                return (
+                                    <div
+                                        key={`${tag.type}-${tag.slug}-${tag.value}`}
+                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all ${
+                                            isBrand
+                                                ? 'bg-red-50 border-red-200 text-red-600'
+                                                : 'bg-blue-50 border-blue-200 text-blue-600'
+                                        }`}
                                     >
-                                        <X size={10} />
-                                    </button>
-                                </div>
-                            ))}
+                                        {isBrand
+                                            ? <Tag size={11} className="shrink-0" />
+                                            : <SlidersHorizontal size={11} className="shrink-0" />
+                                        }
+                                        <span>{tag.label}</span>
+                                        <button
+                                            onClick={() => tag.type === 'attr' ? onFilterChange(tag.slug, tag.value) : onPriceChange(null, null)}
+                                            className={`ml-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                                                isBrand
+                                                    ? 'bg-red-400 hover:bg-red-600 text-white'
+                                                    : 'bg-blue-400 hover:bg-blue-600 text-white'
+                                            }`}
+                                        >
+                                            <X size={9} />
+                                        </button>
+                                    </div>
+                                );
+                            })}
                             <button
                                 onClick={onClearAll}
-                                className="text-xs font-bold text-gray-400 hover:text-red-500 flex items-center gap-1 ml-2"
+                                className="text-xs font-semibold text-gray-400 hover:text-gray-700 flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-200 hover:border-gray-300 transition-colors ml-1"
                             >
-                                <Trash2 size={12} /> Xóa tất cả
+                                <X size={11} /> Xóa tất cả
                             </button>
                         </div>
                     </div>
