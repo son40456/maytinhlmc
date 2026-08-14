@@ -238,8 +238,8 @@ export function CategoryFilterSort({
         <div className={`space-y-4 ${isMobile ? '' : ''}`}>
             {/* Thương hiệu */}
             {brandFilter && (
-                <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-center gap-3'}>
-                    <span className="text-[18px] font-semibold text-gray-900 min-w-[140px] whitespace-nowrap block mb-2 md:mb-0">Thương hiệu:</span>
+                <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-start gap-3'}>
+                    <span className="text-[18px] font-semibold text-gray-900 w-[185px] shrink-0 whitespace-nowrap block mb-2 md:mb-0 md:pt-1">Thương hiệu:</span>
                     <div className={`flex gap-2 ${isMobile ? 'flex-wrap' : 'flex-wrap'}`}>
                         <button
                             onClick={() => onFilterChange(brandFilter.slug, 'all')}
@@ -265,8 +265,8 @@ export function CategoryFilterSort({
 
             {/* Khoảng giá */}
             {dynamicPriceFilter && (
-                <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-center gap-3'}>
-                    <span className="text-[18px] font-semibold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Khoảng giá:</span>
+                <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-start gap-3'}>
+                    <span className="text-[18px] font-semibold text-gray-900 w-[185px] shrink-0 whitespace-nowrap block mb-2 md:mb-0 md:pt-1">Khoảng giá:</span>
                     <div className="flex flex-wrap gap-2">
                         {sortedPriceOptions.map((opt) => {
                             const isSelected = selectedAttributes[dynamicPriceFilter.slug]?.includes(opt.slug);
@@ -339,7 +339,7 @@ export function CategoryFilterSort({
                         </>
                     ) : (
                         <>
-                            <span className="text-[18px] font-semibold text-gray-900 min-w-[140px] shrink-0 block mb-2 md:mb-0 md:pt-2">Chọn theo tiêu chí:</span>
+                            <span className="text-[18px] font-semibold text-gray-900 w-[185px] shrink-0 whitespace-nowrap block mb-2 md:mb-0 md:pt-2">Chọn theo tiêu chí:</span>
                             <div className="flex flex-wrap items-center gap-2">
                                 {otherFilters.map((filter) => (
                                     <div key={filter.slug} className="relative">
@@ -387,8 +387,8 @@ export function CategoryFilterSort({
 
 
             {/* Sắp xếp */}
-            <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-center gap-3 pt-3 border-t border-gray-50'}>
-                <span className="text-sm font-bold text-gray-900 min-w-[100px] block mb-2 md:mb-0">Sắp xếp:</span>
+            <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-start gap-3 pt-3 border-t border-gray-50'}>
+                <span className="text-[18px] font-semibold text-gray-900 w-[185px] shrink-0 whitespace-nowrap block mb-2 md:mb-0 md:pt-1">Sắp xếp:</span>
                 <div className="flex flex-wrap gap-2 flex-grow">
                     {SORT_OPTIONS.map((opt) => (
                         <button
