@@ -15,10 +15,20 @@ interface SearchResult {
     slug: string;
     price: string;
     regularPrice?: string;
+    salePrice?: string;
     image?: { sourceUrl: string; altText: string };
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+function getDiscount(regularPrice?: string, salePrice?: string): number {
+    if (!regularPrice || !salePrice) return 0;
+    const reg  = parseInt(regularPrice.replace(/\D/g, ''));
+    const sale = parseInt(salePrice.replace(/\D/g, ''));
+    return (reg && sale && reg > sale)
+        ? Math.round(((reg - sale) / reg) * 100)
+        : 0;
+}
+
 function Highlight({ text, query }: { text: string; query: string }) {
     if (!query) return <>{text}</>;
     const parts = text.split(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
@@ -172,6 +182,7 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                             slug: h.slug,
                             price: h.price,
                             regularPrice: h.regularPrice,
+                            salePrice: h.salePrice,
                             image: h.image ?? undefined,
                         })));
                     }
@@ -268,8 +279,15 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                                                             <p className="text-[11px] text-gray-400 truncate mt-0.5">Xem chi tiết sản phẩm</p>
                                                         </div>
                                                         <div className="text-right flex-shrink-0 ml-4">
-                                                            <p className="text-[13px] font-bold text-gray-800">{product.price}</p>
-                                                            <p className="text-[10px] font-semibold text-green-600 mt-0.5">Còn hàng</p>
+                                                            <p className="text-[13px] font-bold text-blue-600">{product.price}</p>
+                                                            {getDiscount(product.regularPrice, product.salePrice) > 0 ? (
+                                                                <div className="flex items-center gap-1 justify-end mt-0.5">
+                                                                    <span className="text-[10px] text-gray-400 line-through">{product.regularPrice}</span>
+                                                                    <span className="text-[10px] font-bold text-red-500">-{getDiscount(product.regularPrice, product.salePrice)}%</span>
+                                                                </div>
+                                                            ) : (
+                                                                <p className="text-[10px] font-semibold text-green-600 mt-0.5">Còn hàng</p>
+                                                            )}
                                                         </div>
                                                     </Link>
                                                 ))}
@@ -477,6 +495,12 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                                                             <Highlight text={product.name} query={query} />
                                                         </p>
                                                         <p className="text-[15px] font-bold text-red-600 mt-1.5">{product.price}</p>
+                                                        {getDiscount(product.regularPrice, product.salePrice) > 0 && (
+                                                            <div className="flex items-center gap-1.5 mt-0.5">
+                                                                <span className="text-[11px] text-gray-400 line-through">{product.regularPrice}</span>
+                                                                <span className="text-[11px] font-bold text-blue-600">-{getDiscount(product.regularPrice, product.salePrice)}%</span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0 mt-1" />
                                                 </Link>

@@ -292,16 +292,25 @@ function parsePrice(value) {
     return value;
   }
 
+  /**
+   * IMPORTANT: Giá VN dùng "." làm dấu phân cách nghìn
+   *
+   * VD: "519.000 ₫" → "519.000" → parseFloat = 519 ❌
+   *
+   * Fix: xoá TẤT CẢ ký tự không phải số, dùng parseInt
+   *
+   * "519.000 ₫"    → "519000" → 519000 ✅
+   * "29.990.000 ₫" → "29990000" → 29990000 ✅
+   */
+
   const cleaned =
-    String(value)
-      .replace(/[^0-9.-]/g, "");
+    String(value).replace(/[^\d]/g, "");
 
   if (!cleaned) {
     return undefined;
   }
 
-  const number =
-    parseFloat(cleaned);
+  const number = parseInt(cleaned, 10);
 
   return Number.isFinite(number)
     ? number

@@ -33,7 +33,11 @@ function formatVND(amount: number | null | undefined): string {
 
 function mapHit(hit: any) {
     const doc = hit.document;
-    const displayPrice = doc.price || doc.regularPrice || doc.salePrice;
+    // sync-typesense.js lưu snake_case, index-typesense.js lưu camelCase — hỗ trợ cả 2
+    const regularPriceRaw = doc.regular_price ?? doc.regularPrice ?? null;
+    const salePriceRaw    = doc.sale_price    ?? doc.salePrice    ?? null;
+    const stockStatus     = doc.stock_status  || doc.stockStatus  || 'IN_STOCK';
+    const displayPrice    = doc.price || regularPriceRaw || salePriceRaw;
     return {
         id: doc.id,
         databaseId: parseInt(doc.id),
@@ -41,9 +45,9 @@ function mapHit(hit: any) {
         slug: doc.slug,
         price: formatVND(displayPrice),
         sku: doc.sku,
-        regularPrice: doc.regularPrice ? formatVND(doc.regularPrice) : undefined,
-        salePrice: doc.salePrice ? formatVND(doc.salePrice) : undefined,
-        stockStatus: doc.stockStatus || 'IN_STOCK',
+        regularPrice: regularPriceRaw ? formatVND(regularPriceRaw) : undefined,
+        salePrice: salePriceRaw ? formatVND(salePriceRaw) : undefined,
+        stockStatus,
         image: {
             sourceUrl: doc.image,
             altText: doc.name || ''
