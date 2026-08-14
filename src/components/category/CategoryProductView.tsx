@@ -261,8 +261,24 @@ export function CategoryProductView({
     };
 
     return (
-        <div className="w-full space-y-8">
-            <div className="mb-4 md:mb-8 border-b border-gray-100 pb-4 md:pb-8">
+        <div className="w-full">
+            <div className="mb-1.5 md:mb-2 border-b border-gray-100 pb-1.5 md:pb-2">
+                {/* Breadcrumbs */}
+                <nav className="flex items-center flex-wrap gap-1.5 md:gap-2 text-sm md:text-base text-slate-500 dark:text-slate-400 mb-2 md:mb-3">
+                    <Link href="/" className="hover:text-blue-600 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+                        <span>Trang chủ</span>
+                    </Link>
+                    {category.ancestors?.nodes && [...category.ancestors.nodes].reverse().map((anc: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-1.5 md:gap-2">
+                            <span>/</span>
+                            <Link href={`/${anc.slug}`} className="hover:text-blue-600 truncate max-w-[200px]" title={anc.name}>{anc.name}</Link>
+                        </div>
+                    ))}
+                    <span>/</span>
+                    <span className="text-slate-900 dark:text-white font-medium truncate max-w-[250px] md:max-w-[400px]" title={category.name}>{category.name}</span>
+                </nav>
+                
                 <h1 className="text-xl md:text-3xl font-black text-gray-900 mb-2 md:mb-3 tracking-tight">{category.name}</h1>
                 {category.description && (
                     <div className="text-gray-500 text-sm max-w-3xl leading-relaxed" dangerouslySetInnerHTML={{ __html: category.description }} />
@@ -291,7 +307,7 @@ export function CategoryProductView({
                 if (!activeCategory && otherCategories.length === 0) return null;
 
                 return (
-                    <div className="mb-4 md:mb-8 overflow-x-auto pb-3 md:pb-4 scrollbar-hide">
+                    <div className="mb-2 overflow-x-auto pb-1.5 scrollbar-hide">
                         <div className="flex gap-2 md:gap-4 min-w-max">
                             {isTopLevel ? (
                                 <div className="flex-shrink-0 w-20 h-20 md:w-40 md:h-40 bg-[#d32f2f] text-white rounded-lg md:rounded-xl shadow-sm flex items-center justify-center p-2 md:p-4 text-center cursor-default">
@@ -346,16 +362,18 @@ export function CategoryProductView({
             })()}
 
             {/* Horizontal Filter Component */}
-            <CategoryFilterSort
-                filters={availableFilters}
-                selectedAttributes={selectedAttributes}
-                onFilterChange={handleFilterChange}
-                priceRange={priceRange}
-                onPriceChange={handlePriceChange}
-                sortOrder={sortOrder}
-                onSortChange={setSortOrder}
-                onClearAll={clearAllFilters}
-            />
+            <div className="my-4 md:my-5">
+                <CategoryFilterSort
+                    filters={availableFilters}
+                    selectedAttributes={selectedAttributes}
+                    onFilterChange={handleFilterChange}
+                    priceRange={priceRange}
+                    onPriceChange={handlePriceChange}
+                    sortOrder={sortOrder}
+                    onSortChange={setSortOrder}
+                    onClearAll={clearAllFilters}
+                />
+            </div>
 
             {/* Product List — Skeleton overlay crossfade */}
             <div className="relative min-h-[400px]">

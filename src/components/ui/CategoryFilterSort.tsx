@@ -511,7 +511,7 @@ export function CategoryFilterSort({
             </div>
 
             {/* ===== DESKTOP: Full inline filter ===== */}
-            <div className="hidden lg:block bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
+            <div className="hidden lg:block bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 space-y-4">
                 {FilterContent({})}
 
                 {/* Active tags */}

@@ -382,6 +382,12 @@ export const GET_NODE_BY_SLUG = `
       name
       description
       slug
+      ancestors {
+        nodes {
+          name
+          slug
+        }
+      }
       parent {
         node {
           id

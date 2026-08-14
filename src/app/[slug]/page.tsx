@@ -452,8 +452,24 @@ export default async function SlugPage({ params }: {
             });
         }
 
+        // Generate breadcrumbs data for schema
+        const breadcrumbs: { name: string, slug: string }[] = [];
+        if (category.ancestors?.nodes) {
+            const ancestors = [...category.ancestors.nodes].reverse();
+            ancestors.forEach((anc: any) => {
+                breadcrumbs.push({ name: anc.name, slug: anc.slug });
+            });
+        }
+        
         return (
-            <div className="container mx-auto px-4 py-12">
+            <div className="container mx-auto px-4 py-2 md:py-4">
+                <BreadcrumbSchema
+                    items={[
+                        { name: 'Trang chủ', item: 'https://maytinhlmc.vn/' },
+                        ...breadcrumbs.map(bc => ({ name: bc.name, item: `https://maytinhlmc.vn/${bc.slug}` })),
+                        { name: category.name, item: `https://maytinhlmc.vn/${category.slug}` }
+                    ]}
+                />
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Đang tải cấu trúc danh mục...</div>}>
                     <CategoryProductView
                         category={category}
