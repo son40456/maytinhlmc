@@ -273,7 +273,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                         <div ref={desktopSearchRef} className="hidden lg:flex flex-1 max-w-3xl px-8 relative">
                             <form onSubmit={handleDesktopSearch} className="w-full relative">
                                 <input
-                                    type="search"
+                                    type="text"
                                     placeholder="Tìm sản phẩm, thương hiệu, danh mục..."
                                     value={desktopQuery}
                                     onChange={e => { setDesktopQuery(e.target.value); setShowDesktopDropdown(true); }}
@@ -281,8 +281,8 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     className="w-full h-12 pl-5 pr-14 rounded-full text-gray-800 bg-white/95 focus:bg-white focus:outline-none focus:ring-4 focus:ring-yellow-400/50 shadow-inner transition-all text-sm"
                                 />
                                 {desktopQuery && (
-                                    <button type="button" onClick={() => setDesktopQuery('')} className="absolute right-11 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500 p-1">
-                                        <X className="w-3.5 h-3.5" />
+                                    <button type="button" onClick={() => setDesktopQuery('')} className="absolute right-11 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1">
+                                        <X className="w-4 h-4" />
                                     </button>
                                 )}
                                 <button type="submit" className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-yellow-400 hover:text-blue-900 transition-colors shadow-sm">
