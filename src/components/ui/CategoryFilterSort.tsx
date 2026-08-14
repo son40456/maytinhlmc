@@ -301,7 +301,10 @@ export function CategoryFilterSort({
 
                                 return (
                                     <div key={filter.slug} className="pb-3 border-b border-gray-100 last:border-0">
-                                        <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider mb-2.5">{filter.name}</h4>
+                                        <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider mb-2.5">
+                                            {filter.name}
+                                            {selectedAttributes[filter.slug]?.length > 0 && ` (${selectedAttributes[filter.slug].length})`}
+                                        </h4>
                                         <div className="flex flex-wrap gap-2">
                                             {visibleOptions.map((opt) => {
                                                 const isSelected = selectedAttributes[filter.slug]?.includes(opt.slug);
@@ -351,6 +354,7 @@ export function CategoryFilterSort({
                                                 }`}
                                         >
                                             {filter.name}
+                                            {selectedAttributes[filter.slug]?.length > 0 && ` (${selectedAttributes[filter.slug].length})`}
                                             <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === filter.slug ? 'rotate-180' : ''}`} />
                                         </button>
 
