@@ -289,95 +289,102 @@ export function CategoryFilterSort({
 
             {/* Thuộc tính kỹ thuật */}
             {otherFilters.length > 0 && (
-                <div className={isMobile ? 'space-y-3' : 'flex flex-wrap items-center gap-2 pt-3 border-t border-gray-50'}>
+                <div className={isMobile ? 'space-y-3' : 'flex flex-col md:flex-row md:items-start gap-3 pt-3 border-t border-gray-50'}>
                     {isMobile ? (
-                        // Mobile: flat chip sections like the screenshot
-                        otherFilters.map((filter) => {
-                            const isExpanded = expandedSections.has(filter.slug);
-                            const maxVisible = 6;
-                            const visibleOptions = isExpanded ? filter.options : filter.options.slice(0, maxVisible);
-                            const hasMore = filter.options.length > maxVisible;
+                        <>
+                            <h4 className="text-[15px] font-bold text-gray-900 mb-1">Chọn theo tiêu chí:</h4>
+                            {otherFilters.map((filter) => {
+                                const isExpanded = expandedSections.has(filter.slug);
+                                const maxVisible = 6;
+                                const visibleOptions = isExpanded ? filter.options : filter.options.slice(0, maxVisible);
+                                const hasMore = filter.options.length > maxVisible;
 
-                            return (
-                                <div key={filter.slug} className="pb-3 border-b border-gray-100 last:border-0">
-                                    <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider mb-2.5">{filter.name}</h4>
-                                    <div className="flex flex-wrap gap-2">
-                                        {visibleOptions.map((opt) => {
-                                            const isSelected = selectedAttributes[filter.slug]?.includes(opt.slug);
-                                            return (
-                                                <button
-                                                    key={opt.slug}
-                                                    onClick={() => onFilterChange(filter.slug, opt.slug)}
-                                                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${isSelected
-                                                        ? 'bg-orange-600 border-orange-600 text-white'
-                                                        : 'bg-white border-gray-200 text-gray-700 active:bg-gray-100'
-                                                        }`}
-                                                >
-                                                    {opt.name}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                    {hasMore && (
-                                        <button
-                                            onClick={() => {
-                                                const next = new Set(expandedSections);
-                                                if (isExpanded) next.delete(filter.slug);
-                                                else next.add(filter.slug);
-                                                setExpandedSections(next);
-                                            }}
-                                            className="mt-2 text-xs font-bold text-orange-500 flex items-center gap-1"
-                                        >
-                                            {isExpanded ? 'Thu gọn' : 'Xem thêm'}
-                                            <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                                        </button>
-                                    )}
-                                </div>
-                            );
-                        })
-                    ) : (
-                        // Desktop: dropdown buttons
-                        otherFilters.map((filter) => (
-                            <div key={filter.slug} className="relative">
-                                <button
-                                    onClick={() => setOpenDropdown(openDropdown === filter.slug ? null : filter.slug)}
-                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-bold uppercase tracking-wider transition-all ${selectedAttributes[filter.slug]?.length > 0
-                                        ? 'border-orange-500 bg-orange-50 text-orange-700'
-                                        : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-400'
-                                        }`}
-                                >
-                                    {filter.name}
-                                    <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === filter.slug ? 'rotate-180' : ''}`} />
-                                </button>
-
-                                {openDropdown === filter.slug && (
-                                    <>
-                                        <div className="fixed inset-0 z-10" onClick={() => setOpenDropdown(null)} />
-                                        <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 z-20 py-3 animate-in fade-in zoom-in duration-200">
-                                            <div className="max-h-72 overflow-y-auto px-2 space-y-1">
-                                                {filter.options.map((opt) => {
-                                                    const isSelected = selectedAttributes[filter.slug]?.includes(opt.slug);
-                                                    return (
-                                                        <button
-                                                            key={opt.slug}
-                                                            onClick={() => onFilterChange(filter.slug, opt.slug)}
-                                                            className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between ${isSelected ? 'bg-orange-50 text-orange-600 font-bold' : 'hover:bg-gray-50 text-gray-700'}`}
-                                                        >
-                                                            {opt.name}
-                                                            {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />}
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
+                                return (
+                                    <div key={filter.slug} className="pb-3 border-b border-gray-100 last:border-0">
+                                        <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider mb-2.5">{filter.name}</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {visibleOptions.map((opt) => {
+                                                const isSelected = selectedAttributes[filter.slug]?.includes(opt.slug);
+                                                return (
+                                                    <button
+                                                        key={opt.slug}
+                                                        onClick={() => onFilterChange(filter.slug, opt.slug)}
+                                                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${isSelected
+                                                            ? 'bg-orange-600 border-orange-600 text-white'
+                                                            : 'bg-white border-gray-200 text-gray-700 active:bg-gray-100'
+                                                            }`}
+                                                    >
+                                                        {opt.name}
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
-                                    </>
-                                )}
+                                        {hasMore && (
+                                            <button
+                                                onClick={() => {
+                                                    const next = new Set(expandedSections);
+                                                    if (isExpanded) next.delete(filter.slug);
+                                                    else next.add(filter.slug);
+                                                    setExpandedSections(next);
+                                                }}
+                                                className="mt-2 text-xs font-bold text-orange-500 flex items-center gap-1"
+                                            >
+                                                {isExpanded ? 'Thu gọn' : 'Xem thêm'}
+                                                <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </>
+                    ) : (
+                        <>
+                            <span className="text-[15px] font-bold text-gray-900 min-w-[140px] shrink-0 block mb-2 md:mb-0 md:pt-2">Chọn theo tiêu chí:</span>
+                            <div className="flex flex-wrap items-center gap-2">
+                                {otherFilters.map((filter) => (
+                                    <div key={filter.slug} className="relative">
+                                        <button
+                                            onClick={() => setOpenDropdown(openDropdown === filter.slug ? null : filter.slug)}
+                                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-bold uppercase tracking-wider transition-all ${selectedAttributes[filter.slug]?.length > 0
+                                                ? 'border-orange-500 bg-orange-50 text-orange-700'
+                                                : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-400'
+                                                }`}
+                                        >
+                                            {filter.name}
+                                            <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === filter.slug ? 'rotate-180' : ''}`} />
+                                        </button>
+
+                                        {openDropdown === filter.slug && (
+                                            <>
+                                                <div className="fixed inset-0 z-10" onClick={() => setOpenDropdown(null)} />
+                                                <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 z-20 py-3 animate-in fade-in zoom-in duration-200">
+                                                    <div className="max-h-72 overflow-y-auto px-2 space-y-1">
+                                                        {filter.options.map((opt) => {
+                                                            const isSelected = selectedAttributes[filter.slug]?.includes(opt.slug);
+                                                            return (
+                                                                <button
+                                                                    key={opt.slug}
+                                                                    onClick={() => onFilterChange(filter.slug, opt.slug)}
+                                                                    className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between ${isSelected ? 'bg-orange-50 text-orange-600 font-bold' : 'hover:bg-gray-50 text-gray-700'}`}
+                                                                >
+                                                                    {opt.name}
+                                                                    {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
-                        ))
+                        </>
                     )}
                 </div>
             )
             }
+
 
             {/* Sắp xếp */}
             <div className={isMobile ? '' : 'flex flex-col md:flex-row md:items-center gap-3 pt-3 border-t border-gray-50'}>
