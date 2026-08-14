@@ -64,7 +64,7 @@ export const searchProductsLive = unstable_cache(
                 infix: 'fallback,always,off',
                 num_typos: '2,0,0',
                 per_page: hitsPerPage
-            };
+            } as any;
             const searchResponse = await getClient().collections(COLLECTION_NAME).documents().search(searchParameters);
             return (searchResponse.hits || []).map(mapHit);
         } catch (error) {
@@ -94,7 +94,7 @@ export const searchProductsPaginated = unstable_cache(
                 num_typos: '2,0,0',
                 page: page,
                 per_page: hitsPerPage
-            };
+            } as any;
             const searchResponse = await getClient().collections(COLLECTION_NAME).documents().search(searchParameters);
             const totalHits = searchResponse.found || 0;
             const totalPages = Math.ceil(totalHits / hitsPerPage);
