@@ -58,7 +58,11 @@ export const searchProductsLive = unstable_cache(
         try {
             const searchParameters = {
                 q: query,
-                query_by: 'name,slug,sku',
+                query_by: 'name,sku,slug',
+                query_by_weights: '3,2,1',
+                // infix search: tìm chuỗi con trong token (VD: "AE1000" khớp "GP-AE1000PM")
+                infix: 'fallback,always,off',
+                num_typos: '2,0,0',
                 per_page: hitsPerPage
             };
             const searchResponse = await getClient().collections(COLLECTION_NAME).documents().search(searchParameters);
@@ -83,7 +87,11 @@ export const searchProductsPaginated = unstable_cache(
         try {
             const searchParameters = {
                 q: query,
-                query_by: 'name,slug,sku',
+                query_by: 'name,sku,slug',
+                query_by_weights: '3,2,1',
+                // infix search: tìm chuỗi con trong token (VD: "AE1000" khớp "GP-AE1000PM")
+                infix: 'fallback,always,off',
+                num_typos: '2,0,0',
                 page: page,
                 per_page: hitsPerPage
             };
