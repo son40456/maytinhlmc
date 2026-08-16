@@ -8,14 +8,12 @@
  *       không quá ngắn gây cache miss liên tục.
  *
  * Key format: filter:{categorySlug} → JSON string
+ *
+ * QUAN TRỌNG: Redis client được khởi tạo lazy (không phải module-level)
+ * → Nếu KV_REST_API_URL chưa được set trên server, hàm trả về null thay vì crash.
  */
 
 import { Redis } from '@upstash/redis';
-
-const redis = new Redis({
-    url: process.env.KV_REST_API_URL!,
-    token: process.env.KV_REST_API_TOKEN!,
-});
 
 const FILTER_TTL_SECONDS = 30 * 60; // 30 phút
 
@@ -32,15 +30,40 @@ export type FilterEntry = {
     options: FilterOption[];
 };
 
+// Lazy singleton — chỉ tạo client khi thực sự cần, và chỉ tạo 1 lần
+let _redis: Redis | null = null;
+
+function getRedisClient(): Redis | null {
+    // Guard: không có env vars → không dùng Redis (graceful degradation)
+    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+        return null;
+    }
+    // Singleton: tránh tạo nhiều connections
+    if (!_redis) {
+        try {
+            _redis = new Redis({
+                url: process.env.KV_REST_API_URL,
+                token: process.env.KV_REST_API_TOKEN,
+            });
+        } catch (err) {
+            console.error('[FilterCache] Failed to create Redis client:', err);
+            return null;
+        }
+    }
+    return _redis;
+}
+
 /**
- * Lấy filter từ Redis cache. Trả về null nếu cache miss.
+ * Lấy filter từ Redis cache. Trả về null nếu cache miss HOẶC Redis không khả dụng.
  */
 export async function getFilterCache(categorySlug: string): Promise<FilterEntry[] | null> {
+    const redis = getRedisClient();
+    if (!redis) return null; // Redis không có → cache miss, fallback to GraphQL
+
     try {
         const cached = await redis.get<FilterEntry[]>(`filter:${categorySlug}`);
         return cached ?? null;
     } catch (err) {
-        // Redis lỗi → tiếp tục fetch từ WP như bình thường
         console.error('[FilterCache] Redis GET error:', err);
         return null;
     }
@@ -50,10 +73,12 @@ export async function getFilterCache(categorySlug: string): Promise<FilterEntry[
  * Lưu filter vào Redis cache với TTL 30 phút.
  */
 export async function setFilterCache(categorySlug: string, filters: FilterEntry[]): Promise<void> {
+    const redis = getRedisClient();
+    if (!redis) return; // Redis không có → bỏ qua, không crash
+
     try {
         await redis.set(`filter:${categorySlug}`, filters, { ex: FILTER_TTL_SECONDS });
     } catch (err) {
-        // Redis lỗi → không crash, chỉ log
         console.error('[FilterCache] Redis SET error:', err);
     }
 }
@@ -63,6 +88,9 @@ export async function setFilterCache(categorySlug: string, filters: FilterEntry[
  * Gọi từ admin webhook nếu cần.
  */
 export async function invalidateFilterCache(categorySlug: string): Promise<void> {
+    const redis = getRedisClient();
+    if (!redis) return;
+
     try {
         await redis.del(`filter:${categorySlug}`);
     } catch (err) {
