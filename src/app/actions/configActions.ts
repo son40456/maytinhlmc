@@ -3,6 +3,11 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { Redis } from '@upstash/redis';
+import { unstable_cache } from 'next/cache';
+
+// Next.js 16: revalidateTag type đã thay đổi — dùng require để bypass type conflict
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { revalidateTag } = require('next/cache') as { revalidateTag: (tag: string) => void };
 
 export interface HardwareGridCategory {
     id: string;
@@ -120,7 +125,7 @@ const DEFAULT_HARDWARE_GRID_CONFIG: HardwareGridConfig = {
     ]
 };
 
-export async function getHomepageConfig() {
+const _getHomepageConfig = async () => {
     const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
     const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
 
@@ -143,7 +148,13 @@ export async function getHomepageConfig() {
         console.error('Error reading homepage config:', error);
         return [];
     }
-}
+};
+
+export const getHomepageConfig = unstable_cache(
+    _getHomepageConfig,
+    ['config-homepage'],
+    { revalidate: 3600, tags: ['config-homepage', 'config-all'] }
+);
 
 export async function getPcBuilderConfig() {
     const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
@@ -214,7 +225,7 @@ export async function getPcBuilderConfig() {
 }
 
 
-export async function getHardwareGridConfig(): Promise<HardwareGridConfig> {
+const _getHardwareGridConfig = async (): Promise<HardwareGridConfig> => {
     const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
     const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
 
@@ -233,7 +244,13 @@ export async function getHardwareGridConfig(): Promise<HardwareGridConfig> {
     }
 
     return DEFAULT_HARDWARE_GRID_CONFIG;
-}
+};
+
+export const getHardwareGridConfig = unstable_cache(
+    _getHardwareGridConfig,
+    ['config-hardware-grid'],
+    { revalidate: 3600, tags: ['config-hardware-grid', 'config-all'] }
+);
 
 export interface SiteSettings {
     logo?: string;
@@ -245,7 +262,7 @@ export interface SiteSettings {
 
 const DEFAULT_SITE_SETTINGS: SiteSettings = {};
 
-export async function getSiteSettings(): Promise<SiteSettings> {
+const _getSiteSettings = async (): Promise<SiteSettings> => {
     const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
     const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
 
@@ -264,7 +281,13 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     }
 
     return DEFAULT_SITE_SETTINGS;
-}
+};
+
+export const getSiteSettings = unstable_cache(
+    _getSiteSettings,
+    ['config-site-settings'],
+    { revalidate: 3600, tags: ['config-site-settings', 'config-all'] }
+);
 
 export async function saveSiteSettings(settings: SiteSettings): Promise<{ success: boolean }> {
     const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
@@ -276,6 +299,9 @@ export async function saveSiteSettings(settings: SiteSettings): Promise<{ succes
     try {
         if (useKV && redis) {
             await redis.set('siteSettings', JSON.stringify(settings));
+            // Revalidate cache sau khi lưu
+            revalidateTag('config-site-settings');
+            revalidateTag('config-all');
             return { success: true };
         }
         return { success: false };
@@ -283,6 +309,22 @@ export async function saveSiteSettings(settings: SiteSettings): Promise<{ succes
         console.error('Error saving site settings:', error);
         return { success: false };
     }
+}
+
+// ── Revalidate Helpers cho Admin Routes ──────────────────────────────────────
+export async function revalidateBannerConfig() {
+    revalidateTag('config-banners');
+    revalidateTag('config-all');
+}
+
+export async function revalidateHomepageConfig() {
+    revalidateTag('config-homepage');
+    revalidateTag('config-all');
+}
+
+export async function revalidateHardwareGridConfig() {
+    revalidateTag('config-hardware-grid');
+    revalidateTag('config-all');
 }
 
 // --------------------------------------------------------------------------------
@@ -293,23 +335,36 @@ export interface BannerItem {
     id: string;
     image: string;
     link: string;
+    title?: string;
+}
+
+export interface CategoryBannerSetting {
+    enabled: boolean;
+    banners: BannerItem[]; // Danh sách banner — hiển thị 2 ảnh/lần theo dạng carousel slide từng ảnh
 }
 
 export interface BannerConfig {
     mainBanners: BannerItem[];
     smallBanners: BannerItem[];
     showSmallBanners?: boolean;
+    // Banner riêng cho từng danh mục. Key là category slug.
+    // Key đặc biệt '_default' là banner dùng chung cho mọi danh mục chưa có cấu hình riêng.
+    categoryBanners?: {
+        _default?: CategoryBannerSetting;
+        [categorySlug: string]: CategoryBannerSetting | undefined;
+    };
 }
 
 const DEFAULT_BANNER_CONFIG: BannerConfig = {
     mainBanners: [],
     smallBanners: [],
-    showSmallBanners: true
+    showSmallBanners: true,
+    categoryBanners: {}
 };
 
 const bannerConfigPath = path.join(process.cwd(), 'src', 'data', 'bannerConfig.json');
 
-export async function getBannerConfig(): Promise<BannerConfig> {
+const _getBannerConfig = async (): Promise<BannerConfig> => {
     const kvUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
     const kvToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
 
@@ -330,4 +385,33 @@ export async function getBannerConfig(): Promise<BannerConfig> {
         console.error('Error reading banner config:', error);
         return DEFAULT_BANNER_CONFIG;
     }
+};
+
+export const getBannerConfig = unstable_cache(
+    _getBannerConfig,
+    ['config-banners'],
+    { revalidate: 3600, tags: ['config-banners', 'config-all'] }
+);
+
+/**
+ * Lấy cấu hình banner cho một danh mục cụ thể.
+ * Fallback: banner riêng theo slug -> banner mặc định (_default) -> null (ẩn).
+ */
+export async function getCategoryBanner(categorySlug: string): Promise<CategoryBannerSetting | null> {
+    const config = await getBannerConfig();
+    const categoryBanners = config.categoryBanners || {};
+
+    // Ưu tiên banner riêng của danh mục
+    const specificBanner = categoryBanners[categorySlug];
+    if (specificBanner && specificBanner.enabled && specificBanner.banners.length > 0) {
+        return specificBanner;
+    }
+
+    // Fallback sang banner mặc định
+    const defaultBanner = categoryBanners['_default'];
+    if (defaultBanner && defaultBanner.enabled && defaultBanner.banners.length > 0) {
+        return defaultBanner;
+    }
+
+    return null;
 }

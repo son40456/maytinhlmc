@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 import { Redis } from '@upstash/redis';
+import { revalidateBannerConfig } from '@/app/actions/configActions';
 
 const dataFilePath = path.join(process.cwd(), 'src', 'data', 'bannerConfig.json');
 const REDIS_KEY = 'bannerConfig';
@@ -41,6 +42,7 @@ export async function POST(req: Request) {
             // In production (Vercel), filesystem is read-only — Redis is the source of truth
         }
 
+        await revalidateBannerConfig();
         return NextResponse.json({ success: true });
     } catch (e) {
         console.error('Error saving banner config:', e);

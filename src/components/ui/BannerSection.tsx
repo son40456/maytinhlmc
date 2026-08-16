@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Cpu, Sparkles, MonitorPlay, Mouse, Keyboard, Headphones, Monitor } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import imageKitLoader, { getImageKitUrl } from "@/utils/imagekit-loader";
 
 import { BannerConfig } from "@/app/actions/configActions";
 
@@ -48,13 +49,15 @@ export function BannerSection({ config }: { config: BannerConfig }) {
                     {config?.mainBanners?.map((banner, idx) => (
                         <div key={banner.id || idx} className="w-full flex-shrink-0 relative aspect-[21/9] md:aspect-[3/1]">
                             <Link href={banner.link || "#"} className="block w-full h-full">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img 
-                                    src={banner.image} 
-                                    alt={`Banner ${idx}`}
-                                    className="w-full h-full object-cover block bg-slate-100"
-                                    fetchPriority={idx === 0 ? "high" : undefined}
-                                    loading={idx === 0 ? "eager" : "lazy"}
+                                <Image
+                                    loader={imageKitLoader}
+                                    src={banner.image}
+                                    alt={banner.title || `Banner ${idx + 1}`}
+                                    fill
+                                    className="object-cover"
+                                    sizes="100vw"
+                                    priority={idx === 0}
+                                    quality={85}
                                 />
                             </Link>
                         </div>
@@ -103,7 +106,7 @@ export function BannerSection({ config }: { config: BannerConfig }) {
                                 <div className="relative aspect-[4/3] md:h-[220px] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden shadow-xl border-2 border-white/20 transform transition-transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent after:-translate-x-[150%] group-hover:after:translate-x-[150%] after:transition-transform after:duration-1000 after:ease-in-out">
                                     <div 
                                         className="w-full h-full bg-cover bg-center"
-                                        style={{ backgroundImage: `url(${banner.image})` }}
+                                        style={{ backgroundImage: `url(${getImageKitUrl(banner.image, 800, 80)})` }}
                                     ></div>
                                 </div>
                             </Link>

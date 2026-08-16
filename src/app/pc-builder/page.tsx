@@ -10,10 +10,6 @@ import { PcBuilderPrintTemplate } from "@/components/pc-builder/PcBuilderPrintTe
 import { useCartStore } from "@/store/useCartStore";
 import { getAutoFilterForCategory } from "@/lib/pc-builder/compatibilityEngine";
 import { FileSpreadsheet, DownloadCloud, Share2, Printer, AlertTriangle, Lightbulb, CheckCircle2 } from "lucide-react";
-import { toPng } from 'html-to-image';
-import download from 'downloadjs';
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import { getPcBuilderConfig } from '@/app/actions/configActions';
 import type { PcBuilderTab, PcTemplate } from '@/app/actions/configActions';
 import { wpgraphqlFetch } from "@/lib/graphql/fetcher";
@@ -178,7 +174,9 @@ function BuildPcPageInner() {
             const response = await fetch('/templates/buildpc.xlsx');
             const arrayBuffer = await response.arrayBuffer();
 
-            // 2. Load workbook
+            // 2. Load workbook (dynamic import — ExcelJS không nằm trong bundle ban đầu)
+            const ExcelJS = (await import('exceljs')).default;
+            const { saveAs } = await import('file-saver');
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(arrayBuffer);
             const worksheet = workbook.getWorksheet(1);
@@ -386,6 +384,8 @@ function BuildPcPageInner() {
     const handleDownloadImage = async () => {
         if (!exportRef.current) return;
         try {
+            const { toPng } = await import('html-to-image');
+            const { default: download } = await import('downloadjs');
             const dataUrl = await toPng(exportRef.current, { backgroundColor: '#ffffff', pixelRatio: 2 });
             download(dataUrl, 'cau_hinh_pc_lmc.png');
         } catch (error) {

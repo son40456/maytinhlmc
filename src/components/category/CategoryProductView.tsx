@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useTransition } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { CategoryFilterSort } from "@/components/ui/CategoryFilterSort";
+import { CategoryBanners } from "@/components/category/CategoryBanners";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -45,6 +46,7 @@ interface CategoryProductViewProps {
     initialPageInfo: any;
     availableFilters: any[];
     categorySlug: string;
+    categoryBanners?: { id: string; image: string; link: string; title?: string }[] | null;
 }
 
 export function CategoryProductView({
@@ -53,6 +55,7 @@ export function CategoryProductView({
     initialPageInfo,
     availableFilters,
     categorySlug,
+    categoryBanners,
 }: CategoryProductViewProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -61,6 +64,7 @@ export function CategoryProductView({
     const [products, setProducts] = useState(initialProducts);
     const [pageInfo, setPageInfo] = useState(initialPageInfo);
     const [loading, setLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
     // Initialize State filters from URL
     const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string[]>>(() => {
@@ -207,6 +211,13 @@ export function CategoryProductView({
         }
     }, [categorySlug, selectedAttributes, priceRange, sortOrder]);
 
+    // Wrapper: bỬdng startTransition khi filter thay đổi (non-urgent update)
+    const triggerFetch = useCallback((isLoadMore = false) => {
+        startTransition(() => {
+            fetchProducts(isLoadMore);
+        });
+    }, [fetchProducts]);
+
     // Re-fetch when filters change (với debounce 200ms tránh requests thừa khi click nhanh)
     const isFirstRender = useRef(true);
 
@@ -227,13 +238,13 @@ export function CategoryProductView({
         // Debounce: Hủy timer cũ, đặt timer mới 200ms
         if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
         debounceTimerRef.current = setTimeout(() => {
-            fetchProducts();
+            triggerFetch();
         }, 200);
 
         return () => {
             if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
         };
-    }, [selectedAttributes, priceRange, sortOrder, fetchProducts, updateUrlParams]);
+    }, [selectedAttributes, priceRange, sortOrder, triggerFetch, updateUrlParams]);
 
     const handleFilterChange = (attrSlug: string, value: string) => {
         setSelectedAttributes(prev => {
@@ -262,8 +273,8 @@ export function CategoryProductView({
 
     return (
         <div className="w-full">
+            {/* Breadcrumbs */}
             <div className="mb-1.5 md:mb-2 border-b border-gray-100 pb-1.5 md:pb-2">
-                {/* Breadcrumbs */}
                 <nav className="flex items-center flex-wrap gap-1.5 md:gap-2 text-sm md:text-base text-slate-500 dark:text-slate-400 mb-2 md:mb-3">
                     <Link href="/" className="hover:text-blue-600 flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
@@ -278,11 +289,6 @@ export function CategoryProductView({
                     <span>/</span>
                     <span className="text-slate-900 dark:text-white font-medium truncate max-w-[250px] md:max-w-[400px]" title={category.name}>{category.name}</span>
                 </nav>
-                
-                <h1 className="text-xl md:text-3xl font-black text-gray-900 mb-2 md:mb-3 tracking-tight">{category.name}</h1>
-                {category.description && (
-                    <div className="text-gray-500 text-sm max-w-3xl leading-relaxed" dangerouslySetInnerHTML={{ __html: category.description }} />
-                )}
             </div>
 
             {/* Child Categories Block */}
@@ -361,6 +367,19 @@ export function CategoryProductView({
                 );
             })()}
 
+            {/* ====== 2 Banner Danh Mục ====== */}
+            {categoryBanners && categoryBanners.length > 0 && (
+                <CategoryBanners banners={categoryBanners} />
+            )}
+
+            {/* Category title + description */}
+            <div className="mb-1.5 md:mb-2 border-b border-gray-100 pb-1.5 md:pb-2">
+                <h1 className="text-xl md:text-3xl font-black text-gray-900 mb-2 md:mb-3 tracking-tight">{category.name}</h1>
+                {category.description && (
+                    <div className="text-gray-500 text-sm max-w-3xl leading-relaxed" dangerouslySetInnerHTML={{ __html: category.description }} />
+                )}
+            </div>
+
             {/* Horizontal Filter Component */}
             <div className="my-4 md:my-5">
                 <CategoryFilterSort
@@ -431,8 +450,8 @@ export function CategoryProductView({
                 {pageInfo?.hasNextPage && (
                     <div className="mt-6 md:mt-12 flex justify-center">
                         <button
-                            onClick={() => fetchProducts(true)}
-                            disabled={loading}
+                            onClick={() => triggerFetch(true)}
+                            disabled={loading || isPending}
                             className="px-6 py-2.5 bg-white border border-gray-200 rounded-xl font-bold text-sm text-gray-700 hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
                         >
                             Tải thêm sản phẩm

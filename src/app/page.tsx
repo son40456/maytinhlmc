@@ -89,13 +89,24 @@ export default function Home() {
       <WebSiteSchema />
       
       {/* Hero Banner Slider + Small Banners */}
-      <Suspense fallback={<div className="w-full aspect-[21/9] md:aspect-[3/1] bg-slate-100 animate-pulse rounded-lg"></div>}>
+      <Suspense fallback={
+        <div className="w-full">
+          <div className="w-full aspect-[21/9] md:aspect-[3/1] bg-slate-100 animate-pulse rounded-none" />
+          <div className="container mx-auto px-4 mt-4 hidden md:grid grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-[220px] bg-slate-100 animate-pulse rounded-2xl" />
+            ))}
+          </div>
+        </div>
+      }>
         <BannerWrapper />
       </Suspense>
 
       {/* Danh mục nổi bật */}
       <div className="mb-2 md:mb-4">
-        <Suspense fallback={<div className="w-full h-[150px] md:h-[200px] bg-slate-100 animate-pulse rounded-lg"></div>}>
+        <Suspense fallback={
+          <div className="w-full h-[200px] md:h-[380px] bg-slate-100 animate-pulse rounded-xl" />
+        }>
           <HardwareGridWrapper />
         </Suspense>
       </div>
@@ -104,8 +115,9 @@ export default function Home() {
       <div className="flex flex-col gap-4 md:gap-6">
         <Suspense fallback={
           <div className="w-full flex flex-col gap-4">
-            <div className="h-[400px] bg-slate-100 animate-pulse rounded-lg"></div>
-            <div className="h-[400px] bg-slate-100 animate-pulse rounded-lg"></div>
+            <div className="h-[400px] bg-slate-100 animate-pulse rounded-lg" />
+            <div className="h-[400px] bg-slate-100 animate-pulse rounded-lg" />
+            <div className="h-[400px] bg-slate-100 animate-pulse rounded-lg" />
           </div>
         }>
           <HomeSectionsWrapper />

@@ -2,13 +2,18 @@
   "mainBanners": [
     {
       "id": "1",
-      "image": "https://kccshop.vn/media/banner/KCC_1920x560.jpg",
-      "link": "/category/all"
+      "image": "https://xucymr0kqtqlzxog.public.blob.vercel-storage.com/1785821819881-BannerBaoHanh__1_.png",
+      "link": "https://baohanh.maytinhlmc.vn/"
     },
     {
       "id": "2",
-      "image": "https://kccshop.vn/media/banner/banner-1920x6001.jpg",
+      "image": "https://xucymr0kqtqlzxog.public.blob.vercel-storage.com/1785821856020-BannerBuildPC-comp.png",
       "link": "/pc-builder"
+    },
+    {
+      "id": "banner-1785821872018",
+      "image": "https://xucymr0kqtqlzxog.public.blob.vercel-storage.com/1785821897685-BanGheGaming-min.png",
+      "link": ""
     }
   ],
   "smallBanners": [
@@ -33,5 +38,62 @@
       "link": ""
     }
   ],
-  "showSmallBanners": true
+  "showSmallBanners": true,
+  "categoryBanners": {
+    "_default": {
+      "enabled": true,
+      "banners": [
+        {
+          "id": "cat-banner-1786715325109",
+          "image": "https://cdn-transformations.hacom.vn/insecure/f:webp/q:70/rt:fit/w:1920/aHR0cHM6Ly9jZG4tZmlsZXMuaGFjb20udm4vaGFjb20vY2RuL01lZGlhL0ltYWdlL0Jhbm5lci8xODA1MjAyNi9iYW5uZXItbXNpLmpwZw.webp",
+          "link": "",
+          "title": ""
+        },
+        {
+          "id": "cat-banner-1786715334482",
+          "image": "https://cdn-transformations.hacom.vn/insecure/f:webp/q:85/rt:fit/w:1920/aHR0cHM6Ly9jZG4tZmlsZXMuaGFjb20udm4vaGFjb20vY2RuL01lZGlhL0ltYWdlL0Jhbm5lci8yNDA5MjAyNS9uZ2FuaG5oYS5qcGc.webp",
+          "link": "",
+          "title": ""
+        },
+        {
+          "id": "cat-banner-1786715638259",
+          "image": "https://cdn-transformations.hacom.vn/insecure/f:webp/q:85/rt:fit/w:1920/aHR0cHM6Ly9jZG4tZmlsZXMuaGFjb20udm4vaGFjb20vY2RuL01lZGlhL0ltYWdlL0Jhbm5lci8yODAxMjAyNi90aW50dWMuanBn.webp",
+          "link": "",
+          "title": ""
+        }
+      ]
+    },
+    "case-vo-may-tinh": {
+      "enabled": true,
+      "banners": [
+        {
+          "id": "cat-banner-1786717106549",
+          "image": "https://cdn-transformations.hacom.vn/insecure/f:webp/q:85/rt:fit/w:1920/aHR0cHM6Ly9jZG4tZmlsZXMuaGFjb20udm4vaGFjb20vY2RuL01lZGlhL0ltYWdlL0Jhbm5lci8yMTAzMjAyNi84MTAyNjZhcy5qcGc.webp",
+          "link": "",
+          "title": ""
+        },
+        {
+          "id": "cat-banner-1786717129813",
+          "image": "https://cdn-transformations.hacom.vn/insecure/f:webp/q:85/rt:fit/w:1920/aHR0cHM6Ly9jZG4tZmlsZXMuaGFjb20udm4vaGFjb20vY2RuL01lZGlhL0ltYWdlL0Jhbm5lci8xMDA4MjAyNi85YThiMWY2Mi04YzQ0LTQxZTMtYTRkMy01NWExOTZmOGRkMWYucG5n.webp",
+          "link": "",
+          "title": ""
+        }
+      ]
+    },
+    "man-hinh-may-tinh": {
+      "enabled": true,
+      "banners": [
+        {
+          "id": "cat-1786719956533",
+          "image": "https://cdn-transformations.hacom.vn/insecure/f:webp/q:85/rt:fit/w:1920/aHR0cHM6Ly9jZG4tZmlsZXMuaGFjb20udm4vaGFjb20vY2RuL01lZGlhL0ltYWdlL0Jhbm5lci8xMDA4MjAyNi85YThiMWY2Mi04YzQ0LTQxZTMtYTRkMy01NWExOTZmOGRkMWYucG5n.webp",
+          "link": ""
+        },
+        {
+          "id": "cat-1786720007654",
+          "image": "https://cdn-transformations.hacom.vn/insecure/f:webp/q:70/rt:fit/w:1920/aHR0cHM6Ly9jZG4tZmlsZXMuaGFjb20udm4vaGFjb20vY2RuL01lZGlhL0ltYWdlL0Jhbm5lci8wNjAxMjAyNi9CYW5uZXItODEweDI2Ni5qcGc.webp",
+          "link": ""
+        }
+      ]
+    }
+  }
 }

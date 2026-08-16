@@ -359,25 +359,37 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                     )}
                     <Arrows />
 
-                    {/* Slide track: mỗi ảnh absolute, dịch theo (idx - activeIndex) * 100% */}
+                    {/* Slide track: chỉ render ảnh hiện tại, trước và sau để giảm DOM nodes */}
                     <div className="aspect-square overflow-hidden relative">
-                        {allImages.map((img, idx) => (
-                            <div
-                                key={idx}
-                                className="absolute inset-0 transition-transform duration-500 ease-in-out"
-                                style={{ transform: `translateX(${(idx - activeIndex) * 100}%)` }}
-                            >
-                                <Image
-                                    src={img.sourceUrl}
-                                    alt={img.altText || name}
-                                    fill
-                                    className="object-contain p-6"
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                                    priority={idx === 0}
-                                    fetchPriority={idx === 0 ? "high" : "auto"}
-                                />
-                            </div>
-                        ))}
+                        {allImages.map((img, idx) => {
+                            const offset = idx - activeIndex;
+                            // Chỉ render ảnh gần activeIndex (prev/current/next)
+                            const isVisible = Math.abs(offset) <= 1;
+                            return (
+                                <div
+                                    key={idx}
+                                    className="absolute inset-0 transition-transform duration-500 ease-in-out"
+                                    style={{
+                                        transform: `translateX(${offset * 100}%)`,
+                                        // Ẩn hết những ảnh xa, giúp trình duyệt không cần composite layer
+                                        visibility: isVisible ? 'visible' : 'hidden',
+                                    }}
+                                    aria-hidden={!isVisible}
+                                >
+                                    {isVisible && (
+                                        <Image
+                                            src={img.sourceUrl}
+                                            alt={img.altText || name}
+                                            fill
+                                            className="object-contain p-6"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                                            priority={idx === 0}
+                                            fetchPriority={idx === 0 ? "high" : "auto"}
+                                        />
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
 
                     {/* Counter */}
@@ -402,25 +414,35 @@ export function ProductGallery({ mainImage, galleryNodes, name, salePrice, regul
                     )}
                     <Arrows mobile />
 
-                    {/* Slide track mobile */}
+                    {/* Slide track mobile — tương tự: chỉ render prev/current/next */}
                     <div className="aspect-square overflow-hidden relative">
-                        {allImages.map((img, idx) => (
-                            <div
-                                key={idx}
-                                className="absolute inset-0 transition-transform duration-500 ease-in-out"
-                                style={{ transform: `translateX(${(idx - activeIndex) * 100}%)` }}
-                            >
-                                <Image
-                                    src={img.sourceUrl}
-                                    alt={img.altText || name}
-                                    fill
-                                    className="object-contain p-4"
-                                    sizes="(max-width: 768px) 100vw, 50vw"
-                                    priority={idx === 0}
-                                    fetchPriority={idx === 0 ? "high" : "auto"}
-                                />
-                            </div>
-                        ))}
+                        {allImages.map((img, idx) => {
+                            const offset = idx - activeIndex;
+                            const isVisible = Math.abs(offset) <= 1;
+                            return (
+                                <div
+                                    key={idx}
+                                    className="absolute inset-0 transition-transform duration-500 ease-in-out"
+                                    style={{
+                                        transform: `translateX(${offset * 100}%)`,
+                                        visibility: isVisible ? 'visible' : 'hidden',
+                                    }}
+                                    aria-hidden={!isVisible}
+                                >
+                                    {isVisible && (
+                                        <Image
+                                            src={img.sourceUrl}
+                                            alt={img.altText || name}
+                                            fill
+                                            className="object-contain p-4"
+                                            sizes="(max-width: 768px) 100vw, 50vw"
+                                            priority={idx === 0}
+                                            fetchPriority={idx === 0 ? "high" : "auto"}
+                                        />
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
 
                     {allImages.length > 1 && (

@@ -29,6 +29,7 @@ const RelatedProductsCarousel = dynamic(() => import('@/components/product/Relat
 import { generateProductSEO, generateCategorySEO } from "@/utils/seo";
 import { ProductSchema } from "@/components/seo/ProductSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { getCategoryBanner } from "@/app/actions/configActions";
 
 // ISR: Các trang đã build sẽ được phục vụ như HTML tĩnh, cache làm mới sau 1 tiếng.
 export const revalidate = 3600;
@@ -461,6 +462,9 @@ export default async function SlugPage({ params }: {
             });
         }
         
+        // Fetch category banners server-side
+        const categoryBannerConfig = await getCategoryBanner(slug);
+
         return (
             <div className="container mx-auto px-4 py-2 md:py-4">
                 <BreadcrumbSchema
@@ -477,6 +481,7 @@ export default async function SlugPage({ params }: {
                         initialPageInfo={pageInfo}
                         availableFilters={availableFilters}
                         categorySlug={slug}
+                        categoryBanners={categoryBannerConfig?.banners || null}
                     />
                 </Suspense>
             </div>
