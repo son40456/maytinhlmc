@@ -146,6 +146,16 @@ export default async function SlugPage({ params }: {
 }) {
     const { slug } = await params;
 
+    try {
+        return await renderSlugPage(slug);
+    } catch (err) {
+        // Log chi tiết để debug trên Coolify
+        console.error(`[SlugPage] FATAL ERROR for slug="${slug}":`, err);
+        throw err; // re-throw để Next.js hiển thị error page
+    }
+}
+
+async function renderSlugPage(slug: string) {
     // Xóa bỏ searchParams ở Server Component để cho phép Build Tĩnh (SSG) hoàn toàn.
     // Việc lọc (filter) và sắp xếp (sort) sẽ được Client Component (CategoryProductView) xử lý sau khi load.
     const { data: nodeData } = await wpgraphqlFetch<any>(GET_NODE_BY_SLUG, {
@@ -445,7 +455,15 @@ export default async function SlugPage({ params }: {
 
         // P1 FIX: Cache-aside pattern — kiểm tra Redis trước, chỉ chạy N requests nếu cache miss
         let availableFilters: any[] = [];
-        const cachedFilters = await getFilterCache(slug);
+        let cachedFilters: any[] | null = null;
+
+        // Isolated try/catch cho Redis — nếu Redis fail chỉ log, không crash trang
+        try {
+            cachedFilters = await getFilterCache(slug);
+        } catch (redisErr) {
+            console.error(`[SlugPage] Redis getFilterCache failed for "${slug}":`, redisErr);
+            cachedFilters = null;
+        }
 
         if (cachedFilters !== null) {
             // ✅ Cache HIT — trả về ngay, TTFB < 5ms thay vì 2-15s
