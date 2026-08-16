@@ -30,6 +30,7 @@ import { generateProductSEO, generateCategorySEO } from "@/utils/seo";
 import { ProductSchema } from "@/components/seo/ProductSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { getCategoryBanner } from "@/app/actions/configActions";
+import { getFilterCache, setFilterCache } from "@/lib/filterCache";
 
 // ISR: Các trang đã build sẽ được phục vụ như HTML tĩnh, cache làm mới sau 1 tiếng.
 export const revalidate = 3600;
@@ -442,71 +443,79 @@ export default async function SlugPage({ params }: {
             }
         `;
 
-        // attrMap: key = rawSlug, value = { filterEntry, seenTermSlugs }
-        const attrMap = new Map<string, { entry: any; seenTerms: Set<string> }>();
-        const availableFilters: any[] = [];
-        let hasMorePages = true;
-        let afterCursor: string | null = null;
-        let pageNum = 0;
+        // P1 FIX: Cache-aside pattern — kiểm tra Redis trước, chỉ chạy N requests nếu cache miss
+        let availableFilters: any[] = [];
+        const cachedFilters = await getFilterCache(slug);
 
-        // Lúc build SSG: limit 1 trang → build nhanh (ISR sẽ tự revalidate với full filter sau)
-        // Lúc ISR revalidate: paginate đầy đủ 15 trang (1500 SP) → filter hoàn chỉnh
-        const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
-        const maxFilterPages = isBuildPhase ? 1 : 15;
+        if (cachedFilters !== null) {
+            // ✅ Cache HIT — trả về ngay, TTFB < 5ms thay vì 2-15s
+            availableFilters = cachedFilters;
+        } else {
+            // ❌ Cache MISS — chạy paginated GraphQL discovery (chỉ khi lần đầu hoặc cache hết hạn)
+            const attrMap = new Map<string, { entry: any; seenTerms: Set<string> }>();
+            let hasMorePages = true;
+            let afterCursor: string | null = null;
+            let pageNum = 0;
 
-        while (hasMorePages && pageNum < maxFilterPages) {
-            const { data: fd }: any = await wpgraphqlFetch<any>(FILTER_QUERY, {
-                slugStr: slug,
-                after: afterCursor,
-            });
-            const nodes = fd?.filterDiscovery?.nodes || [];
-            hasMorePages = fd?.filterDiscovery?.pageInfo?.hasNextPage ?? false;
-            afterCursor = fd?.filterDiscovery?.pageInfo?.endCursor ?? null;
-            pageNum++;
+            // Lúc build SSG: limit 1 trang → build nhanh (ISR sẽ tự revalidate với full filter sau)
+            // Lúc ISR revalidate: paginate đầy đủ 15 trang (1500 SP) → filter hoàn chỉnh
+            const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+            const maxFilterPages = isBuildPhase ? 1 : 15;
 
-            nodes.forEach((p: any) => {
-                p.attributes?.nodes?.forEach((attr: any) => {
-                    // Chỉ xử lý GlobalProductAttribute (có slug)
-                    if (!attr.slug) return;
-                    const key: string = attr.slug;
-
-                    const newTerms = (attr.terms?.nodes || []).map((t: any) => ({
-                        slug: t.slug,
-                        name: t.name,
-                        logo: t.logo?.logo?.node?.sourceUrl ?? null,
-                    }));
-
-                    if (!attrMap.has(key)) {
-                        // Lần đầu gặp attribute này — tạo mới
-                        const entry = {
-                            name: attr.label || attr.name,
-                            slug: key.startsWith('pa_') ? key.slice(3) : key,
-                            rawSlug: key,
-                            options: [] as any[],
-                        };
-                        const seenTerms = new Set<string>();
-
-                        newTerms.forEach((term: any) => {
-                            if (term.slug && !seenTerms.has(term.slug)) {
-                                seenTerms.add(term.slug);
-                                entry.options.push(term);
-                            }
-                        });
-
-                        attrMap.set(key, { entry, seenTerms });
-                        availableFilters.push(entry);
-                    } else {
-                        // Đã gặp attribute này — MERGE thêm terms mới (logic chính!)
-                        const { entry, seenTerms } = attrMap.get(key)!;
-                        newTerms.forEach((term: any) => {
-                            if (term.slug && !seenTerms.has(term.slug)) {
-                                seenTerms.add(term.slug);
-                                entry.options.push(term);
-                            }
-                        });
-                    }
+            while (hasMorePages && pageNum < maxFilterPages) {
+                const { data: fd }: any = await wpgraphqlFetch<any>(FILTER_QUERY, {
+                    slugStr: slug,
+                    after: afterCursor,
                 });
-            });
+                const nodes = fd?.filterDiscovery?.nodes || [];
+                hasMorePages = fd?.filterDiscovery?.pageInfo?.hasNextPage ?? false;
+                afterCursor = fd?.filterDiscovery?.pageInfo?.endCursor ?? null;
+                pageNum++;
+
+                nodes.forEach((p: any) => {
+                    p.attributes?.nodes?.forEach((attr: any) => {
+                        if (!attr.slug) return;
+                        const key: string = attr.slug;
+
+                        const newTerms = (attr.terms?.nodes || []).map((t: any) => ({
+                            slug: t.slug,
+                            name: t.name,
+                            logo: t.logo?.logo?.node?.sourceUrl ?? null,
+                        }));
+
+                        if (!attrMap.has(key)) {
+                            const entry = {
+                                name: attr.label || attr.name,
+                                slug: key.startsWith('pa_') ? key.slice(3) : key,
+                                rawSlug: key,
+                                options: [] as any[],
+                            };
+                            const seenTerms = new Set<string>();
+
+                            newTerms.forEach((term: any) => {
+                                if (term.slug && !seenTerms.has(term.slug)) {
+                                    seenTerms.add(term.slug);
+                                    entry.options.push(term);
+                                }
+                            });
+
+                            attrMap.set(key, { entry, seenTerms });
+                            availableFilters.push(entry);
+                        } else {
+                            const { entry, seenTerms } = attrMap.get(key)!;
+                            newTerms.forEach((term: any) => {
+                                if (term.slug && !seenTerms.has(term.slug)) {
+                                    seenTerms.add(term.slug);
+                                    entry.options.push(term);
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            // Ghi cache vào Redis (non-blocking — không chờ, không crash nếu Redis lỗi)
+            setFilterCache(slug, availableFilters).catch(() => {});
         }
 
         // Generate breadcrumbs data for schema
