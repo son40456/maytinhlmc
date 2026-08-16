@@ -12,7 +12,6 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import imageKitLoader from "@/utils/imagekit-loader";
 
 interface Banner {
     id?: string;
@@ -63,7 +62,6 @@ export function BannerSlider({ banners }: BannerSliderProps) {
                     <div key={banner.id || idx} className="w-full flex-shrink-0 relative aspect-[21/9] md:aspect-[3/1]">
                         <Link href={banner.link || "#"} className="block w-full h-full">
                             <Image
-                                loader={imageKitLoader}
                                 src={banner.image}
                                 alt={banner.title || `Banner ${idx + 1}`}
                                 fill
