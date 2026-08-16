@@ -12,8 +12,7 @@
  */
 
 import Link from "next/link";
-import Image from "next/image";
-import imageKitLoader, { getImageKitUrl } from "@/utils/imagekit-loader";
+import ImageKitImage from "./ImageKitImage";
 import { BannerConfig } from "@/app/actions/configActions";
 import { BannerSlider } from "./BannerSlider";
 
@@ -35,8 +34,7 @@ export function BannerSection({ config }: { config: BannerConfig }) {
                             <Link href={banner.link || "#"} key={banner.id || idx} className="block group">
                                 <div className="relative aspect-[4/3] md:h-[220px] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden shadow-xl border-2 border-white/20 transform transition-transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent after:-translate-x-[150%] group-hover:after:translate-x-[150%] after:transition-transform after:duration-1000 after:ease-in-out">
                                     {/* Dùng next/image thay vì background-image để có lazy loading và LCP hint đúng */}
-                                    <Image
-                                        loader={imageKitLoader}
+                                    <ImageKitImage
                                         src={banner.image}
                                         alt={banner.title || `Small banner ${idx + 1}`}
                                         fill
