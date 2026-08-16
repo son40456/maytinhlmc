@@ -44,6 +44,10 @@ function getRedisClient(): Redis | null {
             _redis = new Redis({
                 url: process.env.KV_REST_API_URL,
                 token: process.env.KV_REST_API_TOKEN,
+                // Fix DYNAMIC_SERVER_USAGE: Upstash mặc định dùng cache: 'no-store'.
+                // Khai báo rõ cache: 'default' (hoặc 'force-cache') để Next.js không
+                // bail out khỏi quá trình SSG/ISR.
+                cache: 'default',
             });
         } catch (err) {
             console.error('[FilterCache] Failed to create Redis client:', err);
