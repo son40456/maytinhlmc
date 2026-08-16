@@ -271,6 +271,19 @@ export function CategoryProductView({
         setSortOrder("DATE_DESC");
     };
 
+    // [FIX 3] Build "Load More" pagination href for SEO crawlability
+    // Googlebot không click button JS — ta dùng thẻ <a> thực với href để bot có thể theo
+    const loadMoreHref = pageInfo?.endCursor
+        ? `${pathname}?after=${encodeURIComponent(pageInfo.endCursor)}`
+        : null;
+
+    const handleLoadMoreClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault(); // Ngăn full reload — người dùng thật vẫn dùng AJAX
+        if (!loading && !isPending) {
+            triggerFetch(true);
+        }
+    };
+
     return (
         <div className="w-full">
             {/* Breadcrumbs */}
@@ -446,19 +459,43 @@ export function CategoryProductView({
                     </div>
                 )}
 
-                {/* Load More */}
-                {pageInfo?.hasNextPage && (
+                {/* [FIX 3] Load More — dùng thẻ <a> thực để Googlebot crawl được
+                    Người dùng thật: click intercepted → AJAX, không reload trang
+                    Googlebot: follow href bình thường để crawl trang sau */}
+                {pageInfo?.hasNextPage && loadMoreHref && (
                     <div className="mt-6 md:mt-12 flex justify-center">
-                        <button
-                            onClick={() => triggerFetch(true)}
-                            disabled={loading || isPending}
-                            className="px-6 py-2.5 bg-white border border-gray-200 rounded-xl font-bold text-sm text-gray-700 hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
+                        <a
+                            href={loadMoreHref}
+                            onClick={handleLoadMoreClick}
+                            aria-label="Tải thêm sản phẩm"
+                            className={`px-6 py-2.5 bg-white border border-gray-200 rounded-xl font-bold text-sm text-gray-700 hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm flex items-center gap-2 ${(loading || isPending) ? 'opacity-50 cursor-wait' : ''}`}
                         >
+                            {(loading || isPending) ? (
+                                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                </svg>
+                            ) : null}
                             Tải thêm sản phẩm
-                        </button>
+                        </a>
                     </div>
                 )}
             </div>
+
+            {/* [FIX 2] SEO Footer Content — hiển thị dưới lưới sản phẩm, không ảnh hưởng UX mua sắm.
+                Nội dung lấy từ trường seo_description hoặc description dài của danh mục WP.
+                Nếu backend có custom field "seo_bottom_content" thì dùng trường đó. */}
+            {category.seoBottomContent && (
+                <div className="mt-10 md:mt-16 pt-8 md:pt-12 border-t border-gray-100">
+                    <div
+                        className="prose prose-slate dark:prose-invert max-w-none text-gray-600 text-sm leading-relaxed
+                            prose-h2:text-xl prose-h2:font-bold prose-h2:text-gray-800 prose-h2:mb-3
+                            prose-h3:text-lg prose-h3:font-semibold prose-h3:text-gray-700
+                            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
+                        dangerouslySetInnerHTML={{ __html: category.seoBottomContent }}
+                    />
+                </div>
+            )}
         </div>
     );
 }

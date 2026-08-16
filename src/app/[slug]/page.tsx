@@ -372,9 +372,16 @@ export default async function SlugPage({ params }: {
     }
 
     if (nodeData?.productCategory) {
-        const category = nodeData.productCategory;
+        // [FIX 2] Enrich category with seoBottomContent for SEO footer block below product grid.
+        // Uses WP category description as the SEO content — no extra plugin required.
+        // If the WP backend ever adds a custom ACF field "seoBottomContent", map it here instead.
+        const category = {
+            ...nodeData.productCategory,
+            seoBottomContent: nodeData.productCategory.description || null,
+        };
         const products = nodeData.categoryProducts?.nodes || [];
         const pageInfo = nodeData.categoryProducts?.pageInfo;
+
 
         // Fetch filter attributes server-side with pagination (thἀm tất cả SP, không bị giới hạn 100 items)
         const FILTER_QUERY = `
