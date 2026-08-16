@@ -58,12 +58,31 @@ export async function generateMetadata({ params }: {
         taxFilters: null
     });
 
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maytinhlmc.vn';
+
     if (data?.product) {
         const seo = generateProductSEO(data.product.name, data.product.shortDescription);
+        const productImage = data.product.image?.sourceUrl || '';
         return {
             title: seo.title,
             description: seo.description,
-            openGraph: { images: [data.product.image?.sourceUrl || ""] },
+            // C5: canonical prevents duplicate content from filter/sort query params
+            alternates: {
+                canonical: `${baseUrl}/${slug}`,
+            },
+            openGraph: {
+                title: seo.title,
+                description: seo.description,
+                images: productImage ? [{ url: productImage }] : [],
+                type: 'website',
+            },
+            // C4: twitter card must use product-specific title/description/image
+            twitter: {
+                card: 'summary_large_image',
+                title: seo.title,
+                description: seo.description,
+                images: productImage ? [productImage] : [],
+            },
         };
     }
 
@@ -72,16 +91,46 @@ export async function generateMetadata({ params }: {
         return {
             title: seo.title,
             description: seo.description,
+            // C5: canonical prevents index bloat from ?sort=&page= variants
+            alternates: {
+                canonical: `${baseUrl}/${slug}`,
+            },
+            openGraph: {
+                title: seo.title,
+                description: seo.description,
+                type: 'website',
+            },
+            twitter: {
+                card: 'summary_large_image',
+                title: seo.title,
+                description: seo.description,
+            },
         };
     }
 
     if (data?.post) {
         const post = data.post;
         const plainExcerpt = post.excerpt?.replace(/<[^>]+>/g, '').slice(0, 160) || '';
+        const featuredImage = post.featuredImage?.node?.sourceUrl || '';
         return {
             title: `${post.title} | LMC`,
             description: plainExcerpt,
-            openGraph: { images: [post.featuredImage?.node?.sourceUrl || ''] },
+            // C5: canonical for post pages
+            alternates: {
+                canonical: `${baseUrl}/${slug}`,
+            },
+            openGraph: {
+                title: `${post.title} | LMC`,
+                description: plainExcerpt,
+                images: featuredImage ? [{ url: featuredImage }] : [],
+                type: 'article',
+            },
+            twitter: {
+                card: 'summary_large_image',
+                title: `${post.title} | LMC`,
+                description: plainExcerpt,
+                images: featuredImage ? [featuredImage] : [],
+            },
         };
     }
 
@@ -496,6 +545,14 @@ export default async function SlugPage({ params }: {
 
         return (
             <div className="bg-white dark:bg-gray-900 min-h-screen">
+                {/* H3: BreadcrumbList schema for post pages — enables SERP breadcrumb rich result */}
+                <BreadcrumbSchema
+                    items={[
+                        { name: 'Trang chủ', item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://maytinhlmc.vn'}/` },
+                        { name: 'Tin tức', item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://maytinhlmc.vn'}/tin-tuc` },
+                        { name: post.title, item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://maytinhlmc.vn'}/${slug}` },
+                    ]}
+                />
                 <div className="container mx-auto px-4 py-8 max-w-4xl">
                     {/* Breadcrumb */}
                     <nav className="flex items-center flex-wrap gap-1.5 md:gap-2 text-sm md:text-base text-slate-500 dark:text-slate-400 mb-6">
@@ -504,6 +561,7 @@ export default async function SlugPage({ params }: {
                             <span>Trang chủ</span>
                         </Link>
                         <span>/</span>
+
                         <Link href="/tin-tuc" className="hover:text-blue-600">Tin tức</Link>
                         <span>/</span>
                         <span className="text-slate-900 dark:text-white font-medium truncate max-w-[250px] md:max-w-[400px]">{post.title}</span>

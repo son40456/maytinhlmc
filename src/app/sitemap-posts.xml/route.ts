@@ -6,6 +6,7 @@ const GET_POSTS = `
     posts(first: 100) {
       nodes {
         slug
+        modified
       }
     }
   }
@@ -21,7 +22,12 @@ export async function GET() {
 
         posts.forEach((post: any) => {
             if (post.slug) {
-                xmlStr += `  <url>\n    <loc>${baseUrl}/tin-tuc/${post.slug}</loc>\n    <lastmod>${new Date().toISOString()}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+                // Posts use flat /{slug} route (same as products/categories via [slug]/page.tsx)
+                // NOT /tin-tuc/{slug} which would result in 404s
+                const lastmod = post.modified
+                    ? new Date(post.modified).toISOString()
+                    : new Date().toISOString();
+                xmlStr += `  <url>\n    <loc>${baseUrl}/${post.slug}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
             }
         });
     } catch (e) {

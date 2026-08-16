@@ -1,5 +1,8 @@
-import { ProductCard } from "@/components/ui/ProductCard";
+// H6: Use ProductCardServer (Server Component) to eliminate SSR bailout on homepage
+// ProductCard (client) caused BAILOUT_TO_CLIENT_SIDE_RENDERING → poor LCP
+import { ProductCardServer } from "@/components/ui/ProductCardServer";
 import Link from "next/link";
+
 
 interface Product {
     id: string;
@@ -57,7 +60,7 @@ export function HomeSection({ title, categorySlug, subFilters, products }: HomeS
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 md:gap-3 lg:gap-4">
                 {products.map((p: Product, idx: number) => (
-                    <ProductCard
+                    <ProductCardServer
                         key={p.id}
                         id={p.id}
                         databaseId={p.databaseId ?? 0}
@@ -70,9 +73,11 @@ export function HomeSection({ title, categorySlug, subFilters, products }: HomeS
                         salePrice={p.salePrice}
                         stockStatus={p.stockStatus}
                         category={categorySlug}
+                        priority={idx < 6}
                     />
                 ))}
             </div>
         </section>
     );
 }
+

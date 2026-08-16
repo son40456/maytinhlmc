@@ -16,8 +16,18 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
             ? `Kết quả tìm kiếm "${q}" - Trang ${page} | LMC`
             : `Kết quả tìm kiếm cho "${q}" | LMC`,
         description: 'Tìm kiếm sản phẩm tốt nhất tại LMC.',
+        // C-Search: noindex prevents thin/duplicate content indexing for search query URLs
+        robots: {
+            index: false,
+            follow: true,
+        },
+        // canonical points to base search page (without query params) to consolidate signals
+        alternates: {
+            canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://maytinhlmc.vn'}/search`,
+        },
     };
 }
+
 
 export default async function SearchPage({
     searchParams,
