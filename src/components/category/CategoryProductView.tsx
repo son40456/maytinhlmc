@@ -482,20 +482,88 @@ export function CategoryProductView({
                 )}
             </div>
 
-            {/* [FIX 2] SEO Footer Content — hiển thị dưới lưới sản phẩm, không ảnh hưởng UX mua sắm.
-                Nội dung lấy từ trường seo_description hoặc description dài của danh mục WP.
-                Nếu backend có custom field "seo_bottom_content" thì dùng trường đó. */}
+            {/* GEO: Category description block — visible content + AI-citable.
+                Displayed below product grid to not interrupt shopping flow.
+                DO NOT remove — this is primary citability content for AI Overviews. */}
             {category.seoBottomContent && (
-                <div className="mt-10 md:mt-16 pt-8 md:pt-12 border-t border-gray-100">
-                    <div
-                        className="prose prose-slate dark:prose-invert max-w-none text-gray-600 text-sm leading-relaxed
-                            prose-h2:text-xl prose-h2:font-bold prose-h2:text-gray-800 prose-h2:mb-3
-                            prose-h3:text-lg prose-h3:font-semibold prose-h3:text-gray-700
-                            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
-                        dangerouslySetInnerHTML={{ __html: category.seoBottomContent }}
-                    />
+                <div className="mt-12 md:mt-20">
+                    {/* Divider with label */}
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent" />
+                        <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2 whitespace-nowrap">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Giới thiệu danh mục
+                        </span>
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent" />
+                    </div>
+
+                    {/* Main card */}
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/60 dark:from-slate-800/80 dark:via-slate-800 dark:to-slate-900/60 border border-blue-100/80 dark:border-slate-700/60 shadow-sm">
+                        {/* Left accent bar */}
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-indigo-500 to-violet-500 rounded-l-2xl" />
+
+                        {/* Decorative background circle */}
+                        <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-blue-100/40 dark:bg-blue-900/20 blur-2xl pointer-events-none" />
+
+                        <div className="relative pl-6 pr-6 py-6 md:py-7">
+                            {/* Header row */}
+                            <div className="flex items-start gap-3 mb-4">
+                                <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center mt-0.5">
+                                    <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-0.5">Tại Máy Tính LMC</p>
+                                    <h2 className="text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">{category.name}</h2>
+                                </div>
+                            </div>
+
+                            {/* Description text */}
+                            <div
+                                className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed
+                                    prose prose-sm prose-slate dark:prose-invert max-w-none
+                                    prose-p:my-0 prose-p:text-slate-600 dark:prose-p:text-slate-300
+                                    prose-strong:text-slate-700 dark:prose-strong:text-slate-200 prose-strong:font-semibold
+                                    prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
+                                dangerouslySetInnerHTML={{ __html: category.seoBottomContent }}
+                            />
+
+                            {/* Footer chips row */}
+                            <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-blue-100 dark:border-slate-700/60">
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 dark:bg-green-900/30 border border-green-200/60 dark:border-green-800/60 text-green-700 dark:text-green-400 text-xs font-medium">
+                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    Hàng chính hãng
+                                </span>
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200/60 dark:border-blue-800/60 text-blue-700 dark:text-blue-400 text-xs font-medium">
+                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    Bảo hành chính hãng
+                                </span>
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-50 dark:bg-violet-900/30 border border-violet-200/60 dark:border-violet-800/60 text-violet-700 dark:text-violet-400 text-xs font-medium">
+                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                    Tư vấn miễn phí
+                                </span>
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 dark:bg-orange-900/30 border border-orange-200/60 dark:border-orange-800/60 text-orange-700 dark:text-orange-400 text-xs font-medium">
+                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    Tại Hải Dương
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
+
         </div>
     );
 }
