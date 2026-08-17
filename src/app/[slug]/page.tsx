@@ -30,6 +30,7 @@ import { generateProductSEO, generateCategorySEO } from "@/utils/seo";
 import { ProductSchema } from "@/components/seo/ProductSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { CategorySchema } from "@/components/seo/CategorySchema";
+import { getCategoryDescription } from "@/data/categoryDescriptions";
 import { getCategoryBanner } from "@/app/actions/configActions";
 import { getFilterCache, setFilterCache } from "@/lib/filterCache";
 
@@ -390,12 +391,16 @@ async function renderSlugPage(slug: string) {
     }
 
     if (nodeData?.productCategory) {
-        // [FIX 2] Enrich category with seoBottomContent for SEO footer block below product grid.
-        // Uses WP category description as the SEO content — no extra plugin required.
-        // If the WP backend ever adds a custom ACF field "seoBottomContent", map it here instead.
+        // GEO: Resolve category description — WP description takes priority,
+        // falls back to static descriptions in categoryDescriptions.ts
+        const resolvedDescription = getCategoryDescription(
+            slug,
+            nodeData.productCategory.description
+        );
         const category = {
             ...nodeData.productCategory,
-            seoBottomContent: nodeData.productCategory.description || null,
+            // Used by CategoryProductView to render intro block above product grid
+            seoBottomContent: resolvedDescription,
         };
         const products = nodeData.categoryProducts?.nodes || [];
         const pageInfo = nodeData.categoryProducts?.pageInfo;
@@ -570,7 +575,7 @@ async function renderSlugPage(slug: string) {
                     products={products}
                     categoryName={category.name}
                     categorySlug={slug}
-                    categoryDescription={category.description || undefined}
+                    categoryDescription={resolvedDescription || undefined}
                 />
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Đang tải cấu trúc danh mục...</div>}>
                     <CategoryProductView
