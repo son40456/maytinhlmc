@@ -239,12 +239,13 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                         <button
                             className="lg:hidden p-1.5 text-white"
                             onClick={() => setMobileDrawerOpen(true)}
+                            aria-label="Mở menu điều hướng"
                         >
                             <Menu size={22} />
                         </button>
 
                         {/* Logo */}
-                        <Link href="/" className="flex-shrink-0">
+                        <Link href="/" className="flex-shrink-0" aria-label="Trang chủ MaytinhLMC">
                             {logoUrl ? (
                                 <Image
                                     src={logoUrl}
@@ -264,6 +265,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                             onClick={() => setMenuOpen(prev => !prev)}
                             className={`hidden lg:flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 text-white hover:bg-white/15 flex-shrink-0 ${scrolled ? 'opacity-100 bg-white/10' : 'opacity-0 scale-90 pointer-events-none w-0 px-0 overflow-hidden'}`}
                             title={menuOpen ? 'Ẩn danh mục' : 'Hiện danh mục'}
+                            aria-label={menuOpen ? 'Ẩn danh mục' : 'Hiện danh mục'}
                         >
                             <Menu size={20} className={`transition-transform duration-300 ${menuOpen ? 'rotate-90' : 'rotate-0'}`} />
                             <span className="text-sm font-bold">Danh mục</span>
@@ -279,13 +281,14 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     onChange={e => { setDesktopQuery(e.target.value); setShowDesktopDropdown(true); }}
                                     onFocus={() => setShowDesktopDropdown(true)}
                                     className="w-full h-12 pl-5 pr-14 rounded-full text-gray-800 bg-white/95 focus:bg-white focus:outline-none focus:ring-4 focus:ring-yellow-400/50 shadow-inner transition-all text-sm"
+                                    aria-label="Tìm kiếm sản phẩm"
                                 />
                                 {desktopQuery && (
-                                    <button type="button" onClick={() => setDesktopQuery('')} className="absolute right-11 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1">
+                                    <button type="button" onClick={() => setDesktopQuery('')} aria-label="Xóa từ khóa tìm kiếm" className="absolute right-11 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1">
                                         <X className="w-4 h-4" />
                                     </button>
                                 )}
-                                <button type="submit" className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-yellow-400 hover:text-blue-900 transition-colors shadow-sm">
+                                <button type="submit" aria-label="Tìm kiếm" className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-yellow-400 hover:text-blue-900 transition-colors shadow-sm">
                                     {desktopSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-5 w-5" />}
                                 </button>
 
@@ -409,6 +412,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                         <div className="flex lg:hidden flex-1 px-2">
                             <button
                                 type="button"
+                                aria-label="Tìm kiếm sản phẩm"
                                 onClick={() => {
                                     setSearchOverlayOpen(true);
                                     // Call focus DIRECTLY in onClick (same user-gesture tick)
@@ -423,7 +427,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                         </div>
 
                         {/* Mobile: Cart icon */}
-                        <Link href="/cart" className="lg:hidden relative p-1.5 text-white">
+                        <Link href="/cart" aria-label="Giỏ hàng" className="lg:hidden relative p-1.5 text-white">
                             <ShoppingCart className="h-5 w-5" />
                             {mounted && itemCount > 0 && (
                                 <span className="absolute -top-0.5 -right-0.5 bg-yellow-400 text-blue-900 text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-1 ring-[#004b91]">
@@ -473,7 +477,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                             </div>
 
                             <div className="relative group">
-                                <Link href="/cart" className="flex p-2 text-white hover:text-yellow-400 transition-colors border-l border-blue-400 ml-2 pl-4">
+                                <Link href="/cart" aria-label="Giỏ hàng" className="flex p-2 text-white hover:text-yellow-400 transition-colors border-l border-blue-400 ml-2 pl-4">
                                     <ShoppingCart className="h-6 w-6" />
                                     {mounted && itemCount > 0 && (
                                         <span className="absolute top-1 right-0 bg-yellow-400 text-blue-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-[#004b91]">
@@ -500,7 +504,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                 <div key={item.id} className="group/item flex items-center gap-3 bg-white px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 relative">
                                                     <div className="bg-white border border-slate-100 aspect-square rounded-lg w-16 h-16 shrink-0 shadow-sm relative overflow-hidden">
                                                         {item.imageUrl ? (
-                                                            <Image src={item.imageUrl} alt={item.name} fill className="object-contain p-1" sizes="64px" />
+                                                             <Image src={item.imageUrl} alt={item.name} fill className="object-contain p-1" sizes="64px" />
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center bg-slate-50 text-slate-300"><ShoppingCart size={20} /></div>
                                                         )}
@@ -514,6 +518,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFromCart(item.id); }}
                                                                 className="text-slate-300 hover:text-red-500 transition-colors shrink-0 p-0.5 z-10"
                                                                 title="Xóa khỏi giỏ hàng"
+                                                                aria-label="Xóa sản phẩm khỏi giỏ hàng"
                                                             >
                                                                 <X size={16} />
                                                             </button>
@@ -692,7 +697,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                     <span className="text-2xl font-black italic text-white">LMC</span>
                                 )}
                             </Link>
-                            <button onClick={() => setMobileDrawerOpen(false)} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
+                            <button onClick={() => setMobileDrawerOpen(false)} aria-label="Đóng menu" className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
                                 <X size={18} />
                             </button>
                         </div>
@@ -773,6 +778,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                                                 {hasChildren && (
                                                     <button
                                                         onClick={() => setExpandedMobileMenu(isExpanded ? null : item.id)}
+                                                        aria-label={isExpanded ? `Thu gọn danh mục con ${cleanLabel}` : `Mở rộng danh mục con ${cleanLabel}`}
                                                         className="px-4 py-3 text-gray-400"
                                                     >
                                                         <ChevronDown size={16} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
@@ -826,6 +832,7 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
                     </Link>
                     <button
                         onClick={() => setMobileDrawerOpen(true)}
+                        aria-label="Danh mục sản phẩm"
                         className="flex flex-col items-center gap-0.5 px-2 py-1 text-gray-500 hover:text-blue-600"
                     >
                         <Menu size={20} />

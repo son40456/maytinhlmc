@@ -244,7 +244,7 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                             {isSearching
                                 ? <Loader2 className="w-4 h-4 animate-spin text-blue-500 flex-shrink-0" />
                                 : query
-                                    ? <button type="button" onClick={() => setQuery('')} className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100"><X className="w-4 h-4" /></button>
+                                    ? <button type="button" onClick={() => setQuery('')} aria-label="Xóa từ khóa" className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100"><X className="w-4 h-4" /></button>
                                     : <kbd className="flex items-center px-2 py-0.5 text-[10px] font-medium text-gray-400 border border-gray-200 rounded bg-gray-50">ESC</kbd>
                             }
                         </form>
@@ -390,12 +390,12 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                             />
                             {isSearching && <Loader2 className="w-4 h-4 animate-spin text-blue-500 flex-shrink-0" />}
                             {query && !isSearching && (
-                                <button type="button" onClick={() => setQuery('')} className="p-0.5 text-gray-400 bg-gray-300 rounded-full active:bg-gray-400 flex-shrink-0">
+                                <button type="button" onClick={() => setQuery('')} aria-label="Xóa từ khóa" className="p-0.5 text-gray-400 bg-gray-300 rounded-full active:bg-gray-400 flex-shrink-0">
                                     <X className="w-3 h-3" />
                                 </button>
                             )}
                         </form>
-                        <button type="button" onClick={onClose} className="text-[15px] font-medium text-gray-600 flex-shrink-0 px-1">
+                        <button type="button" onClick={onClose} aria-label="Đóng tìm kiếm" className="text-[15px] font-medium text-gray-600 flex-shrink-0 px-1">
                             Huỷ
                         </button>
                     </div>
@@ -421,6 +421,7 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                                                     <span>{r}</span>
                                                     <span
                                                         role="button"
+                                                        aria-label={`Xóa ${r} khỏi lịch sử tìm kiếm`}
                                                         onClick={e => { e.stopPropagation(); removeRecentSearch(r); }}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
