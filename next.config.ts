@@ -32,6 +32,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'swiper'],
+  },
   async redirects() {
     return [
       {

@@ -169,17 +169,21 @@ export const Header = ({ logoUrl }: { logoUrl?: string | null }) => {
     }, [mobileDrawerOpen]);
 
     useEffect(() => {
-        let lastScrollY = 0;
+        let ticking = false;
         const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-            // Use hysteresis to prevent flickering when scrolling near the threshold
-            if (currentScrollY > 120) {
-                setScrolled(true);
-            } else if (currentScrollY < 40) {
-                setScrolled(false);
-                setMenuOpen(false);
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const currentScrollY = window.scrollY;
+                    if (currentScrollY > 120) {
+                        setScrolled(true);
+                    } else if (currentScrollY < 40) {
+                        setScrolled(false);
+                        setMenuOpen(false);
+                    }
+                    ticking = false;
+                });
+                ticking = true;
             }
-            lastScrollY = currentScrollY;
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);

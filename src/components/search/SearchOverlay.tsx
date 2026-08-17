@@ -101,6 +101,7 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
         // visualViewport.offsetTop = how much the page has scrolled (can be > 0 when keyboard opens)
         // visualViewport.height    = the visible height above the keyboard
         useEffect(() => {
+            if (!isOpen) return;
             const vv = window.visualViewport;
             const update = () => {
                 if (vv) {
@@ -118,7 +119,7 @@ export const SearchOverlay = forwardRef<SearchOverlayHandle, SearchOverlayProps>
                     vv.removeEventListener('scroll', update);
                 };
             }
-        }, []);
+        }, [isOpen]);
 
         // Lock scroll behind overlay when open
         useEffect(() => {
