@@ -8,6 +8,7 @@ interface ProductSchemaProps {
     url: string;
     stockStatus: string;
     sku?: string;
+    brandName?: string | null; // GEO: brand for entity disambiguation
 }
 
 export const ProductSchema: React.FC<ProductSchemaProps> = ({
@@ -17,7 +18,8 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({
     price,
     url,
     stockStatus,
-    sku
+    sku,
+    brandName,
 }) => {
     const isAvailable = stockStatus === 'IN_STOCK' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock';
 
@@ -34,15 +36,24 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({
         "image": image,
         "description": cleanDescription,
         ...(sku && { "sku": sku }),
+        // GEO: brand field helps AI distinguish "Samsung SSD" from "Samsung TV" etc.
+        ...(brandName && {
+            "brand": {
+                "@type": "Brand",
+                "name": brandName
+            }
+        }),
         "offers": {
             "@type": "Offer",
             "url": url,
             "priceCurrency": "VND",
             "price": numericPrice,
             "availability": isAvailable,
+            "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             "seller": {
                 "@type": "Organization",
-                "name": "LMC"
+                "@id": "https://maytinhlmc.vn/#organization",
+                "name": "Máy Tính LMC"
             }
         }
     };

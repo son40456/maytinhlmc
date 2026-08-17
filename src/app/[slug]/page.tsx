@@ -29,6 +29,7 @@ const RelatedProductsCarousel = dynamic(() => import('@/components/product/Relat
 import { generateProductSEO, generateCategorySEO } from "@/utils/seo";
 import { ProductSchema } from "@/components/seo/ProductSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { CategorySchema } from "@/components/seo/CategorySchema";
 import { getCategoryBanner } from "@/app/actions/configActions";
 import { getFilterCache, setFilterCache } from "@/lib/filterCache";
 
@@ -184,6 +185,11 @@ async function renderSlugPage(slug: string) {
         const savingsAmount = hasDiscount ? (regularNum - saleNum).toLocaleString("vi-VN") + "₫" : "";
         const relatedProducts = product.related?.nodes || [];
         const categories = product.productCategories?.nodes || [];
+        // GEO: Extract brand name from pa_thuong-hieu attribute for ProductSchema brand field
+        const brandAttr = product.attributes?.nodes?.find((a: any) =>
+            a.slug === 'pa_thuong-hieu' || a.slug === 'thuong-hieu' || a.name?.toLowerCase().includes('thương hiệu')
+        );
+        const brandName = brandAttr?.terms?.nodes?.[0]?.name || null;
         let deepestCategory: any = null;
         let maxDepth = -1;
         categories.forEach((cat: any) => {
@@ -213,6 +219,7 @@ async function renderSlugPage(slug: string) {
                     url={`https://maytinhlmc.vn/${product.slug}`}
                     stockStatus={product.stockStatus || "IN_STOCK"}
                     sku={product.sku}
+                    brandName={brandName}
                 />
                 <BreadcrumbSchema
                     items={[
@@ -550,12 +557,20 @@ async function renderSlugPage(slug: string) {
 
         return (
             <div className="container mx-auto px-4 py-2 md:py-4">
+                {/* GEO: BreadcrumbList schema */}
                 <BreadcrumbSchema
                     items={[
                         { name: 'Trang chủ', item: 'https://maytinhlmc.vn/' },
                         ...breadcrumbs.map(bc => ({ name: bc.name, item: `https://maytinhlmc.vn/${bc.slug}` })),
                         { name: category.name, item: `https://maytinhlmc.vn/${category.slug}` }
                     ]}
+                />
+                {/* GEO: ItemList schema — helps AI engines understand this as a structured product list */}
+                <CategorySchema
+                    products={products}
+                    categoryName={category.name}
+                    categorySlug={slug}
+                    categoryDescription={category.description || undefined}
                 />
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Đang tải cấu trúc danh mục...</div>}>
                     <CategoryProductView
