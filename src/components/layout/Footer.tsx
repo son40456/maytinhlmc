@@ -217,7 +217,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                         <div className="flex items-center justify-center gap-5 sm:gap-6 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
                             <div className="h-4 w-12 relative">
                                 <Image
-                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png"
+                                    src="https://cdn.brandfetch.io/idhem73aId/w/800/h/259/theme/dark/logo.png?c=1dxbfHSJFAPEGdCLU4o5B"
                                     alt="Visa"
                                     fill
                                     className="object-contain"
@@ -226,7 +226,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                             </div>
                             <div className="h-6 w-10 relative">
                                 <Image
-                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png"
+                                    src="https://cdn.brandfetch.io/idFw8DodCr/w/800/h/495/theme/dark/symbol.webp?c=1dxbfHSJFAPEGdCLU4o5B"
                                     alt="Mastercard"
                                     fill
                                     className="object-contain"
@@ -235,7 +235,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                             </div>
                             <div className="h-6 w-6 relative bg-white/20 p-1 rounded">
                                 <Image
-                                    src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png"
+                                    src="https://cdn.brandfetch.io/idn4xaCzTm/w/180/h/180/theme/dark/logo.png?c=1dxbfHSJFAPEGdCLU4o5B"
                                     alt="Momo"
                                     fill
                                     className="object-contain p-0.5"
@@ -260,7 +260,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                             >
                                 <div className="h-[40px] sm:h-[52px] w-[130px] sm:w-[170px] relative transition-opacity hover:opacity-90">
                                     <Image
-                                        src="https://apiserver.maytinhlmc.vn/wp-content/uploads/dadangkybocongthuong.png"
+                                        src="https://ik.imagekit.io/maytinhlmc/dadangkybocongthuong.png"
                                         alt="Đã thông báo Bộ Công Thương"
                                         fill
                                         className="object-contain drop-shadow-md sm:-ml-2"
