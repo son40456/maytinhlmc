@@ -36,7 +36,7 @@ export const Footer = ({ logoUrl }: { logoUrl?: string | null }) => {
                             <div className="space-y-4">
                                 <p className="text-white font-black text-base leading-tight uppercase">Công ty cổ phần thiết bị công nghệ LMC</p>
                                 <div className="space-y-4 text-[#B5B5B5] text-sm">
-                                    <p className="leading-relaxed text-slate-200">Số 472 Đại Lộ Lê Thanh Nghị, P. Lê Thanh Nghị, TP. Hải Dương, Hải Phòng</p>
+                                    <p className="leading-relaxed text-slate-200">Số 472 Lê Thanh Nghị, Phường Lê Thanh Nghị, TP. Hải Phòng</p>
                                     <p className="text-xs italic opacity-70 border-l-2 border-yellow-500/30 pl-3">GPĐKKD số 0801262705 do Sở KH&ĐT Tỉnh Hải Dương cấp ngày 22/10/2018</p>
                                     <div className="pt-2 space-y-3">
                                         <p className="flex items-center gap-4 group">
